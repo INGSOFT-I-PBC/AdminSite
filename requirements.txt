@@ -4,3 +4,5 @@ flake8
 django-environ
 psycopg2
 djoser
+mysqlclient
+django_restframework

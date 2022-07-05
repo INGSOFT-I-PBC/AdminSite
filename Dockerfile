@@ -1,7 +1,32 @@
-# Create MySQL for Django project test
+# For more information, please refer to https://aka.ms/vscode-docker-python
+FROM python:3.8-slim
 FROM mysql
-LABEL maintainer="labfernandez2014@gmail.com"
 
+EXPOSE 8000
+EXPOSE 3306
+
+# Keeps Python from generating .pyc files in the container
+ENV PYTHONDONTWRITEBYTECODE=1
+
+# Turns off buffering for easier container logging
+ENV PYTHONUNBUFFERED=1
+
+# Install pip requirements
+COPY requirements.txt .
+RUN python -m pip install -r requirements.txt
+
+WORKDIR /app
+COPY . /app
+
+# Creates a non-root user with an explicit UID and adds permission to access the /app folder
+# For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
+RUN adduser -u 5678 --disabled-password --gecos "" appuser && chown -R appuser /app
+USER appuser
+
+# During debugging, this entry point will be overridden. For more information, please refer to https://aka.ms/vscode-docker-python-debug
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "backend.wsgi"]
+
+# Mysql Root password
 ENV MYSQL_ROOT_PASSWORD root
 
-EXPOSE 3306
+RUN mysqld -u root -p ${MYSQL_ROOT_PASSWORD}
