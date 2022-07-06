@@ -7,3 +7,4 @@ djoser
 mysqlclient
 django_restframework
 dj-rest-auth
+djangorestframework-simplejwt[crypto]

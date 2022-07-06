@@ -180,7 +180,7 @@ LOGGING = {
             'handlers': ['query_log']
         },
         'django': {
-            'level': 'INFO',
+            'level': 'WARNING',
             'handlers': ['logfile']
         }
     }
@@ -188,24 +188,33 @@ LOGGING = {
 
 # JWT Rest Framework settings
 
+REST_FRAMEWORK = {
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
+
 
 def read_key(path):
     if os.path.isfile(path):
         with open(path) as f:
-            return f
+            return f.read()
     raise Exception(f'No keyfile was found (at:{os.path.realpath(path)})')
 
 
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
-    'ALGORITHM': 'HS512',
+    'ALGORITHM': 'RS256',
     'TOKEN_USER_CLASS': 'api.models.User',
-    'AUTH_HEADER_TYPES': {'Berar'},
-    'SIGNING_KEY': read_key('backend/storage/jwt/private.pem'),
+    'AUTH_HEADER_TYPES': ('Bearer', 'JWT'),
+    'SIGNING_KEY':   read_key('backend/storage/jwt/private.pem'),
     'VERIFYING_KEY': read_key('backend/storage/jwt/public.pem')
 }
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
