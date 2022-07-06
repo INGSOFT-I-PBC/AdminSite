@@ -35,3 +35,19 @@ class LogoutView(APIView):
         token = RefreshToken(token=refresh_token)
         token.blacklist()
         return Response({"status": "OK, goodbye"})
+
+
+class PermissionsView(APIView):
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        breakpoint()
+        print(User.objects.all().query)
+        # permissions = User.objects.filter(id=2).select_related('permissions', 'user_permissions')
+        # print(**user)
+        return Response({
+            # 'fullname': f'{user.name} {user.lastname}',
+            'id': user.id,
+            'permissions': [
+            ]
+        })
