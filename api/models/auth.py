@@ -38,3 +38,6 @@ class UserPermission(models.Model):
     """
     permission_id = models.ForeignKey('Permission', on_delete=models.DO_NOTHING)
     user_id = models.ForeignKey('User', on_delete=models.DO_NOTHING)
+
+    class Meta:
+        db_table = 'user_permissions'

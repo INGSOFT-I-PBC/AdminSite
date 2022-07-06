@@ -6,3 +6,4 @@ psycopg2
 djoser
 mysqlclient
 django_restframework
+dj-rest-auth

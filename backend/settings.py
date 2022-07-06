@@ -11,9 +11,11 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 from pathlib import Path
+from datetime import timedelta
 
 # Module for load environment variables from .env file
 import environ
+import os
 
 env = environ.Env()
 environ.Env.read_env('.env')
@@ -44,6 +46,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'rest_framework_simplejwt',
+    # 'dj_rest_auth',
     'api'
 ]
 
@@ -141,6 +145,66 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+# Logging Settings
+LOGGING = {
+    'version': 1,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue'
+        },
+        'production_mode': {
+            '()': 'django.utils.log.RequireDebugFalse'
+        }
+    },
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'filters': ['require_debug_true'],
+            'class': 'logging.StreamHandler'
+        },
+        'query_log': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': 'backend/storage/logs/django_query.log'
+        },
+        'logfile': {
+            'level': 'INFO',
+            'class': 'logging.FileHandler',
+            'filename': 'backend/storage/logs/django.log'
+        }
+    },
+    'loggers': {
+        'django.db.backends': {
+            'level': 'DEBUG',
+            'handlers': ['query_log']
+        },
+        'django': {
+            'level': 'INFO',
+            'handlers': ['logfile']
+        }
+    }
+}
+
+# JWT Rest Framework settings
+
+
+def read_key(path):
+    if os.path.isfile(path):
+        with open(path) as f:
+            return f
+    raise Exception(f'No keyfile was found (at:{os.path.realpath(path)})')
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=8),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ALGORITHM': 'HS512',
+    'TOKEN_USER_CLASS': 'api.models.User',
+    'AUTH_HEADER_TYPES': {'Berar'},
+    'SIGNING_KEY': read_key('backend/storage/jwt/private.pem'),
+    'VERIFYING_KEY': read_key('backend/storage/jwt/public.pem')
+}
 
 
 # Internationalization
