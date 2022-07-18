@@ -9,3 +9,4 @@ django_restframework
 dj-rest-auth
 djangorestframework-simplejwt[crypto]
 drf-yasg
+django[argon2]
