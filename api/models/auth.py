@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password
+from django.conf import settings
 from .users import Employee
 
 
@@ -124,6 +125,8 @@ class User(AbstractBaseUser):
     def has_perm(self, perm, obj=None):
         """Check if the user has the given permission"""
         permission = perm.split(".")[-1]
+        if settings.DEBUG:
+            print(f">> Requesting permission '{permission}' for user: '{self.username}'")
         if self.is_admin:
             return True
         perms = RolePermission.objects.filter(role=self.employee.role)

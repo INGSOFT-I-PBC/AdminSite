@@ -1,7 +1,8 @@
 from django import forms
 from django.contrib import admin
 from django.core.exceptions import ValidationError
-from .models import User, Role, Permission
+from .models import User, Role, Permission, Employee
+from django.contrib.auth.models import Group
 
 
 class UserCreationForm(forms.ModelForm):
@@ -36,3 +37,5 @@ class UserCreationForm(forms.ModelForm):
 admin.site.register(User)
 admin.site.register(Role)
 admin.site.register(Permission)
+admin.site.register(Employee)
+admin.site.unregister(Group)
