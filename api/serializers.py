@@ -1,14 +1,11 @@
-from .models import User, Permission
+from .models import User
 from rest_framework import serializers
 
 
-class UserSerializer(serializers.HyperlinkedModelSerializer):
+class UserSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=30)
+    email = serializers.CharField(max_length=100)
+
     class Meta:
         model = User
-        fields = ['name', 'lastname', 'email', 'username', 'password']
-
-
-class PermissionsSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Permission
-        fields = ['id', 'name']
+        fields = ["username", "password"]
