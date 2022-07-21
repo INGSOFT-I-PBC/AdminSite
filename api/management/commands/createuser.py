@@ -21,8 +21,8 @@ class Command(BaseCommand):
             if create != "y":
                 print("User not created")
                 return
-        if username == "":
-            username = input("Insert username: ")
+        while username == "":
+            username = input("Insert username: ").lower().lstrip().rstrip().replace(" ", "_")
         email = input("Email: ")
         name = input("Name: ")
         lastname = input("Lastname: ")
@@ -59,3 +59,4 @@ class Command(BaseCommand):
             print("ID Document is not valid, already registered")
             print(e)
             return
+        print(f"Successfully created user '{username}'")
