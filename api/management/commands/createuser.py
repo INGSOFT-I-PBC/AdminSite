@@ -52,7 +52,6 @@ class Command(BaseCommand):
                 username=username,
                 password=make_password(password),
                 email=email,
-                is_admin=options["admin"],
                 employee=employee_obj,
             ).save()
         except IntegrityError as e:
