@@ -60,4 +60,5 @@ jobs:
                   JWT_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
               run: |
+                  python -m pip install -r requirements
                   python manage.py test

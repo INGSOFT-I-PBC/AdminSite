@@ -16,8 +16,8 @@ RUN pip install -r requirements.txt
 WORKDIR /app
 COPY . /app
 
-RUN echo "$JWT_PUBLIC_KEY" > /app/backend/storage/jwt/public.pem && \
-    echo "$JWT_PRIVATE_KEY" > /app/backend/storage/jwt/private.pem
+# RUN echo "$JWT_PUBLIC_KEY" > /app/backend/storage/jwt/public.pem && \
+#     echo "$JWT_PRIVATE_KEY" > /app/backend/storage/jwt/private.pem
 
 # Creates a non-root user with an explicit UID and adds permission to access the /app folder
 # For more info, please refer to https://aka.ms/vscode-docker-python-configure-containers
