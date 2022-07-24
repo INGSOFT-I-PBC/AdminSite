@@ -12,8 +12,6 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             max-parallel: 4
-            matrix:
-                python-version: [3.7, 3.8, 3.9]
                 db-engine: [mysql]
                 db-port: [3306]
                 mysql-user: [root]
@@ -27,10 +25,10 @@ jobs:
             - name: Checkout repository
               uses: actions/checkout@v3
 
-            - name: Set up Python ${{ matrix.python-version }}
+            - name: Set up Python
               uses: actions/setup-python@v3
               with:
-                  python-version: ${{ matrix.python-version }}
+                  python-version: 3.9
 
             - name: Create dummy file for Docker Compose
               run: |
@@ -42,7 +40,10 @@ jobs:
                   DB_ENGINE: ${{ matrix.db-engine }}
                   DB_NAME: ${{ matrix.app-db }}
                   DB_USER: ${{ matrix.mysql-user }}
+                  MYSQL_ROOT_PASSWORD: ${{ matrix.mysql-password }}
                   DB_PASSWORD: ${{ matrix.mysql-password }}
+                  JWT_PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+                  JWT_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
               run: |
                   docker-compose up -d
 
@@ -54,6 +55,8 @@ jobs:
                   DB_NAME: ${{ matrix.app-db }}
                   DB_USER: ${{ matrix.mysql-user }}
                   DB_PASSWORD: ${{ matrix.mysql-password }}
+                  JWT_PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+                  JWT_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
 
               run: |
                   python manage.py test

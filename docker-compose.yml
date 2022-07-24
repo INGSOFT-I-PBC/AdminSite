@@ -1,21 +1,35 @@
 version: '3.4'
 
 services:
-  mysql:
-    image: mysql:8.0
-    restart: always
-    env_file:
-      - .env
-    environment:
-      - MYSQL_DATABASE=${BD_NAME:-testing}
-      - MYSQL_USER=root
-      - MYSQL_PASSWORD=LOCALTESTING3397uFwK6Ux6NR9nazYBiZbB0Lujh8acdkdHAodEAUk9p4c/kFfMKiXFUWNUucJV
-    ports:
-      - ${MSYQL_PORT:-3306}:3306
-  erpt:
+  web:
+    container_name: erpt.backend.application
+    build: .
+    depends_on:
+      mysql:
+        condition: service_healthy
     image: erpt
-    build:
-      context: .
-      dockerfile: ./Dockerfile
+    env_file: .env
+    command: "python manage.py runserver 0.0.0.0:${APP_PORT:-8080}"
+    volumes:
+      - .:/app
     ports:
-      - 8000:8000
+      - "${APP_PORT:-8080}:8080"
+
+  mysql:
+    container_name: erpt.data.db
+    image: mysql:8.0
+    environment:
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+    ports:
+      - "${DB_PORT:-3306}:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 5s
+      retries: 10
+
+volumes:
+  static_volume:
+  media_volume:
+  db_data:
