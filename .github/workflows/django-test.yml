@@ -13,6 +13,7 @@ jobs:
         strategy:
             max-parallel: 4
             matrix:
+                python-version: [3.7, 3.8, 3.9]
                 db-engine: [mysql]
                 db-port: [3306]
                 mysql-user: [root]
@@ -25,6 +26,11 @@ jobs:
         steps:
             - name: Checkout repository
               uses: actions/checkout@v3
+
+            - name: Set up Python ${{ matrix.python-version }}
+              uses: actions/setup-python@v3
+              with:
+                  python-version: ${{ matrix.python-version }}
 
             - name: Create dummy file for Docker Compose
               run: |
