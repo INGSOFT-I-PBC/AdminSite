@@ -12,14 +12,15 @@ jobs:
         runs-on: ubuntu-latest
         strategy:
             max-parallel: 4
-            db-engine: [mysql]
-            db-port: [3306]
-            mysql-user: [root]
-            mysql-password:
-                [
-                    LOCALTESTING3397uFwK6Ux6NR9nazYBiZbB0Lujh8acdkdHAodEAUk9p4c/kFfMKiXFUWNUucJV,
-                ]
-            app-db: [production]
+            matrix:
+                db-engine: [mysql]
+                db-port: [3306]
+                mysql-user: [root]
+                mysql-password:
+                    [
+                        LOCALTESTING3397uFwK6Ux6NR9nazYBiZbB0Lujh8acdkdHAodEAUk9p4c/kFfMKiXFUWNUucJV,
+                    ]
+                app-db: [production]
 
         steps:
             - name: Checkout repository
