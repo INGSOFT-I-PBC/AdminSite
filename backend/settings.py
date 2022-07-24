@@ -203,14 +203,24 @@ def read_key(path):
     raise Exception(f"No keyfile was found (at:{os.path.realpath(path)})")
 
 
+def get_key(public: bool = True):
+    try:
+        if public:
+            return read_key("backend/storage/jwt/public.pem")
+        else:
+            return read_key("backend/storage/jwt/private.pem")
+    except Exception:
+        return env("JWT_PUBLIC_KEY") if public else env("JWT_PRIVATE_KEY")
+
+
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(hours=8),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "ALGORITHM": "RS256",
     "TOKEN_USER_CLASS": "api.models.User",
     "AUTH_HEADER_TYPES": ("Bearer", "JWT"),
-    "SIGNING_KEY": read_key("backend/storage/jwt/private.pem"),
-    "VERIFYING_KEY": read_key("backend/storage/jwt/public.pem"),
+    "SIGNING_KEY": get_key(public=False),
+    "VERIFYING_KEY": get_key(),
 }
 
 # Authentication Settings
