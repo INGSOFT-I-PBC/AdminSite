@@ -1,6 +1,17 @@
 version: '3.4'
 
 services:
+  mysql:
+    image: mysql:8.0
+    restart: always
+    env_file:
+      - .env
+    environment:
+      - MYSQL_DATABASE=${BD_NAME:-testing}
+      - MYSQL_USER=root
+      - MYSQL_PASSWORD=LOCALTESTING3397uFwK6Ux6NR9nazYBiZbB0Lujh8acdkdHAodEAUk9p4c/kFfMKiXFUWNUucJV
+    ports:
+      - ${MSYQL_PORT:-3306}:3306
   erpt:
     image: erpt
     build:

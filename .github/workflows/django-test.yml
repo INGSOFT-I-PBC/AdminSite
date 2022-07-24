@@ -4,6 +4,7 @@ on:
     push:
         branches: ['main']
     pull_request:
+        types: [opened, synchronize, reopened]
         branches: ['main']
 
 jobs:
@@ -12,20 +13,41 @@ jobs:
         strategy:
             max-parallel: 4
             matrix:
-                python-version: [3.7, 3.8, 3.9]
+                db-engine: [mysql]
+                db-port: [3306]
+                mysql-user: [root]
+                mysql-password:
+                    [
+                        LOCALTESTING3397uFwK6Ux6NR9nazYBiZbB0Lujh8acdkdHAodEAUk9p4c/kFfMKiXFUWNUucJV,
+                    ]
+                app-db: [production]
 
         steps:
-            - uses: actions/checkout@v3
-            - name: Set up Python ${{ matrix.python-version }}
-              uses: actions/setup-python@v3
-              with:
-                  python-version: ${{ matrix.python-version }}
-            - name: Install Dependencies
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Create dummy file for Docker Compose
               run: |
-                  python -m pip install --upgrade pip
-                  pip install -r requirements.txt
+                  touch .env
+            - name: Run application on Docker Compose
+              env:
+                  SECRET_KEY: ${{ secrets.CI_DJANGO_SECRET_KEY }}
+                  DEBUG: false
+                  DB_ENGINE: ${{ matrix.db-engine }}
+                  DB_NAME: ${{ matrix.app-db }}
+                  DB_USER: ${{ matrix.mysql-user }}
+                  DB_PASSWORD: ${{ matrix.mysql-password }}
+              run: |
+                  docker-compose up -d
+
             - name: Run Tests
               env:
                   SECRET_KEY: ${{ secrets.CI_DJANGO_SECRET_KEY }}
+                  DEBUG: false
+                  DB_ENGINE: ${{ matrix.db-engine }}
+                  DB_NAME: ${{ matrix.app-db }}
+                  DB_USER: ${{ matrix.mysql-user }}
+                  DB_PASSWORD: ${{ matrix.mysql-password }}
+
               run: |
                   python manage.py test
