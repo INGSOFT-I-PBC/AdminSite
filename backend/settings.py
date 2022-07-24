@@ -106,31 +106,9 @@ DATABASES = {
         "TEST": {
             "NAME": "staging",
         },
-    },
-    "users": {
-        "ENGINE": ENGINES[env("DB_ENGINE")],
-        "NAME": "users",
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
-        "TEST": {
-            "NAME": "staging",
-        },
-    },
-    "session": {
-        "ENGINE": ENGINES[env("DB_ENGINE")],
-        "NAME": "session",
-        "USER": env("DB_USER"),
-        "PASSWORD": env("DB_PASSWORD"),
-        "HOST": env("DB_HOST"),
-        "PORT": env("DB_PORT"),
-        "TEST": {
-            "NAME": "staging",
-        },
-    },
+    }
 }
-
+print('Database configuration: ', DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -153,6 +131,11 @@ AUTH_PASSWORD_VALIDATORS = [
 # Logging Settings
 LOGGING = {
     "version": 1,
+    "formatters": {
+        "standard": {
+            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
+        }
+    },
     "filters": {
         "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
         "production_mode": {"()": "django.utils.log.RequireDebugFalse"},
@@ -166,8 +149,13 @@ LOGGING = {
         },
         "logfile": {
             "level": "INFO",
-            "class": "logging.FileHandler",
+            "class": "logging.handlers.RotatingFileHandler",
             "filename": "backend/storage/logs/django.log",
+            "formatter": "standard",
+            "maxBytes": 50 * (1024**2), # Máx 50MiB log
+            "backupCount": 10,
+            "mode": "a",
+            "encoding": "utf-8"
         },
     },
     "loggers": {

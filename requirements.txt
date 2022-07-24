@@ -1,12 +1,13 @@
-Django
+Django>=4.0.6
 autopep8
 flake8
 django-environ
 psycopg2
 djoser
-mysqlclient
+mysqlclient>=2.1.1
 django_restframework
 dj-rest-auth
 djangorestframework-simplejwt[crypto]
 drf-yasg
 django[argon2]
+gunicorn>20.0.0
