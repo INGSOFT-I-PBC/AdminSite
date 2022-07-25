@@ -3,6 +3,7 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password
 from django.conf import settings
 from .users import Employee
+from .common import TimestampModel as TModel
 
 
 class AuthManager(BaseUserManager):
@@ -52,10 +53,28 @@ class Permission(models.Model):
     codename = models.CharField(null=False, max_length=128)
 
     class Meta:
-        db_table = "permissions"
+        db_table = "permission"
 
     def __str__(self):
         return f"({self. name}, {self.codename})"
+
+class Group(models.Model):
+    name = models.CharField(max_length=128, null=False)
+    codename = models.CharField(max_length=128, null=False)
+
+    class Meta:
+        db_table = "group"
+
+class GroupPermission(models.Model):
+    """Role Permissions
+    This class store the permission given by the user role
+    """
+
+    permission = models.ForeignKey("Permission", on_delete=models.CASCADE)
+    group = models.ForeignKey("Group", on_delete=models.CASCADE)
+
+    class Meta:
+        db_table = "group_permission"
 
 
 class UserPermission(models.Model):
@@ -72,19 +91,7 @@ class UserPermission(models.Model):
         db_table = "user_permissions"
 
 
-class RolePermission(models.Model):
-    """Role Permissions
-    This class store the permission given by the user role
-    """
-
-    permission = models.ForeignKey("Permission", on_delete=models.CASCADE)
-    role = models.ForeignKey("Role", on_delete=models.CASCADE)
-
-    class Meta:
-        db_table = "role_permissions"
-
-
-class User(AbstractBaseUser):
+class User(AbstractBaseUser, TModel):
     """
     User class
 
@@ -95,9 +102,9 @@ class User(AbstractBaseUser):
     id = models.AutoField(primary_key=True, editable=False, auto_created=True)
     username = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True, max_length=100, verbose_name="email address")
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=False, related_name="employee_info")
     password = models.CharField(max_length=255, null=False)
-    is_admin = models.BooleanField(null=False, default=False)
+    group = models.ForeignKey(Group, on_delete=models.RESTRICT, null=False, related_name="permission_group")
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=False, related_name="employee_info")
     is_active = models.BooleanField(null=False, default=True)
     created_at = models.DateTimeField(auto_created=True, auto_now=True, null=False)
 
@@ -109,11 +116,10 @@ class User(AbstractBaseUser):
     objects = AuthManager()
 
     class Meta:
-        db_table = "users"
-        permissions = (("view.homepage", "View ERP HomePage"), ("system.auth", "Authenticate into system"))
+        db_table = "user"
 
     def __str__(self):
-        return f"User{{ {self.username}, {self.is_admin}}}"
+        return f"('{self.username}' '{self.email}')"
 
     def has_module_perms(self, app_label):
         """
@@ -129,7 +135,7 @@ class User(AbstractBaseUser):
             print(f">> Requesting permission '{permission}' for user: '{self.username}'")
         if self.is_admin:
             return True
-        perms = RolePermission.objects.filter(role=self.employee.role)
+        perms = GroupPermission.objects.filter(group=self.group)
         for perm in perms:
             if perm.permission.codename == permission:
                 return True
@@ -138,7 +144,7 @@ class User(AbstractBaseUser):
     @property
     def is_admin(self):
         try:
-            return self.employee.role.nick == "sys.admin"
+            return self.group.name == "sys.admin"
         except Exception:
             return False
 

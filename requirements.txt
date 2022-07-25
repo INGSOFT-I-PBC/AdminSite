@@ -2,7 +2,7 @@ Django>=4.0.6
 autopep8
 flake8
 django-environ
-psycopg2
+psycopg2-binary
 djoser
 mysqlclient>=2.1.1
 django_restframework

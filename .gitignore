@@ -137,6 +137,8 @@ GitHub.sublime-settings
 !.vscode/launch.json
 !.vscode/extensions.json
 .history
+## using the 'open container' folder
+.devcontainer/
 
 # ignore server configuration
 *.azcli
