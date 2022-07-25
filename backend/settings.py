@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
-    # 'drf_yasg',
     "api",
 ]
 
@@ -108,7 +107,6 @@ DATABASES = {
         },
     }
 }
-print('Database configuration: ', DATABASES)
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
@@ -131,11 +129,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Logging Settings
 LOGGING = {
     "version": 1,
-    "formatters": {
-        "standard": {
-            "format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"
-        }
-    },
+    "formatters": {"standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"}},
     "filters": {
         "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
         "production_mode": {"()": "django.utils.log.RequireDebugFalse"},
@@ -152,10 +146,10 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "backend/storage/logs/django.log",
             "formatter": "standard",
-            "maxBytes": 50 * (1024**2), # Máx 50MiB log
+            "maxBytes": 50 * (1024**2),  # Máx 50MiB log
             "backupCount": 10,
             "mode": "a",
-            "encoding": "utf-8"
+            "encoding": "utf-8",
         },
     },
     "loggers": {

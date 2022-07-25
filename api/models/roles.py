@@ -13,8 +13,8 @@ class Role(models.Model):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     name = models.CharField(max_length=64, verbose_name="role name", null=False)
-    nick = models.CharField(max_length=50, verbose_name="role identifier", default=None)
-    role_class = models.CharField(max_length=128, verbose_name="role class", default=None)
+    codename = models.CharField(max_length=50, verbose_name="role identifier", default=None)
+    role_class = models.CharField(max_length=128, db_column="class", verbose_name="role class", default=None)
 
     def __str__(self):
         return f"{self.name} <{self.nick}>"

@@ -58,12 +58,14 @@ class Permission(models.Model):
     def __str__(self):
         return f"({self. name}, {self.codename})"
 
+
 class Group(models.Model):
     name = models.CharField(max_length=128, null=False)
     codename = models.CharField(max_length=128, null=False)
 
     class Meta:
         db_table = "group"
+
 
 class GroupPermission(models.Model):
     """Role Permissions
