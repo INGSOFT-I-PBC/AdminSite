@@ -31,9 +31,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = env("DEBUG")
+DEBUG = env("DEBUG").lower().strip() == "true"
 
-ALLOWED_HOSTS = [env("APP_URL"), env("APP_HOST")]
+print("Running this server in mode: ", "debug" if DEBUG else "production")
+
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", env("APP_URL"), env("APP_HOST")]
 
 if DEBUG:
     # Prevent CORS on debug mode
@@ -51,6 +53,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "django_vite",
     "api",
 ]
 
@@ -69,7 +72,7 @@ ROOT_URLCONF = "backend.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [str(BASE_DIR.joinpath("templates/"))],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -81,6 +84,7 @@ TEMPLATES = [
         },
     },
 ]
+INTERNAL_IPS = ("127.0.0.1",)
 
 WSGI_APPLICATION = "backend.wsgi.application"
 
@@ -154,7 +158,7 @@ LOGGING = {
     },
     "loggers": {
         "django.db.backends": {"level": "DEBUG", "handlers": ["query_log"]},
-        "django": {"level": "WARNING", "handlers": ["logfile"]},
+        "django": {"level": "DEBUG" if DEBUG else "INFO", "handlers": ["logfile"]},
     },
 }
 
@@ -233,6 +237,19 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "static/"
+STATIC_ROOT = "static/"
+MEDIA_URL = "storage/"
+
+APPEND_SLASH = False
+# Django Vite configuration Variables
+DJANGO_VITE_ASSETS_PATH = "static/dist"
+DJANGO_VITE_DEV_MODE = DEBUG
+STATICFILES_DIRS = [BASE_DIR / DJANGO_VITE_ASSETS_PATH]
+DJANGO_VITE_DEV_SERVER_PORT = 5173
+DJANGO_VITE_STATIC_URL_PREFIX = ""
+DJANGO_VITE_MANIFEST_PATH = os.path.join(BASE_DIR, DJANGO_VITE_ASSETS_PATH, "manifest.json")
+if DEBUG:
+    STATICFILES_DIRS += ["frontend/src/assets", "frontend/src/"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field

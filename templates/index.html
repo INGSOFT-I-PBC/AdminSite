@@ -1,0 +1,17 @@
+{% load django_vite %}
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ERP</title>
+  {% vite_hmr_client %}
+  {% vite_asset 'main.ts' %}
+  {% vite_asset 'assets/main.css' %}
+</head>
+<body>
+  Hola mundo
+  <div id="app"></div>
+</body>
+</html>
