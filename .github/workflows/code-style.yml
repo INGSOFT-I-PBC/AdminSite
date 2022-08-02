@@ -5,7 +5,7 @@ on:
     pull_request:
 
 jobs:
-  prettier:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
@@ -19,4 +19,6 @@ jobs:
             ${{ runner.os }}-npm-
       - name: Run prettier
         run: |-
-          npx prettier --check 'frontend/**/*.{js,ts,json,vue}'
+          cd frontend
+          pnpm install
+          pnpm lint
