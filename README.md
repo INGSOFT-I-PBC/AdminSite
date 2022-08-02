@@ -1,6 +1,6 @@
-# ERP Template with Django Framework
+# ERP project with Django Framework and Vue
 
-This repository contains the base configuration
+This repository contains the configuration
 for an ERP with the Django Framework and the implementation
 for an API REST implementation
 
@@ -89,3 +89,43 @@ To run the Django's server we start the server with the following options
 ```
 > python manage.py runserver [<ip/hostname>:<port>]
 ```
+
+## Frontend
+
+### Requirements
+
+To starting working on the frontend we need the following tools:
+
+- [Node.JS](https://nodejs.org/es/)
+- [PNPM](https://pnpm.io/installation)
+
+NOTE: We use Composition API as a recommended way to make Vue.js components.
+### Dependencies and useful commands
+
+To start the project we'll need to install the dependencies with the following commands:
+```{sh}
+cd frontend/
+pnpm install
+```
+
+After that all the dependencies must be installed. To run the development server, you must run the command:
+```
+$ pnpm dev
+```
+
+For fix the files with the linter:
+```
+$ pnpm lint
+```
+
+### Useful Links
+
+The frontend use [Vite.JS](https://vitejs.dev/guide/) as a frontend tooling and [Vue 3](https://vuejs.org/).
+
+Most of the required knowledge can be readed from the documentation of Vue:
+
+- [Introduction to Vue](https://vuejs.org/guide/introduction.html): Introduction to Vue
+- [Essentials](https://vuejs.org/guide/essentials/template-syntax.html): Essentials about vue syntax
+- [Components](https://vuejs.org/guide/components/registration.html): Components essentials
+- [Vitest](https://vitest.dev/guide/): for Unit Testing
+- [Vue Router:](https://router.vuejs.org/api/#to) for route management
