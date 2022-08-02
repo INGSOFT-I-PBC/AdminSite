@@ -17,7 +17,9 @@ export default defineConfig({
         rollupOptions: {
             input: {
                 main: resolve('./src/main.ts'),
-                style: resolve('./src/assets/main.css'),
+                style: resolve(
+                    './src/assets/main.css'
+                ),
             },
             output: {
                 chunkFileNames: undefined,
@@ -34,7 +36,15 @@ export default defineConfig({
     plugins: [vue(), vueJsx()],
     resolve: {
         alias: {
-            '@': fileURLToPath(new URL('./src', import.meta.url)),
+            '@': fileURLToPath(
+                new URL('./src', import.meta.url)
+            ),
+            '@components': fileURLToPath(
+                new URL(
+                    './src/components',
+                    import.meta.url
+                )
+            ),
         },
     },
 })
