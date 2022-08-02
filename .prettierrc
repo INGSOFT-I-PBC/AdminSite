@@ -3,5 +3,11 @@
     "tabWidth": 4,
     "semi": false,
     "singleQuote": true,
-    "options.editorconfig": true
+    "options.editorconfig": true,
+    "vueIndentScriptAndStyle": true,
+    "arrowParens": "avoid",
+    "bracketSpacing": true,
+    "endOfLine": "lf",
+    "printWidth": 50,
+    "bracketSameLine": true
 }
