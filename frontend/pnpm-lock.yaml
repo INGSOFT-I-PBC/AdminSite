@@ -35,7 +35,7 @@ specifiers:
   vitest: ^0.18.1
   vue: ^3.2.37
   vue-router: ^4.1.2
-  vue-toastification: ^1.7.14
+  vue-toastification: 2.0.0-rc.5
   vue-tsc: ^0.38.8
 
 dependencies:
@@ -48,7 +48,7 @@ dependencies:
   pinia: 2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
   vue: 3.2.37
   vue-router: 4.1.3_vue@3.2.37
-  vue-toastification: 1.7.14_vue@3.2.37
+  vue-toastification: 2.0.0-rc.5_vue@3.2.37
 
 devDependencies:
   '@rushstack/eslint-patch': 1.1.4
@@ -4401,10 +4401,10 @@ packages:
       vue: 3.2.37
     dev: false
 
-  /vue-toastification/1.7.14_vue@3.2.37:
-    resolution: {integrity: sha512-khZR8t3NWZ/JJ2MZxXLbesHrRJ8AKa75PY5Zq8yMifF9x8lHq8ljYkC0d2PD9yahooygQB5tcFyRDkbbIPx8hw==}
+  /vue-toastification/2.0.0-rc.5_vue@3.2.37:
+    resolution: {integrity: sha512-q73e5jy6gucEO/U+P48hqX+/qyXDozAGmaGgLFm5tXX4wJBcVsnGp4e/iJqlm9xzHETYOilUuwOUje2Qg1JdwA==}
     peerDependencies:
-      vue: ^2.0.0
+      vue: ^3.0.2
     dependencies:
       vue: 3.2.37
     dev: false
