@@ -5,6 +5,9 @@ import Toast, {
     type PluginOptions,
     POSITION,
 } from 'vue-toastification'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { awesomeIcons } from './icons'
 
 import App from './App.vue'
 import router from './router'
@@ -21,9 +24,11 @@ const defToastOptions: PluginOptions = {
     pauseOnHover: true,
     maxToasts: 5,
 }
+awesomeIcons.forEach(icon => library.add(icon))
 
 app.use(createPinia())
 app.use(router)
 app.use(Toast, defToastOptions)
+app.component('FontAwesomeIcon', FontAwesomeIcon)
 
 app.mount('#app')
