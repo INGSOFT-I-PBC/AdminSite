@@ -1,6 +1,19 @@
+<script setup lang="ts">
+    import { ref } from 'vue'
+
+    let counter = ref(0)
+
+    function clickButton() {
+        counter.value += 1
+    }
+</script>
 <template>
     <div class="about">
         <h1>This is an about page</h1>
+        <span>Counter: {{ counter }}</span>
+        <button @click="clickButton">
+            Button
+        </button>
     </div>
 </template>
 
