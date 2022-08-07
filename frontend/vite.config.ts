@@ -45,6 +45,18 @@ export default defineConfig({
                     import.meta.url
                 )
             ),
+            '@views': fileURLToPath(
+                new URL(
+                    './src/views',
+                    import.meta.url
+                )
+            ),
+            '@custom-components': fileURLToPath(
+                new URL(
+                    './src/components/custom/index.ts',
+                    import.meta.url
+                )
+            ),
         },
     },
 })
