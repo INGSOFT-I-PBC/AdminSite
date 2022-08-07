@@ -31,6 +31,7 @@ import {
     faExclamationTriangle,
     faFileArrowUp,
     faFileArrowDown,
+    faHouseChimney,
 } from '@fortawesome/free-solid-svg-icons'
 import {
     faVuejs,
@@ -81,4 +82,5 @@ export const awesomeIcons: Array<IconDefinition> =
         faFileArrowUp,
         faFileArrowDown,
         faAnglesRight,
+        faHouseChimney,
     ]
