@@ -3,7 +3,6 @@ import {
     createRouter,
     createWebHashHistory,
 } from 'vue-router'
-import BaseComponent from '@components/BaseComponent.vue'
 import LoginView from '../views/auth/LoginView.vue'
 import Error404 from '../views/Error404.vue'
 import { admin } from './routes/admin'
@@ -15,8 +14,8 @@ import { warehouses } from './routes/wharehouse'
 const routes = [
     {
         path: '/',
-        redirect: 'home-view',
-        component: BaseComponent,
+        redirect: '/home',
+
         children: [
             ...common,
             ...admin,
@@ -25,15 +24,20 @@ const routes = [
             ...warehouses,
         ],
     },
-    { path: '/login', component: LoginView },
+    {
+        path: '/login',
+        component: LoginView,
+        meta: { layout: 'full' },
+    },
     {
         path: '/error-404',
         name: 'error-404',
         component: Error404,
+        meta: { layout: 'full' },
     },
     {
         path: '/:pathMatch(.*)*',
-        redirect: 'error-404',
+        redirect: '/error-404',
     },
 ]
 

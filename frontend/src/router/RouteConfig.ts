@@ -14,16 +14,17 @@ type RouteConfig = {
  * This is the metadata of the route, contains information that would
  * be injected while rendering
  */
-type RouteMetaData = {
+export type RouteMetaData = {
     permission?: string
     pageTitle: string
+    layout?: string
     breadcrumb?: Array<RouteBreadcrumb>
 }
 
 /**
  * This is the route breadcrumb only used for decoration on the main view
  */
-type RouteBreadcrumb = {
+export type RouteBreadcrumb = {
     text: string
     active?: boolean
 }
