@@ -11,3 +11,19 @@ declare module '@custom-components' {
     import index from 'src/components/custom/index'
     export default { ...index }
 }
+
+/**
+ * This interface enable the intelli-sense for .env
+ * defined variables that would be used across the project
+ */
+interface ImportMetaEnv {
+    readonly VITE_BACKEND_URL: string
+}
+
+/**
+ * Interface that is used by Vite to inject
+ * meta data on imports.
+ */
+interface ImportMeta {
+    readonly env: ImportMetaEnv
+}
