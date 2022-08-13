@@ -1,0 +1,24 @@
+{
+  "[python]": {
+    "editor.autoIndent": "full",
+    "editor.formatOnSave": true,
+  },
+  "[vue]": {
+    "outline.showFunctions": true,
+    "editor.formatOnSave": true,
+  },
+  "python.formatting.provider": "black",
+  "python.formatting.blackPath": "black",
+  "eslint.codeAction.showDocumentation": {
+    "enable": true
+  },
+  "eslint.codeActionsOnSave.mode": "all",
+  "eslint.format.enable": true,
+  "prettier.endOfLine": "lf",
+  "python.linting.enabled": true,
+  "eslint.packageManager": "pnpm",
+  "eslint.workingDirectories": [
+    "./frontend",
+    "./frontend/src"
+  ]
+}
