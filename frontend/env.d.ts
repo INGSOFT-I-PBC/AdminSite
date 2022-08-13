@@ -1,5 +1,8 @@
 /// <reference types="vite/client" />
 
+/**
+ * Declare the module to load all .vue files
+ */
 declare module '*.vue' {
     import type { DefineComponent } from 'vue'
     // eslint-disable-next-line @typescript-eslint/ban-types, @typescript-eslint/no-explicit-any
@@ -7,10 +10,7 @@ declare module '*.vue' {
     export default component
 }
 
-declare module '@custom-components' {
-    import index from 'src/components/custom/index'
-    export default { ...index }
-}
+export * from '@/router/types'
 
 /**
  * This interface enable the intelli-sense for .env

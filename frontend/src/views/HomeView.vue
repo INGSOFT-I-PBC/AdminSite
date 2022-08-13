@@ -1,7 +1,9 @@
 <script setup lang="ts">
-    import TheWelcome from '@/components/TheWelcome.vue'
     import ECard from '../components/custom/ECard.vue'
     import EButton from '../components/custom/EButton.vue'
+    import { useAuthStore } from '@store'
+
+    useAuthStore().refreshToken()
 </script>
 
 <template>
