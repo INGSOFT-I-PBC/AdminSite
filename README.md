@@ -6,30 +6,31 @@ for an API REST implementation
 
 ## Installing dependencies
 
-To install the dependencies of python whe must run the next command:
+To install the dependencies that will be used on developement environment
+you must run the next command:
 
 #### GNU/Linux / MacOS
 
 ```
-$ python -m pip install -r requirements.txt
+$ python -m pip install -r dev_requirements.txt
 ```
 
 Or
 
 ```
-$ pip3 install -r requirements.txt
+$ pip3 install -r dev_requirements.txt
 ```
 
 #### Windows
 
 ```
-> py -m pip install -r requirements
+> py -m pip install -r dev_requirements
 ```
 
 Or
 
 ```
-> pip install -r requirements
+> pip install -r dev_requirements
 ```
 
 ## Django Backend
