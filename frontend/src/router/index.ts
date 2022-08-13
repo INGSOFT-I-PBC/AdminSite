@@ -2,14 +2,18 @@
 import {
     createRouter,
     createWebHashHistory,
+    type Router,
 } from 'vue-router'
 import LoginView from '../views/auth/LoginView.vue'
 import Error404 from '../views/Error404.vue'
+import Error403 from '../views/Error403.vue'
+import type { RouteMetaData } from './RouteConfig'
 import { admin } from './routes/admin'
 import { common } from './routes/common'
 import { inventory } from './routes/inventory'
 import { purchases } from './routes/purchases'
 import { warehouses } from './routes/wharehouse'
+import { useAuthStore } from "@store";
 
 const routes = [
     {
@@ -36,15 +40,33 @@ const routes = [
         meta: { layout: 'full' },
     },
     {
+        path: '/error-403',
+        name: 'error-403',
+        component: Error403,
+        meta: { layout: 'full' },
+    },
+    {
         path: '/:pathMatch(.*)*',
         redirect: '/error-404',
     },
 ]
 
 const router = createRouter({
-    //   history: createWebHistory(import.meta.env.BASE_URL),
-    history: createWebHashHistory(''),
+    history: createWebHashHistory(),
     routes: routes,
+})
+
+
+router.beforeEach(async (to, from, next) => {
+    const auth = useAuthStore()
+    const loggedIn = await auth.isAuthenticated()
+    if (!loggedIn) return next({ path: '/login' })
+    if (to.path === '/login') {
+        if (loggedIn) return next({ path: '/' })
+        return next(from)
+    }
+    const targetMeta = from.meta as RouteMetaData
+    return next()
 })
 
 export default router
