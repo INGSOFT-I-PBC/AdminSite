@@ -62,13 +62,12 @@ export default ({ mode }: { mode: string }) => {
                         import.meta.url
                     )
                 ),
-                '@custom-components':
-                    fileURLToPath(
-                        new URL(
-                            './src/components/custom/index.ts',
-                            import.meta.url
-                        )
-                    ),
+                '@store': fileURLToPath(
+                    new URL(
+                        './src/store',
+                        import.meta.url
+                    )
+                ),
             },
         },
     })
