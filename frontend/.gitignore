@@ -26,3 +26,8 @@ coverage
 *.njsproj
 *.sln
 *.sw?
+
+# package manager files
+!pnpm-lock.yaml
+npm-lock.yaml
+yarn-lock.yaml
