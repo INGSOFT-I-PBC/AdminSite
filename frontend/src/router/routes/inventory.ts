@@ -8,7 +8,7 @@ export const inventory: Array<RouteConfig> = [
         name: 'inventory-panel',
         component: () =>
             import(
-                '@views/Inventory.vue'
+                '@views/InventoryView.vue'
             ),
         meta: {
             pageTitle: 'Configuración',

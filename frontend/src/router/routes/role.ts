@@ -8,7 +8,7 @@ export const role : Array<RouteConfig> = [
         name: 'role-panel',
         component: () =>
             import(
-                '@views/Role.vue'
+                '@views/RoleView.vue'
             ),
         meta: {
             pageTitle: 'Configuración',

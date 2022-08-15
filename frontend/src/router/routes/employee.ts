@@ -8,7 +8,7 @@ export const employee : Array<RouteConfig> = [
         name: 'employee-panel',
         component: () =>
             import(
-                '@views/Employee.vue'
+                '@views/EmployeeView.vue'
             ),
         meta: {
             pageTitle: 'Configuración',
