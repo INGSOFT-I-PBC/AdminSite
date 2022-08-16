@@ -2,7 +2,6 @@
     import {
         computed,
         defineAsyncComponent,
-        ref,
     } from 'vue'
     import {
         useRoute,

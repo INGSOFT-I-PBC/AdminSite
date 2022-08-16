@@ -1,15 +1,11 @@
 import type RouteConfig from '../RouteConfig'
 
-export const role : Array<RouteConfig> = [
-
-
-{
+export const role: Array<RouteConfig> = [
+    {
         path: '/role',
         name: 'role-panel',
         component: () =>
-            import(
-                '@views/RoleView.vue'
-            ),
+            import('@views/RoleView.vue'),
         meta: {
             pageTitle: 'Configuración',
             permission: 'can_edit_user',
@@ -27,10 +23,4 @@ export const role : Array<RouteConfig> = [
             permission: 'can_edit_password',
         },
     },
-
-
-
-
-
-
 ]

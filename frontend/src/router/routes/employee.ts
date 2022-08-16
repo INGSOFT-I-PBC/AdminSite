@@ -1,15 +1,11 @@
 import type RouteConfig from '../RouteConfig'
 
-export const employee : Array<RouteConfig> = [
-
-
-{
+export const employee: Array<RouteConfig> = [
+    {
         path: '/employee',
         name: 'employee-panel',
         component: () =>
-            import(
-                '@views/EmployeeView.vue'
-            ),
+            import('@views/EmployeeView.vue'),
         meta: {
             pageTitle: 'Configuración',
             permission: 'can_edit_user',
@@ -27,10 +23,4 @@ export const employee : Array<RouteConfig> = [
             permission: 'can_edit_password',
         },
     },
-
-
-
-
-
-
 ]

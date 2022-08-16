@@ -7,6 +7,6 @@
 <template>
     <div>
         <h1>{{ message }}</h1>
-        <h2>Esto es un ejemplo de inventario </h2>
+        <h2>Esto es un ejemplo de inventario</h2>
     </div>
 </template>
