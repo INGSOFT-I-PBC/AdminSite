@@ -13,6 +13,8 @@ import { common } from './routes/common'
 import { inventory } from './routes/inventory'
 import { purchases } from './routes/purchases'
 import { warehouses } from './routes/wharehouse'
+import { employee } from './routes/employee'
+import { role } from './routes/role'
 import { useAuthStore } from "@store";
 
 const routes = [
@@ -26,6 +28,8 @@ const routes = [
             ...inventory,
             ...purchases,
             ...warehouses,
+            ...employee,
+            ...role
         ],
     },
     {
