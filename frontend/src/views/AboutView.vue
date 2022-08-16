@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import { ref } from 'vue'
 
-    let counter = ref(0)
+    const counter = ref(0)
 
     function clickButton() {
         counter.value += 1

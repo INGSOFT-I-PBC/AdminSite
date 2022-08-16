@@ -1,15 +1,11 @@
 import type RouteConfig from '../RouteConfig'
 
 export const inventory: Array<RouteConfig> = [
-
-
-{
+    {
         path: '/inventory',
         name: 'inventory-panel',
         component: () =>
-            import(
-                '@views/InventoryView.vue'
-            ),
+            import('@views/InventoryView.vue'),
         meta: {
             pageTitle: 'Configuración',
             permission: 'can_edit_user',
@@ -27,9 +23,4 @@ export const inventory: Array<RouteConfig> = [
             permission: 'can_edit_password',
         },
     },
-
-
-
-
-
 ]

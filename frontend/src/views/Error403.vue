@@ -6,7 +6,9 @@
             No esta autorizado para visualizar el
             recurso solicitado
         </p>
-        <EButton @click="goToHome">Regresar al inicio</EButton>
+        <EButton @click="goToHome"
+            >Regresar al inicio</EButton
+        >
     </div>
 </template>
 
@@ -15,10 +17,8 @@
     import { useRouter } from 'vue-router'
     const router = useRouter()
     function goToHome() {
-      router.push({ path: '/' })
+        router.push({ path: '/' })
     }
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>
