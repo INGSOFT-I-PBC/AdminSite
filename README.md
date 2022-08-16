@@ -1,5 +1,7 @@
 # ERP project with Django Framework and Vue
 
+[![Frontend CI](https://github.com/INGSOFT-I-PBC/ERPt/actions/workflows/frontend-check.yml/badge.svg)](https://github.com/INGSOFT-I-PBC/ERPt/actions/workflows/frontend-check.yml)
+
 This repository contains the configuration
 for an ERP with the Django Framework and the implementation
 for an API REST implementation
