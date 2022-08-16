@@ -1,0 +1,11 @@
+# Editor libraries
+autopep8>=1.7.0
+flake8>5.0.0
+# To show API endpoints information
+Markdown==3.4.1
+
+# black formatter
+black>=22.6.0
+
+# load the default requiredments
+-r requirements.txt

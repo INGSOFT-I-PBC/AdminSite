@@ -12,6 +12,9 @@
     }
   ],
   "compilerOptions": {
-    "types": ["naive-ui/volar"]
+    "types": ["naive-ui/volar"],
+    "strict": true,
+    "allowJs": false,
+    "pretty": true
   }
 }
