@@ -2,59 +2,62 @@ name: Check frontend code style and compilation
 
 on:
     push:
-        branches: ['*']
-        pull_request:
+        paths:
+          - '**.vue'
+          - '**.ts'
+          - '**.js'
+    pull_request:
             types: [opened, synchronize, reopened]
-            branches: ['main']
+            branches: ['main', 'master', 'release', 'testing']
 
 jobs:
     frontend-check:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout repo
-            uses: actions/checkout@v2
+              uses: actions/checkout@v2
 
             - name: Install Node.js
-            uses: actions/setup-node@v3
-            with:
+              uses: actions/setup-node@v3
+              with:
                 node-version: 16
 
             - uses: pnpm/action-setup@v2.2.2
-            name: Install pnpm
-            id: pnpm-install
-            with:
+              name: Install pnpm
+              id: pnpm-install
+              with:
                 version: 7
                 run_install: false
 
             - name: Get pnpm store directory
-            id: pnpm-cache
-            run: |
+              id: pnpm-cache
+              run: |
                 echo "::set-output name=pnpm_cache_dir::$(pnpm store path)"
 
             - uses: actions/cache@v3
-            name: Setup pnpm cache
-            with:
-            path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
-            key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-            restore-keys: |
+              name: Setup pnpm cache
+              with:
+              path: ${{ steps.pnpm-cache.outputs.pnpm_cache_dir }}
+              key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+              restore-keys: |
                     ${{ runner.os }}-pnpm-store-
 
             - name: Install dependencies
-            run: |
+              run: |
                 cd frontend/
                 pnpm install
 
             - name: Run lint
-            run: |
+              run: |
                 cd frontend/
                 pnpm lint
 
             - name: Running Vitests
-            run: |
+              run: |
                 cd frontend/
                 pnpm test:unit
 
             - name: Running build
-            run: |
+              run: |
                 cd frontend/
                 pnpm build
