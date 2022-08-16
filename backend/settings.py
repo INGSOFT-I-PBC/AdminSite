@@ -36,10 +36,13 @@ DEBUG = env("DEBUG").lower().strip() == "true"
 print("Running this server in mode: ", "debug" if DEBUG else "production")
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", env("APP_URL"), env("APP_HOST")]
+CORS_ALLOWED_ORIGINS = ["http://localhost:5173", env("APP_URL"), env("APP_HOST")]
+CORS_ALLOW_CREDENTIALS = True
 
 if DEBUG:
     # Prevent CORS on debug mode
     ALLOWED_HOSTS = ["*"]
+    CORS_ALLOW_ALL_ORIGINS = True
 
 # Application definition
 
@@ -53,6 +56,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
     "rest_framework_simplejwt.token_blacklist",
+    "corsheaders",
     "django_vite",
     "api",
 ]
@@ -60,6 +64,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
@@ -220,6 +225,8 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
 ]
+
+CSRF_COOKIE_NAME = "XSRF-TOKEN"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/

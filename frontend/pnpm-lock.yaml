@@ -31,6 +31,7 @@ specifiers:
   start-server-and-test: ^1.14.0
   tailwindcss: ^3.1.6
   typescript: ~4.7.4
+  vee-validate: ^4.6.4
   vfonts: ^0.0.3
   vite: ^3.0.1
   vite-plugin-vue-component-preview: ^0.2.1
@@ -48,6 +49,7 @@ dependencies:
   '@fortawesome/vue-fontawesome': 3.0.1_sqiqa7hvpgqdakjrbqzbqxvzme
   '@headlessui/vue': 1.6.7_vue@3.2.37
   pinia: 2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
+  vee-validate: 4.6.4_vue@3.2.37
   vue: 3.2.37
   vue-router: 4.1.3_vue@3.2.37
   vue-toastification: 2.0.0-rc.5_vue@3.2.37
@@ -285,7 +287,7 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       '@babel/template': 7.18.10
-      '@babel/traverse': 7.18.10
+      '@babel/traverse': 7.18.11
       '@babel/types': 7.18.10
     transitivePeerDependencies:
       - supports-color
@@ -302,6 +304,13 @@ packages:
 
   /@babel/parser/7.18.10:
     resolution: {integrity: sha512-TYk3OA0HKL6qNryUayb5UUEhM/rkOQozIBEA5ITXh5DWrSp0TlUQXMyZmnWxG/DizSWBeeQ0Zbc5z8UGaaqoeg==}
+    engines: {node: '>=6.0.0'}
+    hasBin: true
+    dependencies:
+      '@babel/types': 7.18.10
+
+  /@babel/parser/7.18.11:
+    resolution: {integrity: sha512-9JKn5vN+hDt0Hdqn1PiJ2guflwP+B6Ga8qbDuoF0PzzVhrzsKIJo8yGqVk6CmMHiMei9w1C1Bp9IMJSIK+HPIQ==}
     engines: {node: '>=6.0.0'}
     hasBin: true
     dependencies:
@@ -370,6 +379,24 @@ packages:
       '@babel/helper-hoist-variables': 7.18.6
       '@babel/helper-split-export-declaration': 7.18.6
       '@babel/parser': 7.18.10
+      '@babel/types': 7.18.10
+      debug: 4.3.4
+      globals: 11.12.0
+    transitivePeerDependencies:
+      - supports-color
+    dev: true
+
+  /@babel/traverse/7.18.11:
+    resolution: {integrity: sha512-TG9PiM2R/cWCAy6BPJKeHzNbu4lPzOSZpeMfeNErskGpTJx6trEvFaVCbDvpcxwy49BKWmEPwiW8mrysNiDvIQ==}
+    engines: {node: '>=6.9.0'}
+    dependencies:
+      '@babel/code-frame': 7.18.6
+      '@babel/generator': 7.18.10
+      '@babel/helper-environment-visitor': 7.18.9
+      '@babel/helper-function-name': 7.18.9
+      '@babel/helper-hoist-variables': 7.18.6
+      '@babel/helper-split-export-declaration': 7.18.6
+      '@babel/parser': 7.18.11
       '@babel/types': 7.18.10
       debug: 4.3.4
       globals: 11.12.0
@@ -942,7 +969,7 @@ packages:
   /@vue/compiler-core/3.2.37:
     resolution: {integrity: sha512-81KhEjo7YAOh0vQJoSmAD68wLfYqJvoiD4ulyedzF+OEk/bk6/hx3fTNVfuzugIIaTrOx4PGx6pAiBRe5e9Zmg==}
     dependencies:
-      '@babel/parser': 7.18.10
+      '@babel/parser': 7.18.11
       '@vue/shared': 3.2.37
       estree-walker: 2.0.2
       source-map: 0.6.1
@@ -1013,7 +1040,7 @@ packages:
   /@vue/reactivity-transform/3.2.37:
     resolution: {integrity: sha512-IWopkKEb+8qpu/1eMKVeXrK0NLw9HicGviJzhJDEyfxTR9e1WtpnnbYkJWurX6WwoFP0sz10xQg8yL8lgskAZg==}
     dependencies:
-      '@babel/parser': 7.18.10
+      '@babel/parser': 7.18.11
       '@vue/compiler-core': 3.2.37
       '@vue/shared': 3.2.37
       estree-walker: 2.0.2
@@ -4387,6 +4414,15 @@ packages:
       evtd: 0.2.3
       vue: 3.2.37
     dev: true
+
+  /vee-validate/4.6.4_vue@3.2.37:
+    resolution: {integrity: sha512-40l/fvtz450zTGf0b2/9pz6c6ADBAoC7EquhJ1Zq6fIknWmiLEz8K+a97WmvCkgR/q56H/Hww5T6iMDFp3lrkg==}
+    peerDependencies:
+      vue: ^3.0.0
+    dependencies:
+      '@vue/devtools-api': 6.2.1
+      vue: 3.2.37
+    dev: false
 
   /verror/1.10.0:
     resolution: {integrity: sha512-ZZKSmDAEFOijERBLkmYfJ+vmk3w+7hOLYDNkRCuRuMJGEmqYNCNLyBBFwWKVMhfwaEF3WOd0Zlw86U/WC/+nYw==}

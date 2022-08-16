@@ -1,35 +1,38 @@
 # ERP project with Django Framework and Vue
 
+[![Frontend CI](https://github.com/INGSOFT-I-PBC/ERPt/actions/workflows/frontend-check.yml/badge.svg)](https://github.com/INGSOFT-I-PBC/ERPt/actions/workflows/frontend-check.yml)
+
 This repository contains the configuration
 for an ERP with the Django Framework and the implementation
 for an API REST implementation
 
 ## Installing dependencies
 
-To install the dependencies of python whe must run the next command:
+To install the dependencies that will be used on developement environment
+you must run the next command:
 
 #### GNU/Linux / MacOS
 
 ```
-$ python -m pip install -r requirements.txt
+$ python -m pip install -r dev_requirements.txt
 ```
 
 Or
 
 ```
-$ pip3 install -r requirements.txt
+$ pip3 install -r dev_requirements.txt
 ```
 
 #### Windows
 
 ```
-> py -m pip install -r requirements
+> py -m pip install -r dev_requirements
 ```
 
 Or
 
 ```
-> pip install -r requirements
+> pip install -r dev_requirements
 ```
 
 ## Django Backend
