@@ -18,10 +18,18 @@ export const common: Array<RouteConfig> = [
         meta: {
             pageTitle: 'Dashboard General',
             permission: 'view_dashboard',
-            breadcrumb: [
-                { text: 'inicio' },
-                { text: 'dashboard' },
-            ],
+            breadcrumb: [{ text: 'dashboard' }],
+        },
+    },
+    {
+        path: '/admin/testing-components',
+        name: 'components-testing',
+        component: () =>
+            import(
+                '@views/admin/ComponentsView.vue'
+            ),
+        meta: {
+            pageTitle: 'Ejemplos de componentes',
         },
     },
 ]

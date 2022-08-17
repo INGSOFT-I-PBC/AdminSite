@@ -50,7 +50,13 @@ module.exports = {
                 'inria-sans': ['Inria Sans'],
                 'inter': ['Inter'],
                 'silkscreen': []
-            }
+            },
+            fontSize: {
+                'tiny': '.75rem',
+                'smd': '.89rem',
+                'md': '.935rem',
+                'medium': '.895rem'
+            },
         },
         fontFamily: {
             'sans': ['Inria Sans', ...defaultTheme.fontFamily.sans],

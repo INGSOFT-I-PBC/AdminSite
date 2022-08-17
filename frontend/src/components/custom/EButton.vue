@@ -3,8 +3,17 @@
         type="button"
         @click="buttonClick"
         @mouseenter="buttonHover"
-        :class="style">
+        class="hover:tw-transition-all tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md hover:tw-shadow-lg tw-shadow-md"
+        :class="style"
+        @mouseup="mouseStopInteraction"
+        @mouseleave="mouseStopInteraction">
+        <FontAwesomeIcon
+            v-if="leftIcon"
+            :icon="leftIcon" />
         <slot>Button</slot>
+        <FontAwesomeIcon
+            v-if="rightIcon"
+            :icon="rightIcon" />
     </button>
 </template>
 
@@ -19,31 +28,58 @@
                 return [
                     'primary',
                     'secondary',
+                    'outline',
                 ].includes(value)
             },
+        },
+        leftIcon: {
+            type: String,
+            default: null,
+        },
+        rightIcon: {
+            type: String,
+            default: null,
+        },
+        disabled: {
+            type: Boolean,
+            default: false,
         },
     })
 
     const style = computed(() => {
-        let classes =
-            'hover:transition ease-in-out py-1 px-3 rounded-md hover:shadow-lg shadow-md '
+        let classes = ''
+        const { disabled } = props
         switch (props.type) {
             case 'primary':
                 classes +=
-                    'bg-primary hover:bg-primary-dark text-on-primary dark:bg-primary-night dark:hover:bg-primary-night-dark'
+                    'tw-bg-primary hover:tw-bg-primary-dark focus:tw-bg-primary-dark tw-text-on-primary dark:tw-bg-primary-night dark:hover:tw-bg-primary-night-dark dark:focus:tw-bg-primary-night-dark'
+                break
+            case 'outline':
+                classes =
+                    'tw-bg-transparent focus:tw-bg-transparent tw-ring-2 tw-ring-secondary focus:tw-bg-neutral-200'
                 break
             default:
                 classes +=
-                    'bg-secondary hover:bg-secondary-light text-on-secondary dark:bg-secondary-night dark:hover:bg-secondary-night-dark dark:hover:ring-1 dark:hover:ring-slate-700'
+                    'tw-bg-secondary hover:tw-bg-secondary-light focus:tw-bg-secondary-light tw-text-on-secondary dark:tw-bg-secondary-night dark:hover:tw-bg-secondary-night-dark dark:focus:tw-bg-secondary-night-dark dark:hover:tw-ring-1 dark:hover:tw-ring-slate-700'
         }
+        if (disabled)
+            classes =
+                'tw-bg-neutral-300 dark:tw-bg-neutral-500 hover:tw-drop hover:tw-shadow-md hover:tw-cursor-not-allowed tw-text-neutral-500 dark:tw-text-neutral-800'
         return classes
         // return `bg-${props.type} text-on-${props.type} px-4 py-1 rounded hover:bg-gray-500 bg-primary`
     })
 
     function buttonClick() {
-        emit('click')
+        if (!props.disabled) emit('click')
     }
     function buttonHover() {
         emit('hover')
+    }
+    function mouseStopInteraction(
+        event: MouseEvent
+    ) {
+        const element =
+            event.target as HTMLButtonElement
+        element.blur()
     }
 </script>
