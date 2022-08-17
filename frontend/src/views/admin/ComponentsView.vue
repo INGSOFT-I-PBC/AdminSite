@@ -7,6 +7,11 @@
     import { ref } from 'vue'
 
     let normalValue = ref('')
+    let toggle = ref(true)
+
+    function iconClick() {
+        toggle.value = !toggle.value
+    }
 </script>
 
 <template>
@@ -43,12 +48,18 @@
                 label="Danger"
                 info-label="danger info label"
                 placeholder="danger"
+                right-icon="alert-triangle"
                 :status="false"
                 info-status="danger" />
             <InputText
                 label="Warning"
-                info-label="warning info label"
+                :info-label="
+                    'warning info label :: ' +
+                    (toggle ? 'on' : 'off')
+                "
+                left-icon="eye"
                 placeholder="warning"
+                @left-icon-click="iconClick"
                 info-status="warning" />
             <InputText
                 label="Success"
@@ -60,6 +71,7 @@
                 v-model="normalValue"
                 label="disabled"
                 placeholder="disabled"
+                right-icon="box"
                 disabled />
         </ECard>
         <ECard>
