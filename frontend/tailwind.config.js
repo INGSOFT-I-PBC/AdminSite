@@ -1,7 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 const colors = require('tailwindcss/colors')
+const defaultTheme = require('tailwindcss/defaultTheme')
 // eslint-disable-next-line no-undef
 module.exports = {
+    prefix: 'tw-',
     content: [
         './src/index.html',
         './src/**/*.{vue,js,ts,jsx,tsx}',
@@ -44,7 +46,18 @@ module.exports = {
                     },
                 },
             },
+            fontFamily: {
+                'inria-sans': ['Inria Sans'],
+                'inter': ['Inter'],
+                'silkscreen': []
+            }
         },
+        fontFamily: {
+            'sans': ['Inria Sans', ...defaultTheme.fontFamily.sans],
+            'serif': [...defaultTheme.fontFamily.serif],
+            'mono': [...defaultTheme.fontFamily.mono]
+        }
     },
-    plugins: [],
+    plugins: [
+    ],
 }
