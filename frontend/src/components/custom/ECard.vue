@@ -1,6 +1,6 @@
 <template>
     <div
-        class="rounded-lg ring-1 bg-slate-50 ring-slate-300 p-4 shadow-md dark:bg-gray-800 dark:ring-0 dark:ring-slate-700 text-black dark:text-slate-200">
+        class="tw-rounded-lg tw-ring-1 tw-bg-slate-50 tw-ring-slate-300 tw-p-4 tw-shadow-md dark:tw-bg-gray-800 dark:tw-ring-0 dark:tw-ring-slate-700 tw-text-black dark:tw-text-slate-200">
         <slot />
     </div>
 </template>

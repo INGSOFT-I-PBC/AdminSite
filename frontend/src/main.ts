@@ -12,9 +12,11 @@ import { awesomeIcons } from './icons'
 import App from './App.vue'
 import router from './router'
 
+import '@/scss/styles.scss'
+import * as bootstrap from 'bootstrap'
 import './assets/main.css'
-import './index.css'
 import 'vue-toastification/dist/index.css'
+import './index.css'
 
 const app = createApp(App)
 

@@ -7,19 +7,31 @@
         useRoute,
         RouterView,
     } from 'vue-router'
+    import type {
+        RouteBreadcrumb,
+        RouteMetaData,
+    } from './router/RouteConfig'
     const FullLayout = defineAsyncComponent(
         () => import('./layouts/FullLayout.vue')
     )
     const VerticalLayout = defineAsyncComponent(
-        () =>
-            import('./layouts/VerticalLayout.vue')
+        () => import('./layouts/DrawerLayout.vue')
     )
 
+    /**
+     * The Current route
+     */
     const route = useRoute()
+    /**
+     * The title of the current route
+     */
     const currentTitle = computed(
-        () => route.meta.pageTitle
+        () => route.meta.pageTitle as string
     )
 
+    /**
+     * The layout that the current route require
+     */
     const layout = computed(() => {
         switch (route.meta.layout) {
             case 'full':
@@ -28,10 +40,21 @@
                 return VerticalLayout
         }
     })
+    /**
+     * The breadcrumb of the current route
+     */
+    const breadcrumb = computed(
+        (): Array<RouteBreadcrumb> =>
+            (route.meta as RouteMetaData)
+                .breadcrumb || []
+    )
 </script>
 
 <template>
-    <component :is="layout" :title="currentTitle">
+    <component
+        :is="layout"
+        :title="currentTitle"
+        :breadcrumb="breadcrumb">
         <RouterView />
     </component>
 </template>

@@ -3,7 +3,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
-import { resolve } from 'node:path'
+import path, { resolve } from 'node:path'
 
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: string }) => {
@@ -67,6 +67,10 @@ export default ({ mode }: { mode: string }) => {
                         './src/store',
                         import.meta.url
                     )
+                ),
+                '~bootstrap': path.resolve(
+                    __dirname,
+                    'node_modules/bootstrap'
                 ),
             },
         },
