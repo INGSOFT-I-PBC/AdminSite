@@ -8,7 +8,7 @@
     const router = useRouter()
 
     function redirectHome() {
-        let origin = useRoute()?.redirectedFrom
+        const origin = useRoute()?.redirectedFrom
         let redirectPath = origin?.path || '/'
         if (
             origin?.path === '/error-403' ||
