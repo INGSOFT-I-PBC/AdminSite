@@ -26,6 +26,7 @@ specifiers:
   eslint-plugin-cypress: ^2.12.1
   eslint-plugin-prettier: ^4.2.1
   eslint-plugin-vue: ^9.0.0
+  feather-icons: '4'
   jsdom: ^20.0.0
   npm-run-all: ^4.1.5
   pinia: ^2.0.16
@@ -40,6 +41,7 @@ specifiers:
   vite: ^3.0.1
   vitest: ^0.18.1
   vue: ^3.2.37
+  vue-feather: '2'
   vue-router: ^4.1.2
   vue-toastification: 2.0.0-rc.5
   vue-tsc: ^0.38.8
@@ -54,10 +56,12 @@ dependencies:
   '@popperjs/core': 2.11.5
   axios: 0.27.2
   bootstrap: 5.2.0_@popperjs+core@2.11.5
+  feather-icons: 4.29.0
   pinia: 2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
   sass: 1.54.4
   vee-validate: 4.6.4_vue@3.2.37
   vue: 3.2.37
+  vue-feather: 2.0.0_x5rx2ih5b2suonmbxbf7ye4nou
   vue-router: 4.1.3_vue@3.2.37
   vue-toastification: 2.0.0-rc.5_vue@3.2.37
 
@@ -1417,6 +1421,10 @@ packages:
     resolution: {integrity: sha512-xmDt/QIAdeZ9+nfdPsaBCpMvHNLFiLdjj59qjqn+6iPe6YmHGQ35sBnQ8uslRBXFmXkiZQOJRjvQeoGppoTjjg==}
     dev: true
 
+  /classnames/2.3.1:
+    resolution: {integrity: sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==}
+    dev: false
+
   /clean-stack/2.2.0:
     resolution: {integrity: sha512-4diC9HaTE+KRAMWhDhrGOECgWZxoevMc5TlkObMqNSsVU62PYzXZ/SMTjzyGAFF1YusgxGcSWTEXBhp0CPwQ1A==}
     engines: {node: '>=6'}
@@ -1496,6 +1504,11 @@ packages:
     dependencies:
       safe-buffer: 5.1.2
     dev: true
+
+  /core-js/3.24.1:
+    resolution: {integrity: sha512-0QTBSYSUZ6Gq21utGzkfITDylE8jWC9Ne1D2MrhvlsZBI1x39OdDIVbzSqtgMndIy6BlHxBXpMGqzZmnztg2rg==}
+    requiresBuild: true
+    dev: false
 
   /core-util-is/1.0.2:
     resolution: {integrity: sha512-3lqz5YjWTYnW6dlDa5TLaTCcShfar1e40rmcJVwCBJC6mWlFuj0eCHIElmG1g5kyuJ/GD+8Wn4FFCcz4gJPfaQ==}
@@ -2366,6 +2379,13 @@ packages:
     dependencies:
       pend: 1.2.0
     dev: true
+
+  /feather-icons/4.29.0:
+    resolution: {integrity: sha512-Y7VqN9FYb8KdaSF0qD1081HCkm0v4Eq/fpfQYQnubpqi0hXx14k+gF9iqtRys1SIcTEi97xDi/fmsPFZ8xo0GQ==}
+    dependencies:
+      classnames: 2.3.1
+      core-js: 3.24.1
+    dev: false
 
   /figures/3.2.0:
     resolution: {integrity: sha512-yaduQFRKLXYOGgEn6AZau90j3ggSOyiqXU0F9JZfeXYhNa+Jk4X+s45A2zg5jns87GAFa34BBm2kXw4XpNcbdg==}
@@ -4325,6 +4345,16 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  /vue-feather/2.0.0_x5rx2ih5b2suonmbxbf7ye4nou:
+    resolution: {integrity: sha512-GBvxJWu2ycGTpB8duYWnc5S/TwWPPb2G5Ft2NbkwK1vZkUDUOTYqIb4Nh1HOL6A37Isfrd0Guun0lesS97PfxA==}
+    peerDependencies:
+      feather-icons: ^4.28.0
+      vue: ^3.0.0
+    dependencies:
+      feather-icons: 4.29.0
+      vue: 3.2.37
+    dev: false
 
   /vue-router/4.1.3_vue@3.2.37:
     resolution: {integrity: sha512-XvK81bcYglKiayT7/vYAg/f36ExPC4t90R/HIpzrZ5x+17BOWptXLCrEPufGgZeuq68ww4ekSIMBZY1qdUdfjA==}

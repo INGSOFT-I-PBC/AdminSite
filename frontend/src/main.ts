@@ -8,6 +8,7 @@ import Toast, {
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { awesomeIcons } from './icons'
+import VueFeather from 'vue-feather'
 
 import App from './App.vue'
 import router from './router'
@@ -35,5 +36,6 @@ app.use(createPinia())
 app.use(router)
 app.use(Toast, defToastOptions)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
+app.component(VueFeather.name, VueFeather)
 
 app.mount('#app')

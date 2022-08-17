@@ -44,10 +44,20 @@
             type: Boolean,
             default: false,
         },
+        leftIcon: {
+            type: String,
+            default: null,
+        },
+        rightIcon: {
+            type: String,
+            default: null,
+        },
     })
 
     const emit = defineEmits([
         'update:modelValue',
+        'rightIconClick',
+        'leftIconClick',
     ])
 
     const infoClass = computed(() => {
@@ -70,6 +80,25 @@
         return styles
     })
 
+    const inputDivClass = computed(() => {
+        if (props.disabled) {
+            return 'tw-bg-gray-200 tw-text-gray-400 dark:tw-bg-slate-900 dark:tw-text-slate-500 hover:tw-cursor-not-allowed tw-ring-neutral-300'
+        }
+        let classes =
+            'tw-bg-neutral-100 dark:tw-bg-slate-800 '
+        if (props.status === true) {
+            classes +=
+                'tw-ring-teal-400 dark:tw-ring-emerald-600'
+        } else if (props.status === false) {
+            classes +=
+                'focus:tw-outline-rose-600 tw-ring-red-600 dark:tw-ring-red-700 focus:tw-outline-1 tw-text-red-500 dark:tw-text-400'
+        } else {
+            classes +=
+                'focus:tw-ring-cyan-600 tw-ring-neutral-300 dark:focus:tw-ring-sky-600 tw-text-black dark:tw-text-neutral-300'
+        }
+        return classes
+    })
+
     const inputClass = computed(() => {
         if (props.disabled) {
             return 'tw-bg-gray-200 tw-text-gray-400 dark:tw-bg-slate-900 dark:tw-text-slate-500 hover:tw-cursor-not-allowed tw-ring-neutral-300'
@@ -78,13 +107,13 @@
             'tw-bg-neutral-100 dark:tw-bg-slate-800 '
         if (props.status === true) {
             classes +=
-                'focus:tw-outline-teal-500 tw-ring-teal-400 dark:tw-ring-emerald-600 focus:tw-outline-1 tw-text-green-700 dark:tw-text-green-300'
+                'tw-text-green-700 dark:tw-text-green-300'
         } else if (props.status === false) {
             classes +=
-                'focus:tw-outline-rose-600 tw-ring-red-600 dark:tw-ring-red-700 focus:tw-outline-1 tw-text-red-500 dark:tw-text-400'
+                'tw-text-red-500 dark:tw-text-400'
         } else {
             classes +=
-                'focus:tw-outline-cyan-600 tw-ring-neutral-300 dark:focus:tw-outline-sky-600 tw-text-black dark:tw-text-neutral-300'
+                'tw-text-black dark:tw-text-neutral-300'
         }
         return classes
     })
@@ -115,6 +144,12 @@
         if (props.modelModifiers?.lower) {
             value = value.toLowerCase()
         }
+        if (props.modelModifiers?.number) {
+            value = value.replace(/[^0-9]/g, '')
+        }
+        if (props.modelModifiers?.alpha) {
+            value = value.replace(/[0-9]/g, '')
+        }
         emit('update:modelValue', value)
     }
 </script>
@@ -124,15 +159,56 @@
         <label v-if="label" :class="labelStyle">
             {{ label }}
         </label>
-        <input
-            @mousedown="interactionStart"
-            @keydown="interactionStart"
-            :value="modelValue"
-            @input="emitValue"
-            :placeholder="placeholder"
-            class="tw-py-1 lg:tw-py-1.5 tw-px-2 tw-overflow-hidden tw-rounded-md focus:tw-outline-none tw-ring-2 dark:tw-ring-neutral-600 tw-shadow-md"
-            :class="inputClass"
-            :type="type" />
+        <div
+            class="tw-overflow-hidden tw-rounded-md focus:tw-outline-none tw-ring-1 dark:tw-ring-neutral-600 tw-shadow-md tw-grid tw-grid-flow-col tw-justify-between tw-justify-items-stretch tw-content-center gap-1 tw-px-1"
+            :class="inputDivClass">
+            <button
+                class="tw-text-center tw-ml-1 tw-grid tw-content-center"
+                :class="
+                    disabled
+                        ? 'hover:tw-cursor-not-allowed'
+                        : ''
+                "
+                v-if="leftIcon"
+                @click="
+                    !disabled
+                        ? $emit('leftIconClick')
+                        : () => {}
+                ">
+                <slot name="leftIcon">
+                    <vue-feather
+                        :type="leftIcon" />
+                </slot>
+            </button>
+            <input
+                @mousedown="interactionStart"
+                @keydown="interactionStart"
+                :value="modelValue"
+                @input="emitValue"
+                :placeholder="placeholder"
+                class="tw-py-1 lg:tw-py-1.5 tw-px-1 tw-bg-transparent tw-outline-none tw-min-w-full"
+                :class="inputClass"
+                :type="type" />
+            <button
+                class="tw-text-center tw-p-0.5 tw-content-center tw-grid"
+                v-if="rightIcon"
+                :class="
+                    disabled
+                        ? 'hover:tw-cursor-not-allowed'
+                        : ''
+                "
+                @click="
+                    !disabled
+                        ? $emit('rightIconClick')
+                        : () => {}
+                ">
+                <slot name="rightIcon">
+                    <vue-feather
+                        v-if="rightIcon"
+                        :type="rightIcon" />
+                </slot>
+            </button>
+        </div>
         <slot name="info-label">
             <small :class="infoClass">
                 {{ infoLabel }}
