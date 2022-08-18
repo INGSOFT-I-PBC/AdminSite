@@ -160,10 +160,10 @@
             {{ label }}
         </label>
         <div
-            class="tw-overflow-hidden tw-rounded-md focus:tw-outline-none tw-ring-1 dark:tw-ring-neutral-600 tw-shadow-md tw-grid tw-grid-flow-col tw-justify-between tw-justify-items-stretch tw-content-center gap-1 tw-px-1"
+            class="tw-overflow-hidden tw-rounded-md focus:tw-outline-none tw-ring-1 dark:tw-ring-neutral-600 tw-shadow-md tw-flex tw-flex-row tw-justify-between tw-justify-items-stretch tw-content-center gap-1 tw-px-1 tw-place-content-stretch"
             :class="inputDivClass">
             <button
-                class="tw-text-center tw-ml-1 tw-grid tw-content-center"
+                class="tw-text-center tw-ml-1 tw-grid tw-content-center focus:tw-outline-none"
                 :class="
                     disabled
                         ? 'hover:tw-cursor-not-allowed'
@@ -186,11 +186,11 @@
                 :value="modelValue"
                 @input="emitValue"
                 :placeholder="placeholder"
-                class="tw-py-1 lg:tw-py-1.5 tw-px-1 tw-bg-transparent tw-outline-none tw-min-w-full"
+                class="tw-py-1 lg:tw-py-1.5 tw-px-1 tw-bg-transparent tw-outline-none min-w-full tw-flex-1"
                 :class="inputClass"
                 :type="type" />
             <button
-                class="tw-text-center tw-p-0.5 tw-content-center tw-grid"
+                class="tw-text-center tw-p-0.5 tw-content-center tw-grid focus:tw-outline-none"
                 v-if="rightIcon"
                 :class="
                     disabled
