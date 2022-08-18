@@ -3,7 +3,7 @@
         type="button"
         @click="buttonClick"
         @mouseenter="buttonHover"
-        class="hover:tw-transition-all tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md hover:tw-shadow-lg tw-shadow-md"
+        class="hover:tw-transition-all focus:tw-shadow-sm tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md hover:tw-shadow-lg tw-shadow-md"
         :class="style"
         @mouseup="mouseStopInteraction"
         @mouseleave="mouseStopInteraction">
@@ -29,6 +29,9 @@
                     'primary',
                     'secondary',
                     'outline',
+                    'cancel',
+                    'success',
+                    'blank',
                 ].includes(value)
             },
         },
@@ -57,6 +60,16 @@
             case 'outline':
                 classes =
                     'tw-bg-transparent focus:tw-bg-transparent tw-ring-2 tw-ring-secondary focus:tw-bg-neutral-200'
+                break
+            case 'success':
+                classes =
+                    'tw-bg-green-500 dark:tw-bg-emerald-700 hover:tw-bg-green-600 focus:tw-bg-green-600'
+                break
+            case 'cancel':
+                classes =
+                    'tw-bg-rose-600 dark:tw-bg-red-800 focus:tw-bg-rose-700 hover:tw-bg-rose-700 tw-text-white'
+                break
+            case 'blank':
                 break
             default:
                 classes +=
