@@ -6,6 +6,7 @@
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
+    import ECol from '../../components/custom/ECol.vue'
 
     const normalValue = ref('')
     const toggle = ref(true)
@@ -21,7 +22,7 @@
 </script>
 
 <template>
-    <div class="tw-flex tw-gap-3">
+    <ERow>
         <ModalDialog v-model:show="showModal" />
         <ECard>
             <div>
@@ -36,6 +37,15 @@
                     >
                     <EButton disabled>
                         disabled
+                    </EButton>
+                    <EButton type="cancel">
+                        Cancel
+                    </EButton>
+                    <EButton type="success">
+                        Success
+                    </EButton>
+                    <EButton type="blank">
+                        Blank
                     </EButton>
                 </ERow>
             </div>
@@ -92,8 +102,25 @@
                 >Combo Box & lists</Title
             >
         </ECard>
-        <ECard>
-            <h3></h3>
-        </ECard>
-    </div>
+        <ECol cols="4">
+            <ECard>
+                <Title>Row & Col system</Title>
+                <ERow>
+                    <template
+                        v-for="(_, x) in Array(
+                            12
+                        )">
+                        <ECol :cols="x + 1">
+                            <span
+                                class="tw-ring-emerald-500 tw-ring-1 tw-rounded tw-text-center tw-py-2 tw-px-1">
+                                Col-{{
+                                    `${x + 1}`
+                                }}
+                            </span>
+                        </ECol>
+                    </template>
+                </ERow>
+            </ECard>
+        </ECol>
+    </ERow>
 </template>
