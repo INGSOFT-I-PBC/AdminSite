@@ -6,8 +6,8 @@
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
 
-    let normalValue = ref('')
-    let toggle = ref(true)
+    const normalValue = ref('')
+    const toggle = ref(true)
 
     function iconClick() {
         toggle.value = !toggle.value
