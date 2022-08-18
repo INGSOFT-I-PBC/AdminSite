@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { inject, ref } from 'vue'
     import UserCard from '../components/UserCard.vue'
+    import Title from '../components/custom/Title.vue'
     defineProps({
         title: {
             type: String,
@@ -22,17 +23,17 @@
 
 <template>
     <div
-        class="tw-flex tw-flex-rows tw-justify-items-stretch tw-min-h-screen tw-w-screen tw-justify-between tw-bg-neutral-100 dark:tw-bg-neutral-900"
+        class="tw-flex tw-flex-rows tw-justify-items-stretch tw-min-h-screen tw-w-full tw-justify-between tw-bg-neutral-100 dark:tw-bg-neutral-900 tw-overflow-x-hidden"
         id="_root">
         <aside
-            class="tw-h-full tw-min-w-fit tw-bg-slate-600">
+            class="tw-h-full tw-min-w-fit tw-bg-slate-600 tw-rounded-r-xl tw-overflow-hidden">
             <div
                 id="__left-drawer"
-                class="tw-h-full tw-flex tw-flex-col tw-justify-self-stretch tw-justify-items-stretch lg:tw-min-w-fit tw-resize-x tw-rounded">
+                class="tw-h-full tw-flex tw-flex-col tw-justify-self-stretch tw-justify-items-stretch lg:tw-min-w-fit tw-resize-x">
                 <div
                     id="__left-logo-container"
-                    class="tw-p-10 tw-px-24 tw-bg-gray-300 tw-ring-slate-600">
-                    logo
+                    class="tw-p-10 tw-px-24 tw-bg-gray-300 tw-ring-slate-600 dark:tw-bg-slate-800">
+                    <Title>LOGO</Title>
                 </div>
                 <div
                     id="__left-menu-container"
@@ -45,7 +46,7 @@
             data-target="aside" />
         <!-- Right view -->
         <div
-            class="tw-mx-4 tw-py-2 tw-justify-items-stretch tw-w-full tw-gap-3 flex tw-flex-col"
+            class="tw-mx-4 tw-py-2 tw-justify-items-stretch tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col"
             id="right-panel">
             <header
                 class="tw-flex tw-flex-row tw-gap-3 tw-justify-between tw-justify-items-stretch">
@@ -129,7 +130,7 @@
                 </div>
             </div>
             <!-- End of Breadcrumb -->
-            <main class="row">
+            <main class="row tw-grid">
                 <slot
                     >No element is defined
                     here</slot
@@ -138,7 +139,7 @@
 
             <!-- FOOTER -->
             <footer
-                class="tw-sticky tw-top-full tw-bottom-0">
+                class="tw-sticky tw-top-full tw-bottom-0 tw-pb-1 tw-pt-5">
                 <span
                     class="tw-text-neutral-500 dark:tw-text-neutral-400"
                     >Realizado en
