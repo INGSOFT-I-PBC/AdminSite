@@ -5,8 +5,17 @@
   /* margin: 0 auto; */
   /* padding: 2rem; */
   font-family: 'Inria Sans', 'Inter', sans-serif;
-
+  display: flex;
   font-weight: normal;
+}
+
+
+html, body {
+  overflow-x: hidden;
+  display: flex;
+  width: 100vw!important;
+  min-height: 100vh!important;
+  place-items: center;
 }
 
 a,
@@ -16,12 +25,6 @@ a,
   transition: 0.4s;
 }
 
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
 @media (min-width: 1024px) {
   body {
     display: flex;
@@ -29,7 +32,7 @@ a,
   }
 
   #app {
-    display: grid;
+    /* display: grid; */
     grid-template-columns: 1fr 1fr;
     /* padding: 0 2rem; */
   }
