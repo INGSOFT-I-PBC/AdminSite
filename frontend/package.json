@@ -59,7 +59,7 @@
     "vite": "^3.0.1",
     "vitest": "^0.22.0",
     "vue": "^3.2.37",
-    "vue-tsc": "^0.38.8"
+    "vue-tsc": "^0.40.1"
   },
   "packageManager": "pnpm@7.5.0+"
 }
