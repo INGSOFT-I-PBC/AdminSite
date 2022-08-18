@@ -5,17 +5,24 @@
     import Title from '../../components/custom/Title.vue'
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
+    import ModalDialog from '@components/custom/ModalDialog.vue'
 
     const normalValue = ref('')
     const toggle = ref(true)
+    const showModal = ref(false)
 
     function iconClick() {
         toggle.value = !toggle.value
+    }
+    function showModalClick() {
+        console.log('Toggling modal')
+        showModal.value = !showModal.value
     }
 </script>
 
 <template>
     <div class="tw-flex tw-gap-3">
+        <ModalDialog v-model:show="showModal" />
         <ECard>
             <div>
                 <Title>Botones</Title>
@@ -76,6 +83,9 @@
         </ECard>
         <ECard>
             <Title size="2xl">Modal</Title>
+            <EButton @click="showModalClick"
+                >Show Modal</EButton
+            >
         </ECard>
         <ECard>
             <Title size="2xl"
