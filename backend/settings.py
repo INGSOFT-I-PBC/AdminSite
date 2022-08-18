@@ -149,6 +149,7 @@ LOGGING = {
             "level": "DEBUG",
             "class": "logging.FileHandler",
             "filename": "backend/storage/logs/django_query.log",
+            "filters": ["require_debug_true"],
         },
         "logfile": {
             "level": "INFO",
