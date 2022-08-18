@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 <template>
     <div
-        class="tw-flex tw-grid-cols-12 tw-flex-wrap tw-gap-2 tw-w-100">
+        class="e-row tw-flex tw-flex-wrap tw-justify-items-stretch tw-place-content-stretch tw-justify-start tw-gap-2 tw-w-full">
         <slot></slot>
     </div>
 </template>
