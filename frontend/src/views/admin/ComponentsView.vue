@@ -109,7 +109,8 @@
                     <template
                         v-for="(_, x) in Array(
                             12
-                        )">
+                        )"
+                        :key="x">
                         <ECol :cols="x + 1">
                             <span
                                 class="tw-ring-emerald-500 tw-ring-1 tw-rounded tw-text-center tw-py-2 tw-px-1">
