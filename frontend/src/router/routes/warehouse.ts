@@ -35,7 +35,7 @@ export const warehouses: Array<RouteConfig> = [
         name: 'Proveedores-view',
         component: () =>
             import(
-                '@views/warehouse/Proveedores.vue'
+                '@views/warehouse/ProveedoresView.vue'
             ),
         meta: {
             pageTitle: 'Proveedores',
