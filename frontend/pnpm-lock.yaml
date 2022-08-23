@@ -21,6 +21,7 @@ specifiers:
   autoprefixer: ^10.4.7
   axios: ^0.27.2
   bootstrap: ^5.2.0
+  bootstrap-icons: ^1.9.1
   cypress: ^10.3.0
   eslint: ^8.5.0
   eslint-plugin-cypress: ^2.12.1
@@ -57,6 +58,7 @@ dependencies:
   axios: 0.27.2
   bootstrap: 5.2.0_@popperjs+core@2.11.5
   feather-icons: 4.29.0
+  bootstrap-icons: 1.9.1
   pinia: 2.0.17_j6bzmzd4ujpabbp5objtwxyjp4
   sass: 1.54.4
   vee-validate: 4.6.4_vue@3.2.37
@@ -1279,12 +1281,17 @@ packages:
     resolution: {integrity: sha512-JZOSA7Mo9sNGB8+UjSgzdLtokWAky1zbztM3WRLCbZ70/3cTANmQmOdR7y2g+J0e2WXywy1yS468tY+IruqEww==}
     dev: true
 
+<<<<<<< Updated upstream
   /bootstrap/5.2.0_@popperjs+core@2.11.5:
     resolution: {integrity: sha512-qlnS9GL6YZE6Wnef46GxGv1UpGGzAwO0aPL1yOjzDIJpeApeMvqV24iL+pjr2kU4dduoBA9fINKWKgMToobx9A==}
     peerDependencies:
       '@popperjs/core': ^2.11.5
     dependencies:
       '@popperjs/core': 2.11.5
+=======
+  /bootstrap-icons/1.9.1:
+    resolution: {integrity: sha512-d4ZkO30MIkAhQ2nNRJqKXJVEQorALGbLWTuRxyCTJF96lRIV6imcgMehWGJUiJMJhglN0o2tqLIeDnMdiQEE9g==}
+>>>>>>> Stashed changes
     dev: false
 
   /brace-expansion/1.1.11:
