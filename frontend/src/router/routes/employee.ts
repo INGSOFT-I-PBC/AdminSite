@@ -11,7 +11,7 @@ export const employee: Array<RouteConfig> = [
             permission: 'view_dashboard',
             breadcrumb: [
                 { text: 'Usuarios' },
-                { text: 'Empleados', href: '/empleado' },
+                { text: 'Empleados' },
             ],
         },
     },
@@ -38,7 +38,7 @@ export const employee: Array<RouteConfig> = [
             permission: 'view_dashboard',
             breadcrumb: [
                 { text: 'Usuarios' },
-                { text: 'Empleados', href: '/empleado' },
+                { text: 'Empleados'},
             ],
         },
     },
