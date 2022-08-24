@@ -138,13 +138,19 @@ AUTH_PASSWORD_VALIDATORS = [
 # Logging Settings
 LOGGING = {
     "version": 1,
-    "formatters": {"standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"}},
+    "formatters": {
+        "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"}
+    },
     "filters": {
         "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
         "production_mode": {"()": "django.utils.log.RequireDebugFalse"},
     },
     "handlers": {
-        "console": {"level": "INFO", "filters": ["require_debug_true"], "class": "logging.StreamHandler"},
+        "console": {
+            "level": "INFO",
+            "filters": ["require_debug_true"],
+            "class": "logging.StreamHandler",
+        },
         "query_log": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
@@ -178,7 +184,9 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "COMPACT_JSON": True,
     "DEFAULT_PARSER_CLASSES": (
@@ -255,7 +263,9 @@ DJANGO_VITE_DEV_MODE = DEBUG
 STATICFILES_DIRS = [BASE_DIR / DJANGO_VITE_ASSETS_PATH]
 DJANGO_VITE_DEV_SERVER_PORT = 5173
 DJANGO_VITE_STATIC_URL_PREFIX = ""
-DJANGO_VITE_MANIFEST_PATH = os.path.join(BASE_DIR, DJANGO_VITE_ASSETS_PATH, "manifest.json")
+DJANGO_VITE_MANIFEST_PATH = os.path.join(
+    BASE_DIR, DJANGO_VITE_ASSETS_PATH, "manifest.json"
+)
 if DEBUG:
     STATICFILES_DIRS += ["frontend/src/assets", "frontend/src/"]
 
