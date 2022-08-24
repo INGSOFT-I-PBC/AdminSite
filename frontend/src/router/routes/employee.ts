@@ -2,13 +2,17 @@ import type RouteConfig from '../RouteConfig'
 
 export const employee: Array<RouteConfig> = [
     {
-        path: '/employee',
-        name: 'employee-panel',
+        path: '/empleado',
+        name: 'empleado-panel',
         component: () =>
             import('@views/EmployeeView.vue'),
         meta: {
-            pageTitle: 'Configuración',
-            permission: 'can_edit_user',
+           pageTitle: 'Gestión de Empleados',
+            permission: 'view_dashboard',
+            breadcrumb: [
+                { text: 'Usuarios' },
+                { text: 'Empleados', href: '/empleado' },
+            ],
         },
     },
     {
@@ -21,6 +25,21 @@ export const employee: Array<RouteConfig> = [
         meta: {
             pageTitle: 'Configuración de usuario',
             permission: 'can_edit_password',
+        },
+    },
+
+     {
+        path: '/empleado/agregar',
+        name: 'addemployee-panel',
+        component: () =>
+            import('@views/AddEmployeeView.vue'),
+        meta: {
+           pageTitle: 'Gestión de Empleados',
+            permission: 'view_dashboard',
+            breadcrumb: [
+                { text: 'Usuarios' },
+                { text: 'Empleados', href: '/empleado' },
+            ],
         },
     },
 ]

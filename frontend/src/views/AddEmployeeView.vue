@@ -1,3 +1,22 @@
+<script setup lang="ts">
+    
+    import EButton from '@components/custom/EButton.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import InputText from '@components/custom/InputText.vue'
+
+    import {
+        useRoute,
+        useRouter,
+    } from 'vue-router'
+    const router = useRouter()
+
+    function go2():void {
+        router.push({ path: '/empleado' })
+    }
+
+</script>
+
+
 <template>
     <main>
         <ECard> </ECard>
@@ -15,16 +34,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
-                            <h6
-                                style="
-                                    font-weight: bold;
-                                    font-size: 15px;
-                                    text-align: left;
-                                    color: black;
-                                ">
-                                Informacion
-                                General
-                            </h6>
+                            
                             <div class="col">
                                 <h6
                                     style="
@@ -32,13 +42,16 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Razon social:
+                                    Fecha de creación
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder=""
+                                    placeholder="23/08/2022"
+                                    disabled=false
                                     aria-label="First name" />
+
+
                             </div>
 
                             <div class="col">
@@ -48,45 +61,31 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Tipo de
-                                    identificacion:
-                                </h6>
-                                <select
-                                    class="form-select"
-                                    aria-label="Default select example">
-                                    <option
-                                        selected>
-                                        Todos
-                                    </option>
-                                    <option
-                                        value="1">
-                                        Gerente
-                                    </option>
-                                    <option
-                                        value="2">
-                                        Two
-                                    </option>
-                                    <option
-                                        value="3">
-                                        Three
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Numero de
-                                    identificacion:
+                                   Hora de creación
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder=""
+                                    placeholder="15:00"
+                                    disabled=false
+                                    aria-label="First name" />
+                                
+                            </div>
+
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Creado por
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Admin"
+                                    disabled=false
                                     aria-label="First name" />
                             </div>
                         </div>
@@ -106,7 +105,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Descripcion:
+                                    Cédula *
                                 </h6>
                                 <input
                                     type="text"
@@ -116,6 +115,41 @@
                             </div>
                         </div>
                     </div>
+
+
+                    <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Nombres y apellidos *
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    aria-label="First name" />
+                    </div>
+
+                    <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Fecha de Nacimiento*
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    aria-label="First name" />
+                            </div>
+
+
                 </div>
             </div>
 
@@ -125,66 +159,70 @@
                 style="padding: 10px">
                 <div class="row">
                     <div class="col">
-                        <div class="row g-3">
-                            <h6
-                                style="
-                                    font-weight: bold;
-                                    font-size: 15px;
-                                    text-align: left;
-                                    color: black;
-                                ">
-                                Ubicacion
-                            </h6>
-
-                            <div class="col">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Pais:
+                                    Teléfono
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    aria-label="First name" />
+                    </div>
+
+                    <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Sexo*
                                 </h6>
                                 <select
                                     class="form-select"
                                     aria-label="Default select example">
                                     <option
                                         selected>
-                                        Ecuador
+                                        Femenino
                                     </option>
                                     <option
                                         value="1">
-                                        Gerente
+                                        Masculino
                                     </option>
                                     <option
                                         value="2">
-                                        Two
-                                    </option>
-                                    <option
-                                        value="3">
-                                        Three
+                                        Otro
                                     </option>
                                 </select>
-                            </div>
+                    </div>
 
-                            <div class="col">
+                    <div class="col">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Direccion
-                                    Fisica:
+                                    Estado
                                 </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name" />
-                            </div>
-                        </div>
+                                <p> Icono </p>
+       
+                    </div>
 
+
+                    
+                </div>
+            </div>
+
+            <!--DIV DE BOTONES Y NAV-->
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col">
                         <div class="row g-3">
                             <div class="col">
                                 <h6
@@ -193,39 +231,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Ciudad:
-                                </h6>
-                                <select
-                                    class="form-select"
-                                    aria-label="Default select example">
-                                    <option
-                                        selected>
-                                        Guayaquil
-                                    </option>
-                                    <option
-                                        value="1">
-                                        Gerente
-                                    </option>
-                                    <option
-                                        value="2">
-                                        Two
-                                    </option>
-                                    <option
-                                        value="3">
-                                        Three
-                                    </option>
-                                </select>
-                            </div>
-
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Direccion
-                                    Envio:
+                                    Provincia *
                                 </h6>
                                 <input
                                     type="text"
@@ -234,35 +240,33 @@
                                     aria-label="First name" />
                             </div>
                         </div>
+                    </div>
 
-                        <!--Espacio demas-->
-                        <div
-                            class="container text-center"
-                            style="
-                                padding: 10px;
-                            "></div>
 
-                        <div class="row g-3">
-                            <h6
-                                style="
-                                    font-weight: bold;
-                                    font-size: 15px;
-                                    text-align: left;
-                                    color: black;
-                                ">
-                                Contacto
-                            </h6>
-
-                            <div class="col">
+                    <div class="col">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Nombre
-                                    contacto
-                                    principal:
+                                    Ciudad *
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    aria-label="First name" />
+                    </div>
+
+                    <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                   Correo*
                                 </h6>
                                 <input
                                     type="text"
@@ -271,23 +275,14 @@
                                     aria-label="First name" />
                             </div>
 
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Sitio Web:
-                                </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name" />
-                            </div>
-                        </div>
 
+                </div>
+
+            </div>
+
+            <div class="container text-center">
+                <div class="row">
+                    <div class="col">
                         <div class="row g-3">
                             <div class="col">
                                 <h6
@@ -296,66 +291,64 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Telefono:
+                                    Dirección domiciliaria
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
                                     placeholder=""
                                     aria-label="First name" />
-                            </div>
-
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Correo
-                                    Electronico:
-                                </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name" />
-                            </div>
-                        </div>
-
-                        <div class="row g-3">
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Fax:
-                                </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name" />
-                            </div>
-                        </div>
-
-                        <div
-                            class="row g-3"
-                            style="padding: 10px" >
-                            <div class="col">
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-dark">
-                                    Guardar
-                                    Informacion
-                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
+             </div>
+
+            <div class="container text-center">
+               <div class="row">
+                   <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Rol:
+                                </h6>
+                                <select
+                                    class="form-select"
+                                    aria-label="Default select example">
+                                    <option
+                                        selected>
+                                        Cajero
+                                    </option>
+                                    <option
+                                        value="1">
+                                        Vendedor
+                                    </option>
+                                    <option
+                                        value="2">
+                                        Two
+                                    </option>
+                                    <option
+                                        value="3">
+                                        Three
+                                    </option>
+                                </select>
+                            </div>
+               </div>
+
             </div>
+
+            <div class="container text-center" style="padding: 10px">
+               <div class="row">
+                  <EButton type="secondary" @click="go2">Guardar </EButton>
+               </div>
+
+            </div>
+
+
+
 
             <!--Espacio demas-->
             <div
