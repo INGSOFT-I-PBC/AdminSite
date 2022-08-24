@@ -36,7 +36,12 @@ class AuthManager(BaseUserManager):
         Create and save a new superuser with the given username, email, name,
         lastname and password
         """
-        user = self.model(email=email, username=username, password=make_password(password), employee=employee)
+        user = self.model(
+            email=email,
+            username=username,
+            password=make_password(password),
+            employee=employee,
+        )
         user.is_admin = True
         user.save(using=self._db)
         return user
@@ -105,8 +110,12 @@ class User(AbstractBaseUser, TModel):
     username = models.CharField(max_length=15, unique=True)
     email = models.EmailField(unique=True, max_length=100, verbose_name="email address")
     password = models.CharField(max_length=255, null=False)
-    group = models.ForeignKey(Group, on_delete=models.RESTRICT, null=False, related_name="permission_group")
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=False, related_name="employee_info")
+    group = models.ForeignKey(
+        Group, on_delete=models.RESTRICT, null=False, related_name="permission_group"
+    )
+    employee = models.ForeignKey(
+        Employee, on_delete=models.CASCADE, null=False, related_name="employee_info"
+    )
     is_active = models.BooleanField(null=False, default=True)
     created_at = models.DateTimeField(auto_created=True, auto_now=True, null=False)
 
@@ -134,7 +143,9 @@ class User(AbstractBaseUser, TModel):
         """Check if the user has the given permission"""
         permission = perm.split(".")[-1]
         if settings.DEBUG:
-            print(f">> Requesting permission '{permission}' for user: '{self.username}'")
+            print(
+                f">> Requesting permission '{permission}' for user: '{self.username}'"
+            )
         if self.is_admin:
             return True
         perms = GroupPermission.objects.filter(group=self.group)
