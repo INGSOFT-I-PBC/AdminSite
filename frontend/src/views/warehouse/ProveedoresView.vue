@@ -2,16 +2,9 @@
     <main>
         <ECard> </ECard>
 
-        <div
-            class="container"
-            style="
-                background-color: white;
-                border-radius: 5px;
-            ">
+        <div class="container" style="background-color: white; border-radius: 5px">
             <!--BOTONES Usuario-->
-            <div
-                class="container text-center"
-                style="padding: 10px">
+            <div class="container text-center" style="padding: 10px">
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
@@ -22,8 +15,7 @@
                                     text-align: left;
                                     color: black;
                                 ">
-                                Informacion
-                                General
+                                Informacion General
                             </h6>
                             <div class="col">
                                 <h6
@@ -48,28 +40,15 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Tipo de
-                                    identificacion:
+                                    Tipo de identificacion:
                                 </h6>
                                 <select
                                     class="form-select"
                                     aria-label="Default select example">
-                                    <option
-                                        selected>
-                                        Todos
-                                    </option>
-                                    <option
-                                        value="1">
-                                        Gerente
-                                    </option>
-                                    <option
-                                        value="2">
-                                        Two
-                                    </option>
-                                    <option
-                                        value="3">
-                                        Three
-                                    </option>
+                                    <option selected>Todos</option>
+                                    <option value="1">Gerente</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
                                 </select>
                             </div>
 
@@ -80,8 +59,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Numero de
-                                    identificacion:
+                                    Numero de identificacion:
                                 </h6>
                                 <input
                                     type="text"
@@ -120,9 +98,7 @@
             </div>
 
             <!--BOTONES Usuario-->
-            <div
-                class="container text-center"
-                style="padding: 10px">
+            <div class="container text-center" style="padding: 10px">
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
@@ -148,22 +124,10 @@
                                 <select
                                     class="form-select"
                                     aria-label="Default select example">
-                                    <option
-                                        selected>
-                                        Ecuador
-                                    </option>
-                                    <option
-                                        value="1">
-                                        Gerente
-                                    </option>
-                                    <option
-                                        value="2">
-                                        Two
-                                    </option>
-                                    <option
-                                        value="3">
-                                        Three
-                                    </option>
+                                    <option selected>Ecuador</option>
+                                    <option value="1">Gerente</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
                                 </select>
                             </div>
 
@@ -174,8 +138,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Direccion
-                                    Fisica:
+                                    Direccion Fisica:
                                 </h6>
                                 <input
                                     type="text"
@@ -198,22 +161,10 @@
                                 <select
                                     class="form-select"
                                     aria-label="Default select example">
-                                    <option
-                                        selected>
-                                        Guayaquil
-                                    </option>
-                                    <option
-                                        value="1">
-                                        Gerente
-                                    </option>
-                                    <option
-                                        value="2">
-                                        Two
-                                    </option>
-                                    <option
-                                        value="3">
-                                        Three
-                                    </option>
+                                    <option selected>Guayaquil</option>
+                                    <option value="1">Gerente</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
                                 </select>
                             </div>
 
@@ -224,8 +175,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Direccion
-                                    Envio:
+                                    Direccion Envio:
                                 </h6>
                                 <input
                                     type="text"
@@ -238,9 +188,7 @@
                         <!--Espacio demas-->
                         <div
                             class="container text-center"
-                            style="
-                                padding: 10px;
-                            "></div>
+                            style="padding: 10px"></div>
 
                         <div class="row g-3">
                             <h6
@@ -260,9 +208,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Nombre
-                                    contacto
-                                    principal:
+                                    Nombre contacto principal:
                                 </h6>
                                 <input
                                     type="text"
@@ -312,8 +258,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Correo
-                                    Electronico:
+                                    Correo Electronico:
                                 </h6>
                                 <input
                                     type="text"
@@ -345,11 +290,8 @@
                             class="row g-3"
                             style="padding: 10px" >
                             <div class="col">
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-dark">
-                                    Guardar
-                                    Informacion
+                                <button type="button" class="btn btn-outline-dark">
+                                    Guardar Informacion
                                 </button>
                             </div>
                         </div>
@@ -358,9 +300,7 @@
             </div>
 
             <!--Espacio demas-->
-            <div
-                class="container text-center"
-                style="padding: 10px"></div>
+            <div class="container text-center" style="padding: 10px"></div>
         </div>
     </main>
 </template>

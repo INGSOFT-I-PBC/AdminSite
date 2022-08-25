@@ -18,10 +18,7 @@ export const employee: Array<RouteConfig> = [
     {
         path: '/user/reset-password',
         name: 'user-change-password',
-        component: () =>
-            import(
-                '@views/auth/ResetPasswordView.vue'
-            ),
+        component: () => import('@views/auth/ResetPasswordView.vue'),
         meta: {
             pageTitle: 'Configuración de usuario',
             permission: 'can_edit_password',

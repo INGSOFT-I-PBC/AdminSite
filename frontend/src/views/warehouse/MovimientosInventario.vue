@@ -2,16 +2,9 @@
     <main>
         <ECard> </ECard>
 
-        <div
-            class="container"
-            style="
-                background-color: white;
-                border-radius: 5px;
-            ">
+        <div class="container" style="background-color: white; border-radius: 5px">
             <!--BOTONES Usuario-->
-            <div
-                class="container text-center"
-                style="padding: 10px">
+            <div class="container text-center" style="padding: 10px">
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
@@ -22,28 +15,15 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Tipo de
-                                    Movimiento:
+                                    Tipo de Movimiento:
                                 </h6>
                                 <select
                                     class="form-select"
                                     aria-label="Default select example">
-                                    <option
-                                        selected>
-                                        Todos
-                                    </option>
-                                    <option
-                                        value="1">
-                                        Gerente
-                                    </option>
-                                    <option
-                                        value="2">
-                                        Two
-                                    </option>
-                                    <option
-                                        value="3">
-                                        Three
-                                    </option>
+                                    <option selected>Todos</option>
+                                    <option value="1">Gerente</option>
+                                    <option value="2">Two</option>
+                                    <option value="3">Three</option>
                                 </select>
                             </div>
 
@@ -70,8 +50,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Cantidad de
-                                    items:
+                                    Cantidad de items:
                                 </h6>
                                 <input
                                     type="text"
@@ -85,19 +64,14 @@
                                     aria-label="First name" />
                             </div>
 
-                            <div
-                                class="col"
-                                style="
-                                    padding: 5px;
-                                ">
+                            <div class="col" style="padding: 5px">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Rango de
-                                    horas:
+                                    Rango de horas:
                                 </h6>
                                 <input
                                     type="text"
@@ -111,19 +85,14 @@
                                     aria-label="First name" />
                             </div>
 
-                            <div
-                                class="col"
-                                style="
-                                    padding: 5px;
-                                ">
+                            <div class="col" style="padding: 5px">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Rango de
-                                    fechas:
+                                    Rango de fechas:
                                 </h6>
                                 <input
                                     type="text"
@@ -147,11 +116,8 @@
                     <div class="col">
                         <div class="row g-3">
                             <div class="col">
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-dark">
-                                    Limpiar
-                                    Filtros
+                                <button type="button" class="btn btn-outline-dark">
+                                    Limpiar Filtros
                                 </button>
                             </div>
                         </div>
@@ -159,48 +125,26 @@
                 </div>
             </div>
 
-            <div
-                class="container text-center"
-                style="padding: 10px"></div>
+            <div class="container text-center" style="padding: 10px"></div>
 
             <!--TABLA DE BODEGAS-->
-            <div
-                class="container"
-                style="background-color: white">
-                <table
-                    class="table table-bordered">
+            <div class="container" style="background-color: white">
+                <table class="table table-bordered">
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">
-                                Tipo
-                            </th>
-                            <th scope="col">
-                                Descripcion
-                                Movimiento
-                            </th>
-                            <th scope="col">
-                                Nombre Inventario
-                            </th>
-                            <th scope="col">
-                                Inventario Movido
-                            </th>
-                            <th scope="col">
-                                Hora
-                            </th>
-                            <th scope="col">
-                                Fecha
-                            </th>
-                            <th scope="col">
-                                Detalles
-                            </th>
+                            <th scope="col">Tipo</th>
+                            <th scope="col">Descripcion Movimiento</th>
+                            <th scope="col">Nombre Inventario</th>
+                            <th scope="col">Inventario Movido</th>
+                            <th scope="col">Hora</th>
+                            <th scope="col">Fecha</th>
+                            <th scope="col">Detalles</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <th>Salida</th>
-                            <td>
-                                Movimiento a local
-                            </td>
+                            <td>Movimiento a local</td>
                             <td>Bodega 1</td>
                             <td>100</td>
                             <td>00:30 am</td>
@@ -220,9 +164,7 @@
                         </tr>
                         <tr>
                             <th>Salida</th>
-                            <td>
-                                Movimiento a local
-                            </td>
+                            <td>Movimiento a local</td>
                             <td>Bodega 1</td>
                             <td>100</td>
                             <td>00:30 am</td>
@@ -242,9 +184,7 @@
                         </tr>
                         <tr>
                             <th>Salida</th>
-                            <td>
-                                Movimiento a local
-                            </td>
+                            <td>Movimiento a local</td>
                             <td>Bodega 1</td>
                             <td>100</td>
                             <td>00:30 am</td>
@@ -267,9 +207,7 @@
             </div>
 
             <!--Espacio demas-->
-            <div
-                class="container text-center"
-                style="padding: 10px"></div>
+            <div class="container text-center" style="padding: 10px"></div>
         </div>
     </main>
 </template>

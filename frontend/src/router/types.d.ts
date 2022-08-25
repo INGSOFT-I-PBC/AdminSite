@@ -16,8 +16,6 @@ export type Middleware = (
     context: RouterContext
 ) => NavigationGuardNext | NavigationGuard
 
-export function defineMiddleware(
-    setup: (context: RouterContext) => void
-) {
+export function defineMiddleware(setup: (context: RouterContext) => void) {
     return setup
 }
