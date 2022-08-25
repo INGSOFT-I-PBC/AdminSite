@@ -2,38 +2,15 @@
     <main>
         <ECard> </ECard>
 
-        <div
-            class="container"
-            style="
-                background-color: white;
-                border-radius: 5px;
-            ">
-            <div
-                class="container"
-                style="
-                    background-color: white;
-                    padding: 10px;
-                ">
-                <h6
-                    style="
-                        font-size: 15px;
-                        color: black;
-                    ">
-                    Enviar a:
-                </h6>
+        <div class="container" style="background-color: white; border-radius: 5px">
+            <div class="container" style="background-color: white; padding: 10px">
+                <h6 style="font-size: 15px; color: black">Enviar a:</h6>
 
-                <select
-                    class="form-select"
-                    aria-label="Default select example">
-                    <option selected>
-                        Seleccione sucursal o
-                        bodega
-                    </option>
+                <select class="form-select" aria-label="Default select example">
+                    <option selected>Seleccione sucursal o bodega</option>
                     <option value="1">One</option>
                     <option value="2">Two</option>
-                    <option value="3">
-                        Three
-                    </option>
+                    <option value="3">Three</option>
                 </select>
             </div>
 
@@ -42,9 +19,7 @@
                 role="group"
                 aria-label="Basic radio toggle button group"
                 style="padding: 10px">
-                <button
-                    type="button"
-                    class="btn btn-outline-dark btn-lg">
+                <button type="button" class="btn btn-outline-dark btn-lg">
                     Seleccionar Producto
                 </button>
             </div>
@@ -71,11 +46,8 @@
                             </div>
 
                             <div class="col">
-                                <button
-                                    type="button"
-                                    class="btn btn-outline-dark">
-                                    Añadir
-                                    Producto
+                                <button type="button" class="btn btn-outline-dark">
+                                    Añadir Producto
                                 </button>
                             </div>
                         </div>
@@ -83,9 +55,7 @@
                 </div>
             </div>
 
-            <div
-                class="container text-center"
-                style="padding: 10px">
+            <div class="container text-center" style="padding: 10px">
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
@@ -105,47 +75,28 @@
                                     aria-label="Last name" />
                             </div>
 
-                            <div
-                                class="col"></div>
+                            <div class="col"></div>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!--TABLA DE BODEGAS-->
-            <div
-                class="container"
-                style="background-color: white">
-                <table
-                    class="table table-bordered">
+            <div class="container" style="background-color: white">
+                <table class="table table-bordered">
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">
-                                Nombre del
-                                Producto
-                            </th>
-                            <th scope="col">
-                                Codigo
-                            </th>
-                            <th scope="col">
-                                Cantidad
-                            </th>
-                            <th scope="col">
-                                Detalles
-                            </th>
-                            <th scope="col">
-                                Eliminacion
-                            </th>
-                            <th scope="col">
-                                Detalles
-                            </th>
+                            <th scope="col">Nombre del Producto</th>
+                            <th scope="col">Codigo</th>
+                            <th scope="col">Cantidad</th>
+                            <th scope="col">Detalles</th>
+                            <th scope="col">Eliminacion</th>
+                            <th scope="col">Detalles</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <th>
-                                Zapatos marca x
-                            </th>
+                            <th>Zapatos marca x</th>
                             <td>102 WFP WNGE</td>
                             <td>100</td>
                             <td>N/A</td>
@@ -153,9 +104,7 @@
                             <td>--</td>
                         </tr>
                         <tr>
-                            <th>
-                                Zapatos marca x
-                            </th>
+                            <th>Zapatos marca x</th>
                             <td>102 WFP WNGE</td>
                             <td>100</td>
                             <td>N/A</td>
@@ -163,9 +112,7 @@
                             <td>--</td>
                         </tr>
                         <tr>
-                            <th>
-                                Zapatos marca x
-                            </th>
+                            <th>Zapatos marca x</th>
                             <td>102 WFP WNGE</td>
                             <td>100</td>
                             <td>N/A</td>
@@ -177,9 +124,7 @@
             </div>
 
             <!--Enviar Solicitud-->
-            <div
-                class="container text-center"
-                style="padding: 10px">
+            <div class="container text-center" style="padding: 10px">
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
@@ -187,8 +132,7 @@
                                 <button
                                     type="button"
                                     class="btn btn-outline-dark btn-lg">
-                                    Enviar
-                                    Solicitud
+                                    Enviar Solicitud
                                 </button>
                             </div>
                         </div>

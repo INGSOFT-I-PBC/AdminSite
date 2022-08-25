@@ -14,39 +14,19 @@
              -->
         </ECard>
 
-        <div
-            class="container"
-            style="
-                background-color: white;
-                border-radius: 5px;
-            ">
-            <div
-                class="container"
-                style="
-                    background-color: white;
-                    padding: 10px;
-                ">
-                <h1
-                    style="
-                        font-size: 35px;
-                        color: black;
-                    ">
-                    Bodegas
-                </h1>
+        <div class="container" style="background-color: white; border-radius: 5px">
+            <div class="container" style="background-color: white; padding: 10px">
+                <h1 style="font-size: 35px; color: black">Bodegas</h1>
 
                 <nav class="navbar">
                     <div class="container-fluid">
-                        <form
-                            class="d-flex"
-                            role="search">
+                        <form class="d-flex" role="search">
                             <input
                                 class="form-control me-2"
                                 type="search"
                                 placeholder="Busqueda de Bodega"
                                 aria-label="Search" />
-                            <button
-                                class="btn btn-outline-black"
-                                type="submit">
+                            <button class="btn btn-outline-black" type="submit">
                                 Search
                             </button>
                         </form>
@@ -74,35 +54,17 @@
             </div>
 
             <!--TABLA DE BODEGAS-->
-            <div
-                class="container"
-                style="background-color: white">
-                <table
-                    class="table table-bordered">
+            <div class="container" style="background-color: white">
+                <table class="table table-bordered">
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">
-                                Código Bodega
-                            </th>
-                            <th scope="col">
-                                Ubicación
-                            </th>
-                            <th scope="col">
-                                Fecha última toma
-                                física
-                            </th>
-                            <th scope="col">
-                                Realizada por
-                            </th>
-                            <th scope="col">
-                                Estado
-                            </th>
-                            <th scope="col">
-                                Detalles
-                            </th>
-                            <th scope="col">
-                                Archivos
-                            </th>
+                            <th scope="col">Código Bodega</th>
+                            <th scope="col">Ubicación</th>
+                            <th scope="col">Fecha última toma física</th>
+                            <th scope="col">Realizada por</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Detalles</th>
+                            <th scope="col">Archivos</th>
                         </tr>
                     </thead>
                     <tbody>

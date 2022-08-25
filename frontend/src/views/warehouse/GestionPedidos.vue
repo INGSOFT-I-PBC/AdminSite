@@ -14,25 +14,9 @@
              -->
         </ECard>
 
-        <div
-            class="container"
-            style="
-                background-color: white;
-                border-radius: 5px;
-            ">
-            <div
-                class="container"
-                style="
-                    background-color: white;
-                    padding: 10px;
-                ">
-                <h1
-                    style="
-                        font-size: 35px;
-                        color: black;
-                    ">
-                    Bodega 1
-                </h1>
+        <div class="container" style="background-color: white; border-radius: 5px">
+            <div class="container" style="background-color: white; padding: 10px">
+                <h1 style="font-size: 35px; color: black">Bodega 1</h1>
             </div>
 
             <!--GRUPO DE BOTONES-->
@@ -48,9 +32,7 @@
                     id="btnradio1"
                     autocomplete="off"
                     checked />
-                <label
-                    class="btn btn-outline-dark"
-                    for="btnradio1"
+                <label class="btn btn-outline-dark" for="btnradio1"
                     >Inventario</label
                 >
 
@@ -60,9 +42,7 @@
                     name="btnradio"
                     id="btnradio2"
                     autocomplete="off" />
-                <label
-                    class="btn btn-outline-dark"
-                    for="btnradio2"
+                <label class="btn btn-outline-dark" for="btnradio2"
                     >Historia Pedidos</label
                 >
 
@@ -72,9 +52,7 @@
                     name="btnradio"
                     id="btnradio3"
                     autocomplete="off" />
-                <label
-                    class="btn btn-outline-dark"
-                    for="btnradio3"
+                <label class="btn btn-outline-dark" for="btnradio3"
                     >Tomas Fisicas</label
                 >
 
@@ -84,9 +62,7 @@
                     name="btnradio"
                     id="btnradio3"
                     autocomplete="off" />
-                <label
-                    class="btn btn-outline-dark"
-                    for="btnradio3"
+                <label class="btn btn-outline-dark" for="btnradio3"
                     >Movimientos</label
                 >
             </div>
@@ -95,20 +71,15 @@
             <div class="container text-center">
                 <div class="row">
                     <div class="col">
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark btn-lg">
+                        <button type="button" class="btn btn-outline-dark btn-lg">
                             Limpiar Filtros
                         </button>
                     </div>
 
                     <div class="col">
                         <nav class="navbar">
-                            <div
-                                class="container-fluid">
-                                <form
-                                    class="d-flex"
-                                    role="search">
+                            <div class="container-fluid">
+                                <form class="d-flex" role="search">
                                     <input
                                         class="form-control me-2"
                                         type="search"
@@ -126,9 +97,7 @@
 
                     <div class="col">
                         <!--RANGO MIN MAX-->
-                        <h6 style="color: black">
-                            Rango de stock
-                        </h6>
+                        <h6 style="color: black">Rango de stock</h6>
                         <div class="row g-3">
                             <div class="col">
                                 <input
@@ -148,9 +117,7 @@
                     </div>
 
                     <div class="col">
-                        <button
-                            type="button"
-                            class="btn btn-outline-dark btn-lg">
+                        <button type="button" class="btn btn-outline-dark btn-lg">
                             Solicitar Nuevo Pedido
                         </button>
                     </div>
@@ -158,56 +125,35 @@
             </div>
 
             <!--TABLA DE BODEGAS-->
-            <div
-                class="container"
-                style="background-color: white">
-                <table
-                    class="table table-bordered">
+            <div class="container" style="background-color: white">
+                <table class="table table-bordered">
                     <thead class="table-dark">
                         <tr>
-                            <th scope="col">
-                                Código del
-                                Producto
-                            </th>
-                            <th scope="col">
-                                Descripcion del
-                                Producto
-                            </th>
-                            <th scope="col">
-                                Stock
-                            </th>
-                            <th scope="col">
-                                Costo
-                            </th>
-                            <th scope="col">
-                                P.Venta
-                            </th>
+                            <th scope="col">Código del Producto</th>
+                            <th scope="col">Descripcion del Producto</th>
+                            <th scope="col">Stock</th>
+                            <th scope="col">Costo</th>
+                            <th scope="col">P.Venta</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <th>GST00236</th>
-                            <td>
-                                Calentador Nike
-                            </td>
+                            <td>Calentador Nike</td>
                             <td>10</td>
                             <td>$35.06</td>
                             <td>$37.06</td>
                         </tr>
                         <tr>
                             <th>GST00236</th>
-                            <td>
-                                Calentador Nike
-                            </td>
+                            <td>Calentador Nike</td>
                             <td>10</td>
                             <td>$35.06</td>
                             <td>$37.06</td>
                         </tr>
                         <tr>
                             <th>GST00236</th>
-                            <td>
-                                Calentador Nike
-                            </td>
+                            <td>Calentador Nike</td>
                             <td>10</td>
                             <td>$35.06</td>
                             <td>$37.06</td>

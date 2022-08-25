@@ -37,38 +37,26 @@
             type: String,
             default: 'ok-only',
             validate: (it: string) =>
-                [
-                    'ok-only',
-                    'ok-cancel',
-                    'cancel-only',
-                ].includes(it),
+                ['ok-only', 'ok-cancel', 'cancel-only'].includes(it),
         },
     })
-    const emit = defineEmits([
-        'update:show',
-        'close',
-        'cancel',
-        'ok',
-    ])
+    const emit = defineEmits(['update:show', 'close', 'cancel', 'ok'])
     function onCloseHandler() {
         emit('update:show', false)
         emit('close')
     }
-    function okClicked(e: Event) {
+    function okClicked(_e: Event) {
         emit('ok')
         emit('update:show', false)
     }
-    function cancelClicked(e: Event) {
+    function cancelClicked(_e: Event) {
         emit('cancel')
         emit('update:show', false)
     }
 </script>
 
 <template>
-    <TransitionRoot
-        appear
-        :show="show"
-        as="template">
+    <TransitionRoot appear :show="show" as="template">
         <Dialog
             as="div"
             :open="show"
@@ -100,62 +88,39 @@
                     class="tw-fixed tw-inset-0 tw-transform-gpu tw-flex tw-items-center tw-justify-center">
                     <DialogPanel
                         class="tw-w-full tw-max-w-sm tw-rounded tw-bg-gray-100 dark:tw-bg-slate-700">
-                        <DialogTitle
-                            v-if="!hideTitle">
-                            <div
-                                class="tw-px-3 tw-py-2">
-                                <slot
-                                    name="dialog-title">
+                        <DialogTitle v-if="!hideTitle">
+                            <div class="tw-px-3 tw-py-2">
+                                <slot name="dialog-title">
                                     <h1>
-                                        {{
-                                            title
-                                        }}
+                                        {{ title }}
                                     </h1>
                                 </slot>
                             </div>
                             <div
                                 class="tw-w-full tw-h-0.5 tw-bg-slate-600 dark:tw-bg-slate-400" />
                         </DialogTitle>
-                        <div
-                            class="e-modal-content tw-px-5 tw-py-3">
-                            <slot
-                                >Hello Modal</slot
-                            >
+                        <div class="e-modal-content tw-px-5 tw-py-3">
+                            <slot>Hello Modal</slot>
                         </div>
                         <div
                             class="tw-px-2 tw-py-3 tw-flex tw-flex-row-reverse tw-gap-2">
-                            <slot
-                                name="dialog-buttons">
+                            <slot name="dialog-buttons">
                                 <EButton
                                     v-if="
-                                        [
-                                            'ok-only',
-                                            'ok-cancel',
-                                        ].includes(
-                                            buttonType
-                                        )
+                                        ['ok-only', 'ok-cancel'].includes(buttonType)
                                     "
-                                    @click="
-                                        okClicked
-                                    ">
+                                    @click="okClicked">
                                     {{ okText }}
                                 </EButton>
                                 <EButton
                                     v-if="
-                                        [
-                                            'cancel-only',
-                                            'ok-cancel',
-                                        ].includes(
+                                        ['cancel-only', 'ok-cancel'].includes(
                                             buttonType
                                         )
                                     "
-                                    @click="
-                                        cancelClicked
-                                    "
+                                    @click="cancelClicked"
                                     type="cancel">
-                                    {{
-                                        cancelText
-                                    }}
+                                    {{ cancelText }}
                                 </EButton>
                             </slot>
                         </div>

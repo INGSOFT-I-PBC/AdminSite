@@ -7,9 +7,7 @@ describe('ECard', () => {
     it('renders properly', () => {
         const wrapper = mount(ECard)
         // Check if its a div container
-        expect(wrapper.element).toContain(
-            HTMLDivElement
-        )
+        expect(wrapper.element).toContain(HTMLDivElement)
         expect(wrapper.props).toContain([])
     })
 })
