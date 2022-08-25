@@ -59,6 +59,7 @@ const router = createRouter({
     routes: routes,
 })
 
+/**
 router.beforeEach(async (to, from, next) => {
     const auth = useAuthStore()
     const loggedIn = await auth.isAuthenticated()
@@ -69,6 +70,6 @@ router.beforeEach(async (to, from, next) => {
     }
     const targetMeta = from.meta as RouteMetaData
     return next()
-})
+})*/
 
 export default router
