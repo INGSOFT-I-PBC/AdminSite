@@ -1016,8 +1016,7 @@ packages:
     dependencies:
       vue: 3.2.37
     dev: true
-
-  /@vue/tsconfig/0.1.3_@types+node@18.7.11:
+  /@vue/tsconfig/0.1.3_@types+node@18.7.12:
     resolution: {integrity: sha512-kQVsh8yyWPvHpb8gIc9l/HIDiiVUy1amynLNpCy8p+FoCiZXCo6fQos5/097MmnNZc9AtseDsCrfkhqCrJ8Olg==}
     peerDependencies:
       '@types/node': '*'
@@ -1025,7 +1024,7 @@ packages:
       '@types/node':
         optional: true
     dependencies:
-      '@types/node': 18.7.11
+      '@types/node': 18.7.12
     dev: true
 
   /abab/2.0.6:
