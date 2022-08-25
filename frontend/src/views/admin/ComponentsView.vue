@@ -24,99 +24,81 @@
 <template>
     <ERow>
         <ModalDialog v-model:show="showModal" />
-        <ECard>
-            <div>
-                <Title>Botones</Title>
-                <ERow>
-                    <EButton>Primary</EButton>
-                    <EButton type="secondary"
-                        >Secondary</EButton
-                    >
-                    <EButton type="outline"
-                        >Outlined</EButton
-                    >
-                    <EButton disabled>
-                        disabled
-                    </EButton>
-                    <EButton type="cancel">
-                        Cancel
-                    </EButton>
-                    <EButton type="success">
-                        Success
-                    </EButton>
-                    <EButton type="blank">
-                        Blank
-                    </EButton>
-                </ERow>
-            </div>
-        </ECard>
-        <ECard>
-            <Title size="2xl">Input Texts</Title>
-            <InputText
-                v-model="normalValue"
-                label="Normal"
-                placeholder="normal"
-                info-label="normal info label" />
-            <span
-                >Content normal InputText:
-                {{ normalValue }}</span
-            >
-            <InputText
-                label="Danger"
-                info-label="danger info label"
-                placeholder="danger"
-                right-icon="alert-triangle"
-                :status="false"
-                info-status="danger" />
-            <InputText
-                label="Warning"
-                :info-label="
-                    'warning info label :: ' +
-                    (toggle ? 'on' : 'off')
-                "
-                left-icon="eye"
-                placeholder="warning"
-                @left-icon-click="iconClick"
-                info-status="warning" />
-            <InputText
-                label="Success"
-                info-label="Success info label"
-                placeholder="success"
-                :status="true"
-                info-status="success" />
-            <InputText
-                v-model="normalValue"
-                label="disabled"
-                placeholder="disabled"
-                right-icon="box"
-                disabled />
-        </ECard>
-        <ECard>
-            <Title size="2xl">Modal</Title>
-            <EButton @click="showModalClick"
-                >Show Modal</EButton
-            >
-        </ECard>
-        <ECard>
-            <Title size="2xl"
-                >Combo Box & lists</Title
-            >
-        </ECard>
+        <ECol>
+            <ECard>
+                <div>
+                    <Title>Botones</Title>
+                    <ERow>
+                        <EButton>Primary</EButton>
+                        <EButton type="secondary">Secondary</EButton>
+                        <EButton type="outline">Outlined</EButton>
+                    </ERow>
+                    <ERow class="tw-mt-2">
+                        <EButton disabled> disabled </EButton>
+                        <EButton type="cancel"> Cancel </EButton>
+                        <EButton type="success"> Success </EButton>
+                        <EButton type="blank"> Blank </EButton>
+                    </ERow>
+                </div>
+            </ECard>
+        </ECol>
+        <ECol>
+            <ECard>
+                <Title size="2xl">Input Texts</Title>
+                <InputText
+                    v-model="normalValue"
+                    label="Normal"
+                    placeholder="normal"
+                    info-label="normal info label" />
+                <span>Content normal InputText: {{ normalValue }}</span>
+                <InputText
+                    label="Danger"
+                    info-label="danger info label"
+                    placeholder="danger"
+                    right-icon="alert-triangle"
+                    :status="false"
+                    info-status="danger" />
+                <InputText
+                    label="Warning"
+                    :info-label="'warning info label :: ' + (toggle ? 'on' : 'off')"
+                    left-icon="eye"
+                    placeholder="warning"
+                    @left-icon-click="iconClick"
+                    info-status="warning" />
+                <InputText
+                    label="Success"
+                    info-label="Success info label"
+                    placeholder="success"
+                    :status="true"
+                    info-status="success" />
+                <InputText
+                    v-model="normalValue"
+                    label="disabled"
+                    placeholder="disabled"
+                    right-icon="box"
+                    disabled />
+            </ECard>
+        </ECol>
+        <ECol>
+            <ECard>
+                <Title size="2xl">Modal</Title>
+                <EButton @click="showModalClick">Show Modal</EButton>
+            </ECard>
+        </ECol>
+        <ECol>
+            <ECard>
+                <Title size="2xl">Combo Box & lists</Title>
+            </ECard>
+        </ECol>
         <ECol cols="4">
             <ECard>
                 <Title>Row & Col system</Title>
                 <ERow>
-                    <template
-                        v-for="(_, x) in Array(
-                            12
-                        )"
-                        :key="x">
+                    <template v-for="(_, x) in Array(12)" :key="x">
                         <ECol :cols="x + 1">
                             <span
                                 class="tw-ring-emerald-500 tw-ring-1 tw-rounded tw-text-center tw-py-2 tw-px-1">
-                                Col-{{
-                                    `${x + 1}`
-                                }}
+                                Col-{{ `${x + 1}` }}
                             </span>
                         </ECol>
                     </template>
@@ -124,4 +106,5 @@
             </ECard>
         </ECol>
     </ERow>
+    <ECard> adfas </ECard>
 </template>
