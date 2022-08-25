@@ -6,11 +6,16 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
+      "*":["./src/types/*.d.ts", "./src/types/*.ts"],
       "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@views/*": ["./src/views/*"],
       "@store/*": ["./src/store/*"],
       "@store": ["./src/store"]
-    }
+    },
+    "typeRoots": [
+      "node_modules/@types",
+      "./src/types"
+    ]
   }
 }
