@@ -27,6 +27,7 @@ export type RouteMetaData = {
 export type RouteBreadcrumb = {
     text: string
     active?: boolean
+    href?: string
 }
 
 export default RouteConfig
