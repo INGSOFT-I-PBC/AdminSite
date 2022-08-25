@@ -6,8 +6,13 @@ export const role: Array<RouteConfig> = [
         name: 'role-panel',
         component: () => import('@views/RoleView.vue'),
         meta: {
-            pageTitle: 'Configuración',
-            permission: 'can_edit_user',
+            pageTitle: 'Roles',
+            permission: 'view_dashboard',
+            breadcrumb: [
+                { text: 'Usuarios'},
+                { text: 'Empleados' },
+                { text: 'Roles' },
+            ],
         },
     },
     {
