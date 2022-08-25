@@ -10,9 +10,14 @@ import { ref } from 'vue'
 useAuthStore().refreshToken()
 const router = useRouter()
 const toggle = ref(false)
+const password = ref('')
 
 function switchVisibility() {
     toggle.value = !toggle.value
+}
+
+function inactive(e: Event) {
+    e.preventDefault()
 }
 
 function access() {
@@ -25,15 +30,15 @@ function access() {
         class="tw-h-screen tw-w-screen tw-flex tw-flex-col tw-justify-center tw-justify-items-center tw-text-center tw-items-center tw-bg-gray-200 dark:tw-bg-gray-900">
         <ECard class="tw-bg-gray-900">
             <img src="../../assets/img/nova.png" class="tw-max-w-full tw-h-auto tw-rounded-lg" alt="NovaGym" />
-            <form action="hijo">
+            <form @onsubmit="inactive">
                 <div class="mt-4">
                     <div>
                         <InputText placeholder="Usuario"></InputText>
                         <!--<span class="text-xs tracking-wide text-red-600">Email field is required </span>-->
                     </div>
                     <div class="mt-4">
-                        <InputText placeholder="Contraseña" model-value="" type="password" id="password"
-                            right-icon="eye" @rightIconClick="
+                        <InputText placeholder="Contraseña" v-model="password" :type="(toggle ? 'text' : 'password')"
+                            id="password" :right-icon="(toggle ? 'eye-off' : 'eye')" @rightIconClick="
                                 switchVisibility
                             ">
                         </InputText>
