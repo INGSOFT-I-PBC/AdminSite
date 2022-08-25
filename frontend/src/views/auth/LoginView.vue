@@ -1,24 +1,54 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
-    const message = ref('TODO: Make this view')
+import ECard from '@components/custom/ECard.vue'
+import EButton from '@components/custom/EButton.vue'
+import { useAuthStore } from '@store'
+import { inject } from 'vue'
+import { useRoute, useRouter, } from 'vue-router'
+import InputText from '../../components/custom/InputText.vue'
+import { ref } from 'vue'
+
+useAuthStore().refreshToken()
+const router = useRouter()
+const toggle = ref(false)
+
+function switchVisibility() {
+    toggle.value = !toggle.value
+}
+
+function access() {
+    router.push({ path: '/' })
+}
 </script>
 
 <template>
-    <div>
-        <div
-            class="rounded border ring-1 ring py-5 px-3 ring-offset-3 ring-gray-300 flex flex-col">
-            <label for="email-input">Email:</label>
-            <input type="text" id="email-input" />
-            <label for="password-input">Password:</label>
-            <EInput></EInput>
-            <input type="password" name="password" id="password-input" />
-            <div class="flex flex-row justify-center">
-                <button class="px-2 py-1 ring ring-1 ring-gray-200">
-                    Iniciar Sesión
-                </button>
-                <button class="px-2 py-1 ring ring-1 ring-gray-100">Cancelar</button>
-            </div>
-        </div>
-        <h1>{{ message }}</h1>
+    <div
+        class="tw-h-screen tw-w-screen tw-flex tw-flex-col tw-justify-center tw-justify-items-center tw-text-center tw-items-center tw-bg-gray-200 dark:tw-bg-gray-900">
+        <ECard class="tw-bg-gray-900">
+            <img src="../../assets/img/nova.png" class="tw-max-w-full tw-h-auto tw-rounded-lg" alt="NovaGym" />
+            <form action="hijo">
+                <div class="mt-4">
+                    <div>
+                        <InputText placeholder="Usuario"></InputText>
+                        <!--<span class="text-xs tracking-wide text-red-600">Email field is required </span>-->
+                    </div>
+                    <div class="mt-4">
+                        <InputText placeholder="Contraseña" model-value="" type="password" id="password"
+                            right-icon="eye" @rightIconClick="
+                                switchVisibility
+                            ">
+                        </InputText>
+                        <!--rightIcon="eye"-->
+                    </div>
+                    <div class="mt-4">
+                        <EButton type="primary" @click="access">Acceder
+                        </EButton>
+                    </div>
+                    <div class="flex items-baseline justify-between mt-4">
+                        <a href="#" class="text-sm text-blue-600 hover:underline">¿Olvidó su
+                            contraseña?</a>
+                    </div>
+                </div>
+            </form>
+        </ECard>
     </div>
 </template>
