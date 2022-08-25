@@ -1,11 +1,5 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { JWTToken, UserInfo } from './types'
-
-export interface AuthState {
-    jwtData: JWTToken | null
-    userData: UserInfo | null
-}
 
 /**
  * This store contains the data from the user authentication. Also
