@@ -1,6 +1,18 @@
 from django.db import models
 
 
+class StatusModel(models.Model):
+
+    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+    name = models.CharField(max_length=255)
+    description = models.CharField(max_length=255)
+    created_at = models.DateTimeField(null=False, auto_now_add=True)
+    created_by = models.ForeignKey("Employee", on_delete=models.RESTRICT)
+
+    class Meta:
+        db_table = "status"
+
+
 class TimestampModel(models.Model):
     """TimestampModel
 
@@ -24,10 +36,14 @@ class TraceableModel(models.Model):
     """
 
     created_by = models.ForeignKey(
-        "User", db_column="created_by", null=True, on_delete=models.RESTRICT, related_name="creator"
+        "Employee",
+        db_column="created_by",
+        null=True,
+        on_delete=models.RESTRICT,
+        related_name="creator",
     )
     updated_by = models.ForeignKey(
-        "User",
+        "Employee",
         db_column="updated_by",
         null=True,
         default=None,
@@ -35,7 +51,7 @@ class TraceableModel(models.Model):
         related_name="updater",
     )
     deleted_by = models.ForeignKey(
-        "User",
+        "Employee",
         db_column="deleted_by",
         null=False,
         default=None,

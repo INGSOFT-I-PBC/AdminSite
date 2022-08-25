@@ -11,7 +11,9 @@ class UserCreationForm(forms.ModelForm):
     """
 
     password = forms.CharField(label="Password", widget=forms.PasswordInput)
-    validation_password = forms.CharField(label="Password Confirmation", widget=forms.PasswordInput)
+    validation_password = forms.CharField(
+        label="Password Confirmation", widget=forms.PasswordInput
+    )
 
     class Meta:
         model = User

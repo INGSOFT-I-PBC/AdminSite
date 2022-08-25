@@ -9,6 +9,8 @@
     <div>
         <h1>{{ message }}</h1>
         <h2>Esto es un ejemplo de inventario</h2>
-        <EButton type="secondary"> + Add Product </EButton> 
+        <EButton type="secondary">
+            + Add Product
+        </EButton>
     </div>
 </template>

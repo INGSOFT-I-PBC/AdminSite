@@ -25,4 +25,16 @@ export const admin: Array<RouteConfig> = [
             permission: 'can_edit_password',
         },
     },
+
+    {
+        path: '/admin/creacion-usuario',
+        name: 'CreacionUsuario-view',
+        component: () =>
+            import(
+                '@views/admin/CreacionUsuario.vue'
+            ),
+        meta: {
+            pageTitle: 'Creacion Cuenta Usuario',
+        },
+    },
 ]
