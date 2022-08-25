@@ -64,16 +64,13 @@
         let styles = `${props.infoStyle || ''} `
         switch (props.infoStatus) {
             case 'danger':
-                styles +=
-                    'tw-text-red-700 dark:tw-text-red-500'
+                styles += 'tw-text-red-700 dark:tw-text-red-500'
                 break
             case 'warning':
-                styles +=
-                    'tw-text-amber-800 dark:tw-text-yellow-500'
+                styles += 'tw-text-amber-800 dark:tw-text-yellow-500'
                 break
             case 'success':
-                styles +=
-                    'tw-text-green-600 dark:tw-text-emerald-500'
+                styles += 'tw-text-green-600 dark:tw-text-emerald-500'
                 break
             default: // No apply styles
         }
@@ -84,11 +81,9 @@
         if (props.disabled) {
             return 'tw-bg-gray-200 tw-text-gray-400 dark:tw-bg-slate-900 dark:tw-text-slate-500 hover:tw-cursor-not-allowed tw-ring-neutral-300'
         }
-        let classes =
-            'tw-bg-neutral-100 dark:tw-bg-slate-800 '
+        let classes = 'tw-bg-neutral-100 dark:tw-bg-slate-800 '
         if (props.status === true) {
-            classes +=
-                'tw-ring-teal-400 dark:tw-ring-emerald-600'
+            classes += 'tw-ring-teal-400 dark:tw-ring-emerald-600'
         } else if (props.status === false) {
             classes +=
                 'focus:tw-outline-rose-600 tw-ring-red-600 dark:tw-ring-red-700 focus:tw-outline-1 tw-text-red-500 dark:tw-text-400'
@@ -103,24 +98,19 @@
         if (props.disabled) {
             return 'tw-bg-gray-200 tw-text-gray-400 dark:tw-bg-slate-900 dark:tw-text-slate-500 hover:tw-cursor-not-allowed tw-ring-neutral-300'
         }
-        let classes =
-            'tw-bg-neutral-100 dark:tw-bg-slate-800 '
+        let classes = 'tw-bg-neutral-50 dark:tw-bg-slate-800 '
         if (props.status === true) {
-            classes +=
-                'tw-text-green-700 dark:tw-text-green-300'
+            classes += 'tw-text-green-700 dark:tw-text-green-300'
         } else if (props.status === false) {
-            classes +=
-                'tw-text-red-500 dark:tw-text-400'
+            classes += 'tw-text-red-500 dark:tw-text-400'
         } else {
-            classes +=
-                'tw-text-black dark:tw-text-neutral-300'
+            classes += 'tw-text-black dark:tw-text-neutral-300'
         }
         return classes
     })
 
     function interactionStart(event: Event) {
-        const target =
-            event.target as HTMLButtonElement
+        const target = event.target as HTMLButtonElement
         if (props.disabled) {
             event.preventDefault()
             target.blur()
@@ -128,12 +118,9 @@
     }
 
     function emitValue(e: Event) {
-        let value = (e.target as HTMLInputElement)
-            .value
+        let value = (e.target as HTMLInputElement).value
         if (props.modelModifiers?.capitalize) {
-            value =
-                value.charAt(0).toUpperCase() +
-                value.slice(1)
+            value = value.charAt(0).toUpperCase() + value.slice(1)
         }
         if (props.modelModifiers?.trim) {
             value = value.trim()
@@ -144,7 +131,7 @@
         if (props.modelModifiers?.lower) {
             value = value.toLowerCase()
         }
-        if (props.modelModifiers?.number) {
+        if (props.modelModifiers?.number || props.type === 'number') {
             value = value.replace(/[^0-9]/g, '')
         }
         if (props.modelModifiers?.alpha) {
@@ -164,20 +151,11 @@
             :class="inputDivClass">
             <button
                 class="tw-text-center tw-ml-1 tw-grid tw-content-center focus:tw-outline-none"
-                :class="
-                    disabled
-                        ? 'hover:tw-cursor-not-allowed'
-                        : ''
-                "
+                :class="disabled ? 'hover:tw-cursor-not-allowed' : ''"
                 v-if="leftIcon"
-                @click="
-                    !disabled
-                        ? $emit('leftIconClick')
-                        : () => {}
-                ">
+                @click="!disabled ? $emit('leftIconClick') : () => {}">
                 <slot name="leftIcon">
-                    <vue-feather
-                        :type="leftIcon" />
+                    <vue-feather :type="leftIcon" />
                 </slot>
             </button>
             <input
@@ -192,20 +170,10 @@
             <button
                 class="tw-text-center tw-p-0.5 tw-content-center tw-grid focus:tw-outline-none"
                 v-if="rightIcon"
-                :class="
-                    disabled
-                        ? 'hover:tw-cursor-not-allowed'
-                        : ''
-                "
-                @click="
-                    !disabled
-                        ? $emit('rightIconClick')
-                        : () => {}
-                ">
+                :class="disabled ? 'hover:tw-cursor-not-allowed' : ''"
+                @click="!disabled ? $emit('rightIconClick') : () => {}">
                 <slot name="rightIcon">
-                    <vue-feather
-                        v-if="rightIcon"
-                        :type="rightIcon" />
+                    <vue-feather v-if="rightIcon" :type="rightIcon" />
                 </slot>
             </button>
         </div>
