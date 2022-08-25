@@ -1,33 +1,21 @@
 <script setup lang="ts">
-    import {
-        computed,
-        defineAsyncComponent,
-    } from 'vue'
-    import {
-        useRoute,
-        RouterView,
-    } from 'vue-router'
-    import type {
-        RouteBreadcrumb,
-        RouteMetaData,
-    } from './router/RouteConfig'
-    const FullLayout = defineAsyncComponent(
-        () => import('./layouts/FullLayout.vue')
-    )
+    import { computed, defineAsyncComponent, provide } from 'vue'
+    import { useRoute, RouterView } from 'vue-router'
+    import type { RouteBreadcrumb, RouteMetaData } from './router/RouteConfig'
+    const FullLayout = defineAsyncComponent(() => import('./layouts/FullLayout.vue'))
     const VerticalLayout = defineAsyncComponent(
         () => import('./layouts/DrawerLayout.vue')
     )
-
     /**
      * The Current route
      */
     const route = useRoute()
+
+    provide('route', route)
     /**
      * The title of the current route
      */
-    const currentTitle = computed(
-        () => route.meta.pageTitle as string
-    )
+    const currentTitle = computed(() => route.meta.pageTitle as string)
 
     /**
      * The layout that the current route require
@@ -44,27 +32,35 @@
      * The breadcrumb of the current route
      */
     const breadcrumb = computed(
-        (): Array<RouteBreadcrumb> =>
-            (route.meta as RouteMetaData)
-                .breadcrumb || []
+        (): Array<RouteBreadcrumb> => (route.meta as RouteMetaData).breadcrumb || []
     )
 </script>
 
 <template>
-    <component
-        :is="layout"
-        :title="currentTitle"
-        :breadcrumb="breadcrumb">
-        <RouterView />
-    </component>
+    <Transition
+        enter-active-class="tw-transition-all tw-duration-300"
+        enter-from-class="tw-opacity-0"
+        enter-to-class="tw-opacity-100">
+        <component :is="layout" :title="currentTitle" :breadcrumb="breadcrumb">
+            <!-- <Transition
+                class=""
+                enter-active-class="tw-transition-all tw-transform-gpu tw-ease-in-out tw-duration-550"
+                enter-from-class="tw-opacity-0 tw-scale-10"
+                enter-to-class="tw-opacity-100 tw-scale-105"
+                leave-active-class="tw-transition-all tw-transform-gpu tw-ease-in tw-duration-400"
+                leave-from-class="tw-opacity-100 tw-scale-105"
+                leave-to-class="tw-opacity-0 tw-scale-90 tw-translate-x-full"> -->
+            <RouterView v-slot="{ Component }">
+                <Transition>
+                    <component :is="Component" />
+                </Transition>
+            </RouterView>
+            <!-- </Transition> -->
+        </component>
+    </Transition>
 </template>
 
 <style scoped>
-    header {
-        line-height: 1.5;
-        max-height: 100vh;
-    }
-
     .logo {
         display: block;
         margin: 0 auto 2rem;
@@ -99,9 +95,7 @@
         header {
             display: flex;
             place-items: center;
-            padding-right: calc(
-                var(--section-gap) / 2
-            );
+            padding-right: calc(var(--section-gap) / 2);
         }
 
         .logo {
