@@ -1,4 +1,3 @@
-import type ListBoxVue from '@/components/custom/ListBox.vue'
 import type { Component, Ref } from 'vue'
 
 declare module '*.vue' {
@@ -27,7 +26,7 @@ declare module '*.vue' {
             label: string
             options: Array<ListboxItem | string | any>
         },
-        {},
+        Record<string, unknown>,
         Component
     >
 }

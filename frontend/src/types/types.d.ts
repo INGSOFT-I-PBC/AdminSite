@@ -26,7 +26,7 @@ declare global {
      */
     export class TableHeaderSettings {
         readonly headers: Array<HeaderSetup>
-        readonly rows?: Array<any>
+        readonly rows?: Array<T>
     }
 
     // export class Row<T> ()

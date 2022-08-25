@@ -11,9 +11,7 @@
     <div class="about">
         <h1>This is an about page</h1>
         <span>Counter: {{ counter }}</span>
-        <button @click="clickButton">
-            Button
-        </button>
+        <button @click="clickButton">Button</button>
     </div>
 </template>
 

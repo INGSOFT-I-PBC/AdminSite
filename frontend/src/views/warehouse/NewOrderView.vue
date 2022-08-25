@@ -159,7 +159,7 @@
                 </ERow>
             </ECard>
             <Table :header="tableSettings">
-                <template #body-cell="{ cellData, columnData, colIdx, rowIdx }">
+                <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div
                         v-if="colIdx > 3"
                         class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">

@@ -1,14 +1,7 @@
 import 'vite/modulepreload-polyfill'
-import {
-    createApp,
-    defineComponent,
-    ref,
-} from 'vue'
+import { createApp, defineComponent, ref } from 'vue'
 import { createPinia } from 'pinia'
-import Toast, {
-    type PluginOptions,
-    POSITION,
-} from 'vue-toastification'
+import Toast, { type PluginOptions, POSITION } from 'vue-toastification'
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { awesomeIcons } from './icons'
@@ -38,8 +31,7 @@ const defToastOptions: PluginOptions = {
 }
 awesomeIcons.forEach(icon => library.add(icon))
 
-if (!import.meta.env.VITE_BACKEND_URL)
-    throw new Error('No API url was provided')
+if (!import.meta.env.VITE_BACKEND_URL) throw new Error('No API url was provided')
 
 app.use(createPinia())
 app.use(router)

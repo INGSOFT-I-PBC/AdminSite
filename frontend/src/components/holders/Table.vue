@@ -35,10 +35,10 @@
                         :key="cidx">
                         <slot
                             name="body-cell"
-                            :cellData="
+                            :cell-data="
                                 column?.morphFunc ? column.morphFunc(data) : data
                             "
-                            :columnData="column"
+                            :column-data="column"
                             :row-idx="idx"
                             :col-idx="cidx">
                             <span>

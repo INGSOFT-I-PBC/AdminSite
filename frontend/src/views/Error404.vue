@@ -1,19 +1,13 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-    import {
-        useRoute,
-        useRouter,
-    } from 'vue-router'
+    import { useRoute, useRouter } from 'vue-router'
     import EButton from '../components/custom/EButton.vue'
     const router = useRouter()
 
     function redirectHome() {
         const origin = useRoute()?.redirectedFrom
         let redirectPath = origin?.path || '/'
-        if (
-            origin?.path === '/error-403' ||
-            origin?.path === '/error-404'
-        ) {
+        if (origin?.path === '/error-403' || origin?.path === '/error-404') {
             redirectPath = '/'
         }
         router.push({ path: '/' })
@@ -31,12 +25,9 @@
             class="tw-text-3xl tw-font-bold tw-p-3 tw-text-amber-700 dark:tw-text-amber-500">
             No se encontró el recurso
         </h3>
-        <span
-            class="lg:tw-w-1/2 mx-10 dark:tw-font-bold dark:tw-text-gray-400"
-            >Lo sentimos, no se pudo encontrar la
-            página que estas buscando.<br />
-            Pero puedes seguir hacia la página
-            principal.
+        <span class="lg:tw-w-1/2 mx-10 dark:tw-font-bold dark:tw-text-gray-400"
+            >Lo sentimos, no se pudo encontrar la página que estas buscando.<br />
+            Pero puedes seguir hacia la página principal.
         </span>
         <div class="tw-p-5">
             <EButton

@@ -1,3 +1,4 @@
+/* eslint no-var: 0 */
 declare global {
     type Optional<T> = T | undefined | null
 
@@ -12,7 +13,7 @@ declare global {
     }
 
     var ref: typeof import('vue')['ref']
-
+    /// eslint-disable no-var
     var router: typeof import('@store')
 
     export interface MenuItem {

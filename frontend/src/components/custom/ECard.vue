@@ -2,13 +2,11 @@
     defineProps({
         theme: {
             type: String,
-            default:
-                'tw-bg-slate-50 dark:tw-bg-gray-800',
+            default: 'tw-bg-slate-50 dark:tw-bg-gray-800',
         },
         cardTheme: {
             type: String,
-            default:
-                'tw-bg-slate-50 dark:tw-bg-gray-800',
+            default: 'tw-bg-slate-50 dark:tw-bg-gray-800',
         },
     })
 </script>

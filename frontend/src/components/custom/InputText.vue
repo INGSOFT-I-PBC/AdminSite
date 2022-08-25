@@ -8,7 +8,7 @@
             default: '',
         },
         modelModifiers: {
-            default: () => ({} as any),
+            default: () => ({} as Record<string, unknown>),
         },
         type: {
             type: String,

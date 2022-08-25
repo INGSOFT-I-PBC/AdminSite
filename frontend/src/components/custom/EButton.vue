@@ -9,19 +9,11 @@
         @mouseleave="mouseStopInteraction">
         &ZeroWidthSpace;
         <template v-if="leftIcon">
-            <FontAwesomeIcon
-                class="tw-mr-1"
-                v-if="useAwesome"
-                :icon="leftIcon" />
-            <VueFeather
-                v-else
-                :type="leftIcon"
-                class="tw-mr-1" />
+            <FontAwesomeIcon class="tw-mr-1" v-if="useAwesome" :icon="leftIcon" />
+            <VueFeather v-else :type="leftIcon" class="tw-mr-1" />
         </template>
         <slot>Button</slot>
-        <FontAwesomeIcon
-            v-if="rightIcon"
-            :icon="rightIcon" />
+        <FontAwesomeIcon v-if="rightIcon" :icon="rightIcon" />
     </button>
 </template>
 
@@ -59,17 +51,12 @@
             type: String,
             default: 'awesome',
             validator: (provider: string) =>
-                ['awesome', 'feather'].includes(
-                    provider
-                ),
+                ['awesome', 'feather'].includes(provider),
         },
     })
 
     const useAwesome = computed(
-        () =>
-            props.iconProvider
-                ?.toLowerCase()
-                .trim() === 'awesome'
+        () => props.iconProvider?.toLowerCase().trim() === 'awesome'
     )
 
     const style = computed(() => {
@@ -101,11 +88,8 @@
                 classes +=
                     'tw-bg-secondary hover:tw-bg-secondary-light focus:tw-bg-secondary-light tw-text-on-secondary dark:tw-bg-secondary-night dark:hover:tw-bg-secondary-night-dark dark:focus:tw-bg-secondary-night-dark dark:hover:tw-ring-1 dark:hover:tw-ring-slate-700'
         }
-        if (disabled)
-            classes += ' hover:tw-cursor-default'
-        else
-            classes +=
-                ' hover:tw-shadow-lg focus:tw-shadow-sm'
+        if (disabled) classes += ' hover:tw-cursor-default'
+        else classes += ' hover:tw-shadow-lg focus:tw-shadow-sm'
         // if (disabled)
         //     classes =
         //         'tw-bg-neutral-300 dark:tw-bg-neutral-500 hover:tw-drop hover:tw-shadow-md hover:tw-cursor-not-allowed tw-text-neutral-500 dark:tw-text-neutral-800'
@@ -119,11 +103,8 @@
     function buttonHover() {
         emit('hover')
     }
-    function mouseStopInteraction(
-        event: MouseEvent
-    ) {
-        const element =
-            event.target as HTMLButtonElement
+    function mouseStopInteraction(event: MouseEvent) {
+        const element = event.target as HTMLButtonElement
         element.blur()
     }
 </script>
