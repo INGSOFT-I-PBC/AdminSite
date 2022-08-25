@@ -18,7 +18,7 @@ export const menus: MenuItem[] = [
         children: [
             {
                 label: 'Empleados',
-                path: '/employee',
+                path: '/empleado',
 
             },
             {
