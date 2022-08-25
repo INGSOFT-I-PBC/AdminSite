@@ -4,10 +4,7 @@ export const admin: Array<RouteConfig> = [
     {
         path: '/user/admin',
         name: 'user-admin-panel',
-        component: () =>
-            import(
-                '@views/auth/UserAdminView.vue'
-            ),
+        component: () => import('@views/auth/UserAdminView.vue'),
         meta: {
             pageTitle: 'Configuración',
             permission: 'can_edit_user',
@@ -16,10 +13,7 @@ export const admin: Array<RouteConfig> = [
     {
         path: '/user/reset-password',
         name: 'user-change-password',
-        component: () =>
-            import(
-                '@views/auth/ResetPasswordView.vue'
-            ),
+        component: () => import('@views/auth/ResetPasswordView.vue'),
         meta: {
             pageTitle: 'Configuración de usuario',
             permission: 'can_edit_password',
@@ -29,10 +23,7 @@ export const admin: Array<RouteConfig> = [
     {
         path: '/admin/creacion-usuario',
         name: 'CreacionUsuario-view',
-        component: () =>
-            import(
-                '@views/admin/CreacionUsuario.vue'
-            ),
+        component: () => import('@views/admin/CreacionUsuario.vue'),
         meta: {
             pageTitle: 'Creacion Cuenta Usuario',
         },

@@ -4,10 +4,7 @@ const defaultTheme = require('tailwindcss/defaultTheme')
 // eslint-disable-next-line no-undef
 module.exports = {
     prefix: 'tw-',
-    content: [
-        './src/index.html',
-        './src/**/*.{vue,js,ts,jsx,tsx}',
-    ],
+    content: ['./src/index.html', './src/**/*.{vue,js,ts,jsx,tsx}'],
     theme: {
         extend: {
             colors: {
@@ -16,8 +13,7 @@ module.exports = {
                     light: '#FFC107',
                     dark: colors.yellow[400],
                     night: {
-                        DEFAULT:
-                            colors.yellow[500],
+                        DEFAULT: colors.yellow[500],
                         dark: colors.yellow[600],
                     },
                 },
@@ -58,17 +54,18 @@ module.exports = {
                 medium: '.895rem',
             },
         },
+        screens: {
+            sm: '576px',
+            md: '768px',
+            lg: '992px',
+            xl: '1200px',
+            '2xl': '1400px',
+            '3xl': '1600px',
+        },
         fontFamily: {
-            sans: [
-                'Inria Sans',
-                ...defaultTheme.fontFamily.sans,
-            ],
-            serif: [
-                ...defaultTheme.fontFamily.serif,
-            ],
-            mono: [
-                ...defaultTheme.fontFamily.mono,
-            ],
+            sans: ['Inria Sans', ...defaultTheme.fontFamily.sans],
+            serif: [...defaultTheme.fontFamily.serif],
+            mono: [...defaultTheme.fontFamily.mono],
         },
     },
     plugins: [],

@@ -9,8 +9,6 @@
     <div>
         <h1>{{ message }}</h1>
         <h2>Esto es un ejemplo derole</h2>
-        <EButton type="secondary">
-            New Role +
-        </EButton>
+        <EButton type="secondary"> New Role + </EButton>
     </div>
 </template>

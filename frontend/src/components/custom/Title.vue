@@ -12,11 +12,8 @@
                     'md',
                     'lg',
                     'xl',
-                    ...Array.from(
-                        Array(9).keys()
-                    ).map(
-                        sizeIdx =>
-                            `${sizeIdx + 2}xl`
+                    ...Array.from(Array(9).keys()).map(
+                        sizeIdx => `${sizeIdx + 2}xl`
                     ),
                 ].includes(option),
         },
@@ -24,18 +21,13 @@
             type: String,
             default: 'bold',
             validate: (weight: string) =>
-                [
-                    'normal',
-                    'bold',
-                    'italic',
-                    'bold-italic',
-                    'semibold',
-                ].includes(weight),
+                ['normal', 'bold', 'italic', 'bold-italic', 'semibold'].includes(
+                    weight
+                ),
         },
         textColorClass: {
             type: String,
-            default:
-                'tw-text-slate-700 dark:tw-text-slate-300',
+            default: 'tw-text-slate-700 dark:tw-text-slate-300',
         },
     })
 
@@ -83,8 +75,7 @@
     })
 
     const joinedClasses = computed(
-        () =>
-            `${fontSize.value} ${fontWeight.value} ${props.textColorClass}`
+        () => `${fontSize.value} ${fontWeight.value} ${props.textColorClass}`
     )
 </script>
 

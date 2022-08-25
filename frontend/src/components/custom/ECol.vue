@@ -6,37 +6,64 @@
             type: [Number, String],
             default: 'auto',
         },
+        sm: {
+            type: [Number, String],
+            default: null,
+        },
+        md: {
+            type: [Number, String],
+            default: null,
+        },
+        lg: {
+            type: [Number, String],
+            default: null,
+        },
+        xl: {
+            type: [Number, String],
+            default: null,
+        },
+        xxl: {
+            type: [Number, String],
+            default: null,
+        },
     })
 
+    interface NormalizedBreakpointValue {
+        [breakpoint: string]: number
+    }
+
+    function normalize(value: number, original: string | number) {
+        if (original?.toString().toLowerCase().trim() === 'auto') return '-auto'
+        if (value >= 1 && value <= 12) return `-${value}`
+        return ''
+    }
+
     const widthClass = computed(() => {
-        const { cols } = props
-        const numCols = Number(cols)
-        return {
-            'tw-w-auto':
-                cols === 'auto' ||
-                numCols < 1 ||
-                numCols > 12,
-            'tw-w-1/12': numCols === 1,
-            'tw-w-1/6': numCols === 2,
-            'tw-w-1/4': numCols === 3,
-            'tw-w-1/3': numCols === 4,
-            'tw-w-5/12': numCols === 5,
-            'tw-w-1/2': numCols === 6,
-            'tw-w-7/12': numCols === 7,
-            'tw-w-2/3': numCols === 8,
-            'tw-w-3/4': numCols === 9,
-            'tw-w-5/6': numCols === 10,
-            'tw-w-11/12': numCols === 11,
-            'tw-w-full': numCols === 12,
+        const { cols, sm: rxs, md: rmd, lg: rlg, xl: rxl, xxl: rxxl } = props
+        const normalized: Partial<NormalizedBreakpointValue> = {
+            sm: Number(rxs),
+            md: Number(rmd),
+            lg: Number(rlg),
+            xl: Number(rxl),
+            xxl: Number(rxxl),
         }
+        const numCols = Number(cols)
+        const classes = [`col${normalize(numCols, cols)}`]
+        Object.getOwnPropertyNames(normalized).forEach(breakpoint => {
+            const suffix = normalize(
+                normalized[breakpoint] as number,
+                (props as NormalizedBreakpointValue)[breakpoint]
+            )
+            if (suffix) classes.push(`col-${breakpoint}${suffix}`)
+        })
+        return classes
     })
 </script>
 
 <template>
     <Transition>
-        <div
-            class="tw-justify-self-stretch tw-grid"
-            :class="widthClass">
+        <!-- class="tw-flex-grow-0 tw-flex-shrink-0 tw-basis-auto tw-justify-items-stretch tw-flex-col" -->
+        <div :class="widthClass" c-type="column">
             <slot />
         </div>
     </Transition>

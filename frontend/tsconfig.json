@@ -12,6 +12,7 @@
     }
   ],
   "compilerOptions": {
+    "isolatedModules": true,
     "types": ["naive-ui/volar"],
     "strict": true,
     "allowJs": false,

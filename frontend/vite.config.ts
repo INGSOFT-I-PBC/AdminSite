@@ -22,12 +22,8 @@ export default ({ mode }: { mode: string }) => {
             outDir: resolve('../static/dist'),
             rollupOptions: {
                 input: {
-                    main: resolve(
-                        './src/main.ts'
-                    ),
-                    style: resolve(
-                        './src/assets/main.css'
-                    ),
+                    main: resolve('./src/main.ts'),
+                    style: resolve('./src/assets/main.css'),
                 },
                 output: {
                     chunkFileNames: undefined,
@@ -44,34 +40,13 @@ export default ({ mode }: { mode: string }) => {
         plugins: [vue(), vueJsx()],
         resolve: {
             alias: {
-                '@': fileURLToPath(
-                    new URL(
-                        './src',
-                        import.meta.url
-                    )
-                ),
+                '@': fileURLToPath(new URL('./src', import.meta.url)),
                 '@components': fileURLToPath(
-                    new URL(
-                        './src/components',
-                        import.meta.url
-                    )
+                    new URL('./src/components', import.meta.url)
                 ),
-                '@views': fileURLToPath(
-                    new URL(
-                        './src/views',
-                        import.meta.url
-                    )
-                ),
-                '@store': fileURLToPath(
-                    new URL(
-                        './src/store',
-                        import.meta.url
-                    )
-                ),
-                '~bootstrap': path.resolve(
-                    __dirname,
-                    'node_modules/bootstrap'
-                ),
+                '@views': fileURLToPath(new URL('./src/views', import.meta.url)),
+                '@store': fileURLToPath(new URL('./src/store', import.meta.url)),
+                '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
             },
         },
     })
