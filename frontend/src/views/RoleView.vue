@@ -1,61 +1,55 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
-    import EButton from '@components/custom/EButton.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    const message = ref('TODO: Make this view')
+    import { inject, ref } from 'vue'
+    import UserCard from '@components/UserCard.vue'
+     import ECard from '@components/custom/ECard.vue'
+    import ERow from  '@components/custom/ERow.vue'
+    import ECol from  '@components/custom/ECol.vue'
+    import ListBox from  '@components/custom/ListBox.vue'
+    import InputText from  '@components/custom/InputText.vue'
+    import EButton from  '@components/custom/EButton.vue'
+    import ModalDialog from  '@components/custom/ModalDialog.vue'
+    import Title from  '@components/custom/Title.vue'
+    import Table from  '@components/holders/Table.vue'
+    import { computed, reactive } from 'vue'
+    
+
+    import {
+        useRoute,
+        useRouter,
+    } from 'vue-router'
+    const router = useRouter()
+
+    
+
 </script>
 
 
 <template>
-    <main>
-        <ECard>
-            <!--
-            <h1 class="align-center text-center text-3xl font-bold">
-                Bienvenido
-            </h1>
-
-            <div class="flex gap-3">
-                <EButton>Test primary Button</EButton>
-                <EButton type="secondary">Test secondary
-                    Button</EButton>
-            </div>
-             -->
-        </ECard>
-
-        <div
-            class="container"
-            style="
-                background-color: white;
-                border-radius: 5px;
-            ">
+    <div
+        class="tw-flex tw-flex-rows tw-justify-items-stretch tw-min-h-screen tw-w-full tw-justify-between tw-bg-neutral-100 dark:tw-bg-neutral-900 tw-overflow-x-hidden"
+        id="_root">
+        <aside
+            class="tw-h-full tw-min-w-fit tw-bg-slate-600 tw-rounded-r-xl tw-overflow-hidden">
             <div
-                class="container"
-                style="
-                    background-color: white;
-                    padding: 10px;
-                ">
-                <h1
-                    style="
-                        font-size: 35px;
-                        color: black;
-                    ">
-                    Roles
-                </h1>
+                id="__left-drawer"
+                class="tw-h-full tw-flex tw-flex-col tw-justify-self-stretch tw-justify-items-stretch lg:tw-min-w-fit tw-resize-x">
+                <div
+                    id="__left-logo-container"
+                    class="tw-p-10 tw-px-24 tw-bg-gray-100 tw-ring-slate-600 dark:tw-bg-slate-800">
+                    <EButton type="secondary" @click="go" >+ Agregar rol </EButton>
+                </div>
+                <div
+                    id="__left-menu-container"
+                    class="tw-w-full tw-flex-1 tw-overflow-y-auto tw-bg-gray-200" >
+                    <DrawerMenu>
 
-                <nav class="navbar">
-                    <div class="container-fluid">
-                      <ECol>
-                         <EButton type="secondary" >+ Agregar rol </EButton>
-                        <ECard style="background-color: #F8F9F9 " text>
-
-                          <form
+                        <form
                             class="d-flex"
                             role="search">
                             <input
                                 class="form-control me-2"
                                 type="search"
-                                placeholder="Buscar empleado"
+                                placeholder="Buscar rol"
                                 aria-label="Search" />
                             <button
                                 class="btn btn-outline-black"
@@ -63,43 +57,36 @@
                                 Search
                             </button>
                           </form>
-                          <h3 > Cajero </h3>
-                          <h3 > Vendedor </h3>
-
-                          </ECard>
 
 
-                      </ECol>
-                        <h1  style="
-                        font-size: 35px;
-                        color: black;
-                        "> 
-                        Cajero</h1>
-                        
-                        
-
-                      <ECol>
-
-                      </ECol>
-
-
-                       
-
-                        
-                    </div>
-
-
-                </nav>
-
-               
+                        <template
+                            v-for="(menuItemData, idx) of menuItems"
+                            :key="idx">
+                            <DrawerMenuItem :data="menuItemData" />
+                        </template>
+                    </DrawerMenu>
+                </div>
             </div>
+        </aside>
+        <!-- Resize bar -->
+        <div
+            class="resize-handle--x tw-cursor-ew-resize tw-justify-center hover:tw-bg-primary-light tw-w-1 hover:tw-animate-pulse hover:tw-transition tw-ease-in-out tw-duration-700 tw-bg-transparent"
+            data-target="aside" />
+        <!-- Right view -->
+        <main
+            class="tw-px-4 tw-py-2 tw-justify-items-stretch tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col"
+            id="right-panel">
+            
+            <!-- End of header -->
+            <div
+                id="_page-breadcrumb_row"
+                class="tw-flex tw-my-2 tw-transform-gpu tw-transition-all tw-duration-200 tw-ease-linear">
+                
+            </div>
+            <!-- End of Breadcrumb -->
+            
 
             
-            <div
-                class="container"
-                style="background-color: white">
-               
-            </div>
-        </div>
-    </main>
+        </main>
+    </div>
 </template>

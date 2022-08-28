@@ -1,13 +1,86 @@
 <script setup lang="ts">
-    import EButton from '@components/custom/EButton.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import InputText from '@components/custom/InputText.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ERow from  '@components/custom/ERow.vue'
+    import ECol from  '@components/custom/ECol.vue'
+    import ListBox from  '@components/custom/ListBox.vue'
+    import InputText from  '@components/custom/InputText.vue'
+    import EButton from  '@components/custom/EButton.vue'
+    import ModalDialog from  '@components/custom/ModalDialog.vue'
+    import Title from  '@components/custom/Title.vue'
+    import Table from  '@components/holders/Table.vue'
+    import { computed, reactive } from 'vue'
 
     import {
         useRoute,
         useRouter,
     } from 'vue-router'
     const router = useRouter()
+
+
+    const model = ref(null)
+    const productModalShow = ref(false)
+    // const selectedProduct = null
+    const tableSettings = reactive<TableHeaderSettings>({
+        headers: [
+            {
+                label: 'Fecha de creación',
+                attribute: 'date',
+            },
+            {
+                label: 'Hora de creación',
+                attribute: 'hour',
+            },
+            {
+                label: 'Creado por ',
+                attribute: 'create',
+            },
+            {
+                label: 'Identificación',
+                attribute: 'id',
+            },
+            {
+                label: 'Nombres y Apellidos',
+                attribute: 'name',
+            },
+            {
+                label: 'Estado',
+                attribute: 'estado',
+            },
+            {
+                label: 'Acciones',
+                attribute: 'actions',
+            },
+        ],
+        rows: [
+            {
+                date: '12/03/2022',
+                hour: '15:00',
+                create: 'Admin',
+                id: '09467493043',
+                name: 'Dennisse Aguirre',
+            },
+            
+           
+        ],
+    })
+
+    interface productModel {
+        date: date
+        hour: date
+        create: string
+        id: string
+        name: string
+
+    }
+    let selectedProduct: Optional<productModel> = null
+    function showProduct(product: productModel) {
+        selectedProduct = product
+        console.log(selectedProduct)
+        productModalShow.value = true
+    }
+    function removeItem(index: number) {
+        tableSettings.rows?.splice(index, 1)
+    }
 
     function go():void {
         router.push({ path: '/empleado/agregar' })
@@ -17,46 +90,25 @@
         router.push({ path: '/role' })
     }
 
-</script>
 
+
+</script>
 
 <template>
     <main>
+        
         <ECard>
-            <!--
-            <h1 class="align-center text-center text-3xl font-bold">
-                Bienvenido
-            </h1>
-
-            <div class="flex gap-3">
-                <EButton>Test primary Button</EButton>
-                <EButton type="secondary">Test secondary
-                    Button</EButton>
-            </div>
-             -->
-        </ECard>
-
-        <div
-            class="container"
-            style="
-                background-color: white;
-                border-radius: 5px;
-            ">
-            <div
-                class="container"
-                style="
-                    background-color: white;
-                    padding: 10px;
-                ">
-                <h1
+            <ERow>
+                
+               <h1
                     style="
                         font-size: 35px;
                         color: black;
                     ">
                     Empleados
                 </h1>
-
-                <nav class="navbar">
+            </ERow>
+            <nav class="navbar">
                     <div class="container-fluid">
                         <EButton type="secondary" @click="go" >+ Agregar empleado </EButton>
 
@@ -80,73 +132,40 @@
 
 
                 </nav>
+            
 
-               
-            </div>
+            <!-- <ERow>
+                <ECol cols="12"> -->
+            
+            <Table :header="tableSettings">
+                <template #body-cell="{ cellData, colIdx, rowIdx }">
+                    <div
 
-            <!--TABLA DE EMPLEADOS-->
-            <div
-                class="container"
-                style="background-color: white">
-                <table
-                    class="table table-bordered">
-                    <thead class="table-dark">
-                        <tr>
-                            <th scope="col">
-                                Fecha de creación
-                            </th>
-                            <th scope="col">
-                                Hora de creación
-                            </th>
-                            <th scope="col">
-                                Creado por
-                                
-                            </th>
-                            <th scope="col">
-                                Identificación
-                            </th>
-                            <th scope="col">
-                                Nombres y apellidos
-                            </th>
-                            <th scope="col">
-                               Estado
-                            </th>
-                            <th scope="col">
-                                Acciones
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <th>20/08/2022</th>
-                            <td>15:00</td>
-                            <td>Admin</td>
-                            <td>0945674839 </td>
-                            <td>Dennisse Aguirre</td>
-                            <td>Icono</td>
-                            <td>Icono</td>
-                        </tr>
-                        <tr>
-                             <th>20/08/2022</th>
-                            <td>15:00</td>
-                            <td>Admin</td>
-                            <td>0945674839 </td>
-                            <td>Pamela Rugel</td>
-                            <td>Icono</td>
-                            <td>Icono</td>
-                        </tr>
-                        <tr>
-                            <th>20/08/2022</th>
-                            <td>15:00</td>
-                            <td>Admin</td>
-                            <td>0945674839 </td>
-                            <td>Alejandra Quimi</td>
-                            <td>Icono</td>
-                            <td>Icono</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
+                        
+
+                        v-if="colIdx > 5"
+                        class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
+                        <button
+                            class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
+                            @click="showProduct(cellData)">
+                            Ver más detalles
+                        </button>
+                        <button
+                            class="tw-bg-green-600 tw-py-1 tw-text-white"
+                            @click="removeItem(rowIdx)">
+                            Editar
+                        </button>
+                        <button
+                            class="tw-bg-red-600 tw-py-1 tw-text-white"
+                            @click="removeItem(rowIdx)">
+                            Eliminar
+                        </button>
+                    </div>
+                </template>
+            </Table>
+            
+            <!-- </ECol>
+            </ERow> -->
+        </ECard>
     </main>
 </template>
