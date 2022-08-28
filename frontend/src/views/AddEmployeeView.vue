@@ -1,8 +1,15 @@
 <script setup lang="ts">
     
-    import EButton from '@components/custom/EButton.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import InputText from '@components/custom/InputText.vue'
+     import ECard from '@components/custom/ECard.vue'
+    import ERow from  '@components/custom/ERow.vue'
+    import ECol from  '@components/custom/ECol.vue'
+    import ListBox from  '@components/custom/ListBox.vue'
+    import InputText from  '@components/custom/InputText.vue'
+    import EButton from  '@components/custom/EButton.vue'
+    import ModalDialog from  '@components/custom/ModalDialog.vue'
+    import Title from  '@components/custom/Title.vue'
+    import Table from  '@components/holders/Table.vue'
+    import { computed, reactive } from 'vue'
 
     import {
         useRoute,
@@ -19,14 +26,13 @@
 
 <template>
     <main>
-        <ECard> </ECard>
+        <ECard> 
 
-        <div
-            class="container"
-            style="
-                background-color: white;
+          <div
+             class="container"
+             style="
                 border-radius: 5px;
-            ">
+             ">
             <!--BOTONES Usuario-->
             <div
                 class="container text-center"
@@ -340,6 +346,8 @@
 
             </div>
 
+
+
             <div class="container text-center" style="padding: 10px">
                <div class="row">
                   <EButton type="secondary" @click="go2">Guardar </EButton>
@@ -355,5 +363,8 @@
                 class="container text-center"
                 style="padding: 10px"></div>
         </div>
+
+        </ECard>
+
     </main>
 </template>
