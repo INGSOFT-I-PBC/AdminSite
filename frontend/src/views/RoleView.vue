@@ -36,7 +36,7 @@
                 <div
                     id="__left-logo-container"
                     class="tw-p-10 tw-px-24 tw-bg-gray-100 tw-ring-slate-600 dark:tw-bg-slate-800">
-                    <EButton type="secondary" @click="go" >+ Agregar rol </EButton>
+                    <EButton type="secondary" >+ Agregar rol </EButton>
                 </div>
                 <div
                     id="__left-menu-container"
