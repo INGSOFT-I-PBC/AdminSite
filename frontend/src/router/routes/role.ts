@@ -10,8 +10,8 @@ export const role: Array<RouteConfig> = [
             permission: 'view_dashboard',
             breadcrumb: [
                 { text: 'Usuarios'},
-                { text: 'Empleados' },
-                { text: 'Roles' },
+                { text: 'Empleados' , href: '/empleado',},
+                { text: 'Roles',  },
             ],
         },
     },
