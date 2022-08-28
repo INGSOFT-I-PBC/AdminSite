@@ -59,11 +59,7 @@
                           </form>
 
 
-                        <template
-                            v-for="(menuItemData, idx) of menuItems"
-                            :key="idx">
-                            <DrawerMenuItem :data="menuItemData" />
-                        </template>
+                        
                     </DrawerMenu>
                 </div>
             </div>

@@ -65,8 +65,8 @@
     })
 
     interface productModel {
-        date: date
-        hour: date
+        date: string
+        hour: string
         create: string
         id: string
         name: string
