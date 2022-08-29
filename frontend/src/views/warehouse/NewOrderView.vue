@@ -104,7 +104,7 @@
                 <ECol cols="12" md="6" xl="4">
                     <ListBox
                         v-model="model"
-                        top-label="Enviar a"
+                        top-label="Seleccione un filtro"
                         :options="templateList" />
                 </ECol>
                 <ECol cols="12" md="5">

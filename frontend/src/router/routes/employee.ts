@@ -22,6 +22,9 @@ export const employee: Array<RouteConfig> = [
         meta: {
             pageTitle: 'Configuración de usuario',
             permission: 'can_edit_password',
+            breadcrumb: [
+                { text: 'Inventario' },
+            ],
         },
     },
 
