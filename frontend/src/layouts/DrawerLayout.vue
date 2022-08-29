@@ -1,10 +1,12 @@
 <script setup lang="ts">
-    import { inject, ref } from 'vue'
+    import { inject, ref, computed } from 'vue'
     import UserCard from '../components/UserCard.vue'
     import Title from '../components/custom/Title.vue'
     import { menus as menuItems } from '@/layouts/drawer'
     import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
     import DrawerMenu from '@components/custom/DrawerMenu.vue'
+    import {useAuthStore} from '@store'
+    import {} from '@/router'
     defineProps({
         title: {
             type: String,
@@ -19,9 +21,13 @@
             default: () => [],
         },
     })
+    const authStore = useAuthStore()
     /* Inject flags to children */
     const isDebug = ref(import.meta.env.DEV)
     inject<boolean>('isDebug', isDebug.value)
+    const availableMenus = computed(() => {
+        return menuItems.filter( menu => authStore.hasPermission(''))
+    })
 </script>
 
 <template>
@@ -41,7 +47,7 @@
                 <div
                     id="__left-menu-container"
                     class="tw-w-full tw-flex-1 tw-overflow-y-auto">
-                    <DrawerMenu>
+                    <DrawerMenu ref="menuContainer">
                         <template
                             v-for="(menuItemData, idx) of menuItems"
                             :key="idx">

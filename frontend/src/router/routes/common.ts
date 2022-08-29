@@ -1,5 +1,3 @@
-import type RouteConfig from '../RouteConfig'
-
 export const common: Array<RouteConfig> = [
     {
         path: '/home',

@@ -1,8 +1,6 @@
-import type RouteConfig from '../RouteConfig'
-
 export const role: Array<RouteConfig> = [
     {
-        path: '/role',
+        path: '/admin/roles',
         name: 'role-panel',
         component: () => import('@views/RoleView.vue'),
         meta: {
@@ -13,15 +11,6 @@ export const role: Array<RouteConfig> = [
                 { text: 'Empleados' , href: '/empleado',},
                 { text: 'Roles',  },
             ],
-        },
-    },
-    {
-        path: '/user/reset-password',
-        name: 'user-change-password',
-        component: () => import('@views/auth/ResetPasswordView.vue'),
-        meta: {
-            pageTitle: 'Configuración de usuario',
-            permission: 'can_edit_password',
         },
     },
 ]

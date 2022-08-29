@@ -1,9 +1,7 @@
-import type RouteConfig from '../RouteConfig'
-
 export const employee: Array<RouteConfig> = [
     {
-        path: '/empleado',
-        name: 'empleado-panel',
+        path: '/usuarios/empleados',
+        name: 'employee-management-panel',
         component: () =>
             import('@views/EmployeeView.vue'),
         meta: {
@@ -15,19 +13,6 @@ export const employee: Array<RouteConfig> = [
             ],
         },
     },
-    {
-        path: '/user/reset-password',
-        name: 'user-change-password',
-        component: () => import('@views/auth/ResetPasswordView.vue'),
-        meta: {
-            pageTitle: 'Configuración de usuario',
-            permission: 'can_edit_password',
-            breadcrumb: [
-                { text: 'Inventario' },
-            ],
-        },
-    },
-
      {
         path: '/empleado/agregar',
         name: 'addemployee-panel',

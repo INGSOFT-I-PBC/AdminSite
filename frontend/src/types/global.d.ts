@@ -1,3 +1,7 @@
+import type { RouteMetaData } from '@/router/RouteConfig'
+import type { DefineComponent } from 'vue'
+import type { RouteRecordRaw } from 'vue-router'
+
 /* eslint no-var: 0 */
 declare global {
     type Optional<T> = T | undefined | null
@@ -22,6 +26,7 @@ declare global {
         readonly icon?: Optional<string>
         readonly children?: Optional<MenuItem[]>
         readonly forceRender?: boolean
+        readonly routeName?: string
     }
 
     /********************************
@@ -51,6 +56,26 @@ declare global {
         jwtData: JWTToken | null
         userData: UserInfo | null
     }
+
+    type _RouteMeta = {
+        meta: RouteMetaData
+    }
+    /**
+     * This type contains the configuration of a route with the needed data
+     * and other additions
+     */
+    type RouteConfig = RouteRecordRaw & _RouteMeta
+
+    /**
+     * This is the route breadcrumb only used for decoration on the main view
+     */
+    export type RouteBreadcrumb = {
+        text: string
+        active?: boolean
+        href?: string
+    }
 }
+
+
 
 export {}
