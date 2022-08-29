@@ -64,8 +64,10 @@ export const menus: MenuItem[] = [
     },
     {
         label: 'Inventario',
+        path: '/inventario',
         icon: 'archive',
-        children: [],
+        forceRender: true,
+        
     },
     {
         label: 'Compras',

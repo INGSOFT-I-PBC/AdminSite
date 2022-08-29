@@ -2,12 +2,16 @@ import type RouteConfig from '../RouteConfig'
 
 export const inventory: Array<RouteConfig> = [
     {
-        path: '/inventory',
+        path: '/inventario',
         name: 'inventory-panel',
         component: () => import('@views/InventoryView.vue'),
         meta: {
-            pageTitle: 'Configuración',
-            permission: 'can_edit_user',
+            pageTitle: 'Inventario',
+            permission: 'view_dashboard',
+             breadcrumb: [
+                { text: 'Inventario' },
+               
+            ],
         },
     },
     {
@@ -19,4 +23,18 @@ export const inventory: Array<RouteConfig> = [
             permission: 'can_edit_password',
         },
     },
+     {
+        path: '/inventario/agregar',
+        name: 'addinventario-panel',
+        component: () =>
+            import('@views/AddProductView.vue'),
+        meta: {
+           pageTitle: 'Inventario',
+            permission: 'view_dashboard',
+            breadcrumb: [
+                { text: 'Inventario' },
+            ],
+        },
+    },
+
 ]
