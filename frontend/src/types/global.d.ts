@@ -1,4 +1,3 @@
-import type { RouteMetaData } from '@/router/RouteConfig'
 import type { DefineComponent } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 
@@ -29,6 +28,8 @@ declare global {
         readonly routeName?: string
     }
 
+    type MapObj<T> = { [key: string]: T }
+
     /********************************
      *  Store Types or model types  *
      ********************************/
@@ -57,6 +58,13 @@ declare global {
         userData: UserInfo | null
     }
 
+    type RouteMetaData = {
+        permission?: string
+        pageTitle: string
+        layout?: string
+        breadcrumb?: RouteBreadcrumb[]
+    }
+
     type _RouteMeta = {
         meta: RouteMetaData
     }
@@ -64,7 +72,7 @@ declare global {
      * This type contains the configuration of a route with the needed data
      * and other additions
      */
-    type RouteConfig = RouteRecordRaw & _RouteMeta
+    type RouteConfig = _RouteMeta & Omit<RouteRecordRaw, 'meta'>
 
     /**
      * This is the route breadcrumb only used for decoration on the main view

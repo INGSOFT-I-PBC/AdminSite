@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth-store', {
          * @returns true if the current user has the given permission
          */
         hasPermission(permission: string): boolean {
-            console.debug(
+            console.info(
                 `[AUTH-STORE] Checking if has the permission: ${permission}`
             )
             return this.getPermissions.indexOf(permission) >= 0

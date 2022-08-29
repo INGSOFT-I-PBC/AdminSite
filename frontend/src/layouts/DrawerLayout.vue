@@ -6,7 +6,7 @@
     import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
     import DrawerMenu from '@components/custom/DrawerMenu.vue'
     import {useAuthStore} from '@store'
-    import {} from '@/router'
+    import { useRouter } from 'vue-router'
     defineProps({
         title: {
             type: String,
@@ -22,11 +22,35 @@
         },
     })
     const authStore = useAuthStore()
+    const routeMap: MapObj<any> = {} as MapObj<any>
+    useRouter().getRoutes()
+    .forEach(route => {
+        routeMap[(route as unknown as RouteConfig).name?.toString() || 'unknown'] = route.meta?.permission
+    })
+        // .map(it => ({
+        //     name: it.name,
+        //     meta: it.meta
+        // }))
     /* Inject flags to children */
     const isDebug = ref(import.meta.env.DEV)
     inject<boolean>('isDebug', isDebug.value)
+    type FilteredMenuItem = MenuItem & { showable: boolean }
     const availableMenus = computed(() => {
-        return menuItems.filter( menu => authStore.hasPermission(''))
+        const flatten: FilteredMenuItem[] = []
+        const stack = [...menuItems]
+        while (stack.length) {
+            const currentNode = stack.pop() as MenuItem
+            if (currentNode.forceRender) {
+                const node = {...currentNode, showable: true}
+                node.children = [] // reset to filter childs
+                flatten.push()
+            }
+
+        }
+        return menuItems.filter( menu => {
+            console.log('Verifing for: ', menu.routeName)
+            return menu.forceRender || authStore.hasPermission(routeMap[menu.routeName || 'unknown'] || 'bypass')
+        })
     })
 </script>
 
