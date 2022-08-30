@@ -1,3 +1,5 @@
+import type { RouteRecordRaw } from 'vue-router'
+
 /* eslint no-var: 0 */
 declare global {
     type Optional<T> = T | undefined | null
@@ -7,10 +9,12 @@ declare global {
      * `ListBox`
      * @see Listbox
      */
-    interface ListboxItem {
+    interface _ListboxItem {
         label: string
         value: string
     }
+
+    type ListboxItem = _ListboxItem | MapObj
 
     var ref: typeof import('vue')['ref']
     /// eslint-disable no-var
@@ -22,7 +26,10 @@ declare global {
         readonly icon?: Optional<string>
         readonly children?: Optional<MenuItem[]>
         readonly forceRender?: boolean
+        readonly routeName?: string
     }
+
+    type MapObj<T> = { [key: string]: T }
 
     /********************************
      *  Store Types or model types  *
@@ -50,6 +57,31 @@ declare global {
     export interface AuthState {
         jwtData: JWTToken | null
         userData: UserInfo | null
+    }
+
+    type RouteMetaData = {
+        permission?: string
+        pageTitle: string
+        layout?: string
+        breadcrumb?: RouteBreadcrumb[]
+    }
+
+    type _RouteMeta = {
+        meta: RouteMetaData
+    }
+    /**
+     * This type contains the configuration of a route with the needed data
+     * and other additions
+     */
+    type RouteConfig = _RouteMeta & Omit<RouteRecordRaw, 'meta'>
+
+    /**
+     * This is the route breadcrumb only used for decoration on the main view
+     */
+    export type RouteBreadcrumb = {
+        text: string
+        active?: boolean
+        href?: string
     }
 }
 

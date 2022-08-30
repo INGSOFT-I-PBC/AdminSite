@@ -1,13 +1,10 @@
-import type { Component, Ref } from 'vue'
+import type { Component } from 'vue'
 
 declare module '*.vue' {
     import { type DefineComponent } from 'vue'
 
     import { type Router } from 'vue-router'
 
-    export type Testingaaaa = {
-        a: string
-    }
     /**
      * The Item type for the ListBox component
      */
@@ -21,10 +18,10 @@ declare module '*.vue' {
      */
     export const ListBox: DefineComponent<
         {
-            modelValue: any
+            modelValue: unknown
             /** The `model` property used to show the object on UI */
             label: string
-            options: Array<ListboxItem | string | any>
+            options: Array<ListboxItem | string | MapObj<unknown>>
         },
         Record<string, unknown>,
         Component

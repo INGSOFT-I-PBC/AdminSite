@@ -1,15 +1,16 @@
 export const menus: MenuItem[] = [
-
     {
         label: 'Principal',
         path: '/home',
         icon: 'home',
+        routeName: 'home-view',
         forceRender: true,
     },
     {
         label: 'Dashboard',
         path: '/dashboard',
         icon: 'bar-chart-2',
+        routeName: 'dashboard-view',
         forceRender: true,
     },
     {
@@ -18,15 +19,13 @@ export const menus: MenuItem[] = [
         children: [
             {
                 label: 'Empleados',
-                path: '/empleado',
-
+                path: '/usuarios/empleados',
+                routeName: 'employee-management-panel',
             },
             {
                 label: 'Clientes',
-                path: '/',
-
+                path: '/usuarios/clients',
             },
-
         ],
     },
     {
@@ -39,8 +38,14 @@ export const menus: MenuItem[] = [
                     {
                         label: 'Components',
                         path: '/admin/testing-components',
+                        routeName: 'components-testing',
                     },
                 ],
+            },
+            {
+                label: 'Roles',
+                path: '/admin/roles',
+                routeName: 'role-panel',
             },
         ],
     },
@@ -49,25 +54,42 @@ export const menus: MenuItem[] = [
         icon: 'package',
         children: [
             {
-                label: 'Gestión',
-                path: '/',
+                label: 'Gestión pedidos',
+                path: '/bodegas/pedidos',
+                routeName: 'pedidos-view',
             },
             {
                 label: 'Solcitar Pedido',
                 path: '/bodegas/nueva-orden',
+                routeName: 'warehouse-new-order',
+            },
+            {
+                label: 'Tomas físicas',
+                path: '/bodegas/tomas-fisicas',
+                routeName: 'tomas-fisica-view',
             },
             {
                 label: 'Visualizar Movimientos',
-                path: '',
+                path: '/bodegas/movimiento-inventario',
+                routeName: 'movimiento-inventario-view',
+            },
+            {
+                label: 'Proveedores',
+                path: '/bodegas/proveedores',
+                routeName: 'proveedores-view',
             },
         ],
     },
     {
         label: 'Inventario',
-        path: '/inventario',
         icon: 'archive',
-        forceRender: true,
-        
+        children: [
+            {
+                label: 'Administración',
+                path: '/inventario',
+                routeName: 'inventory-panel',
+            },
+        ],
     },
     {
         label: 'Compras',

@@ -25,7 +25,7 @@ export interface HeaderSetup {
  */
 export class TableHeaderSettings {
     readonly headers: Array<HeaderSetup>
-    readonly rows?: Array<any>
+    readonly rows?: Array<unknown>
 
     constructor() {
         this.headers = []

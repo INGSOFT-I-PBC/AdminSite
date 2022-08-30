@@ -1,28 +1,7 @@
 <script setup lang="ts">
-    import { inject, ref } from 'vue'
-    import UserCard from '@components/UserCard.vue'
-     import ECard from '@components/custom/ECard.vue'
-    import ERow from  '@components/custom/ERow.vue'
-    import ECol from  '@components/custom/ECol.vue'
-    import ListBox from  '@components/custom/ListBox.vue'
-    import InputText from  '@components/custom/InputText.vue'
-    import EButton from  '@components/custom/EButton.vue'
-    import ModalDialog from  '@components/custom/ModalDialog.vue'
-    import Title from  '@components/custom/Title.vue'
-    import Table from  '@components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
-    
-
-    import {
-        useRoute,
-        useRouter,
-    } from 'vue-router'
-    const router = useRouter()
-
-   // 
-
+    import EButton from '@components/custom/EButton.vue'
+    //
 </script>
-
 
 <template>
     <div
@@ -36,30 +15,22 @@
                 <div
                     id="__left-logo-container"
                     class="tw-p-10 tw-px-24 tw-bg-gray-100 tw-ring-slate-600 dark:tw-bg-slate-800">
-                    <EButton type="secondary" >+ Agregar rol </EButton>
+                    <EButton type="secondary">+ Agregar rol </EButton>
                 </div>
                 <div
                     id="__left-menu-container"
-                    class="tw-w-full tw-flex-1 tw-overflow-y-auto tw-bg-gray-200" >
+                    class="tw-w-full tw-flex-1 tw-overflow-y-auto tw-bg-gray-200">
                     <DrawerMenu>
-
-                        <form
-                            class="d-flex"
-                            role="search">
+                        <form class="d-flex" role="search">
                             <input
                                 class="form-control me-2"
                                 type="search"
                                 placeholder="Buscar rol"
                                 aria-label="Search" />
-                            <button
-                                class="btn btn-outline-black"
-                                type="submit">
+                            <button class="btn btn-outline-black" type="submit">
                                 Search
                             </button>
-                          </form>
-
-
-                        
+                        </form>
                     </DrawerMenu>
                 </div>
             </div>
@@ -72,17 +43,11 @@
         <main
             class="tw-px-4 tw-py-2 tw-justify-items-stretch tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col"
             id="right-panel">
-            
             <!-- End of header -->
             <div
                 id="_page-breadcrumb_row"
-                class="tw-flex tw-my-2 tw-transform-gpu tw-transition-all tw-duration-200 tw-ease-linear">
-                
-            </div>
+                class="tw-flex tw-my-2 tw-transform-gpu tw-transition-all tw-duration-200 tw-ease-linear"></div>
             <!-- End of Breadcrumb -->
-            
-
-            
         </main>
     </div>
 </template>

@@ -1,5 +1,3 @@
-import type RouteConfig from '../RouteConfig'
-
 export const inventory: Array<RouteConfig> = [
     {
         path: '/inventario',
@@ -8,33 +6,17 @@ export const inventory: Array<RouteConfig> = [
         meta: {
             pageTitle: 'Inventario',
             permission: 'view_dashboard',
-             breadcrumb: [
-                { text: 'Inventario' },
-               
-            ],
+            breadcrumb: [{ text: 'Inventario' }],
         },
     },
     {
-        path: '/user/reset-password',
-        name: 'user-change-password',
-        component: () => import('@views/auth/ResetPasswordView.vue'),
-        meta: {
-            pageTitle: 'Configuración de usuario',
-            permission: 'can_edit_password',
-        },
-    },
-     {
         path: '/inventario/agregar',
         name: 'addinventario-panel',
-        component: () =>
-            import('@views/AddProductView.vue'),
+        component: () => import('@views/AddProductView.vue'),
         meta: {
-           pageTitle: 'Inventario',
+            pageTitle: 'Inventario',
             permission: 'view_dashboard',
-            breadcrumb: [
-                { text: 'Inventario' },
-            ],
+            breadcrumb: [{ text: 'Inventario' }],
         },
     },
-
 ]

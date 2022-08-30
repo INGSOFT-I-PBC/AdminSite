@@ -10,7 +10,7 @@
         if (origin?.path === '/error-403' || origin?.path === '/error-404') {
             redirectPath = '/'
         }
-        router.push({ path: '/' })
+        router.push({ path: redirectPath })
     }
 </script>
 

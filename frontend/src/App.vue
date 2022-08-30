@@ -1,7 +1,6 @@
 <script setup lang="ts">
     import { computed, defineAsyncComponent, provide } from 'vue'
     import { useRoute, RouterView } from 'vue-router'
-    import type { RouteBreadcrumb, RouteMetaData } from './router/RouteConfig'
     const FullLayout = defineAsyncComponent(() => import('./layouts/FullLayout.vue'))
     const VerticalLayout = defineAsyncComponent(
         () => import('./layouts/DrawerLayout.vue')

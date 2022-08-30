@@ -24,7 +24,7 @@
         { label: 'Bodega 4', value: 'Gato' },
     ]
 
-    const model = ref(null)
+    const model = ref({})
     const productModalShow = ref(false)
     // const selectedProduct = null
     const tableSettings = reactive<TableHeaderSettings>({

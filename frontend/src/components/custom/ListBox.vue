@@ -2,16 +2,16 @@
     import {
         Listbox,
         ListboxButton,
-        ListboxLabel,
+        // ListboxLabel,
         ListboxOption,
         ListboxOptions,
     } from '@headlessui/vue'
     import { computed } from 'vue'
     import VueFeather from 'vue-feather'
-    type ValidListboxItem = any | ListboxItem
+    type ValidListboxItem = ListboxItem & Record<string | number, unknown>
     const props = defineProps({
         modelValue: {
-            type: Object as any,
+            type: Object,
             default: null,
         },
         topLabel: {
@@ -25,7 +25,8 @@
         options: {
             type: Array<ValidListboxItem>,
             default: [],
-            validator: (value: any) => value !== null || value !== undefined,
+            validator: (value: Optional<unknown>) =>
+                value !== null || value !== undefined,
         },
     })
     const emit = defineEmits(['update:modelValue'])
@@ -89,7 +90,7 @@
                                     selected ? 'tw-font-medium' : 'tw-font-normal',
                                     'tw-block tw-truncate',
                                 ]"
-                                >{{ item[props.label] || '' }}</span
+                                >{{ `${item[props.label] || ''}` }}</span
                             >
                             <span
                                 v-if="selected"

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import type { text } from '@fortawesome/fontawesome-svg-core'
     import { computed } from 'vue'
 
     const props = defineProps({
@@ -8,6 +7,7 @@
             default: '',
         },
         modelModifiers: {
+            type: Object,
             default: () => ({} as Record<string, unknown>),
         },
         type: {
@@ -16,6 +16,7 @@
         },
         label: {
             type: String,
+            default: null,
         },
         placeholder: {
             type: String,
@@ -27,6 +28,7 @@
         },
         infoLabel: {
             type: String,
+            default: null,
         },
         infoStyle: {
             type: String,

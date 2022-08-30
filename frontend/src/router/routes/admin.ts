@@ -1,5 +1,3 @@
-import type RouteConfig from '../RouteConfig'
-
 export const admin: Array<RouteConfig> = [
     {
         path: '/user/admin',
@@ -22,7 +20,7 @@ export const admin: Array<RouteConfig> = [
 
     {
         path: '/admin/creacion-usuario',
-        name: 'CreacionUsuario-view',
+        name: 'user-creation-view',
         component: () => import('@views/admin/CreacionUsuario.vue'),
         meta: {
             pageTitle: 'Creacion Cuenta Usuario',

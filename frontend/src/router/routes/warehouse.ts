@@ -1,5 +1,3 @@
-import type RouteConfig from '../RouteConfig'
-
 export const warehouses: Array<RouteConfig> = [
     {
         path: '/bodegas/nueva-orden',
@@ -22,7 +20,7 @@ export const warehouses: Array<RouteConfig> = [
     {
         path: '/bodegas/tomas-fisicas',
         component: () => import('@views/warehouse/GestionTomasFisicas.vue'),
-        name: 'TomasFisicas-view',
+        name: 'tomas-fisica-view',
         meta: {
             pageTitle: 'Tomas Fisicas',
             permission: 'view_dashboard',
@@ -32,7 +30,7 @@ export const warehouses: Array<RouteConfig> = [
 
     {
         path: '/bodegas/movimiento-inventario',
-        name: 'MovimientoInventario-view',
+        name: 'movimiento-inventario-view',
         component: () => import('@views/warehouse/MovimientosInventario.vue'),
         meta: {
             pageTitle: 'Movimiento Inventario',
@@ -41,7 +39,7 @@ export const warehouses: Array<RouteConfig> = [
 
     {
         path: '/bodegas/proveedores',
-        name: 'Proveedores-view',
+        name: 'proveedores-view',
         component: () => import('@views/warehouse/ProveedoresView.vue'),
         meta: {
             pageTitle: 'Proveedores',
@@ -49,20 +47,11 @@ export const warehouses: Array<RouteConfig> = [
     },
 
     {
-        path: '/bodegas/tomas-pedidos',
-        name: 'Pedidos-view',
+        path: '/bodegas/pedidos',
+        name: 'pedidos-view',
         component: () => import('@views/warehouse/GestionPedidos.vue'),
         meta: {
             pageTitle: 'Gestion Pedidos',
-        },
-    },
-
-    {
-        path: '/bodegas/solicitud-pedido',
-        name: 'SolicitudPedido-view',
-        component: () => import('@views/warehouse/SolicitudPedido.vue'),
-        meta: {
-            pageTitle: 'Solicitud Pedidos',
         },
     },
 ]
