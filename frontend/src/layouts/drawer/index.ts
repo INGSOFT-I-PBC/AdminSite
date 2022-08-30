@@ -1,5 +1,4 @@
 export const menus: MenuItem[] = [
-
     {
         label: 'Principal',
         path: '/home',
@@ -21,8 +20,7 @@ export const menus: MenuItem[] = [
             {
                 label: 'Empleados',
                 path: '/usuarios/empleados',
-                routeName: 'employee-management-panel'
-
+                routeName: 'employee-management-panel',
             },
             {
                 label: 'Clientes',
@@ -40,15 +38,15 @@ export const menus: MenuItem[] = [
                     {
                         label: 'Components',
                         path: '/admin/testing-components',
-                        routeName: 'components-testing'
+                        routeName: 'components-testing',
                     },
                 ],
             },
             {
                 label: 'Roles',
                 path: '/admin/roles',
-                routeName: 'role-panel'
-            }
+                routeName: 'role-panel',
+            },
         ],
     },
     {
@@ -58,28 +56,28 @@ export const menus: MenuItem[] = [
             {
                 label: 'Gestión pedidos',
                 path: '/bodegas/pedidos',
-                routeName: 'pedidos-view'
+                routeName: 'pedidos-view',
             },
             {
                 label: 'Solcitar Pedido',
                 path: '/bodegas/nueva-orden',
-                routeName: 'warehouse-new-order'
+                routeName: 'warehouse-new-order',
             },
             {
                 label: 'Tomas físicas',
                 path: '/bodegas/tomas-fisicas',
-                routeName: 'tomas-fisica-view'
+                routeName: 'tomas-fisica-view',
             },
             {
                 label: 'Visualizar Movimientos',
                 path: '/bodegas/movimiento-inventario',
-                routeName: 'movimiento-inventario-view'
+                routeName: 'movimiento-inventario-view',
             },
             {
                 label: 'Proveedores',
                 path: '/bodegas/proveedores',
-                routeName: 'proveedores-view'
-            }
+                routeName: 'proveedores-view',
+            },
         ],
     },
     {
@@ -89,8 +87,8 @@ export const menus: MenuItem[] = [
             {
                 label: 'Administración',
                 path: '/inventario',
-                routeName: 'inventory-panel'
-            }
+                routeName: 'inventory-panel',
+            },
         ],
     },
     {

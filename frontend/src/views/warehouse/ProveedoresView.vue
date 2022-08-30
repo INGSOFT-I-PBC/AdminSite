@@ -286,9 +286,7 @@
                             </div>
                         </div>
 
-                        <div
-                            class="row g-3"
-                            style="padding: 10px" >
+                        <div class="row g-3" style="padding: 10px">
                             <div class="col">
                                 <button type="button" class="btn btn-outline-dark">
                                     Guardar Informacion

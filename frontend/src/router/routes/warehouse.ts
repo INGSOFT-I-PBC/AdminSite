@@ -54,5 +54,4 @@ export const warehouses: Array<RouteConfig> = [
             pageTitle: 'Gestion Pedidos',
         },
     },
-
 ]

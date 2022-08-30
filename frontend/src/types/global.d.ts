@@ -10,10 +10,12 @@ declare global {
      * `ListBox`
      * @see Listbox
      */
-    interface ListboxItem {
+    interface _ListboxItem {
         label: string
         value: string
     }
+
+    type ListboxItem = _ListboxItem | MapObj
 
     var ref: typeof import('vue')['ref']
     /// eslint-disable no-var
@@ -83,7 +85,5 @@ declare global {
         href?: string
     }
 }
-
-
 
 export {}
