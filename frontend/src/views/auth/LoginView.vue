@@ -2,8 +2,7 @@
     import ECard from '@components/custom/ECard.vue'
     import EButton from '@components/custom/EButton.vue'
     import { useAuthStore } from '@store'
-    import { inject } from 'vue'
-    import { useRoute, useRouter } from 'vue-router'
+    import { useRouter } from 'vue-router'
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
 
@@ -46,7 +45,7 @@
                             :type="toggle ? 'text' : 'password'"
                             id="password"
                             :right-icon="toggle ? 'eye-off' : 'eye'"
-                            @rightIconClick="switchVisibility">
+                            @right-icon-click="switchVisibility">
                         </InputText>
                         <!--rightIcon="eye"-->
                     </div>

@@ -1,4 +1,3 @@
-import type { DefineComponent } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
 
 /* eslint no-var: 0 */

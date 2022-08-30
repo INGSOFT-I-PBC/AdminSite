@@ -8,7 +8,7 @@
     } from '@headlessui/vue'
     import { computed } from 'vue'
     import VueFeather from 'vue-feather'
-    type ValidListboxItem = ListboxItem & Record<string | number, any>
+    type ValidListboxItem = ListboxItem & Record<string | number, unknown>
     const props = defineProps({
         modelValue: {
             type: Object,

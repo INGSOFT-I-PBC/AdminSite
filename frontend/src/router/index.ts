@@ -11,7 +11,7 @@ import { warehouses } from './routes/warehouse'
 import { employee } from './routes/employee'
 import { role } from './routes/role'
 
-const routes: RouteRecordRaw[] = [
+const routes = [
     {
         path: '/',
         redirect: '/home',
@@ -50,7 +50,7 @@ const routes: RouteRecordRaw[] = [
 
 const router = createRouter({
     history: createWebHashHistory(),
-    routes: routes,
+    routes: routes as RouteRecordRaw[],
 })
 
 /**

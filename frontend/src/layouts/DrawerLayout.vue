@@ -22,6 +22,7 @@
         },
     })
     const authStore = useAuthStore()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const routeMap: MapObj<any> = {} as MapObj<any>
     useRouter()
         .getRoutes()
@@ -38,6 +39,7 @@
     const isDebug = ref(import.meta.env.DEV)
     inject<boolean>('isDebug', isDebug.value)
     type FilteredMenuItem = MenuItem & { showable: boolean }
+    // TODO: Make this work
     const availableMenus = computed(() => {
         const flatten: FilteredMenuItem[] = []
         const stack = [...menuItems]

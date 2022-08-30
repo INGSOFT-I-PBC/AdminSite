@@ -3,14 +3,11 @@
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
     import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
-    import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
+    import { reactive } from 'vue'
 
-    import { useRoute, useRouter } from 'vue-router'
+    import { useRouter } from 'vue-router'
     const router = useRouter()
 
     const templateList = [
@@ -23,7 +20,7 @@
         { label: 'Por cantidad', value: '4' },
     ]
 
-    const model = ref(null)
+    const model = ref({})
     const productModalShow = ref(false)
     // const selectedProduct = null
     const tableSettings = reactive<TableHeaderSettings>({

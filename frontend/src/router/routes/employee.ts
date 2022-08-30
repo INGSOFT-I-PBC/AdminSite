@@ -10,7 +10,7 @@ export const employee: Array<RouteConfig> = [
         },
     },
     {
-        path: '/empleado/agregar',
+        path: '/usuarios/empleado/agregar',
         name: 'addemployee-panel',
         component: () => import('@views/AddEmployeeView.vue'),
         meta: {

@@ -1,13 +1,15 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
     import { TableHeaderSettings } from './definitions/table'
-    const props = defineProps({
+
+    defineProps({
         header: {
             type: TableHeaderSettings,
             require: true,
+            default: () => ({} as TableHeaderSettings),
         },
         columns: {
-            type: Array<any>,
+            type: Array<unknown>,
             default: [],
         },
     })
@@ -46,7 +48,9 @@
                                     `${
                                         (column?.morphFunc
                                             ? column.morphFunc(data)
-                                            : data)[column.attribute || ''] || ''
+                                            : (data as any))[
+                                            column.attribute || ''
+                                        ] || ''
                                     }`
                                 }}
                             </span>

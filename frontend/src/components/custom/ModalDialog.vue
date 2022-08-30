@@ -45,11 +45,11 @@
         emit('update:show', false)
         emit('close')
     }
-    function okClicked(_e: Event) {
+    function okClicked() {
         emit('ok')
         emit('update:show', false)
     }
-    function cancelClicked(_e: Event) {
+    function cancelClicked() {
         emit('cancel')
         emit('update:show', false)
     }
