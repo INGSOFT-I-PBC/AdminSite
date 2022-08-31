@@ -123,7 +123,7 @@
             v-model:show="productModalShow"
             title="Detalle del producto">
             <h1>nombre: {{ selectedProduct?.name }}</h1>
-            <span>Cantidad: ${{ selectedProduct?.stock}}</span>
+            
     </ModalDialog>
         
         <ECard>
