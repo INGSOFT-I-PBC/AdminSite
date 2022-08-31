@@ -328,11 +328,11 @@
                                     ">
                                     Elegir Bodega
                                 </h6>
-                                <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
+                                <input type="checkbox" id="jack" value="Jack" >
                                 <label for="jack"> Bodega 1  </label>
-                                <input type="checkbox" id="john" value="John" v-model="checkedNames">
+                                <input type="checkbox" id="john" value="John" >
                                 <label for="john"> Bodega 2 </label>
-                                <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
+                                <input type="checkbox" id="mike" value="Mike" >
                                 <label for="mike"> Bodega 3 </label>
                                     
                             </div>

@@ -56,7 +56,7 @@
                                 type="submit">
                                 Search
                             </button>
-                            <input type="checkbox" id="checkbox" v-model="checked">
+                            
                           </form>
 
 

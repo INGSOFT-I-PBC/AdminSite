@@ -110,7 +110,7 @@
             v-model:show="productModalShow"
             title="Detalle del empleado">
             <h1>nombre: {{ selectedProduct?.name }}</h1>
-            <span>Cantidad: ${{ selectedProduct?.quantity }}</span>
+            <span>Cantidad: ${{ selectedProduct?.id }}</span>
         </ModalDialog>
         
         <ECard>
