@@ -1,14 +1,23 @@
 <script setup lang="ts">
     import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import EButton from '@components/custom/EButton.vue'
-    import Table from '@components/holders/Table.vue'
-    import { reactive } from 'vue'
+    import ERow from  '@components/custom/ERow.vue'
+    import ECol from  '@components/custom/ECol.vue'
+    import ListBox from  '@components/custom/ListBox.vue'
+    import InputText from  '@components/custom/InputText.vue'
+    import EButton from  '@components/custom/EButton.vue'
+    import ModalDialog from  '@components/custom/ModalDialog.vue'
+    import Title from  '@components/custom/Title.vue'
+    import Table from  '@components/holders/Table.vue'
+    import { computed, reactive } from 'vue'
 
-    import { useRouter } from 'vue-router'
+    import {
+        useRoute,
+        useRouter,
+    } from 'vue-router'
     const router = useRouter()
 
-    // const model = ref(null)
+
+    const model = ref(null)
     const productModalShow = ref(false)
     // const selectedProduct = null
     const tableSettings = reactive<TableHeaderSettings>({
@@ -50,6 +59,8 @@
                 id: '09467493043',
                 name: 'Dennisse Aguirre',
             },
+            
+           
         ],
     })
 
@@ -59,6 +70,7 @@
         create: string
         id: string
         name: string
+
     }
     let selectedProduct: Optional<productModel> = null
     function showProduct(product: productModel) {
@@ -70,58 +82,90 @@
         tableSettings.rows?.splice(index, 1)
     }
 
-    function go(): void {
-        router.push({ path: 'usuarios/empleado/agregar' })
+    function go():void {
+        router.push({ path: '/usuarios/empleado/agregar' })
     }
 
-    function rol(): void {
+
+     function go3():void {
+        router.push({ path: '/usuarios/empleado/agregar' })
+    }
+  
+
+    function rol():void {
         router.push({ path: '/admin/roles' })
     }
+
+
+
 </script>
 
 <template>
     <main>
+         <ModalDialog
+            id="employee-modal"
+            v-model:show="productModalShow"
+            title="Detalle del empleado">
+            <h1>nombre: {{ selectedProduct?.name }}</h1>
+            <span>Cantidad: ${{ selectedProduct?.id }}</span>
+        </ModalDialog>
+        
         <ECard>
             <ERow>
-                <h1 style="font-size: 35px; color: black">Empleados</h1>
+                
+               <h1
+                    style="
+                        font-size: 35px;
+                        color: black;
+                    ">
+                    Empleados
+                </h1>
             </ERow>
             <nav class="navbar">
-                <div class="container-fluid">
-                    <EButton type="secondary" @click="go"
-                        >+ Agregar empleado
-                    </EButton>
+                    <div class="container-fluid">
+                        <EButton type="secondary" @click="go" >+ Agregar empleado </EButton>
 
-                    <form class="d-flex" role="search">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Buscar empleado"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
+                        <form
+                            class="d-flex"
+                            role="search">
+                            <input
+                                class="form-control me-2"
+                                type="search"
+                                placeholder="Buscar empleado"
+                                aria-label="Search" />
+                            <button
+                                class="btn btn-outline-black"
+                                type="submit">
+                                Search
+                            </button>
+                        </form>
 
-                    <EButton @click="rol">Roles</EButton>
-                </div>
-            </nav>
+                        <EButton @click="rol">Roles</EButton>
+                    </div>
+
+
+                </nav>
+            
 
             <!-- <ERow>
                 <ECol cols="12"> -->
-
+            
             <Table :header="tableSettings">
                 <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div
+
+                        
+
                         v-if="colIdx > 5"
                         class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
                         <button
                             class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
-                            @click="showProduct(cellData as productModel)">
+                            @click="showProduct(cellData)">
                             Ver más detalles
                         </button>
                         <button
                             class="tw-bg-green-600 tw-py-1 tw-text-white"
-                            @click="removeItem(rowIdx)">
+                            @click="go3">
                             Editar
                         </button>
                         <button
@@ -132,7 +176,7 @@
                     </div>
                 </template>
             </Table>
-
+            
             <!-- </ECol>
             </ERow> -->
         </ECard>
