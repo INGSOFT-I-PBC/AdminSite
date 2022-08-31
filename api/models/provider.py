@@ -1,8 +1,8 @@
 from django.db import models
-from .common import TimestampModel, TraceableModel, StatusModel
+from .common import TimestampModel, TraceableModel, Status
 
 
-class ProviderModel(TimestampModel, TraceableModel):
+class Provider(TimestampModel, TraceableModel):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     name = models.CharField(max_length=128)
@@ -13,7 +13,8 @@ class ProviderModel(TimestampModel, TraceableModel):
     email = models.EmailField(max_length=64)
     latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True)
     longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True)
-    status = models.ForeignKey(StatusModel, on_delete=models.RESTRICT)
+    status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "provider"
+        indexes = [models.Index(fields=["name"]), models.Index(fields=["email"])]

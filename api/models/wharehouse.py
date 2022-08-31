@@ -1,7 +1,7 @@
 from django.db import models
-from .common import StatusModel, TimestampModel
+from .common import Status, TimestampModel
 from .users import Employee
-from .items import ItemsModel
+from .items import Item
 from django.core.validators import MinValueValidator
 
 
@@ -12,7 +12,7 @@ class WharehouseModel(TimestampModel):
     latitude = models.DecimalField(max_digits=10, decimal_places=6, null=True)
     longitude = models.DecimalField(max_digits=10, decimal_places=6, null=True)
 
-    status = models.ForeignKey(StatusModel, on_delete=models.RESTRICT)
+    status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "wharehouse"
@@ -23,7 +23,7 @@ class InventoryModel(TimestampModel):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
     wharehouse = models.ForeignKey(WharehouseModel, on_delete=models.RESTRICT)
-    item = models.ForeignKey(ItemsModel, on_delete=models.RESTRICT)
+    item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     quantity = models.IntegerField(validators=[MinValueValidator(0)])
 
     delete_at = None
@@ -45,7 +45,7 @@ class WharehouseTransactionModel(models.Model):
     )
     created_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
-    status = models.ForeignKey(StatusModel, on_delete=models.RESTRICT)
+    status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "wharehouse_transaction"
@@ -54,7 +54,7 @@ class WharehouseTransactionModel(models.Model):
 class WhTransactionDetailsModel(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     header = models.ForeignKey(WharehouseTransactionModel, on_delete=models.CASCADE)
-    item = models.ForeignKey(ItemsModel, on_delete=models.RESTRICT)
+    item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     quantity = models.IntegerField()
 
     class Meta:

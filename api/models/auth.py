@@ -1,3 +1,4 @@
+from dataclasses import field
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.hashers import make_password
@@ -51,6 +52,14 @@ class Permission(models.Model):
     """Permission
 
     This class represents a permission that a user have.
+
+    Attributes:
+        name (CharField):
+            This field holds the human-readable name of the current permission.
+
+        codename (CharField):
+            This field holds an system identifier for the permission, may contain
+            extra information/flags.
     """
 
     id = models.AutoField(primary_key=True, editable=False, auto_created=True)
@@ -59,12 +68,34 @@ class Permission(models.Model):
 
     class Meta:
         db_table = "permission"
+        indexes = [
+            models.Index(
+                fields=[
+                    "name",
+                ]
+            )
+        ]
 
     def __str__(self):
         return f"({self. name}, {self.codename})"
 
 
 class Group(models.Model):
+    """
+    This Model represent a group of permission that a User has available/assigned.
+
+    Args:
+        models (Model): A Django's Model
+
+    Attributes:
+        name(CharField):
+            This field represents a human-readable name for the current permission.
+
+        codename(CharField):
+            This field represent the system identifier of the `Group` that is used
+            for internal logic
+    """
+
     name = models.CharField(max_length=128, null=False)
     codename = models.CharField(max_length=128, null=False)
 
@@ -126,9 +157,6 @@ class User(AbstractBaseUser, TModel):
 
     objects = AuthManager()
 
-    class Meta:
-        db_table = "user"
-
     def __str__(self):
         return f"('{self.username}' '{self.email}')"
 
@@ -165,3 +193,20 @@ class User(AbstractBaseUser, TModel):
     def is_staff(self):
         """Checks if the user is a staff (Developer Team/Super User)"""
         return self.is_admin
+
+    class Meta:
+        db_table = "user"
+        indexes = [
+            models.Index(
+                fields=[
+                    "username",
+                ],
+                name="idx_username_search",
+            ),
+            models.Index(
+                fields=[
+                    "email",
+                ],
+                name="idx_email_find",
+            ),
+        ]
