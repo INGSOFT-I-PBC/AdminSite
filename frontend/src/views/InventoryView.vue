@@ -10,10 +10,7 @@
     import Table from  '@components/holders/Table.vue'
     import { computed, reactive } from 'vue'
 
-    import {
-        useRoute,
-        useRouter,
-    } from 'vue-router'
+    import { useRouter  } from 'vue-router'
     const router = useRouter()
 
 
@@ -28,7 +25,7 @@
     ]
 
 
-    const model = ref(null)
+    const model = ref({})
     const productModalShow = ref(false)
     // const selectedProduct = null
     const tableSettings = reactive<TableHeaderSettings>({
