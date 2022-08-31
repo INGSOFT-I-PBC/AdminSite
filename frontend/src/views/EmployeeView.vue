@@ -86,6 +86,15 @@
         router.push({ path: '/empleado/agregar' })
     }
 
+    function go2():void {
+        router.push({ path: '/empleado/ver' })
+    }
+
+     function go3():void {
+        router.push({ path: '/empleado/agregar' })
+    }
+  
+
     function rol():void {
         router.push({ path: '/role' })
     }
@@ -96,6 +105,13 @@
 
 <template>
     <main>
+         <ModalDialog
+            id="employee-modal"
+            v-model:show="productModalShow"
+            title="Detalle del empleado">
+            <h1>nombre: {{ selectedProduct?.name }}</h1>
+            <span>Cantidad: ${{ selectedProduct?.quantity }}</span>
+        </ModalDialog>
         
         <ECard>
             <ERow>
@@ -152,7 +168,7 @@
                         </button>
                         <button
                             class="tw-bg-green-600 tw-py-1 tw-text-white"
-                            @click="removeItem(rowIdx)">
+                            @click="go3">
                             Editar
                         </button>
                         <button

@@ -118,6 +118,13 @@
 
 <template>
     <main>
+    <ModalDialog
+            id="product-modal"
+            v-model:show="productModalShow"
+            title="Detalle del producto">
+            <h1>nombre: {{ selectedProduct?.name }}</h1>
+            <span>Cantidad: ${{ selectedProduct?.quantity }}</span>
+    </ModalDialog>
         
         <ECard>
             <ERow>
@@ -170,7 +177,6 @@
                 <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div
 
-                        
 
                         v-if="colIdx > 8"
                         class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
@@ -181,7 +187,7 @@
                         </button>
                         <button
                             class="tw-bg-green-600 tw-py-1 tw-text-white"
-                            @click="removeItem(rowIdx)">
+                            @click="go">
                             Editar
                         </button>
                         <button

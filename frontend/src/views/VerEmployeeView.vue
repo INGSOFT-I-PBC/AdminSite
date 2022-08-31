@@ -18,7 +18,7 @@
     const router = useRouter()
 
     function go2():void {
-        router.push({ path: '/inventario' })
+        router.push({ path: '/empleado' })
     }
 
 </script>
@@ -48,12 +48,13 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Código *
+                                    Fecha de creación
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
                                     placeholder="23/08/2022"
+                                    disabled=false
                                     aria-label="First name" />
 
 
@@ -66,12 +67,13 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                  Nombre *
+                                   Hora de creación
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
                                     placeholder="15:00"
+                                    disabled=false
                                     aria-label="First name" />
                                 
                             </div>
@@ -83,28 +85,13 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Marca *
+                                    Creado por
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
                                     placeholder="Admin"
-                                    aria-label="First name" />
-                            </div>
-
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                   Modelo
-                                </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder="Admin"
+                                    disabled=false
                                     aria-label="First name" />
                             </div>
                         </div>
@@ -115,31 +102,25 @@
             <!--DIV DE BOTONES Y NAV-->
             <div class="container text-center">
                 <div class="row">
-                     <div class="col">
+                    <div class="col">
+                        <div class="row g-3">
+                            <div class="col">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Categoría*
+                                    Cédula *
                                 </h6>
-                                <select
-                                    class="form-select"
-                                    aria-label="Default select example">
-                                    <option
-                                        selected>
-                                        Femenino
-                                    </option>
-                                    <option
-                                        value="1">
-                                        Masculino
-                                    </option>
-                                    <option
-                                        value="2">
-                                        Unisex
-                                    </option>
-                                </select>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                     disabled=false
+                                    aria-label="First name" />
+                            </div>
+                        </div>
                     </div>
 
 
@@ -150,12 +131,13 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Descripción *
+                                    Nombres y apellidos *
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
                                     placeholder=""
+                                     disabled=false
                                     aria-label="First name" />
                     </div>
 
@@ -166,29 +148,16 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Precio*
+                                    Fecha de Nacimiento*
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
                                     placeholder=""
+                                     disabled=false
                                     aria-label="First name" />
                             </div>
-                    <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Peso
-                                </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name" />
-                            </div>
+
 
                 </div>
             </div>
@@ -205,13 +174,15 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Tipo*
+                                    Teléfono
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
                                     placeholder=""
+                                    disabled=false
                                     aria-label="First name" />
+                                    
                     </div>
 
                     <div class="col">
@@ -221,18 +192,26 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Iva*
+                                    Sexo*
                                 </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name" />
+                                <select
+                                    class="form-select"
+                                    disabled=false
+                                    aria-label="Default select example">
+                                    <option
+                                        selected>
+                                        Femenino
+                                    </option>
+                                    <option
+                                        value="1">
+                                        Masculino
+                                    </option>
+                                    <option
+                                        value="2">
+                                        Otro
+                                    </option>
+                                </select>
                     </div>
-
-
-
-                    
 
                     <div class="col">
                                 <h6
@@ -255,25 +234,27 @@
             <!--DIV DE BOTONES Y NAV-->
             <div class="container text-center">
                 <div class="row">
-                    
-                     <div class="col">
+                    <div class="col">
+                        <div class="row g-3">
+                            <div class="col">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Fecha de creación
+                                    Provincia *
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="23/08/2022"
+                                    placeholder=""
                                     disabled=false
                                     aria-label="First name" />
-
-
                             </div>
+                        </div>
+                    </div>
+
 
                     <div class="col">
                                 <h6
@@ -282,16 +263,16 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                   Hora de creación
+                                    Ciudad *
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="15:00"
+                                    placeholder=""
                                     disabled=false
                                     aria-label="First name" />
-                                
-                            </div>
+                                    
+                    </div>
 
                     <div class="col">
                                 <h6
@@ -300,15 +281,17 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Creado por
+                                   Correo*
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="Admin"
+                                    placeholder=""
                                     disabled=false
                                     aria-label="First name" />
+                                     
                             </div>
+
 
                 </div>
 
@@ -318,7 +301,6 @@
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
-
                             <div class="col">
                                 <h6
                                     style="
@@ -326,42 +308,16 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Elegir Bodega
-                                </h6>
-                                <input type="checkbox" id="jack" value="Jack" v-model="checkedNames">
-                                <label for="jack"> Bodega 1  </label>
-                                <input type="checkbox" id="john" value="John" v-model="checkedNames">
-                                <label for="john"> Bodega 2 </label>
-                                <input type="checkbox" id="mike" value="Mike" v-model="checkedNames">
-                                <label for="mike"> Bodega 3 </label>
-                                    
-                            </div>
-
-                             <div class="col">
-
-
-                                <InputText label="Cantidad del Producto" type="number" />
-                            </div>
-
-
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Descuento
+                                    Dirección domiciliaria
                                 </h6>
                                 <input
                                     type="text"
                                     class="form-control"
+                                    placeholder=""
+                                    disabled=false
                                     aria-label="First name" />
+                                    
                             </div>
-
-
-
-
                         </div>
                     </div>
                 </div>
@@ -369,33 +325,40 @@
 
             <div class="container text-center">
                <div class="row">
-                    <div class="col">
+                   <div class="col">
                                 <h6
                                     style="
                                         font-size: 15px;
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Cargar imagen
+                                    Rol:
                                 </h6>
-                                
+                                <select
+                                    class="form-select"
+                                    disabled=false
+                                    aria-label="Default select example">
+                                    <option
+                                        selected>
+                                        Cajero
+                                    </option>
+                                    <option
+                                        value="1">
+                                        Vendedor
+                                    </option>
+                                    <option
+                                        value="2">
+                                        Two
+                                    </option>
+                                    <option
+                                        value="3">
+                                        Three
+                                    </option>
+                                </select>
                             </div>
-
-
-                   
                </div>
 
             </div>
-
-
-
-            <div class="container text-center" style="padding: 10px">
-               <div class="row">
-                  <EButton type="secondary" @click="go2">Guardar </EButton>
-               </div>
-
-            </div>
-
 
 
 

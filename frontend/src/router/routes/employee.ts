@@ -11,7 +11,7 @@ export const employee: Array<RouteConfig> = [
             permission: 'view_dashboard',
             breadcrumb: [
                 { text: 'Usuarios' },
-                { text: 'Empleados' },
+                { text: 'Empleados',  href: '/empleado' },
             ],
         },
     },
@@ -38,8 +38,24 @@ export const employee: Array<RouteConfig> = [
             permission: 'view_dashboard',
             breadcrumb: [
                 { text: 'Usuarios' },
-                { text: 'Empleados'},
+                { text: 'Empleados',  href: '/empleado'},
             ],
         },
+
     },
+
+    {
+        path: '/empleado/ver',
+        name: 'veremployee-panel',
+        component: () =>
+            import('@views/VerEmployeeView.vue'),
+        meta: {
+           pageTitle: 'Gestión de Empleados',
+            permission: 'view_dashboard',
+            breadcrumb: [
+                { text: 'Usuarios' },
+                { text: 'Empleados',  href: '/empleado'},
+            ],
+        },
+    }, 
 ]

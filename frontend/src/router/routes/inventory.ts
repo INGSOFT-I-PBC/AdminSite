@@ -37,4 +37,6 @@ export const inventory: Array<RouteConfig> = [
         },
     },
 
+    
+
 ]
