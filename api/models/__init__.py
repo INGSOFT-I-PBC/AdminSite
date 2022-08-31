@@ -1,12 +1,12 @@
 from .auth import User, UserPermission, Permission, AuthManager, GroupPermission, Group
-from .cities import CitiesModel, ProvinceModel
-from .historialcaja import HistorialCajaModel
-from .invoice import InvoiceDetailsModel, PaymentMethodModel, CreditNote, InvoiceModel
-from .items import CategoryModel, CategoryParamsModel, ItemsModel, ItemMetaDataModel
-from .offices import BranchOfficeModel
-from .orders import OrderRequestModel, OrderRequestDetailsModel, OrderStatusModel
-from .provider import ProviderModel
-from .purchases import PurchaseModel, PurchaseDetailsModel, PurchaseStatusModel
+from .cities import City, Province
+from .historialcaja import HistorialCaja
+from .invoice import InvoiceDetails, PaymentMethod, CreditNote, Invoice
+from .items import Category, CategoryParam, Item, ItemMetaData
+from .offices import BranchOffice
+from .orders import OrderRequest, OrderRequestDetail, OrderStatus
+from .provider import Provider
+from .purchases import Purchase, PurchaseDetail, PurchaseStatus
 from .wharehouse import (
     WharehouseModel,
     WharehouseTransactionModel,
@@ -25,25 +25,25 @@ __all__ = [
     "Role",
     "AuthManager",
     "Employee",
-    "CitiesModel",
-    "ProvinceModel",
-    "HistorialCajaModel",
-    "InvoiceDetailsModel",
-    "PaymentMethodModel",
+    "City",
+    "Province",
+    "HistorialCaja",
+    "InvoiceDetails",
+    "PaymentMethod",
     "CreditNote",
-    "InvoiceModel",
-    "CategoryModel",
-    "CategoryParamsModel",
-    "ItemsModel",
-    "ItemMetaDataModel",
-    "BranchOfficeModel",
-    "OrderRequestModel",
-    "OrderRequestDetailsModel",
-    "OrderStatusModel",
-    "ProviderModel",
-    "PurchaseModel",
-    "PurchaseDetailsModel",
-    "PurchaseStatusModel",
+    "Invoice",
+    "Category",
+    "CategoryParam",
+    "Item",
+    "ItemMetaData",
+    "BranchOffice",
+    "OrderRequest",
+    "OrderRequestDetail",
+    "OrderStatus",
+    "Provider",
+    "Purchase",
+    "PurchaseDetail",
+    "PurchaseStatus",
     "WharehouseModel",
     "WharehouseTransactionModel",
     "WhTransactionDetailsModel",

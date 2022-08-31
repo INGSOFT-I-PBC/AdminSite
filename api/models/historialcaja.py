@@ -1,20 +1,38 @@
 from django.db import models
 from django.db import models
 from .users import Employee
-from .common import StatusModel
+from .common import Status
 from django.core.validators import MinValueValidator
 
 
-class HistorialCajaModel(models.Model):
+class HistorialCaja(models.Model):
+    """
+    This model represent a History for cash desk closing.
+
+    Args:
+        models (Model): A Django's Model
+
+    Attributes:
+        cantidad_facturas (IntegerField):
+            The quantity of invoice that are registered on a cash desk closing.
+
+        fecha_cierre (DateTimeField):
+            The instant in which the cash desk close happened.
+
+        fecha_apertura (DateTimeField):
+            The instant in which a cash desk is opening.
+    """
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
     cantidad_facturas = models.IntegerField()
-    created_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
+    created_by = models.ForeignKey(
+        Employee, on_delete=models.RESTRICT, db_column="created_by"
+    )
     fecha_cierre = models.DateTimeField()
     fecha_apertura = models.DateTimeField()
     num_caja = models.IntegerField()
-    status = models.ForeignKey(StatusModel, on_delete=models.RESTRICT)
+    status = models.ForeignKey(Status, on_delete=models.RESTRICT)
     valor_apertura = models.DecimalField(decimal_places=3, max_digits=10)
     valor_cierre = models.DecimalField(decimal_places=3, max_digits=10)
 
