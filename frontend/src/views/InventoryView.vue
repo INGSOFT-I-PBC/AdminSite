@@ -182,7 +182,7 @@
                         class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
                         <button
                             class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
-                            @click="showProduct(cellData)">
+                            @click="showProduct(cellData as productModel )">
                             Ver más detalles
                         </button>
                         <button
