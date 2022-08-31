@@ -40,6 +40,7 @@
     inject<boolean>('isDebug', isDebug.value)
     type FilteredMenuItem = MenuItem & { showable: boolean }
     // TODO: Make this work
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     const availableMenus = computed(() => {
         const flatten: FilteredMenuItem[] = []
         const stack = [...menuItems]
