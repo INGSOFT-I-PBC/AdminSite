@@ -27,6 +27,7 @@
                 return VerticalLayout
         }
     })
+    const isDevMode = import.meta.env.DEV
     /**
      * The breadcrumb of the current route
      */
@@ -36,6 +37,13 @@
 </script>
 
 <template>
+    <head>
+        <title>
+            {{ isDevMode ? '[Dev] ' : '' }}
+            ERPt
+            {{ currentTitle ? ` :: ${currentTitle}` : '' }}
+        </title>
+    </head>
     <Transition
         enter-active-class="tw-transition-all tw-duration-300"
         enter-from-class="tw-opacity-0"

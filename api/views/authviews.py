@@ -1,14 +1,21 @@
-from api.models import User, UserPermission
-
+from django.core.exceptions import ObjectDoesNotExist
+from django.http import JsonResponse
 # from django.shortcuts import render
 from rest_framework import viewsets
+from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.token_blacklist.models import OutstandingToken, BlacklistedToken
+from rest_framework_simplejwt.token_blacklist.models import (
+    OutstandingToken,
+    BlacklistedToken,
+)
 from rest_framework_simplejwt.tokens import RefreshToken
+
+from api.models import User, UserPermission
 from api.serializers import UserSerializer
-from django.core.exceptions import ObjectDoesNotExist
+
 
 # Create your views here.
 
@@ -54,7 +61,10 @@ class PermissionsView(APIView):
             permissions = UserPermission.objects.filter(user=user.id)
             for permission in permissions:
                 permission_list.append(
-                    {"name": permission.permission.name, "id": permission.permission.codename}
+                    {
+                        "name": permission.permission.name,
+                        "id": permission.permission.codename,
+                    }
                 )
         except ObjectDoesNotExist as ex:
             print("Not found: ", ex)
@@ -66,6 +76,35 @@ class PermissionsView(APIView):
                 "permissions": permission_list,
             }
         )
+
+
+@api_view(["POST"])
+def reset_password(request: Request):
+    data = dict(**request.data)
+    user: User = request.user
+    try:
+        if data["password"] != data["password_confirm"]:
+            return JsonResponse(
+                {"error": False, "message": "The given password does not match"},
+                status=400,
+            )
+        if len(data["password"]) < 6:
+            return JsonResponse(
+                {
+                    "error": True,
+                    "message": "The password need to have a minimum length of 6",
+                },
+                status=400,
+            )
+        user.set_password(data["password"])
+        user.save()
+    except:
+        return JsonResponse(
+            {"error": True, "message": "Invalid attribute received"},
+            status=400,
+        )
+
+    return JsonResponse({"error": False, "message": "Ok"})
 
 
 def user_info():
