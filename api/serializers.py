@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import User
+from .models import User, Permission
 
 
 class UserSerializer(serializers.Serializer):
@@ -16,3 +16,12 @@ class UserSerializer(serializers.Serializer):
     class Meta:
         model = User
         fields = ["username", "password"]
+
+
+class PermissionSerializer(serializers.ModelSerializer):
+    codename = serializers.CharField(max_length=128)
+    name = serializers.CharField(max_length=128)
+
+    class Meta:
+        model = Permission
+        fields = ['codename', 'name']
