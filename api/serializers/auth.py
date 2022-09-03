@@ -1,9 +1,8 @@
 from rest_framework import serializers
+from api.models import User, Permission
 
-from .models import User, Permission
 
-
-class UserSerializer(serializers.Serializer):
+class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         pass
 

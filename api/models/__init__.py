@@ -7,12 +7,7 @@ from .offices import BranchOffice
 from .orders import OrderRequest, OrderRequestDetail, OrderStatus
 from .provider import Provider
 from .purchases import Purchase, PurchaseDetail, PurchaseStatus
-from .wharehouse import (
-    WharehouseModel,
-    WharehouseTransactionModel,
-    WhTransactionDetailsModel,
-    InventoryModel,
-)
+from .warehouse import Warehouse, WarehouseTransaction, WhTransactionDetails, Inventory
 from .roles import Role
 from .users import Employee
 
@@ -44,8 +39,8 @@ __all__ = [
     "Purchase",
     "PurchaseDetail",
     "PurchaseStatus",
-    "WharehouseModel",
-    "WharehouseTransactionModel",
-    "WhTransactionDetailsModel",
-    "InventoryModel",
+    "Warehouse",
+    "WarehouseTransaction",
+    "WhTransactionDetails",
+    "Inventory",
 ]

@@ -2,8 +2,8 @@ from django.db import models
 
 from api.models.common import Status
 from api.models.items import Item
+from .warehouse import Warehouse
 
-from .wharehouse import WharehouseModel
 from .provider import Provider
 from .orders import OrderStatus
 from .invoice import InvoiceDetails
@@ -18,7 +18,7 @@ class Purchase(models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.RESTRICT)
     order_origin = models.ForeignKey(OrderStatus, on_delete=models.RESTRICT, null=True)
     reference = models.IntegerField()
-    wharehouse = models.ForeignKey(WharehouseModel, on_delete=models.RESTRICT)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
     invoice = models.ForeignKey(InvoiceDetails, on_delete=models.RESTRICT)
     img_details = models.CharField(max_length=255, null=True)
 

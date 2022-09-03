@@ -13,7 +13,7 @@ from rest_framework_simplejwt.token_blacklist.models import (
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models import User, UserPermission, Permission, Group, GroupPermission, WharehouseModel
+from api.models import User, Permission, GroupPermission
 from api.serializers import UserSerializer, PermissionSerializer
 
 
@@ -36,12 +36,6 @@ class PermissionsViewSet(viewsets.ModelViewSet):
     queryset = Permission.objects.all().order_by("codename")
     serializer_class = PermissionSerializer
 
-
-class WarehouseViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that retrieves all the warehouses in the system
-    """
-    queryset = WharehouseModel.objects.all().order_by("name")
 
 class LogoutViewSet(APIView):
     """
