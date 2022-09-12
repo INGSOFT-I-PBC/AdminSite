@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    
+
      import ECard from '@components/custom/ECard.vue'
     import ERow from  '@components/custom/ERow.vue'
     import ECol from  '@components/custom/ECol.vue'
@@ -21,12 +21,15 @@
         router.push({ path: '/usuarios/empleados' })
     }
 
+
+    var hoy = new Date();
+
 </script>
 
 
 <template>
     <main>
-        <ECard> 
+        <ECard>
 
           <div
              class="container"
@@ -40,7 +43,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
-                            
+
                             <div class="col">
                                 <h6
                                     style="
@@ -72,10 +75,11 @@
                                 <input
                                     type="text"
                                     class="form-control"
+
                                     placeholder="15:00"
                                     disabled=false
                                     aria-label="First name" />
-                                
+
                             </div>
 
                             <div class="col">
@@ -90,7 +94,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="Admin"
+                                    placeholder=""
                                     disabled=false
                                     aria-label="First name" />
                             </div>
@@ -118,6 +122,7 @@
                                     class="form-control"
                                     placeholder=""
                                     aria-label="First name" />
+
                             </div>
                         </div>
                     </div>
@@ -216,12 +221,15 @@
                                     ">
                                     Estado
                                 </h6>
-                                <p> Icono </p>
-       
+                                <div class="form-check form-switch">
+                                   <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                   <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                               </div>
+
                     </div>
 
 
-                    
+
                 </div>
             </div>
 
