@@ -82,8 +82,8 @@
                 price:  '19.90',
                 stock:  '10',
             },
-            
-           
+
+
         ],
     })
 
@@ -120,12 +120,12 @@
             v-model:show="productModalShow"
             title="Detalle del producto">
             <h1>nombre: {{ selectedProduct?.name }}</h1>
-            
+
     </ModalDialog>
-        
+
         <ECard>
             <ERow>
-                
+
                <h1
                     style="
                         font-size: 35px;
@@ -144,7 +144,7 @@
                                  top-label="Seleccione un filtro"
                                 :options="templateList" />
                         </ECol>
-  
+
                         <form
                             class="d-flex"
                             role="search">
@@ -160,22 +160,28 @@
                             </button>
                         </form>
 
-                    
+
                     </div>
 
 
                 </nav>
-            
+
 
             <!-- <ERow>
                 <ECol cols="12"> -->
-            
+
             <Table :header="tableSettings">
                 <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div
+                    v-if="colIdx == 8">
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked >
+                        <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                    </div>
+                    </div>
 
 
-                        v-if="colIdx > 8"
+                    <div v-else-if="colIdx > 8"
                         class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
                         <button
                             class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
@@ -195,7 +201,7 @@
                     </div>
                 </template>
             </Table>
-            
+
             <!-- </ECol>
             </ERow> -->
         </ECard>

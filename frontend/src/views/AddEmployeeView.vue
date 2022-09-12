@@ -21,6 +21,9 @@
         router.push({ path: '/usuarios/empleados' })
     }
 
+
+    var hoy = new Date();
+
 </script>
 
 
@@ -72,6 +75,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
+
                                     placeholder="15:00"
                                     disabled=false
                                     aria-label="First name" />
@@ -90,7 +94,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="Admin"
+                                    placeholder=""
                                     disabled=false
                                     aria-label="First name" />
                             </div>
@@ -113,11 +117,14 @@
                                     ">
                                     Cédula *
                                 </h6>
-                                <input
-                                    type="text"
-                                    class="form-control"
+                                <InputText
+                                    
+                                    v-model="message"
+                                    :info-status="message?.length > 10  ? 'danger' : 'normal'"
+                                    :info-label="message?.length > 10  ? 'danger' : 'normal'"
                                     placeholder=""
                                     aria-label="First name" />
+                                
                             </div>
                         </div>
                     </div>
@@ -216,7 +223,10 @@
                                     ">
                                     Estado
                                 </h6>
-                                <p> Icono </p>
+                                <div class="form-check form-switch"> 
+                                   <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
+                                   <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                               </div>
        
                     </div>
 
