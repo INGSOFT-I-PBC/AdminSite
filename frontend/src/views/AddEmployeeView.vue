@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    
+
      import ECard from '@components/custom/ECard.vue'
     import ERow from  '@components/custom/ERow.vue'
     import ECol from  '@components/custom/ECol.vue'
@@ -29,7 +29,7 @@
 
 <template>
     <main>
-        <ECard> 
+        <ECard>
 
           <div
              class="container"
@@ -43,7 +43,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="row g-3">
-                            
+
                             <div class="col">
                                 <h6
                                     style="
@@ -79,7 +79,7 @@
                                     placeholder="15:00"
                                     disabled=false
                                     aria-label="First name" />
-                                
+
                             </div>
 
                             <div class="col">
@@ -117,14 +117,12 @@
                                     ">
                                     Cédula *
                                 </h6>
-                                <InputText
-                                    
-                                    v-model="message"
-                                    :info-status="message?.length > 10  ? 'danger' : 'normal'"
-                                    :info-label="message?.length > 10  ? 'danger' : 'normal'"
+                                <input
+                                    type="text"
+                                    class="form-control"
                                     placeholder=""
                                     aria-label="First name" />
-                                
+
                             </div>
                         </div>
                     </div>
@@ -223,15 +221,15 @@
                                     ">
                                     Estado
                                 </h6>
-                                <div class="form-check form-switch"> 
+                                <div class="form-check form-switch">
                                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault">
                                    <label class="form-check-label" for="flexSwitchCheckDefault"></label>
                                </div>
-       
+
                     </div>
 
 
-                    
+
                 </div>
             </div>
 
