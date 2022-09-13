@@ -59,8 +59,8 @@
                 id: '09467493043',
                 name: 'Dennisse Aguirre',
             },
-            
-           
+
+
         ],
     })
 
@@ -90,7 +90,7 @@
      function go3():void {
         router.push({ path: '/usuarios/empleado/agregar' })
     }
-  
+
 
     function rol():void {
         router.push({ path: '/admin/roles' })
@@ -109,10 +109,10 @@
             <h1>nombre: {{ selectedProduct?.name }}</h1>
             <span>Cantidad: ${{ selectedProduct?.id }}</span>
         </ModalDialog>
-        
+
         <ECard>
             <ERow>
-                
+
                <h1
                     style="
                         font-size: 35px;
@@ -145,38 +145,36 @@
 
 
                 </nav>
-            
+
 
             <!-- <ERow>
                 <ECol cols="12"> -->
-            
+
             <Table :header="tableSettings">
                 <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div
+                          v-if="colIdx == 5">
 
-                        
-
-                        v-if="colIdx > 5"
-                        class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
-                        <button
-                            class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
-                            @click="showProduct(cellData as productModel)">
-                            Ver más detalles
-                        </button>
-                        <button
-                            class="tw-bg-green-600 tw-py-1 tw-text-white"
-                            @click="go3">
-                            Editar
-                        </button>
-                        <button
-                            class="tw-bg-red-600 tw-py-1 tw-text-white"
-                            @click="removeItem(rowIdx)">
-                            Eliminar
-                        </button>
+                           <div class="form-check form-switch">
+                                   <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault" checked >
+                                   <label class="form-check-label" for="flexSwitchCheckDefault"></label>
+                            </div>
                     </div>
+
+                         <div v-else-if="colIdx > 5" class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
+                                <button class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white" @click="showProduct(cellData as productModel)">
+                                    Ver más detalles
+                                </button>
+                                <button class="tw-bg-green-600 tw-py-1 tw-text-white" @click="go3">
+                                    Editar
+                                </button>
+                                <button  class="tw-bg-red-600 tw-py-1 tw-text-white" @click="removeItem(rowIdx)">
+                                    Eliminar
+                                </button>
+                            </div>
                 </template>
             </Table>
-            
+
             <!-- </ECol>
             </ERow> -->
         </ECard>
