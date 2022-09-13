@@ -5,7 +5,7 @@ from .items import Item
 from django.core.validators import MinValueValidator
 
 
-class WharehouseModel(TimestampModel):
+class Warehouse(TimestampModel):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     name = models.CharField(max_length=128)
 
@@ -15,14 +15,14 @@ class WharehouseModel(TimestampModel):
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
     class Meta:
-        db_table = "wharehouse"
+        db_table = "warehouse"
 
 
-class InventoryModel(TimestampModel):
+class Inventory(TimestampModel):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
-    wharehouse = models.ForeignKey(WharehouseModel, on_delete=models.RESTRICT)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
     item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     quantity = models.IntegerField(validators=[MinValueValidator(0)])
 
@@ -34,26 +34,26 @@ class InventoryModel(TimestampModel):
         db_table = "inventory"
 
 
-class WharehouseTransactionModel(models.Model):
+class WarehouseTransaction(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     notes = models.CharField(max_length=300, blank=True)
-    wharehouse_origin = models.ForeignKey(
-        WharehouseModel, on_delete=models.RESTRICT, related_name="origin"
+    warehouse_origin = models.ForeignKey(
+        Warehouse, on_delete=models.RESTRICT, related_name="origin"
     )
-    wharehouse_destiny = models.ForeignKey(
-        WharehouseModel, on_delete=models.RESTRICT, related_name="destiny"
+    warehouse_destiny = models.ForeignKey(
+        Warehouse, on_delete=models.RESTRICT, related_name="destiny"
     )
     created_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
     class Meta:
-        db_table = "wharehouse_transaction"
+        db_table = "warehouse_transaction"
 
 
-class WhTransactionDetailsModel(models.Model):
+class WhTransactionDetails(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    header = models.ForeignKey(WharehouseTransactionModel, on_delete=models.CASCADE)
+    header = models.ForeignKey(WarehouseTransaction, on_delete=models.CASCADE)
     item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     quantity = models.IntegerField()
 

@@ -1,5 +1,6 @@
 from django.db import models
-from .wharehouse import WharehouseModel
+
+from .warehouse import Warehouse
 from .common import Status
 from .users import Employee
 from .items import Item
@@ -14,7 +15,7 @@ class OrderRequest(models.Model):
     requested_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="requested_by"
     )
-    wharehouse = models.ForeignKey(WharehouseModel, on_delete=models.RESTRICT)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "order_request"
