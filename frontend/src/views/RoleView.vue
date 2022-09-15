@@ -25,16 +25,13 @@
 
     function btn_agregar():void{
         tiposeleccion.value=1
-        console.log("funciono")
-        console.log(tiposeleccion)
 
     }
 
 
     function obtenerdatos(string:item):void {
         tiposeleccion.value=2
-        console.log(item)
-        console.log(tiposeleccion)
+
 
 
     }
