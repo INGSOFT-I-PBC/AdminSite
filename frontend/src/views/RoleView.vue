@@ -21,7 +21,7 @@
         tiposeleccion.value = 1
     }
 
-    function obtenerdatos(string: item): void {
+    function obtenerdatos(item:string): void {
         tiposeleccion.value = 2
     }
 
