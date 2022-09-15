@@ -6,10 +6,7 @@ export const inventory: Array<RouteConfig> = [
         meta: {
             pageTitle: 'Inventario',
             permission: 'view_dashboard',
-             breadcrumb: [
-                { text: 'Inventario' },
-               
-            ],
+            breadcrumb: [{ text: 'Inventario' }],
         },
     },
     {
@@ -21,20 +18,14 @@ export const inventory: Array<RouteConfig> = [
             permission: 'can_edit_password',
         },
     },
-     {
+    {
         path: '/inventario/agregar',
         name: 'addinventario-panel',
-        component: () =>
-            import('@views/AddProductView.vue'),
+        component: () => import('@views/AddProductView.vue'),
         meta: {
-           pageTitle: 'Inventario',
+            pageTitle: 'Inventario',
             permission: 'view_dashboard',
-            breadcrumb: [
-                { text: 'Inventario' , href:'/inventario'},
-            ],
+            breadcrumb: [{ text: 'Inventario', href: '/inventario' }],
         },
     },
-
-    
-
 ]
