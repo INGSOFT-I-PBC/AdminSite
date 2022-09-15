@@ -84,7 +84,7 @@
 
                           <div v-for="(item, index) in array" :key="index">
 
-                             <EButton @click='obtenerdatos(item)' style="display:flex;align-items;margin-top:10px" class="hover:tw-text-primary hover:tw-font-bold" >{{ item }}</EButton>
+                             <EButton @click="obtenerdatos(item)" style="display:flex;align-items;margin-top:10px" class="hover:tw-text-primary hover:tw-font-bold" >{{ item }}</EButton>
 
 
                           </div>
