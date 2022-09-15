@@ -82,7 +82,7 @@
                           leave-from-class="tw-scale-105"
                           leave-to-class="tw-scale-10 tw-opacity-20 -tw-translate-x-full">
 
-                          <div v-for="item in array" :key="index">
+                          <div v-for="(item, index) in array" :key="index">
 
                              <EButton @click='obtenerdatos(item)' style="display:flex;align-items;margin-top:10px" class="hover:tw-text-primary hover:tw-font-bold" >{{ item }}</EButton>
 
