@@ -31,9 +31,9 @@
     }
 
 
-    function obtenerdatos(string:a):void {
+    function obtenerdatos(string:item):void {
         tiposeleccion.value=2
-        console.log(a)
+        console.log(item)
         console.log(tiposeleccion)
 
 
