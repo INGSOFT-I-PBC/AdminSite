@@ -1,5 +1,15 @@
+<script setup lang="ts">
+    import EButton from  '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import { ref } from 'vue'
+
+
+    const bodegas = ref([{name:"hola"},{name:"chao"}])
+
+</script>
+
 <template>
-    <main>
+
         <ECard>
             <!--
             <h1 class="align-center text-center text-3xl font-bold">
@@ -12,10 +22,28 @@
                     Button</EButton>
             </div>
              -->
-        </ECard>
 
-        <div class="container" style="background-color: white; border-radius: 5px">
-            <div class="container" style="background-color: white; padding: 10px">
+
+        <div class="row d-inline-flex allign-content-center">
+            <div class="col-2 mx-1" style="background-color: white;">
+
+                <form class="mt-2" role="search" >
+                    <input
+                        class="form-control me-2"
+                        type="search"
+                        placeholder="Buscar"
+                        aria-label="Search" />
+                </form>
+
+                <EButton class="col-10 mt-1 ">Todas las Bodegas</EButton>
+
+                <EButton v-for="bodega in bodegas" class="col-10 mt-1 ">{{bodega.name}}</EButton>
+
+
+            </div>
+
+            <div class="col-xl" style="background-color: white; border-radius: 5px">
+            <div class="row" style="background-color: white; padding: 10px">
                 <h1 style="font-size: 35px; color: black">Bodega 1</h1>
             </div>
 
@@ -29,10 +57,10 @@
                     type="radio"
                     class="btn-check"
                     name="btnradio"
-                    id="btnradio1"
+                    id="btnInventario"
                     autocomplete="off"
                     checked />
-                <label class="btn btn-outline-dark" for="btnradio1"
+                <label class="btn btn-outline-dark" for="btnInventario"
                     >Inventario</label
                 >
 
@@ -40,9 +68,9 @@
                     type="radio"
                     class="btn-check"
                     name="btnradio"
-                    id="btnradio2"
+                    id="btnPedidos"
                     autocomplete="off" />
-                <label class="btn btn-outline-dark" for="btnradio2"
+                <label class="btn btn-outline-dark" for="btnPedidos"
                     >Historia Pedidos</label
                 >
 
@@ -50,9 +78,9 @@
                     type="radio"
                     class="btn-check"
                     name="btnradio"
-                    id="btnradio3"
+                    id="btnTomasF"
                     autocomplete="off" />
-                <label class="btn btn-outline-dark" for="btnradio3"
+                <label class="btn btn-outline-dark" for="btnTomasF"
                     >Tomas Fisicas</label
                 >
 
@@ -60,9 +88,9 @@
                     type="radio"
                     class="btn-check"
                     name="btnradio"
-                    id="btnradio3"
+                    id="btnMovimientos"
                     autocomplete="off" />
-                <label class="btn btn-outline-dark" for="btnradio3"
+                <label class="btn btn-outline-dark" for="btnMovimientos"
                     >Movimientos</label
                 >
             </div>
@@ -144,23 +172,12 @@
                             <td>$35.06</td>
                             <td>$37.06</td>
                         </tr>
-                        <tr>
-                            <th>GST00236</th>
-                            <td>Calentador Nike</td>
-                            <td>10</td>
-                            <td>$35.06</td>
-                            <td>$37.06</td>
-                        </tr>
-                        <tr>
-                            <th>GST00236</th>
-                            <td>Calentador Nike</td>
-                            <td>10</td>
-                            <td>$35.06</td>
-                            <td>$37.06</td>
-                        </tr>
                     </tbody>
                 </table>
             </div>
+            </div>
         </div>
-    </main>
+
+    </ECard>
 </template>
+

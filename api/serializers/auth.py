@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ["username", "password"]
+        fields = ["email", "username", "password"]
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -23,4 +23,4 @@ class PermissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Permission
-        fields = ['codename', 'name']
+        fields = ["codename", "name"]
