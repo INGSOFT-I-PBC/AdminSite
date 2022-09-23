@@ -23,9 +23,12 @@ export const useAuthStore = defineStore('auth-store', {
          */
         async refreshToken() {
             try {
-                const data = await axios.post('/api/v1/token-refresh', {
-                    refresh: this.jwtData?.refreshToken || '',
-                })
+                const data = await axios.post(
+                    'http://127.0.0.1:8000/api/v1/token-refresh',
+                    {
+                        refresh: this.jwtData?.refreshToken || '',
+                    }
+                )
             } catch (error) {
                 console.error("Couldn't refresh token.", error)
             }

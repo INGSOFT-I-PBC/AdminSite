@@ -16,7 +16,10 @@ export const employee: Array<RouteConfig> = [
         meta: {
             pageTitle: 'Gestión de Empleados',
             permission: 'view_dashboard',
-            breadcrumb: [{ text: 'Usuarios' }, { text: 'Empleados' , href:'/usuarios/empleados'}],
+            breadcrumb: [
+                { text: 'Usuarios' },
+                { text: 'Empleados', href: '/usuarios/empleados' },
+            ],
         },
     },
 ]

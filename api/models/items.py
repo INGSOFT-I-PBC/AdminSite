@@ -69,6 +69,9 @@ class Item(TimestampModel):
             models.Index(fields=["brand"], name="idx_item_brand"),
         ]
 
+    def created_nameItem(self):
+        return self.created_by.name
+
 
 class ItemMetaData(models.Model):
     id = models.BigAutoField(primary_key=True, auto_created=True, editable=False)

@@ -83,6 +83,10 @@ declare global {
         active?: boolean
         href?: string
     }
+    export interface Auth {
+        token: string | null
+        isAuthenticated: boolean | null
+    }
 }
 
 export {}

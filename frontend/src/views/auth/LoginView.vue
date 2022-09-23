@@ -5,11 +5,19 @@
     import { useRouter } from 'vue-router'
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
+    import axios from 'axios'
 
-    useAuthStore().refreshToken()
+    //useAuthStore().refreshToken()
     const router = useRouter()
     const toggle = ref(false)
-    const password = ref('')
+    const password = 'alevquim'
+    const username = 'alevquim'
+    console.log(password)
+
+    const payload = {
+        username: username,
+        password: password,
+    }
 
     function switchVisibility() {
         toggle.value = !toggle.value
@@ -19,8 +27,25 @@
         e.preventDefault()
     }
 
+    //function access() {
+    //  router.push({ path: '/' })
+    //}
+
     function access() {
-        router.push({ path: '/' })
+        axios
+            .post('http://127.0.0.1:8000/api/v1/login', payload)
+            .then(response => {
+                axios.defaults.headers.common['Authorization'] =
+                    'Bearer ' + response.data.token
+                console.log(response.data)
+                //localStorage.setItem('access', response.data)
+                //localStorage.setItem('id', response.data.userData.id)
+                //localStorage.setItem('userName', response.data.userData.userName)
+                router.push('/')
+            })
+            .catch(error => {
+                const data = error.response.data
+            })
     }
 </script>
 
@@ -35,7 +60,9 @@
             <form @onsubmit="inactive">
                 <div class="mt-4">
                     <div>
-                        <InputText placeholder="Usuario"></InputText>
+                        <InputText
+                            placeholder="Usuario"
+                            v-model="username"></InputText>
                         <!--<span class="text-xs tracking-wide text-red-600">Email field is required </span>-->
                     </div>
                     <div class="mt-4">

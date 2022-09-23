@@ -33,6 +33,42 @@ class Inventory(TimestampModel):
     class Meta:
         db_table = "inventory"
 
+    def nombreItem(self):
+        return self.item.name
+
+    def created_at_Item(self):
+        return self.item.created_at
+
+    def brandItem(self):
+        return self.item.brand
+
+    def imgItem(self):
+        return self.item.img
+
+    def ivaItem(self):
+        return self.item.iva
+
+    def modelItem(self):
+        return self.item.model
+
+    def priceItem(self):
+        return self.item.price
+
+    def category_id_Item(self):
+        return self.item.category_id
+
+    def category_name_Item(self):
+        return self.item.category.name
+
+    def created_by_Item(self):
+        return {
+            "name": self.item.created_by.name,
+            "lastname": self.item.created_by.lastname,
+        }
+
+    def status_id_Item(self):
+        return self.item.status_id
+
 
 class WarehouseTransaction(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
