@@ -1,4 +1,4 @@
-<script >
+<script  setup lang="ts">
      import ECard from '@components/custom/ECard.vue'
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
@@ -14,36 +14,23 @@
     import { Form as EForm } from 'vee-validate';
 
 
+     function onSubmit(value) {
+        console.log(value, null, 2);
 
-    export default {
-      components: {
-        EForm,
-        Field,
-        ErrorMessage,
-      },
-      methods: {
-        onSubmit(value) {
-          console.log(value, null, 2);
+      }
 
-
-
-        },
-
-        validateId(value) {
+      function validateId(value) {
           // if the field is empty
           if (!value) {
             return 'Este campo es requerido';
           }
           if( value.length!=10 || isNaN(value) ){
-            return 'Inválido';
+            return 'Inválido'; }
 
-          }
-          // if the field is not a valid email
-          // All is good
           return true;
-        },
+        }
 
-        validateName(value) {
+      function validateName(value) {
           // if the field is empty
           if (!value) {
             return 'Este campo es requerido';
@@ -52,12 +39,11 @@
             return 'Inválido';
 
           }
-          // if the field is not a valid email
-          // All is good
-          return true;
-        },
 
-        validateEmail(value) {
+          return true;
+        }
+
+        function validateEmail(value) {
           // if the field is empty
           if (!value) {
             return 'This field is required';
@@ -65,9 +51,7 @@
           // if the field is not a valid email
           // All is good
           return true;
-        },
-      },
-    };
+        }
     </script>
 
 
