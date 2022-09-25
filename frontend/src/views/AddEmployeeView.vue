@@ -14,12 +14,12 @@
     import { Form as EForm } from 'vee-validate';
 
 
-     function onSubmit(value) {
+     function onSubmit(value:any) {
         console.log(value, null, 2);
 
       }
 
-      function validateId(value) {
+      function validateId(value:any) {
           // if the field is empty
           if (!value) {
             return 'Este campo es requerido';
@@ -30,7 +30,7 @@
           return true;
         }
 
-      function validateName(value) {
+      function validateName(value:any) {
           // if the field is empty
           if (!value) {
             return 'Este campo es requerido';
@@ -43,7 +43,7 @@
           return true;
         }
 
-        function validateEmail(value) {
+        function validateEmail(value:any) {
           // if the field is empty
           if (!value) {
             return 'This field is required';
