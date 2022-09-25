@@ -1,4 +1,4 @@
-<script>
+<script >
      import ECard from '@components/custom/ECard.vue'
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
