@@ -12,14 +12,42 @@
     import * as VeeValidate from 'vee-validate'
     import { Field, ErrorMessage } from 'vee-validate';
     import { Form as EForm } from 'vee-validate';
+    import { useRoute, useRouter } from 'vue-router'
+    const model = ref(null)
+
+    const router = useRouter()
 
 
      function onSubmit(value:any) {
-        console.log(value, null, 2);
+        console.log(value)
 
-      }
+    }
 
-      function validateId(value:any) {
+
+
+      function validateID(value:any) {
+          // if the field is empty
+          if (!value) {
+            return 'Este campo es requerido';
+          }
+          if( value.length!=10 || isNaN(value) ){
+            return 'Inválido'; }
+
+          return true;
+        }
+
+        function validateCell(value:any) {
+          // if the field is empty
+          if (!value) {
+            return 'Este campo es requerido';
+          }
+          if( value.length!=10 || isNaN(value) ){
+            return 'Inválido'; }
+
+          return true;
+        }
+
+        function validateId(value:any) {
           // if the field is empty
           if (!value) {
             return 'Este campo es requerido';
@@ -39,17 +67,88 @@
             return 'Inválido';
 
           }
+          var regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+          if(!regex.test(value)){
+            return 'Inválido';
+
+          }
+
+          return true;
+        }
+        function validateDate(value:any) {
+          // if the field is empty
+          if (!value) {
+            return 'Este campo es requerido';
+          }
+          var date_regex = /^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/
+          if(!date_regex.test(value)){
+             return 'Inválido';
+
+
+          }
 
           return true;
         }
 
         function validateEmail(value:any) {
+
+          if (!value) {
+            return 'Este campo es requerido';
+          }
+
+          var correo=/^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
+          if(!correo.test(value)){
+            return 'Inválido';
+          }
+
+
+          return true;
+        }
+
+        function validateProvincia(value:any) {
           // if the field is empty
           if (!value) {
-            return 'This field is required';
+            return 'Este campo es requerido';
           }
-          // if the field is not a valid email
-          // All is good
+          if(!isNaN(value)){
+            return 'Inválido';
+
+          }
+          var regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+          if(!regex.test(value)){
+            return 'Inválido';
+
+          }
+
+          return true;
+        }
+
+        function validateCiudad(value:any) {
+          // if the field is empty
+          if (!value) {
+            return 'Este campo es requerido';
+          }
+          if(!isNaN(value)){
+            return 'Inválido';
+
+          }
+          var regex =/^[a-zA-ZÀ-ÿ ]+$/
+
+          if(!regex.test(value)){
+            return 'Inválido';
+
+          }
+
+          return true;
+        }
+        function validateDireccion(value:any) {
+          // if the field is empty
+          if (!value) {
+            return 'Este campo es requerido';
+          }
+
           return true;
         }
     </script>
@@ -58,7 +157,7 @@
 <template>
     <main>
         <div class="container" style="border-radius: 5px">
-      <EForm @submit="onSubmit">
+      <EForm @submit="onSubmit" action='/usuarios/empleados' method="get">
         <div class="row g-3">
                     <div class="col">
 
@@ -122,7 +221,7 @@
         text-align: left;
     ">
     Cédula* </h6>
-    <Field name="email"  class="form-control" type="email" :rules="validateId" />
+    <Field name="email"  class="form-control" type="email" :rules="validateID" />
     <div class="col">
     <ErrorMessage name="email"  style="
         font-size: 10px;
@@ -154,7 +253,7 @@
                     ">
                     Fecha de Nacimiento*
                 </h6>
-                <Field name="date"  class="form-control" type="email"  />
+                <Field name="date"  placeholder="dd/mm/yyyy" class="form-control" type="email"  :rules="validateDate"/>
                  <div class="col">
                    <ErrorMessage name="date"  style="  font-size: 10px;  color: red; text-align: left;"/>
                  </div>
@@ -169,9 +268,9 @@
                         color: black;
                         text-align: left;
                     ">
-                    Teléfono
+                    Teléfono*
                 </h6>
-                <Field name="celular"  class="form-control" type="email"  />
+                <Field name="celular"  class="form-control" type="email" :rules="validateCell" />
                  <div class="col">
                    <ErrorMessage name="celular"  style="  font-size: 10px;  color: red; text-align: left;"/>
                  </div>
@@ -183,7 +282,7 @@
                         color: black;
                         text-align: left;
                     ">
-                    Sexo*
+                    Sexo
                 </h6>
                 <select
                     class="form-select"
@@ -224,7 +323,7 @@
                             ">
                             Provincia *
                         </h6>
-                        <Field name="provincia"  class="form-control" type="email"  />
+                        <Field name="provincia"  class="form-control" type="email" :rules="validateProvincia" />
                  <div class="col">
                    <ErrorMessage name="provincia"  style="  font-size: 10px;  color: red; text-align: left;"/>
                  </div>
@@ -239,7 +338,7 @@
                     ">
                     Ciudad *
                 </h6>
-                <Field name="ciudad"  class="form-control" type="email"  />
+                <Field name="ciudad"  class="form-control" type="email" :rules="validateCiudad"/>
                  <div class="col">
                    <ErrorMessage name="ciudad"  style="  font-size: 10px;  color: red; text-align: left;"/>
                  </div>
@@ -253,7 +352,7 @@
                     ">
                     Correo*
                 </h6>
-                <Field name="correo"  class="form-control" type="email"  />
+                <Field name="correo"  class="form-control" type="email" :rules="validateEmail"/>
                  <div class="col">
                    <ErrorMessage name="correo"  style="  font-size: 10px;  color: red; text-align: left;"/>
                  </div>
@@ -268,9 +367,9 @@
                                 color: black;
                                 text-align: left;
                             ">
-                            Dirección domiciliaria
+                            Dirección domiciliaria*
                         </h6>
-                        <Field name="direccion"  class="form-control" type="email"  />
+                        <Field name="direccion"  class="form-control" type="email" :rules="validateDireccion" />
                  <div class="col">
                    <ErrorMessage name="direccion"  style="  font-size: 10px;  color: red; text-align: left;"/>
                  </div>
@@ -298,7 +397,18 @@
 
 
 
-        <button > Sign up</button>
+        <button  style="
+                        font-size: 15px;
+                        color: black;
+                        text-align: center;
+                        width:50%;
+                        margin-left:25%;
+                        margin-right:25%;
+                        margin-top:10px;
+                        color: white;
+                        background-color: #555555;
+
+                    ">  Guardar </button>
       </EForm>
       </div>
     </main>
