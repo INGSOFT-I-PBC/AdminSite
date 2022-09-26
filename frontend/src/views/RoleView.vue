@@ -3,11 +3,39 @@
     import EButton from '@components/custom/EButton.vue'
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
+    import * as VeeValidate from 'vee-validate'
+    import { Field, ErrorMessage } from 'vee-validate'
+    import { Form as EForm } from 'vee-validate'
 
     const array = ['Cajero', 'Vendedor', 'Bodeguero']
 
+    function validateName(value:any) {
+          // if the field is empty
+          if (!value) {
+            return 'Este campo es requerido';
+          }
+          if(!isNaN(value)){
+            return 'Inválido';
+
+          }
+          var regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+          if(!regex.test(value)){
+            return 'Inválido';
+
+          }
+
+          return true;
+        }
+
     const tiposeleccion = ref(0)
     const datos = []
+
+    function onSubmit(value:any) {
+        console.log(value)
+        btn_guardar()
+
+    }
 
     function btn_guardar(): void {
         tiposeleccion.value = 0
@@ -101,14 +129,15 @@
                 </div>
 
                 <div v-else-if="tiposeleccion == 1">
+                    <EForm @submit="onSubmit" >
+
                     <h6 style="font-size: 15px; color: black; text-align: left">
                         Nombre del rol: *
                     </h6>
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder=""
-                        aria-label="First name" />
+                    <Field name="email"  class="form-control" type="email" :rules="validateName" />
+                    <div class="col">
+                        <ErrorMessage name="email"  style=" font-size: 10px; color: red; text-align: left;"/>
+                    </div>
 
                     <h6 style="font-size: 15px; color: black; text-align: left">
                         Fecha de creación:
@@ -143,8 +172,21 @@
                     <h6 style="font-size: 15px; color: black; text-align: left">
                         Permisos:
                     </h6>
-                    <EButton type="secondary" @click="btn_guardar">Guardar </EButton>
+                    <button  style="
+                        font-size: 15px;
+                        color: black;
+                        text-align: center;
+                        width:50%;
+                        margin-left:25%;
+                        margin-right:25%;
+                        margin-top:10px;
+                        color: white;
+                        background-color: #555555;
+
+                    ">  Guardar </button>
+                </EForm>
                 </div>
+
 
                 <div v-else-if="tiposeleccion == 2">
                     <ECol>

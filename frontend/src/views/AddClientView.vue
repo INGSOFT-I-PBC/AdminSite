@@ -20,7 +20,7 @@
 
      function onSubmit(value:any) {
         console.log(value)
-        router.push({ path: '/usuarios/empleados' })
+        router.push({ path: '/usuarios/clientes' })
 
     }
 
@@ -221,7 +221,7 @@
         color: black;
         text-align: left;
     ">
-    Cédula* </h6>
+    Identificación* </h6>
     <Field name="email"  class="form-control" type="email" :rules="validateID" />
     <div class="col">
     <ErrorMessage name="email"  style="
@@ -376,22 +376,6 @@
                  </div>
                     </div>
                     <div class="col">
-                <h6
-                    style="
-                        font-size: 15px;
-                        color: black;
-                        text-align: left;
-                    ">
-                    Rol:
-                </h6>
-                <select
-                    class="form-select"
-                    aria-label="Default select example">
-                    <option selected>Cajero</option>
-                    <option value="1">Vendedor</option>
-                    <option value="2">Two</option>
-                    <option value="3">Three</option>
-                </select>
             </div>
 
                 </div>
