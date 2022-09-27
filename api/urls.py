@@ -22,5 +22,4 @@ urlpatterns = [
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     path("auth/reset-password", reset_password, name="reset-user-password"),
-    path("", include(router.urls)),
 ]

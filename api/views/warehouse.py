@@ -1,5 +1,10 @@
+from distutils.log import error
 from email import message
-from operator import truediv
+
+from operator import truediv, and_
+from tkinter import W
+from tkinter.tix import Tree
+from django.db.models import Q
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,7 +13,7 @@ from api import serializers
 
 
 from api.models.common import Status
-from api.models import Warehouse, OrderRequest
+from api.models import Warehouse, OrderRequest, warehouse
 from api.serializers import WarehouseSerializer, FullWarehouseSerializer
 from django.http import JsonResponse
 
@@ -22,22 +27,50 @@ class WarehouseView(APIView):
 
         try:
             querydict = request.query_params
-            warehouse = Warehouse.objects.get(pk=querydict["id"])
-            status = warehouse.status.name
 
-            if status == "invalid":
-                return JsonResponse(
-                    {"error": True, "message": "Warehouse invalid"},
-                    status=400,
-                )
+            filters = {}
 
-            serializer_class = WarehouseSerializer(warehouse)
-            return Response(serializer_class.data)
+            for key, value in querydict.items():
+                if key in ["id", "name", "latitude", "longitude"]:
+                    filters[key] = value
 
-        except:
+            filters["status"] = Status.objects.get(name="active")
 
+            warehouse_qset = Warehouse.objects.filter(**filters)
+
+            serializer = WarehouseSerializer(warehouse_qset, many=True)
+
+            return Response(serializer.data)
+
+        except Exception as e:
+            print(e)
             return JsonResponse(
                 {"error": True, "message": "Invalid query"},
+                status=400,
+            )
+
+    def put(self, request: Request):
+
+        try:
+
+            queryid = request.query_params.get("id")
+
+            data = dict(**request.data)
+
+            warehouse = Warehouse.objects.get(id=queryid)
+
+            serializer = WarehouseSerializer(warehouse, data=data)
+
+            serializer.is_valid(raise_exception=True)
+
+            serializer.save()
+
+            return JsonResponse({"error": False, "message": serializer.data})
+
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                {"error": True, "message": "Object not found"},
                 status=400,
             )
 
@@ -55,11 +88,12 @@ class WarehouseView(APIView):
 
             serializer.is_valid(raise_exception=True)
 
-            serializer.save()
+            serializer.update()
 
-        except:
+        except Exception as e:
+            print(e)
             return JsonResponse(
-                {"error": True, "message": "Invalid attribute received"},
+                {"error": True, "message": "Invalid attributes received"},
                 status=400,
             )
 
@@ -76,8 +110,33 @@ class WarehouseView(APIView):
             executed.
 
         """
+        try:
+            querydict = request.query_params
 
-        return Response({})
+            filters = {}
+
+            for key, value in querydict.items():
+                if key in ["id", "name", "latitude", "longitude"]:
+                    filters[key] = value
+
+            filters["status"] = Status.objects.get(name="active")
+
+            inactive_status = Status.objects.get(name="inactive")
+
+            updateted_rows = Warehouse.objects.filter(**filters).update(
+                status=inactive_status
+            )
+
+            return JsonResponse(
+                {"error": False, "message": "Rows affected: " + str(updateted_rows)},
+            )
+
+        except Exception as e:
+            print(e)
+            return JsonResponse(
+                {"error": True, "message": "Invalid query"},
+                status=400,
+            )
 
 
 class WarehouseViewSet(ReadOnlyModelViewSet):
