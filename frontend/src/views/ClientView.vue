@@ -123,7 +123,7 @@
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
-                            v-model="model1"
+                            v-model="model"
                             top-label="Seleccione un filtro"
                             :options="templateList" />
                     </ECol>
