@@ -262,7 +262,7 @@
              <select @change="changeCountry($event)"
                  class="form-select"
                  aria-label="Default select example" >
-                 <option value="1" >Cédula</option>
+                 <option selected value="1" >Cédula</option>
                  <option value="2">RUC</option>
              </select>
 
