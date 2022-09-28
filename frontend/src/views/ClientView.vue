@@ -1,5 +1,5 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
+   import ECard from '@components/custom/ECard.vue'
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
     import ListBox from '@components/custom/ListBox.vue'
@@ -10,8 +10,9 @@
     import Table from '@components/holders/Table.vue'
     import { computed, reactive } from 'vue'
 
-    import { useRoute, useRouter } from 'vue-router'
+    import { useRouter } from 'vue-router'
     const router = useRouter()
+
     const templateList = [
         { label: 'Por fecha de creación', value: '1' },
         { label: 'Por tipo de identificación', value: '2' },
