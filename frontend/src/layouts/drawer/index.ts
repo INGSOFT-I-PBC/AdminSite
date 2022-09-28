@@ -24,7 +24,8 @@ export const menus: MenuItem[] = [
             },
             {
                 label: 'Clientes',
-                path: '/usuarios/clients',
+                path: '/usuarios/clientes',
+                routeName: 'client-management-panel',
             },
         ],
     },
