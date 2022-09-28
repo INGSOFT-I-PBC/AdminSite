@@ -18,7 +18,7 @@
 
  const router = useRouter()
 
-  function changeCountry (event:Event) {
+  function changeCountry (event:any) {
       if(event.target.options[event.target.options.selectedIndex].text=='Cédula'){
         tipoid.value=true
       }
