@@ -9,6 +9,7 @@ import { inventory } from './routes/inventory'
 import { purchases } from './routes/purchases'
 import { warehouses } from './routes/warehouse'
 import { employee } from './routes/employee'
+import { client } from './routes/client'
 import { role } from './routes/role'
 
 const routes = [
@@ -23,6 +24,7 @@ const routes = [
             ...warehouses,
             ...employee,
             ...role,
+            ...client,
         ],
     },
     {
