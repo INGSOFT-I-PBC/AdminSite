@@ -107,7 +107,7 @@
         <ModalDialog
             id="employee-modal"
             v-model:show="productModalShow"
-            title="Detalle del empleado">
+            title="Detalle del cliente">
             <h1>nombre: {{ selectedProduct?.name }}</h1>
             <span>Cantidad: ${{ selectedProduct?.id }}</span>
         </ModalDialog>
@@ -123,7 +123,7 @@
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
-                            v-model="model"
+                            v-model="model1"
                             top-label="Seleccione un filtro"
                             :options="templateList" />
                     </ECol>
