@@ -23,7 +23,7 @@
         { label: 'Por Nombres y apellidos', value: '4' },
     ]
 
-    const model = ref(null)
+    const model = ref({})
     const productModalShow = ref(false)
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
@@ -80,7 +80,7 @@
         id: string
         name: string
     }
-    let selectedProduct: Optional<productModel>
+    let selectedProduct: Optional<productModel> = null
     function showProduct(product: productModel) {
         selectedProduct = product
         console.log(selectedProduct)
