@@ -121,7 +121,7 @@
                     <EButton type="secondary" @click="go"
                         >+ Agregar cliente
                     </EButton>
-                    <ECol cols="9" md="6" xl="4">
+                    <ECol cols="4" md="6" xl="4">
                         <ListBox
                             v-model="model"
                             top-label="Seleccione un filtro"
