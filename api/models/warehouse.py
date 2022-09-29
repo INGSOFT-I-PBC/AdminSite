@@ -59,3 +59,14 @@ class WhTransactionDetails(models.Model):
 
     class Meta:
         db_table = "wh_transaction_details"
+
+
+class WhTomasFisicas(models.Model):
+
+    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+    done_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
+    created_at = models.DateTimeField(null=False, auto_now_add=True)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
+
+    class Meta:
+        db_table = "tomas_fisicas"

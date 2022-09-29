@@ -1,21 +1,31 @@
+from api.models.common import Status
+from api.models import (
+    Warehouse,
+    OrderRequest,
+    OrderRequestDetail,
+    OrderStatus,
+    Inventory,
+    Item,
+)
+from api.serializers import WarehouseSerializer, FullWarehouseSerializer
+from api.serializers.oders import OrderSerializer, OrderDetailsSerializer
+
 from distutils.log import error
+from django.core.paginator import Paginator
+from django.db.models import Q
+from django.http import JsonResponse
+
 from email import message
 
-from operator import truediv, and_
-from tkinter import W
-from tkinter.tix import Tree
-from django.db.models import Q
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from api import serializers
 
+from tkinter import W
+from tkinter.tix import Tree
 
-from api.models.common import Status
-from api.models import Warehouse, OrderRequest, warehouse
-from api.serializers import WarehouseSerializer, FullWarehouseSerializer
-from django.http import JsonResponse
+from api.serializers.warehouse import InventorySerializer
 
 
 class WarehouseView(APIView):
@@ -26,6 +36,7 @@ class WarehouseView(APIView):
     def get(self, request: Request):
 
         try:
+
             querydict = request.query_params
 
             filters = {}
@@ -34,13 +45,21 @@ class WarehouseView(APIView):
                 if key in ["id", "name", "latitude", "longitude"]:
                     filters[key] = value
 
-            filters["status"] = Status.objects.get(name="active")
+            inactive_obj = Status.objects.get(name="inactive")
 
             warehouse_qset = Warehouse.objects.filter(**filters)
 
-            serializer = WarehouseSerializer(warehouse_qset, many=True)
+            warehouse_qset = warehouse_qset.exclude(status=inactive_obj).latest("id")
 
-            return Response(serializer.data)
+            serializer = WarehouseSerializer(warehouse_qset)
+
+            wh_inventory = InventorySerializer(warehouse_qset.inventory_set, many=True)
+
+            data = dict(serializer.data)
+
+            data["inventory"] = dict(wh_inventory.data)
+
+            return JsonResponse(data)
 
         except Exception as e:
             print(e)
@@ -91,7 +110,7 @@ class WarehouseView(APIView):
             serializer.update()
 
         except Exception as e:
-            print(e)
+
             return JsonResponse(
                 {"error": True, "message": "Invalid attributes received"},
                 status=400,
@@ -132,7 +151,7 @@ class WarehouseView(APIView):
             )
 
         except Exception as e:
-            print(e)
+
             return JsonResponse(
                 {"error": True, "message": "Invalid query"},
                 status=400,
@@ -140,25 +159,62 @@ class WarehouseView(APIView):
 
 
 class WarehouseViewSet(ReadOnlyModelViewSet):
+
     queryset = Warehouse.objects.all().order_by("name")
-    serializer_class = FullWarehouseSerializer(queryset, many=True)
+    serializer_class = WarehouseSerializer(queryset, many=True)
 
     def list(self, request):
-        queryset = Warehouse.objects.all().order_by("name")
-        serializer_class = FullWarehouseSerializer(queryset, many=True)
-        return Response(serializer_class.data)
+        return Response(self.serializer_class.data)
 
 
 class OrderRequestViewSet(ReadOnlyModelViewSet):
     queryset = OrderRequest.objects.all().order_by("id")
-    serializer_class = WarehouseSerializer
+    serializer_class = WarehouseSerializer(queryset, many=True)
+
+    def list(self, request):
+
+        page_number = request.query_params.get("page")
+
+        if page_number:
+
+            paginator = Paginator(self.queryset, 50)
+
+            page_obj = paginator.get_page(page_number)
+
+            return Response(OrderSerializer(page_obj, many=True).data)
+
+        return Response(self.serializer_class.data)
 
 
 class WhOrderRequestView(APIView):
-    def get(self):
-        pass
+    def get(self, request):
+
+        try:
+
+            wh_orders = OrderRequest.objects.filter(
+                warehouse__pk=request.query_params.get("id")
+            ).order_by("-id")
+
+            page_number = request.query_params.get("page")
+
+            if page_number:
+
+                paginator = Paginator(wh_orders, 50)
+
+                page_obj = paginator.get_page(page_number)
+
+                return Response(OrderSerializer(page_obj, many=True).data)
+
+            return Response(OrderSerializer(wh_orders, many=True))
+
+        except:
+            return JsonResponse(
+                {"error": True, "message": "Invalid query"},
+                status=400,
+            )
 
     def post(self):
+
         pass
 
     def put(self):
@@ -172,3 +228,6 @@ class WhOrderRequestViewSet(ReadOnlyModelViewSet):
     """
     API Endpoint that allows only read operation on the given Orders that are registered and available
     """
+
+    queryset = OrderRequest.objects.all().order_by("id")
+    serializer_class = OrderSerializer(queryset, many=True)

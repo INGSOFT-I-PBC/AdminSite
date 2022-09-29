@@ -2,11 +2,20 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import CharField, IntegerField, DateTimeField
 
 from api.models.common import Status
-from .users import Employee, EmployeeSerializer
+from .users import EmployeeSerializer
 
 
 class StatusSerializer(ModelSerializer):
 
+    name = CharField(max_length=255)
+    description = CharField(max_length=255)
+
+    class Meta:
+        model = Status
+        fields = ["name", "description"]
+
+
+class FullStatusSerializer(ModelSerializer):
     id = IntegerField()
     name = CharField(max_length=255)
     description = CharField(max_length=255)
