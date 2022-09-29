@@ -15,9 +15,12 @@
 
     const templateList = [
         { label: 'Por fecha de creación', value: '1' },
-        { label: 'Por tipo de identificación', value: '2' },
-        { label: 'Por Nombres y Apellidos', value: '3' },
-        { label: 'Por creador', value: '4' },
+        { label: 'Por creador', value: '2' },
+        {
+            label: 'Por tipo de ID',
+            value: '3',
+        },
+        { label: 'Por Nombres y apellidos', value: '4' },
     ]
 
 
@@ -121,13 +124,12 @@
                     <EButton type="secondary" @click="go"
                         >+ Agregar cliente
                     </EButton>
-                    <ECol cols="4" md="6" xl="4">
+                    <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="model"
                             top-label="Seleccione un filtro"
                             :options="templateList" />
                     </ECol>
-
                     <form class="d-flex" role="search">
                         <input
                             class="form-control me-2"
