@@ -100,9 +100,6 @@
         router.push({ path: '/usuarios/cliente/agregar' })
     }
 
-    function rol(): void {
-        router.push({ path: '/admin/roles' })
-    }
 </script>
 
 <template>
