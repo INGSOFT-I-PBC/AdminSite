@@ -25,7 +25,6 @@
 
     const model = ref(null)
     const productModalShow = ref(false)
-    // const selectedProduct = null
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
             {
@@ -81,7 +80,7 @@
         id: string
         name: string
     }
-    let selectedProduct: Optional<productModel> = null
+    let selectedProduct: Optional<productModel>
     function showProduct(product: productModel) {
         selectedProduct = product
         console.log(selectedProduct)
@@ -104,7 +103,7 @@
 <template>
     <main>
         <ModalDialog
-            id="employee-modal"
+            id="client-modal"
             v-model:show="productModalShow"
             title="Detalle del cliente">
             <h1>nombre: {{ selectedProduct?.name }}</h1>
