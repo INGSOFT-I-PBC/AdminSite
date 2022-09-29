@@ -55,11 +55,9 @@ class WarehouseView(APIView):
 
             wh_inventory = InventorySerializer(warehouse_qset.inventory_set, many=True)
 
-            data = dict(serializer.data)
-
-            data["inventory"] = dict(wh_inventory.data)
-
-            return JsonResponse(data)
+            return JsonResponse(
+                {"warehouse": serializer.data, "inventory": wh_inventory.data}
+            )
 
         except Exception as e:
             print(e)
