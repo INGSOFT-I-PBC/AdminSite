@@ -24,7 +24,6 @@
     ]
 
 
-    const model = ref(null)
     const productModalShow = ref(false)
     // const selectedProduct = null
     const tableSettings = reactive<TableHeaderSettings>({
