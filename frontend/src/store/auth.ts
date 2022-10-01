@@ -1,22 +1,21 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
+import { SessionExpiredException, UndersiredStateError, UserNotLoggedInError } from '@/exceptions'
 
 const savedToken:JWTToken|null = JSON.parse(localStorage.getItem('accessToken')??'null')
-
+const savedUserData: Nullable<UserInfo> = JSON.parse(localStorage.getItem("userData") ?? 'null')
 /**
  * This store contains the data from the user authentication. Also
  * contains method to handle the API authorization and authentication.
  */
-function getToken():JWTToken|null { return JSON.parse(localStorage.getItem('accessToken')??'null')}
-
 export const useAuthStore = defineStore('auth-store', {
     state: (): AuthState => ({
         jwtData: savedToken,
-        userData: null,
+        userData: savedUserData,
     }),
     getters: {
         /** Get the list of permission of the current user */
-        getToken(state):JWTToken|null { return state.jwtData },
+        getToken(state): Nullable<JWTToken> { return state.jwtData },
         getPermissions: (state): Array<string> => state.userData?.permissions || [],
     },
     actions: {
@@ -29,13 +28,14 @@ export const useAuthStore = defineStore('auth-store', {
         async refreshToken() {
             try {
                 const data = await (await axios.post<JWTAccessToken>('/api/v1/token-refresh', {
-                    refresh: JSON.parse(localStorage.getItem('accessToken')??'null')?.refreshToken,
+                    refresh: this.jwtData!.refresh,
                 })).data
-                this.jwtData!.accessToken = data.accessToken
+                this.jwtData!.access = data.access
                 localStorage.setItem('accessToken', JSON.stringify(this.jwtData))
-                axios.defaults.headers.common['Authorization'] = `Bearer ${data.accessToken}`
+                axios.defaults.headers.common['Authorization'] = `Bearer ${data.access}`
             } catch (error) {
-                console.error("Couldn't refresh token.", error)
+                if (this.jwtData) throw new SessionExpiredException()
+                throw new UserNotLoggedInError()
             }
         },
         /**
@@ -75,7 +75,7 @@ export const useAuthStore = defineStore('auth-store', {
                   localStorage.setItem('accessToken', JSON.stringify(data))
                   axios.defaults.headers.common = {
                     ...axios.defaults.headers.common,
-                    Authorization: `Bearer ${this.jwtData?.accessToken}`,
+                    Authorization: `Bearer ${this.jwtData?.access}`,
                   }
                   commit(data)
                 })
@@ -85,14 +85,25 @@ export const useAuthStore = defineStore('auth-store', {
             })
         },
 
+        async fetchUserData() {
+            const data = await(await axios.get<UserInfo>('/api/v1/auth/me')).data
+            this.userData = data
+            localStorage.setItem("userData", JSON.stringify(data))
+            return data
+        },
+
         async logout(){
             try {
                 const data = await axios.post('/api/v1/logout', {
-                    refresh: this.jwtData?.refreshToken || '',
+                    refresh: this.jwtData?.refresh || '',
                 })
-                localStorage.removeItem('accessToken')
+                this.jwtData = null
             } catch (error) {
-                console.error("Couldn't logout.", error)
+                if (!this.jwtData) throw new UndersiredStateError("The user has tried log out without login previously")
+                throw error
+            }finally {
+                localStorage.removeItem('accessToken')
+                localStorage.removeItem('userData')
             }
         }
 

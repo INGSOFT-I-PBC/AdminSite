@@ -2,7 +2,10 @@ import type { RouteRecordRaw } from 'vue-router'
 
 /* eslint no-var: 0 */
 declare global {
-    type Optional<T> = T | undefined | null
+    type Optional<T> = T | null
+    type Nullable<T> = Optional<T>
+
+    type Maybe<T> = T | undefined
 
     /**
      * A item used by default or base on the component
@@ -36,15 +39,15 @@ declare global {
      *  Store Types or model types  *
      ********************************/
     export interface JWTAccessToken {
-        accessToken: string
+        access: string
     }
     /**
      * The definition of response type for:
      * JWT authentication
      */
     export interface JWTToken {
-        accessToken: string
-        refreshToken: string
+        access: string
+        refresh: string
     }
     /**
      * This is the type of a user that is returned from the Backend

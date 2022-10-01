@@ -62,39 +62,18 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
     if (to.meta.isAuthenticated) {
       const authStore = useAuthStore()
-      try {
-        authStore.refreshToken()
-      } catch (err) {
-        next({ path: '/login' })
-      }
+      authStore.refreshToken()
+      .catch((err) => {
+        console.error(err)
+        next({path:'/login'})
+      })
+    //   try {
+    //     await authStore.refreshToken()
+    //   } catch (err) {
+    //     next({ path: '/login' })
+    //   }
     }
     next()
   })
-
-/*
-router.beforeEach(async (to, from, next) => {
-    const auth = useAuthStore()
-    const loggedIn = await auth.isAuthenticated()
-    if (!loggedIn) return next({ path: '/login' })
-    if (to.path === '/login') {
-        if (loggedIn) return next({ path: '/' })
-        return next(from)
-    }
-    const targetMeta = from.meta as RouteMetaData
-    return next()
-})
-
-router.beforeEach(async (to, from, next) => {
-    if (to.meta.isAuthenticated) {
-      const authStore = useAuthStore()
-      try {
-        authStore.refreshToken()
-      } catch (err) {
-        next({ path: '/login' })
-      }
-    }
-    next()
-  })
-*/
 
 export default router
