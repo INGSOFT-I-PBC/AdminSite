@@ -103,7 +103,6 @@
             id="client-modal"
             v-model:show="productModalShow"
             title="Detalle de la factura">
-            <h1>nombre: {{ selectedProduct?.name }}</h1>
             <span>Cantidad: ${{ selectedProduct?.id }}</span>
         </ModalDialog>
 
