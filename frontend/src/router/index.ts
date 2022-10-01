@@ -11,6 +11,7 @@ import { warehouses } from './routes/warehouse'
 import { employee } from './routes/employee'
 import { client } from './routes/client'
 import { role } from './routes/role'
+import { bill } from './routes/bill'
 
 const routes = [
     {
@@ -25,6 +26,7 @@ const routes = [
             ...employee,
             ...role,
             ...client,
+            ...bill,
         ],
     },
     {
