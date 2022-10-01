@@ -21,6 +21,7 @@ declare global {
     var router: typeof import('@store')
 
     export interface MenuItem {
+        readonly id?: string
         readonly label: string
         readonly path?: string
         readonly icon?: Optional<string>
@@ -34,6 +35,9 @@ declare global {
     /********************************
      *  Store Types or model types  *
      ********************************/
+    export interface JWTAccessToken {
+        accessToken: string
+    }
     /**
      * The definition of response type for:
      * JWT authentication

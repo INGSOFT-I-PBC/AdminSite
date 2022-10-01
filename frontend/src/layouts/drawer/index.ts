@@ -97,4 +97,9 @@ export const menus: MenuItem[] = [
         icon: 'shopping-bag',
         children: [],
     },
+    {
+        id: 'logout',
+        label: 'Cerrar Sesión',
+        icon: 'log-out',
+    },
 ]
