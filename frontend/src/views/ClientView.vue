@@ -66,7 +66,7 @@
                 hour: '15:00',
                 create: 'Admin',
                 type_id:'cédula',
-                id: '09467493043',
+                id: '0946749304',
                 name: 'Pamela Rugel',
             },
         ],

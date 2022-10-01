@@ -97,4 +97,10 @@ export const menus: MenuItem[] = [
         icon: 'shopping-bag',
         children: [],
     },
+    {
+        label: 'Facturación',
+        icon: 'clipboard',
+        children: [],
+        path: '/facturacion',
+    },
 ]

@@ -22,5 +22,6 @@ export const client: Array<RouteConfig> = [
             ],
         },
     },
+
     
 ]
