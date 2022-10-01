@@ -89,13 +89,7 @@
        if (!value) {
          return 'Este campo es requerido';
        }
-       var date_regex = /^(0[1-9]|[12][0-9]|3[01])[- /.](0[1-9]|1[012])[- /.](19|20)\d\d$/
-       if(!date_regex.test(value)){
-          return 'Inválido';
-
-
-       }
-
+       
        return true;
      }
 
@@ -326,7 +320,7 @@
                  ">
                  Fecha de Nacimiento*
              </h6>
-             <Field name="date"  placeholder="dd/mm/yyyy" class="form-control" type="email"  :rules="validateDate"/>
+             <Field name="date"  placeholder="dd/mm/yyyy" class="form-control" type="date"  :rules="validateDate"/>
               <div class="col">
                 <ErrorMessage name="date"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
