@@ -11,11 +11,15 @@ import { warehouses } from './routes/warehouse'
 import { employee } from './routes/employee'
 import { client } from './routes/client'
 import { role } from './routes/role'
+import { useAuthStore } from '@/store'
 import { bill } from './routes/bill'
 
 const routes = [
     {
         path: '/',
+        meta: {
+            isAuthenticated: true,
+        },
         redirect: '/home',
         children: [
             ...common,
@@ -57,17 +61,21 @@ const router = createRouter({
     routes: routes as RouteRecordRaw[],
 })
 
-/**
 router.beforeEach(async (to, from, next) => {
-    const auth = useAuthStore()
-    const loggedIn = await auth.isAuthenticated()
-    if (!loggedIn) return next({ path: '/login' })
-    if (to.path === '/login') {
-        if (loggedIn) return next({ path: '/' })
-        return next(from)
+    if (to.meta.isAuthenticated) {
+      const authStore = useAuthStore()
+      authStore.refreshToken()
+      .catch((err) => {
+        console.error(err)
+        next({path:'/login'})
+      })
+    //   try {
+    //     await authStore.refreshToken()
+    //   } catch (err) {
+    //     next({ path: '/login' })
+    //   }
     }
-    const targetMeta = from.meta as RouteMetaData
-    return next()
-})*/
+    next()
+  })
 
 export default router
