@@ -69,7 +69,7 @@ export const useAuthStore = defineStore('auth-store', {
         login(datos:{username: string, password: string}){
             return new Promise<JWTToken>((commit, reject) => {
               axios
-                .post<JWTToken>('/api/v1/login', datos)
+                .post<JWTToken>('http://127.0.0.1:8000/api/v1/login', datos)
                 .then(({ data }) => {
                   this.jwtData = data
                   localStorage.setItem('accessToken', JSON.stringify(data))
