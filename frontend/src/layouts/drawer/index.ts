@@ -24,7 +24,8 @@ export const menus: MenuItem[] = [
             },
             {
                 label: 'Clientes',
-                path: '/usuarios/clients',
+                path: '/usuarios/clientes',
+                routeName: 'client-management-panel',
             },
         ],
     },
@@ -95,5 +96,17 @@ export const menus: MenuItem[] = [
         label: 'Compras',
         icon: 'shopping-bag',
         children: [],
+    },
+    {
+        id: 'logout',
+        label: 'Cerrar Sesión',
+        forceRender: true,
+        icon: 'log-out',
+    },
+    {
+        label: 'Facturación',
+        icon: 'clipboard',
+        children: [],
+        path: '/facturacion',
     },
 ]

@@ -9,7 +9,11 @@ class ItemDataService {
         return await axios.get('/api/v1/inventory', {
             headers: {
                 'Content-Type': 'application/json',
+<<<<<<< HEAD
                 Authorization: this.var,
+=======
+               // Authorization: this.var,
+>>>>>>> 0647b062d21fd56ab09765328103e0b7999f954f
             },
         })
     }
@@ -18,7 +22,11 @@ class ItemDataService {
         return await axios.get(`/api/v1/items/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
+<<<<<<< HEAD
                 Authorization: this.var,
+=======
+                //Authorization: this.var,
+>>>>>>> 0647b062d21fd56ab09765328103e0b7999f954f
             },
         })
     }
@@ -28,7 +36,11 @@ class ItemDataService {
             .post('/api/v1/items', data, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
+<<<<<<< HEAD
                     Authorization: this.var,
+=======
+                    //Authorization: this.var,
+>>>>>>> 0647b062d21fd56ab09765328103e0b7999f954f
                     //'cache-control': 'no-cache',
                     //'content-type': 'application/x-www-form-urlencoded',
                 },
@@ -45,7 +57,11 @@ class ItemDataService {
             '/api/v1/inventory',
             {
                 headers: {
+<<<<<<< HEAD
                     Authorization: this.var,
+=======
+                    //Authorization: this.var,
+>>>>>>> 0647b062d21fd56ab09765328103e0b7999f954f
                     'Content-Type': 'multipart/form-data',
                 },
             },
@@ -58,7 +74,7 @@ class ItemDataService {
             `/api/v1/items/${id}`,
             {
                 headers: {
-                    Authorization: this.var,
+                    //Authorization: this.var,
                 },
             },
             data

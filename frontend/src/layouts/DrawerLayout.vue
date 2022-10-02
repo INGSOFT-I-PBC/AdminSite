@@ -5,7 +5,7 @@
     import { menus as menuItems } from '@/layouts/drawer'
     import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
     import DrawerMenu from '@components/custom/DrawerMenu.vue'
-    import { useAuthStore } from '@store'
+    import { useAuthStore } from '@store/auth'
     import { useRouter } from 'vue-router'
     defineProps({
         title: {
@@ -22,6 +22,7 @@
         },
     })
     const authStore = useAuthStore()
+    const router = useRouter()
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const routeMap: MapObj<any> = {} as MapObj<any>
     useRouter()
@@ -62,6 +63,17 @@
             )
         })
     })
+
+    function logout() {
+        authStore
+            .logout()
+            .then(it => {
+                router.push({ path: '/login' })
+            })
+            .catch(it => {
+                console.error(it)
+            })
+    }
 </script>
 
 <template>
@@ -85,7 +97,13 @@
                         <template
                             v-for="(menuItemData, idx) of menuItems"
                             :key="idx">
-                            <DrawerMenuItem :data="menuItemData" />
+                            <DrawerMenuItem
+                                v-if="menuItemData.id != 'logout'"
+                                :data="menuItemData" />
+                            <DrawerMenuItem
+                                v-else
+                                @click="logout"
+                                :data="menuItemData" />
                         </template>
                     </DrawerMenu>
                 </div>
@@ -101,7 +119,9 @@
             id="right-panel">
             <header
                 class="tw-flex tw-flex-row tw-gap-3 tw-justify-between tw-justify-items-stretch">
-                <UserCard />
+                <UserCard
+                    :username="authStore.userData?.username"
+                    :role="authStore.userData?.role" />
                 <div
                     id="_page-title-container"
                     class="tw-bg-secondary tw-px-5 tw-rounded-md dark:tw-bg-slate-800 tw-grid tw-content-center tw-justify-items-center tw-justify-center tw-align-middle tw-flex-1">
@@ -143,8 +163,8 @@
                             <RouterLink
                                 v-else
                                 class="hover:tw-text-primary hover:tw-font-bold"
-                                :to="item.href || '/'"
-                                >{{ item.text }}</RouterLink
+                                :to="item.href || '/'">
+                                {{ item.text }}</RouterLink
                             >
                         </div>
                     </TransitionGroup>

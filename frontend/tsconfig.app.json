@@ -11,7 +11,8 @@
       "@components/*": ["./src/components/*"],
       "@views/*": ["./src/views/*"],
       "@store/*": ["./src/store/*"],
-      "@store": ["./src/store"]
+      "@store": ["./src/store"],
+      "@exceptions": ["./src/exceptions"],
     },
     "typeRoots": [
       "node_modules/@types",
