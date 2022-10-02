@@ -3,6 +3,7 @@ The `urlpatterns` list the URLs to the Views
 """
 from django.urls import path, include
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from .views import *
@@ -16,7 +17,7 @@ router.register(r"warehouses", views.WarehouseViewSet)
 
 urlpatterns = [
     path("list/", include(router.urls)),
-    path("logout", LogoutViewSet.as_view(), name="logout"),
+    path("logout", TokenBlacklistView.as_view(), name="logout"),
     path("auth/me/permissions", PermissionsView.as_view(), name="user-permissions"),
     path("auth/me", user_data, name="user-data"),
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
