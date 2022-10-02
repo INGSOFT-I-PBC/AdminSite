@@ -13,16 +13,24 @@
  import { Field, ErrorMessage } from 'vee-validate'
  import { Form as EForm } from 'vee-validate'
  import { useRoute, useRouter } from 'vue-router'
- const model = ref(null)
 
  const router = useRouter()
+ const tipopago = ref(true)
 
+ function changeCountry (event:any) {
+      if(event.target.options[event.target.options.selectedIndex].text=='En efectivo'){
+        tipopago.value=true
+      }
+      else{
+        tipopago.value=false
+      }
 
-  function onSubmit(value:any) {
+    }
+
+    function onSubmit(value:any) {
      console.log(value)
-     router.push({ path: '/usuarios/empleados' })
-
- }
+     router.push({ path: '/facturacion' })
+    }
 
 
 
@@ -31,7 +39,7 @@
        if (!value) {
          return 'Este campo es requerido';
        }
-       if( value.length!=10 || isNaN(value) ){
+       if( isNaN(value) ){
          return 'Inválido'; }
 
        return true;
@@ -83,6 +91,15 @@
          return 'Este campo es requerido';
        }
 
+       return true;
+     }
+
+     function validateDate2(value:any) {
+       // if the field is empty
+       if (!value) {
+         return 'Este campo es requerido';
+       }
+       
 
        return true;
      }
@@ -121,7 +138,7 @@
        return true;
      }
 
-     function validateCiudad(value:any) {
+     function validateSucursal(value:any) {
        // if the field is empty
        if (!value) {
          return 'Este campo es requerido';
@@ -147,65 +164,33 @@
 
        return true;
      }
+
+     function validatePago(value:any) {
+      var regex = /^[a-zA-ZÀ-ÿ ]+$/
+       if(tipopago.value==false && !value){
+        return 'Este campo es necesario ';}
+
+         if(tipopago.value==false && isNaN(value)){
+          return 'Inválido';
+        }
+        if(tipopago.value==false && regex.test(value)){
+        return 'Inválido';
+
+       }
+
+      if(tipopago.value==true){
+                return true;
+ }
+  return true;
+}
  </script>
+
 
 <template>
  <main>
      <div class="container" style="border-radius: 5px">
    <EForm @submit="onSubmit" >
-     <div class="row g-3">
-                 <div class="col">
-
-                     <h6
-                         style="
-                             font-size: 15px;
-                             color: black;
-                             text-align: left;
-                         ">
-                         Fecha de creación
-                     </h6>
-                     <input
-                         type="text"
-                         class="form-control"
-                         placeholder="23/08/2022"
-                         disabled="false"
-                         aria-label="First name" />
-                 </div>
-
-                 <div class="col">
-                     <h6
-                         style="
-                             font-size: 15px;
-                             color: black;
-                             text-align: left;
-                         ">
-                         Hora de creación
-                     </h6>
-                     <input
-                         type="text"
-                         class="form-control"
-                         placeholder="15:00"
-                         disabled="false"
-                         aria-label="First name" />
-                 </div>
-                 <div class="col">
-                     <h6
-                         style="
-                             font-size: 15px;
-                             color: black;
-                             text-align: left;
-                         ">
-                         Creado por
-                     </h6>
-                     <input
-                         type="text"
-                         class="form-control"
-                         placeholder=""
-                         disabled="false"
-                         aria-label="First name" />
-                 </div>
-
-       </div>
+    
    <div class="row g-3">
 
      <div class="col">
@@ -215,7 +200,7 @@
      color: black;
      text-align: left;
  ">
- Cédula* </h6>
+ Código de factura *</h6>
  <Field name="email"  class="form-control" type="email" :rules="validateID" />
  <div class="col">
  <ErrorMessage name="email"  style="
@@ -232,11 +217,11 @@
                      color: black;
                      text-align: left;
                  ">
-                 Nombres y apellidos *
+                 Fecha de emisión *
              </h6>
-             <Field name="name"  class="form-control" type="email" :rules="validateName" />
+             <Field name="fecha"  placeholder="dd/mm/yyyy" class="form-control" type="Date"  :rules="validateDate"/>
               <div class="col">
-                <ErrorMessage name="name"  style="  font-size: 10px;  color: red; text-align: left;"/>
+                <ErrorMessage name="fecha"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
 </div>
 <div class="col">
@@ -246,11 +231,25 @@
                      color: black;
                      text-align: left;
                  ">
-                 Fecha de Nacimiento*
+                 Fecha de devolución*
              </h6>
-             <Field name="date"  placeholder="dd/mm/yyyy" class="form-control" type="date"  :rules="validateDate"/>
+             <Field name="date"  placeholder="dd/mm/yyyy" class="form-control" type="Date"  :rules="validateDate2"/>
               <div class="col">
                 <ErrorMessage name="date"  style="  font-size: 10px;  color: red; text-align: left;"/>
+              </div>
+</div>
+<div class="col">
+                     <h6
+                         style="
+                             font-size: 15px;
+                             color: black;
+                             text-align: left;
+                         ">
+                        Cajero *
+                     </h6>
+                     <Field name="provincia"  class="form-control" type="email" :rules="validateProvincia" />
+              <div class="col">
+                <ErrorMessage name="provincia"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
 </div>
 
@@ -263,67 +262,79 @@
                      color: black;
                      text-align: left;
                  ">
-                 Teléfono*
+                Cliente *
              </h6>
-             <Field name="celular"  class="form-control" type="email" :rules="validateCell" />
+             <select
+                 class="form-select"
+                 aria-label="Default select example">
+                 <option value="1">cliente 1</option>
+                 <option value="2">cliente 2</option>
+                 <option value="3">cliente 3</option>
+             </select>
+              
+         </div>
+         <div class="col">
+          <EButton type="secondary" style="margin-top:20px;"> + </EButton>
+
+        </div>
+         <div class="col">
+             <h6
+                 style="
+                     font-size: 15px;
+                     color: black;
+                     text-align: left;
+                 ">
+                 Identificación
+             </h6>
+             <Field name="id"  class="form-control" type="email"  />
+             
+         </div>
+         <div class="col">
+             <h6
+                 style="
+                     font-size: 15px;
+                     color: black;
+                     text-align: left;
+                 ">
+                 Teléfono
+             </h6>
+             <Field name="celular"  class="form-control" type="email"  />
               <div class="col">
                 <ErrorMessage name="celular"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
          </div>
          <div class="col">
-             <h6
-                 style="
-                     font-size: 15px;
-                     color: black;
-                     text-align: left;
-                 ">
-                 Sexo
-             </h6>
-             <select
-                 class="form-select"
-                 aria-label="Default select example">
-                 <option selected>Femenino</option>
-                 <option value="1">Masculino</option>
-                 <option value="2">Otro</option>
-             </select>
-         </div>
-         <div class="col">
-             <h6
-                 style="
-                     font-size: 15px;
-                     color: black;
-                     text-align: left;
-                 ">
-                 Estado
-             </h6>
-             <div class="form-check form-switch">
-                 <input
-                     class="form-check-input"
-                     type="checkbox"
-                     role="switch"
-                     id="flexSwitchCheckDefault" />
-                 <label
-                     class="form-check-label"
-                     for="flexSwitchCheckDefault"></label>
-             </div>
-         </div>
-       </div>
-       <div class="row g-3">
-           <div class="col">
                      <h6
                          style="
                              font-size: 15px;
                              color: black;
                              text-align: left;
                          ">
-                         Provincia *
+                         Dirección 
                      </h6>
-                     <Field name="provincia"  class="form-control" type="email" :rules="validateProvincia" />
+                     <Field name="direccion"  class="form-control" type="email"  />
               <div class="col">
-                <ErrorMessage name="provincia"  style="  font-size: 10px;  color: red; text-align: left;"/>
+                <ErrorMessage name="direccion"  style="  font-size: 10px;  color: red; text-align: left;"/>
+              </div>
+                 </div>
+       </div>
+       
+       <div class="row g-3">
+        <div class="col">
+             <h6
+                 style="
+                     font-size: 15px;
+                     color: black;
+                     text-align: left;
+                 ">
+                 Correo
+             </h6>
+             <Field name="correo"  class="form-control" type="email" />
+              <div class="col">
+                <ErrorMessage name="correo"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
 
-             </div>
+         </div>
              <div class="col">
              <h6
                  style="
@@ -331,9 +342,9 @@
                      color: black;
                      text-align: left;
                  ">
-                 Ciudad *
+                 Sucursal *
              </h6>
-             <Field name="ciudad"  class="form-control" type="email" :rules="validateCiudad"/>
+             <Field name="ciudad"  class="form-control" type="email" :rules="validateSucursal"/>
               <div class="col">
                 <ErrorMessage name="ciudad"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
@@ -345,47 +356,52 @@
                      color: black;
                      text-align: left;
                  ">
-                 Correo*
+                 Tipo de pago:
              </h6>
-             <Field name="correo"  class="form-control" type="email" :rules="validateEmail"/>
-              <div class="col">
-                <ErrorMessage name="correo"  style="  font-size: 10px;  color: red; text-align: left;"/>
-              </div>
-
+             <select
+                 class="form-select"
+                 aria-label="Default select example" @change="changeCountry($event)">
+                 <option value="1">En efectivo</option>
+                 <option value="2">Con tarjeta</option>
+             </select>
          </div>
+         <div class="col">
+         <h6
+ style="
+     font-size: 15px;
+     color: black;
+     text-align: left;
+ ">
+ Últimos dígitos de tarjeta</h6>
+ <Field name="pago"  class="form-control" type="email" :rules="validatePago" />
+ <div class="col">
+ <ErrorMessage name="pago"  style="
+     font-size: 10px;
+     color: red;
+     text-align: left;
+ "/>
+ </div>
+</div>
    </div>
    <div class="row g-3">
-       <div class="col">
-                     <h6
-                         style="
-                             font-size: 15px;
-                             color: black;
-                             text-align: left;
-                         ">
-                         Dirección domiciliaria*
-                     </h6>
-                     <Field name="direccion"  class="form-control" type="email" :rules="validateDireccion" />
-              <div class="col">
-                <ErrorMessage name="direccion"  style="  font-size: 10px;  color: red; text-align: left;"/>
-              </div>
-                 </div>
-                 <div class="col">
+    <div class="col">
              <h6
                  style="
                      font-size: 15px;
                      color: black;
                      text-align: left;
                  ">
-                 Rol:
+                 Estado:
              </h6>
              <select
                  class="form-select"
                  aria-label="Default select example">
-                 <option selected>Cajero</option>
-                 <option value="1">Vendedor</option>
-                 <option value="2">Two</option>
-                 <option value="3">Three</option>
+                 <option selected>Activa</option>
+                 <option value="1">Anulada</option>
              </select>
+         </div>
+         <div class="col">
+         <EButton type="secondary" style="margin-top:20px;">Añadir producto</EButton>
          </div>
 
              </div>
@@ -403,7 +419,7 @@
                      color: white;
                      background-color: #555555;
 
-                 ">  Guardar </button>
+                 ">  Facturar </button>
    </EForm>
    </div>
  </main>

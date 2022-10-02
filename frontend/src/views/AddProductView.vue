@@ -409,28 +409,19 @@
                     </div>
                 </div>
 
-                <div class="container text-left col">
-                    <form enctype="multipart/form-data">
-                        <div class="col form-group">
-                            <div class="row">
-                                <label for="imagen">Imagen</label>
-                            </div>
-                            <input
-                                type="file"
-                                ref="file"
-                                @change="obtenerImagen"
-                                class="form-control-file" />
-
-                            <figure>
-                                <img
-                                    width="200"
-                                    height="200"
-                                    :src="imagen"
-                                    alt="Foto del producto"
-                                    v-if="imagenM" />
-                            </figure>
+                <div class="container text-center">
+                    <div class="row">
+                        <div class="col">
+                            <h6
+                                style="
+                                    font-size: 15px;
+                                    color: black;
+                                    text-align: left;
+                                ">
+                                Cargar imagen
+                            </h6>
                         </div>
-                    </form>
+                    </div>
                 </div>
 
                 <div class="container text-center" style="padding: 10px">

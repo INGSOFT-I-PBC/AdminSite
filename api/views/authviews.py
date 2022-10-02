@@ -1,5 +1,7 @@
+from tokenize import group
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
+
 # from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework.decorators import api_view
@@ -13,7 +15,7 @@ from rest_framework_simplejwt.token_blacklist.models import (
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models import User, Permission, GroupPermission
+from api.models import User, Permission, GroupPermission, Role
 from api.serializers import UserSerializer, PermissionSerializer
 
 
@@ -33,6 +35,7 @@ class PermissionsViewSet(viewsets.ModelViewSet):
     """
     API endpoint that retrieves all the permissions that are on the system
     """
+
     queryset = Permission.objects.all().order_by("codename")
     serializer_class = PermissionSerializer
 
@@ -81,6 +84,24 @@ class PermissionsView(APIView):
         )
 
 
+@api_view(["GET"])
+def user_data(request: Request):
+    user: User = request.user
+    role: Role = user.employee.role
+    gperms = GroupPermission.objects.filter(group=user.group)
+    permissions = []
+    for gperm in gperms:
+        permissions.append(gperm.permission.name)
+    return JsonResponse(
+        {
+            "name": user.employee.name,
+            "username": user.username,
+            "role": role.name,
+            "permissions": permissions,
+        }
+    )
+
+
 @api_view(["POST"])
 def reset_password(request: Request):
     data = dict(**request.data)
@@ -108,7 +129,3 @@ def reset_password(request: Request):
         )
 
     return JsonResponse({"error": False, "message": "Ok"})
-
-
-def user_info():
-    pass

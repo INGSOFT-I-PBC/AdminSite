@@ -4,6 +4,7 @@ from .authviews import (
     PermissionsView,
     reset_password,
     PermissionsViewSet,
+    user_data,
 )
 from .warehouse import (
     WarehouseView,
@@ -27,4 +28,6 @@ __all__ = [
     "ItemView",
     "CategoryView",
     "InventoryView",
+    "user_data",
+    "PermissionsViewSet",
 ]

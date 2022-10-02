@@ -24,7 +24,7 @@
         },
         labelStyle: {
             type: String,
-            default: 'tw-font-bold tw-text-smd',
+            default: 'tw-font-bold tw-text-smd tw-text-left',
         },
         infoLabel: {
             type: String,

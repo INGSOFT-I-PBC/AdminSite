@@ -156,6 +156,7 @@
     onMounted(() => {
         return showAllProducts()
     })
+
 </script>
 
 <template>

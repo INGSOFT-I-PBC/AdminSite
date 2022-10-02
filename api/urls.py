@@ -5,15 +5,7 @@ from django.urls import path, include
 from rest_framework import routers
 
 from api import views
-from .views import (
-    LogoutViewSet,
-    PermissionsView,
-    reset_password,
-    WarehouseView,
-    ItemView,
-    CategoryView,
-    InventoryView,
-)
+from .views import *
 from .views.warehouse import WhOrderRequestView
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -26,6 +18,7 @@ urlpatterns = [
     path("list/", include(router.urls)),
     path("logout", LogoutViewSet.as_view(), name="logout"),
     path("auth/me/permissions", PermissionsView.as_view(), name="user-permissions"),
+    path("auth/me", user_data, name="user-data"),
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
     path("items", ItemView.as_view(), name="item-list"),
     path("items/<int:id>", ItemView.as_view(), name="item_process"),

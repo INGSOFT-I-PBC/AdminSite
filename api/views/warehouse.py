@@ -40,15 +40,21 @@ class WarehouseViewSet(ReadOnlyModelViewSet):
 class OrderRequestViewSet(ReadOnlyModelViewSet):
     queryset = OrderRequest.objects.all().order_by("id")
     serializer_class = WarehouseSerializer
+
+
 class WhOrderRequestView(APIView):
     def get(self):
         pass
+
     def post(self):
         pass
+
     def put(self):
         pass
+
     def delete(self):
         pass
+
 
 class WhOrderRequestViewSet(ReadOnlyModelViewSet):
     """
