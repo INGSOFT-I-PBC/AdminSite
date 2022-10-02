@@ -258,7 +258,7 @@ MEDIA_URL = "/storage/"
 MEDIA_ROOT = BASE_DIR / "storage"
 
 APPEND_SLASH = False
-# Django Vite configuration Variables
+# Django  configuration Variables
 DJANGO_VITE_ASSETS_PATH = "static/dist"
 DJANGO_VITE_DEV_MODE = DEBUG
 STATICFILES_DIRS = [BASE_DIR / DJANGO_VITE_ASSETS_PATH]
