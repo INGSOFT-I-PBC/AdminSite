@@ -254,7 +254,8 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = "static/"
-MEDIA_URL = "storage/"
+MEDIA_URL = "/storage/"
+MEDIA_ROOT = BASE_DIR / "storage"
 
 APPEND_SLASH = False
 # Django Vite configuration Variables

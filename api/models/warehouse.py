@@ -43,7 +43,8 @@ class Inventory(TimestampModel):
         return self.item.brand
 
     def imgItem(self):
-        return self.item.img
+        return self.item.img.name
+        #imgItem
 
     def ivaItem(self):
         return self.item.iva

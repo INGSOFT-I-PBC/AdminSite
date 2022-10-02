@@ -4,39 +4,7 @@
     import type Item from '@/interfaz/items'
     import type Item3 from '@/interfaz/Items3'
 
-    export default defineComponent({
-        name: 'IventoryView',
 
-        data() {
-            return {
-                items: [] as Item[],
-                currentTutorial: {} as Item,
-                currentIndex: -1,
-                title: '',
-            }
-        },
-        methods: {
-            retrieveTutorials() {
-                ItemDataService.getAll()
-                    .then((response) => {
-                        this.items = response.data.items
-                        console.log(this.items)
-                    })
-                    .catch((e: Error) => {
-                        console.log(e)
-                    })
-            },
-            refreshList() {
-                this.retrieveTutorials()
-                this.currentTutorial = {} as Item
-                this.currentIndex = -1
-            },
-            setActiveTutorial(tutorial: Item, index = -1) {
-                this.currentTutorial = tutorial
-                this.currentIndex = index
-            },
-        },
-    })
 </script>
 
 <script setup lang="ts">
@@ -181,6 +149,10 @@
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
+    function goAgregar(): void {
+
+        router.push({ path: "/inventario/agregar" })
+    }
     onMounted(() => {
         return showAllProducts()
     })
@@ -201,7 +173,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="go(1)"
+                    <EButton type="secondary" @click="goAgregar"
                         >+ Agregar producto
                     </EButton>
 
@@ -231,16 +203,22 @@
             <Table :header="tableSettings">
                 <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div v-if="colIdx == 8">
-                        <div class="form-check form-switch" v-if="items2[rowIdx].state==1">
-                            <input
+                        <div class="form-check form-switch" >
+                            <input v-if="items2[rowIdx].state==1"
                                 class="form-check-input"
                                 type="checkbox"
                                 role="switch"
                                 id="flexSwitchCheckDefault"
                                 checked />
+                            <input v-else
+                                class="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                id="flexSwitchCheckDefault"
+                                 />
                             <label
                                 class="form-check-label"
-                                for="flexSwitchCheckDefault">{{items2[rowIdx].state==1}}</label>
+                                for="flexSwitchCheckDefault"></label>
                         </div>
                     </div>
 
