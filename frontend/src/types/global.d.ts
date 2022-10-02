@@ -90,6 +90,11 @@ declare global {
         active?: boolean
         href?: string
     }
+
+    export type PaginationOptions = {
+        perPage?: number
+        page: number
+    }
 }
 
 export {}

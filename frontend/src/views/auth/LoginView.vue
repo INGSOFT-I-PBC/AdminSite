@@ -48,9 +48,8 @@
 </script>
 
 <template>
-    <div
-        class="tw-h-screen tw-w-screen tw-flex tw-flex-col tw-justify-center tw-justify-items-center tw-items-center tw-bg-gray-200 dark:tw-bg-gray-900">
-        <ECard class="tw-bg-gray-900">
+    <div class="login-view">
+        <ECard id="login-card">
             <img
                 src="../../assets/img/nova.png"
                 class="tw-max-w-full tw-h-auto tw-rounded-lg"
@@ -82,7 +81,9 @@
                         <p class="tw-text-red-700">{{ errorMessage }}</p>
                     </div>
                     <div class="mt-4">
-                        <EButton type="primary" @click="access">Acceder </EButton>
+                        <EButton type="primary" @click="access"
+                            >Acceder
+                        </EButton>
                     </div>
                     <div class="flex items-baseline justify-between mt-4">
                         <a class="text-sm text-blue-600 hover:underline"
@@ -94,3 +95,12 @@
         </ECard>
     </div>
 </template>
+
+<style lang="scss">
+    .login-view {
+        @apply tw-min-h-full tw-py-0 md:tw-py-5 tw-w-screen tw-flex tw-flex-col tw-justify-center tw-justify-items-center tw-items-center tw-bg-gray-200 dark:tw-bg-gray-900;
+    }
+    .login-view > #login-card {
+        @apply tw-h-full tw-min-h-full;
+    }
+</style>

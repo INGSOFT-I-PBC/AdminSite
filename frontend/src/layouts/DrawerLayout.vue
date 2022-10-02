@@ -114,9 +114,7 @@
             class="resize-handle--x tw-cursor-ew-resize tw-justify-center hover:tw-bg-primary-light tw-w-1 hover:tw-animate-pulse hover:tw-transition tw-ease-in-out tw-duration-700 tw-bg-transparent"
             data-target="aside" />
         <!-- Right view -->
-        <main
-            class="tw-px-4 tw-py-2 tw-justify-items-stretch tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col"
-            id="right-panel">
+        <main class="main-section" id="right-panel">
             <header
                 class="tw-flex tw-flex-row tw-gap-3 tw-justify-between tw-justify-items-stretch">
                 <UserCard
@@ -141,7 +139,9 @@
                     <FontAwesomeIcon
                         class="tw-h-4 tw-text-center tw-content-center tw-align-middle"
                         icon="fa-solid fa-house-chimney" />
-                    <RouterLink class="breadcrumb_link" to="/">Principal</RouterLink>
+                    <RouterLink class="breadcrumb_link" to="/"
+                        >Principal</RouterLink
+                    >
                     <TransitionGroup
                         enter-active-class="tw-transition-all tw-duration-400"
                         enter-from-class="tw-opacity-0 -tw-translate-x-50 tw-scale-60"
@@ -184,7 +184,8 @@
             </div>
 
             <!-- FOOTER -->
-            <footer class="tw-sticky tw-top-full tw-bottom-0 tw-pb-1 tw-pt-5 tw-z-0">
+            <footer
+                class="tw-sticky tw-top-full tw-bottom-0 tw-pb-1 tw-pt-5 tw-z-0">
                 <span class="tw-text-neutral-500 dark:tw-text-neutral-400"
                     >Realizado en
                     <FontAwesomeIcon icon="fa-brands fa-vuejs" />
@@ -199,4 +200,12 @@
     </div>
 </template>
 
-<style lang="postcss"></style>
+<style lang="scss">
+    .main-section {
+        @apply tw-px-4 tw-py-2 tw-justify-items-stretch
+        tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col tw-overflow-y-auto;
+    }
+
+    .drawer-left-view {
+    }
+</style>
