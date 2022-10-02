@@ -11,6 +11,8 @@
       "@store/*": ["./src/store/*"],
       "@store": ["./src/store"],
       "@exceptions": ["./src/exceptions/index.ts"],
+      "@components-types": ["./src/components/types"],
+      "@store-types": ["./src/store/types"],
       "*":["./src/types/*.d.ts", "./src/types/*.ts"],
       "@/*": ["./src/*"],
     },

@@ -1,5 +1,10 @@
 // vim: set tw=4:sw=4
-import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
+import {
+    createRouter,
+    createWebHashHistory,
+    useRouter,
+    type RouteRecordRaw,
+} from 'vue-router'
 import LoginView from '../views/auth/LoginView.vue'
 import Error404 from '../views/Error404.vue'
 import Error403 from '../views/Error403.vue'
@@ -63,19 +68,20 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.isAuthenticated) {
-      const authStore = useAuthStore()
-      authStore.refreshToken()
-      .catch((err) => {
-        console.error(err)
-        next({path:'/login'})
-      })
-    //   try {
-    //     await authStore.refreshToken()
-    //   } catch (err) {
-    //     next({ path: '/login' })
-    //   }
+        // const router = useRouter()
+        const authStore = useAuthStore()
+        authStore.refreshToken().catch(err => {
+            console.error(err)
+            router.push({ path: '/login' })
+            // next({ path: '/login' })
+        })
+        //   try {
+        //     await authStore.refreshToken()
+        //   } catch (err) {
+        //     next({ path: '/login' })
+        //   }
     }
     next()
-  })
+})
 
 export default router

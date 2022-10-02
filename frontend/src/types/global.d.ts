@@ -4,7 +4,7 @@ import type { RouteRecordRaw } from 'vue-router'
 declare global {
     type Optional<T> = T | null
     type Nullable<T> = Optional<T>
-
+    type Nullish = null | undefined
     type Maybe<T> = T | undefined
 
     /**
