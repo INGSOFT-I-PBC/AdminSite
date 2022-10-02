@@ -27,14 +27,12 @@ export const useAuthStore = defineStore('auth-store', {
          */
         async refreshToken() {
             try {
-
                 const data = await (await axios.post<JWTAccessToken>('/api/v1/token-refresh', {
                     refresh: this.jwtData!.refresh,
                 })).data
                 this.jwtData!.access = data.access
                 localStorage.setItem('accessToken', JSON.stringify(this.jwtData))
                 axios.defaults.headers.common['Authorization'] = `Bearer ${data.access}`
-
             } catch (error) {
                 if (this.jwtData) throw new SessionExpiredException()
                 throw new UserNotLoggedInError()
