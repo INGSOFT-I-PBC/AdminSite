@@ -10,6 +10,10 @@ declare module '*.vue' {
     export default component
 }
 
+declare module '@components-types' {
+    export * from '@/components/types'
+}
+
 /**
  * This interface enable the intelli-sense for .env
  * defined variables that would be used across the project

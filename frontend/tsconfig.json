@@ -13,7 +13,7 @@
   ],
   "compilerOptions": {
     "isolatedModules": true,
-    "types": ["naive-ui/volar"],
+    "types": ["naive-ui/volar", "axios", "vue", "@components-types"],
     "strict": true,
     "allowJs": false,
     "pretty": true

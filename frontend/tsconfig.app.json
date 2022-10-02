@@ -6,13 +6,13 @@
     "composite": true,
     "baseUrl": ".",
     "paths": {
-      "*":["./src/types/*.d.ts", "./src/types/*.ts"],
-      "@/*": ["./src/*"],
       "@components/*": ["./src/components/*"],
       "@views/*": ["./src/views/*"],
       "@store/*": ["./src/store/*"],
       "@store": ["./src/store"],
-      "@exceptions": ["./src/exceptions"],
+      "@exceptions": ["./src/exceptions/index.ts"],
+      "*":["./src/types/*.d.ts", "./src/types/*.ts"],
+      "@/*": ["./src/*"],
     },
     "typeRoots": [
       "node_modules/@types",
