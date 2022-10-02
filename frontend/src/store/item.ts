@@ -1,15 +1,15 @@
-import axios,{Axios, type AxiosResponse } from 'axios'
+import axios, { Axios, type AxiosResponse } from 'axios'
 import type Item from '@/interfaz/items'
 
 /* eslint-disable */
 class ItemDataService {
     var: string =
-        'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjYzOTc5OTA5LCJpYXQiOjE2NjM5NTExMDksImp0aSI6IjU1MTM4NGUyODdhMjQzZGJiMjk5Zjk1MWEwN2I2YWU5IiwidXNlcl9pZCI6M30.fUfkHzP3Y5FrwGqMtdjQBcc1ZlaVDKQVCydACuV9bPfbO8JBa1iF8SzzaOl_-1MLrt_cvRf6JM_R9AvcoupbYdTZbRf8xUJdawPi2M8OqttMiQEqQ49sqxdhk7jgXaHe6RWP1vU3a74Wwrza-CFWOdE8_EmKD7_17fgjN6WfbMBgNqH3fotfdmEMhI-HACh2c86LFbzljxcAIxpZBEPRZ-b07Pm3hYeaeX7lEeuj5JU4rsgGMltujv1c9oEtsUJFvf1YiRRgpheEoYpIlrtKQxa6_mUW84lWJLz3NVqW_-6rwLXsxkP2sm1A-cj3W1pcJt2ImgT4J_6hxZ0_oaLlmjiRgl7fcoypgrqFueQKB01I5flDbHTJzK5EtbNUUVUVqUnsXl1edVgoJ3qEtmhw-f76yTj89yKVryX4ZQ_FTaiKOHl4YjuQpzTX7nOFDL5OtI9kiYsWzzfbnXNICg3U8tRHDKQB9hJR28n7QIPfH7beG9EseC1tnB_1OlwZ9CL9QtOJ8X_Nbm_BPKLI8tV3oqLaQSF29Nfr_E5E9eNGqA47XLDxMwh9MJnPCev6x68oWMaktEaxiiulSDTPxl78A4XBH0klxqZVLIvHMBl8IXHiLdNi6YgEv6hV_YjE42kfhbMz-BQ0XJVaQXFdYY2b9-LZ19CfEutpOP12S1u5eWA'
+        'Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjY0NDk1MTk0LCJpYXQiOjE2NjQ0NjYzOTQsImp0aSI6IjdhYjRmMWM2MDAxODQyZjNhNGY5NGRlZjY4Yjg5OGFmIiwidXNlcl9pZCI6M30.USRfAbA-cAmUPO5UVOBlZ_BP7so3SGwZqf1MqTqBDD11tNa6L9rcam7k-2rzFy7aa5HemxhxA0SaVFSqNyEloa6J5tAXN6Zh-UneKQMQiU-fSAJk8upjWfvRSUbO3TbbuVPlZuAKTl1-o-WCvR-sxXzCf6ip7MwcBBR_6n-2NabhpG-KIkd1Mi4KcRi8X3dpJSPfT_5HoLyNceJa5L2aoq6Mm6KJJ7b4Sz7O_2Pz9uKzDtAOU5BwKXZtKJ2K6EpDLs8gTzLDpfza3rcP1MCYV_0BnkB6_APlbOXZ-PQ6IIae0gCw4__uDcnQQB3qx1NusWm6Uf6d169Ghqqr_F7YLMU3hKL0EU4iBjhvDJ7ucux7PY68zMwxPNm8KrnD5WCF13p5PLZQqe3Xu_p1DH0MsI1c3xA4Teif1C0j4Ml-eCNMPI_NG90mT66WdpIe9j5uOk-3gyMIi6XYuupWl1lJxXlGR48XLexYjSt28id4Nq8dMXGgY_Jvn1q5kaIRCHFfmUgm74umuonTu0HmRTB1dL8mIswUKoBQyJX6v9KtZpIIryUGu0Wf394ONIbNFRCy5qh8C106mlRCm8snCREEq7PQ-2YOXSyMcq_fQnN2hnFaXiTJJUrK7_KBmKVd3lsZ4UABb9g09Ae17xiPHmXrKnJHcmY43h_NLntSFL0YJaM'
     async getAll(): Promise<any> {
         return await axios.get('/api/v1/inventory', {
             headers: {
-                "Content-Type":"application/json",
-                Authorization: this.var,
+                'Content-Type': 'application/json',
+               // Authorization: this.var,
             },
         })
     }
@@ -17,18 +17,36 @@ class ItemDataService {
     async get(id: string): Promise<AxiosResponse<Item>> {
         return await axios.get(`/api/v1/items/${id}`, {
             headers: {
-                "Content-Type":"application/json",
-                Authorization: this.var,
+                'Content-Type': 'application/json',
+                //Authorization: this.var,
             },
         })
     }
 
-    create(data: any): Promise<any> {
+    createItem(data: any): Promise<any> {
+        return axios
+            .post('/api/v1/items', data, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    //Authorization: this.var,
+                    //'cache-control': 'no-cache',
+                    //'content-type': 'application/x-www-form-urlencoded',
+                },
+            })
+            .then(response => {
+                console.log('Successfully uploaded: ', response.data)
+            })
+            .catch(err => {
+                console.log('error occured: ', err)
+            })
+    }
+    createInventory(data: any): Promise<any> {
         return axios.post(
-            '/api/v1/items',
+            '/api/v1/inventory',
             {
                 headers: {
-                    Authorization: this.var,
+                    //Authorization: this.var,
+                    'Content-Type': 'multipart/form-data',
                 },
             },
             data
@@ -40,7 +58,7 @@ class ItemDataService {
             `/api/v1/items/${id}`,
             {
                 headers: {
-                    Authorization: this.var,
+                    //Authorization: this.var,
                 },
             },
             data

@@ -34,6 +34,7 @@ class InventoryView(APIView):
             )
             if len(items) > 0:
                 datos = Response(serializer.data)
+                print(datos)
 
             return datos
 

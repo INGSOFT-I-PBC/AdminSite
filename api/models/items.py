@@ -1,8 +1,11 @@
 from dataclasses import field
+from distutils.command.upload import upload
 from django.db import models
 from .common import Status, TimestampModel
 from .users import Employee
 from django.core.validators import MinValueValidator
+import os
+import datetime
 
 
 class Category(TimestampModel):
@@ -43,6 +46,13 @@ class CategoryParam(models.Model):
         ]
 
 
+def filepath(request, filename):
+    old_filename = filename
+    timeNow = datetime.datetime.now().strftime("%Y%m%d%H:%M:%S")
+    filename = "%s%s" % (timeNow, old_filename)
+    return os.path.join("uploads/", filename)
+
+
 class Item(TimestampModel):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
@@ -51,7 +61,7 @@ class Item(TimestampModel):
     created_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="created_by"
     )
-    img = models.CharField(max_length=255)
+    img = models.ImageField(upload_to="recipes/", null=True, blank=True)
     iva = models.DecimalField(default=0, max_digits=6, decimal_places=3)
     model = models.CharField(max_length=128)
     name = models.CharField(max_length=60)
@@ -68,9 +78,6 @@ class Item(TimestampModel):
             models.Index(fields=["category"], name="idx_item_category"),
             models.Index(fields=["brand"], name="idx_item_brand"),
         ]
-
-    def created_nameItem(self):
-        return self.created_by.name
 
 
 class ItemMetaData(models.Model):

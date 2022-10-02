@@ -1,17 +1,29 @@
+from api import serializers
+from api.serializers.items import ItemSerializer
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from api.models import Category, Item
+from api.models import Category, Item,Status
+
 from django.http import JsonResponse
 import json
 from api.serializers import FullItemSerializer
+from api.forms import UploadForm
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authtoken.models import Token
+from rest_framework.authentication import TokenAuthentication
 
 
 class ItemView(APIView):
     """
     This View holds multiple methods for the Items
     """
+
+    #authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
 
     def get(self, request: Request, id=0):
         if id > 0:
@@ -34,23 +46,43 @@ class ItemView(APIView):
             return JsonResponse(datos)
 
     def post(self, request: Request):
-        jd = json.loads(request.body)
-        Item.objects.create(
-            created_at=jd["created_at"],
-            updated_at=jd["updated_at"],
-            deleted_at=jd["deleted_at"],
-            brand=jd["brand"],
-            category_id=jd["category_id"],
-            created_by_id=jd["created_by_id"],
-            img=jd["img"],
-            iva=jd["iva"],
-            model=jd["model"],
-            name=jd["name"],
-            price=jd["price"],
-            status_id=jd["status_id"],
-        )
-        datos = {"message": "Success"}
-        return JsonResponse(datos)
+
+        serializer=ItemSerializer(data=request.data)
+        cateid=self.request.data.get("category_id")
+        staid=self.request.data.get("status_id")
+
+
+        if serializer.is_valid():
+            serializer.save(
+                category=Category.objects.get(pk=cateid),
+                status=Status.objects.get(pk=staid)
+            )
+            return Response(serializer.data,status=200)
+        else:
+            return Response(serializer.errors,status=400)
+        '''if request.FILES:
+            form = UploadForm(request.POST, request.FILES)
+            if form.is_valid():
+                img = form.cleaned_data.get("image_field")
+                jd = json.loads(request.data["data"])
+                obj = Item.objects.create(
+                    created_at=jd["created_at"],
+                    updated_at=jd["updated_at"],
+                    deleted_at=jd["deleted_at"],
+                    brand=jd["brand"],
+                    category_id=jd["category_id"],
+                    created_by_id=jd["created_by_id"],
+                    img=img,
+                    iva=jd["iva"],
+                    model=jd["model"],
+                    name=jd["name"],
+                    price=jd["price"],
+                    status_id=jd["status_id"],
+                )
+                obj.save()
+                print(obj)
+                datos = {"message": "Success"}
+                return JsonResponse(datos)'''
 
     def put(self, request: Request, id):
         jd = json.loads(request.body)

@@ -10,6 +10,7 @@ from .purchases import Purchase, PurchaseDetail, PurchaseStatus
 from .warehouse import Warehouse, WarehouseTransaction, WhTransactionDetails, Inventory
 from .roles import Role
 from .users import Employee
+from .common import Status
 
 __all__ = [
     "User",
@@ -43,4 +44,5 @@ __all__ = [
     "WarehouseTransaction",
     "WhTransactionDetails",
     "Inventory",
+    "Status"
 ]
