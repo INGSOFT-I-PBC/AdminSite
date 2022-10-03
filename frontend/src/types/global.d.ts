@@ -7,6 +7,10 @@ declare global {
     type Nullish = null | undefined
     type Maybe<T> = T | undefined
 
+    type TypeChecker<T> = (arg0: T) => arg0 is T
+
+    type Functor<I, O> = (I) => O
+
     /**
      * A item used by default or base on the component
      * `ListBox`
