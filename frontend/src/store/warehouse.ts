@@ -1,29 +1,42 @@
-import axios from "axios";
-import { defineStore } from "pinia";
-import type { Warehouse } from "./models/warehouseModels";
-
+import axios from 'axios'
+import { defineStore } from 'pinia'
+import type { Warehouse } from './models/warehouseModels'
+import type { PaginatedAPIResponse } from '@store-types'
 
 export interface WarehouseState {
     lastWarehouseList: Optional<Warehouse[]>
+    paginatedWarehouse: Optional<PaginatedAPIResponse<Warehouse>>
 }
 
-export const useWarehouseStore =defineStore('warehouse-store',
-{
+export const useWarehouseStore = defineStore('warehouse-store', {
     state: (): WarehouseState => ({
-        lastWarehouseList: null
+        lastWarehouseList: null,
+        paginatedWarehouse: null,
     }),
 
     getters: {
-        getWarehouseList: state => state.lastWarehouseList
+        getWarehouseList: state => state.lastWarehouseList,
+        getPaginatedWarehouse: state => state.paginatedWarehouse,
     },
 
     actions: {
-        async fetchPaginated(options: PaginationOptions) {
-            const result = await( await axios
-                .get<Warehouse[]>('/api/v1/warehouse/list', {params: options}))
-                .data
+        async fetchWarehouses(options: Optional<PaginationOptions> = null) {
+            const result = await (
+                await axios.get<Warehouse[]>('/api/v1/list/warehouses', {
+                    params: options,
+                })
+            ).data
             this.lastWarehouseList = result
-        }
-    }
-
+        },
+        async fetchPaginatedWarehouses(options: PaginationOptions) {
+            const result = await (
+                await await axios.get<PaginatedAPIResponse<Warehouse>>(
+                    '/api/v1/list/warehouses',
+                    { params: options }
+                )
+            ).data
+            this.paginatedWarehouse = result
+            return result
+        },
+    },
 })
