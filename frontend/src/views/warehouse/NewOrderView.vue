@@ -9,6 +9,11 @@
     import Title from '../../components/custom/Title.vue'
     import Table from '../../components/holders/Table.vue'
     import { computed, reactive } from 'vue'
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+    import { useWarehouseStore } from '@store/warehouse'
+    import TextArea from '../../components/custom/TextArea.vue'
+    import type { Item, Warehouse } from '@store/types'
+    import BTable from '../../components/custom/BTable.vue'
 
     const templateList = [
         { label: 'Bodega 1', value: 'Hola' },
@@ -23,8 +28,9 @@
         },
         { label: 'Bodega 4', value: 'Gato' },
     ]
-
+    const warehouse = useWarehouseStore()
     const model = ref({})
+    const showWaitOverlay = ref(true)
     const productModalShow = ref(false)
     // const selectedProduct = null
     const tableSettings = reactive<TableHeaderSettings>({
@@ -51,7 +57,12 @@
             },
         ],
         rows: [
-            { name: 'Zapatos Marca X', code: '102-XFSOE', quantity: 10, detail: '' },
+            {
+                name: 'Zapatos Marca X',
+                code: '102-XFSOE',
+                quantity: 10,
+                detail: '',
+            },
             {
                 name: 'Camiseta deportiva',
                 code: '102-XFSOE',
@@ -64,10 +75,37 @@
                 quantity: 10,
                 detail: '',
             },
-            { name: 'Zapatos Marca X', code: '102-XFSOE', quantity: 10, detail: '' },
-            { name: 'Zapatos Marca X', code: '102-XFSOE', quantity: 10, detail: '' },
-            { name: 'Zapatos Marca X', code: '102-XFSOE', quantity: 10, detail: '' },
-            { name: 'Zapatos Marca X', code: '102-XFSOE', quantity: 10, detail: '' },
+            {
+                name: 'Zapatos Marca X',
+                code: '102-XFSOE',
+                quantity: 10,
+                detail: '',
+            },
+            {
+                name: 'Zapatos Marca X',
+                code: '102-XFSOE',
+                quantity: 10,
+                detail: '',
+            },
+            {
+                name: 'Zapatos Marca X',
+                code: '102-XFSOE',
+                quantity: 10,
+                detail: '',
+            },
+            {
+                name: 'Zapatos Marca X',
+                code: '102-XFSOE',
+                quantity: 10,
+                detail: '',
+            },
+        ],
+    })
+
+    const itemTableSettings = ref<TableHeaderSettings>({
+        headers: [
+            { label: 'Producto', attribute: '' },
+            { label: 'Código', attribute: '' },
         ],
     })
 
@@ -88,108 +126,144 @@
     function removeItem(index: number) {
         tableSettings.rows?.splice(index, 1)
     }
+
+    /**
+     * Definition of page-used form
+     */
+    type Form = {
+        bodega: Optional<Warehouse>
+        comentario: string
+        items: Item[]
+    }
+    const form = ref<Form>({
+        bodega: null,
+        comentario: '',
+        items: [],
+    })
+
+    ;(function () {
+        warehouse.fetchWarehouses().then(it => {
+            showWaitOverlay.value = false
+        })
+    })()
 </script>
 
 <template>
     <main>
-        <ModalDialog
-            id="product-modal"
-            v-model:show="productModalShow"
-            title="Detalle del producto">
-            <h1>nombre: {{ selectedProduct?.name }}</h1>
-            <span>Cantidad: ${{ selectedProduct?.quantity }}</span>
-        </ModalDialog>
-        <ECard>
-            <ERow>
-                <ECol cols="12" md="6" xl="4">
-                    <ListBox
-                        v-model="model"
-                        top-label="Seleccione un filtro"
-                        :options="templateList" />
-                </ECol>
-                <ECol cols="12" md="5">
-                    <InputText
-                        label="Comentario del pedido"
-                        placeholder="Razón o comentario del pedido" />
-                </ECol>
-            </ERow>
-            <ERow>
-                <ECol>
-                    <EButton @click="productModalShow = true">
-                        Seleccionar producto
-                    </EButton>
-                </ECol>
-            </ERow>
-            <div class="tw-flex">
-                <div class="tw-w-[1.5rem]">&ZeroWidthSpace;</div>
-            </div>
-
-            <!-- <ERow>
-                <ECol cols="12"> -->
+        <WaitOverlay :show="showWaitOverlay">
+            <ModalDialog
+                id="product-modal"
+                v-model:show="productModalShow"
+                title="Lista de productos">
+                <BTable :columns="['hola']" />
+            </ModalDialog>
             <ECard>
-                <Title size="lg"> Datos del Ítem seleccionado </Title>
+                <ERow align-v="start">
+                    <ECol cols="12" md="6" xl="4">
+                        <ListBox
+                            v-model="model"
+                            top-label="Seleccione un filtro"
+                            :options="warehouse.getWarehouseList ?? []"
+                            label="name" />
+                    </ECol>
+                    <ECol cols="12" md="5">
+                        <div class="tw-flex tw-flex-col">
+                            <label class="tw-font-bold tw-text-smd tw-text-left"
+                                >Comentario del pedido</label
+                            >
+                            <TextArea
+                                v-model="form.comentario"
+                                placeholder="Comentario" />
+                        </div>
+
+                        <!-- <InputText
+                            type="text-area"
+                            label="Comentario del pedido"
+                            placeholder="Razón o comentario del pedido" /> -->
+                    </ECol>
+                </ERow>
                 <ERow>
                     <ECol>
-                        <InputText label="Producto seleccionado" />
-                    </ECol>
-                    <ECol>
-                        <InputText
-                            label="Código de producto"
-                            :disabled="!!selectedProduct" />
-                    </ECol>
-                    <ECol>
-                        <EButton left-icon="plus" disabled>
-                            Añadir producto
+                        <EButton @click="productModalShow = true">
+                            Seleccionar producto
                         </EButton>
                     </ECol>
-                    <!-- <ECol></ECol>
+                </ERow>
+                <div class="tw-flex">
+                    <div class="tw-w-[1.5rem]">&ZeroWidthSpace;</div>
+                </div>
+
+                <!-- <ERow>
+                <ECol cols="12"> -->
+                <ECard>
+                    <Title size="lg"> Datos del Ítem seleccionado </Title>
+                    <ERow>
+                        <ECol>
+                            <InputText label="Producto seleccionado" />
+                        </ECol>
+                        <ECol>
+                            <InputText
+                                label="Código de producto"
+                                :disabled="!!selectedProduct" />
+                        </ECol>
+                        <ECol>
+                            <EButton left-icon="plus" disabled>
+                                Añadir producto
+                            </EButton>
+                        </ECol>
+                        <!-- <ECol></ECol>
                     <ECol></ECol> -->
-                </ERow>
-                <!-- Item quantity fields -->
+                    </ERow>
+                    <!-- Item quantity fields -->
+                    <ERow>
+                        <ECol>
+                            <InputText
+                                label="Detalle del producto"
+                                disabled
+                                placeholder="Cargue un ítem para ver su descripción" />
+                        </ECol>
+                        <ECol>
+                            <InputText
+                                label="Cantidad del Producto"
+                                type="number" />
+                        </ECol>
+                    </ERow>
+                </ECard>
+                <Table :header="tableSettings">
+                    <template #body-cell="{ cellData, colIdx, rowIdx }">
+                        <div
+                            v-if="colIdx > 3"
+                            class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
+                            <button
+                                class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
+                                @click="showProduct(cellData as productModel)">
+                                Ver más detalles
+                            </button>
+                            <button
+                                class="tw-bg-red-600 tw-py-1 tw-text-white"
+                                @click="removeItem(rowIdx)">
+                                Eliminar
+                            </button>
+                        </div>
+                    </template>
+                </Table>
                 <ERow>
-                    <ECol>
-                        <InputText
-                            label="Detalle del producto"
-                            disabled
-                            placeholder="Cargue un ítem para ver su descripción" />
-                    </ECol>
-                    <ECol>
-                        <InputText label="Cantidad del Producto" type="number" />
+                    <ECol class="tw-content-end tw-justify-end">
+                        <div
+                            class="tw-flex tw-flex-col tw-font-bold tw-content-end tw-items-center tw-justify-between">
+                            <span>Sub Total: ${{ subTotal.toFixed(3) }}</span>
+                            <!-- <div> -->
+                            <span>IVA 12%: ${{ iva.toFixed(3) }}</span>
+                            <span
+                                >Total: ${{ (subTotal + iva).toFixed(3) }}</span
+                            >
+                            <!-- </div> -->
+                        </div>
                     </ECol>
                 </ERow>
-            </ECard>
-            <Table :header="tableSettings">
-                <template #body-cell="{ cellData, colIdx, rowIdx }">
-                    <div
-                        v-if="colIdx > 3"
-                        class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
-                        <button
-                            class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
-                            @click="showProduct(cellData as productModel)">
-                            Ver más detalles
-                        </button>
-                        <button
-                            class="tw-bg-red-600 tw-py-1 tw-text-white"
-                            @click="removeItem(rowIdx)">
-                            Eliminar
-                        </button>
-                    </div>
-                </template>
-            </Table>
-            <ERow>
-                <ECol class="tw-content-end tw-justify-end">
-                    <div
-                        class="tw-flex tw-flex-col tw-font-bold tw-content-end tw-items-center tw-justify-between">
-                        <span>Sub Total: ${{ subTotal.toFixed(3) }}</span>
-                        <!-- <div> -->
-                        <span>IVA 12%: ${{ iva.toFixed(3) }}</span>
-                        <span>Total: ${{ (subTotal + iva).toFixed(3) }}</span>
-                        <!-- </div> -->
-                    </div>
-                </ECol>
-            </ERow>
-            <!-- </ECol>
+                <!-- </ECol>
             </ERow> -->
-        </ECard>
+            </ECard>
+        </WaitOverlay>
     </main>
 </template>

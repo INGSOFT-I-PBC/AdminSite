@@ -55,12 +55,16 @@
                     label="Danger"
                     info-label="danger info label"
                     placeholder="danger"
+                    theme="dark"
                     right-icon="alert-triangle"
                     :status="false"
                     info-status="danger" />
                 <InputText
                     label="Warning"
-                    :info-label="'warning info label :: ' + (toggle ? 'on' : 'off')"
+                    :info-label="
+                        'warning info label :: ' + (toggle ? 'on' : 'off')
+                    "
+                    theme="daynight"
                     left-icon="eye"
                     placeholder="warning"
                     @left-icon-click="iconClick"

@@ -202,8 +202,7 @@
 
 <style lang="scss">
     .main-section {
-        @apply tw-px-4 tw-py-2 tw-justify-items-stretch
-        tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col tw-overflow-y-auto;
+        @apply tw-px-4 tw-py-2 tw-justify-items-stretch tw-overflow-x-hidden tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col tw-overflow-y-auto;
     }
 
     .drawer-left-view {
