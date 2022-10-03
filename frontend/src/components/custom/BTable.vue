@@ -2,19 +2,18 @@
     import { computed, type Prop, type PropType } from 'vue'
     import type { TableColumnish, NormalizedHeader } from '@components-types'
     import { isTableColumn } from '@/components/types'
-
     const props = defineProps({
         hover: Boolean,
         dark: Boolean,
         striped: Boolean,
         columns: {
             type: Object as PropType<TableColumnish[]>,
-            default: [],
+            default: (): TableColumnish[] => [],
             required: true,
         },
         rows: {
             type: Object as PropType<string[]>,
-            default: [],
+            default: (): string[] => [],
         },
     })
 
