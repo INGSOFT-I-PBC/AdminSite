@@ -15,7 +15,7 @@ declare module '@components-types' {
 }
 
 declare module '@store-types' {
-    export * from '@/store/types'
+    export * from '@store/types'
 }
 
 /**

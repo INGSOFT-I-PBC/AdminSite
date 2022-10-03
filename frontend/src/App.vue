@@ -40,34 +40,25 @@
 </script>
 
 <template>
-    <head>
+    <Teleport to="head">
         <title>
             {{ isDevMode ? '[Dev] ' : '' }}
             ERPt
             {{ currentTitle ? ` :: ${currentTitle}` : '' }}
         </title>
-    </head>
-    <Transition
+    </Teleport>
+    <!-- <Transition
         enter-active-class="tw-transition-all tw-duration-300"
         enter-from-class="tw-opacity-0"
-        enter-to-class="tw-opacity-100">
-        <component :is="layout" :title="currentTitle" :breadcrumb="breadcrumb">
-            <!-- <Transition
-                class=""
-                enter-active-class="tw-transition-all tw-transform-gpu tw-ease-in-out tw-duration-550"
-                enter-from-class="tw-opacity-0 tw-scale-10"
-                enter-to-class="tw-opacity-100 tw-scale-105"
-                leave-active-class="tw-transition-all tw-transform-gpu tw-ease-in tw-duration-400"
-                leave-from-class="tw-opacity-100 tw-scale-105"
-                leave-to-class="tw-opacity-0 tw-scale-90 tw-translate-x-full"> -->
-            <RouterView v-slot="{ Component }">
-                <Transition>
-                    <component :is="Component" />
-                </Transition>
-            </RouterView>
-            <!-- </Transition> -->
-        </component>
-    </Transition>
+        enter-to-class="tw-opacity-100"> -->
+    <component :is="layout" :title="currentTitle" :breadcrumb="breadcrumb">
+        <RouterView v-slot="{ Component }">
+            <Transition>
+                <component :is="Component" />
+            </Transition>
+        </RouterView>
+    </component>
+    <!-- </Transition> -->
 </template>
 
 <style lang="scss">
