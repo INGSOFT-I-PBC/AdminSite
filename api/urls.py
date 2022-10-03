@@ -14,6 +14,7 @@ router.register(r"users", views.UserViewSet)
 router.register(r"permissions", views.PermissionsViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
+router.register(r"items", views.ItemViewSet, "itemViewSet")
 
 urlpatterns = [
     path("list/", include(router.urls)),

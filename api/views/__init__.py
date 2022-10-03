@@ -12,6 +12,7 @@ from .warehouse import (
     WarehouseViewSet,
     OrderRequestViewSet,
 )
+from .itemview import *
 
 __all__ = [
     "UserViewSet",
@@ -24,4 +25,6 @@ __all__ = [
     "OrderRequestViewSet",
     "user_data",
     "PermissionsViewSet",
+    "ItemView",
+    "ItemViewSet",
 ]
