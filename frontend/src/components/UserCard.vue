@@ -1,8 +1,25 @@
 <script setup lang="ts">
     import { ref } from 'vue'
-    const username = ref('Username')
-    const role = ref('Role')
-    const userImage = ref('')
+    import { stringifyQuery } from 'vue-router'
+    defineProps({
+        username: {
+            type: String,
+            required: true,
+            default: 'Unknown',
+        },
+        role: {
+            type: String,
+            required: true,
+            default: 'Unknown Role',
+        },
+        userImage: {
+            type: String,
+            default: '',
+        },
+    })
+    // const username = ref('Username')
+    // const role = ref('Role')
+    // const userImage = ref('')
 </script>
 
 <template>

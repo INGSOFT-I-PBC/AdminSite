@@ -14,27 +14,44 @@
  import { Form as EForm } from 'vee-validate'
  import { useRoute, useRouter } from 'vue-router'
  const model = ref(null)
+ const tipoid = ref(true)
 
  const router = useRouter()
 
+  function changeCountry (event:any) {
+      if(event.target.options[event.target.options.selectedIndex].text=='Cédula'){
+        tipoid.value=true
+      }
+      else{
+        tipoid.value=false
+      }
+
+    }
 
   function onSubmit(value:any) {
      console.log(value)
-     router.push({ path: '/usuarios/empleados' })
+     router.push({ path: '/usuarios/clientes' })
 
  }
-
-
-
    function validateID(value:any) {
        // if the field is empty
        if (!value) {
          return 'Este campo es requerido';
        }
-       if( value.length!=10 || isNaN(value) ){
-         return 'Inválido'; }
+       if(isNaN(value)){
+        return 'Inválido';
 
+       }
+       if(tipoid.value==true && value.length!=10){
+          return 'Inválido # de cédula';
+
+       }
+       if(tipoid.value==false && value.length!=13){
+        return 'Inválido # de RUC';
+
+       }
        return true;
+
      }
 
      function validateCell(value:any) {
@@ -48,16 +65,6 @@
        return true;
      }
 
-     function validateId(value:any) {
-       // if the field is empty
-       if (!value) {
-         return 'Este campo es requerido';
-       }
-       if( value.length!=10 || isNaN(value) ){
-         return 'Inválido'; }
-
-       return true;
-     }
 
    function validateName(value:any) {
        // if the field is empty
@@ -83,7 +90,6 @@
          return 'Este campo es requerido';
        }
        
-
        return true;
      }
 
@@ -144,6 +150,34 @@
        if (!value) {
          return 'Este campo es requerido';
        }
+
+       return true;
+     }
+
+     function validateRazon(value:any) {
+
+      var regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+       if(tipoid.value==false && !value){
+        return 'Este campo es necesario ';
+
+       }
+       if(tipoid.value==false && !isNaN(value)){
+        return 'Inválido';
+
+       }
+
+
+       if(tipoid.value==false && !regex.test(value)){
+        return 'Inválido';
+
+       }
+
+       if(tipoid.value==true ){
+        return true;
+
+       }
+
 
        return true;
      }
@@ -208,6 +242,26 @@
 
        </div>
    <div class="row g-3">
+    <div class="col">
+             <h6
+                 style="
+                     font-size: 15px;
+                     color: black;
+                     text-align: left;
+                 ">
+                 Tipo de identificación:
+             </h6>
+
+
+             <select @change="changeCountry($event)"
+                 class="form-select"
+                 aria-label="Default select example" >
+                 <option selected value="1" >Cédula</option>
+                 <option value="2">RUC</option>
+             </select>
+
+
+         </div>
 
      <div class="col">
          <h6
@@ -216,7 +270,7 @@
      color: black;
      text-align: left;
  ">
- Cédula* </h6>
+ Identificación* </h6>
  <Field name="email"  class="form-control" type="email" :rules="validateID" />
  <div class="col">
  <ErrorMessage name="email"  style="
@@ -240,7 +294,24 @@
                 <ErrorMessage name="name"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
 </div>
-<div class="col">
+
+</div>
+<div class="row">
+         <div class="col">
+             <h6
+                 style="
+                     font-size: 15px;
+                     color: black;
+                     text-align: left;
+                 ">
+                 Razón Social
+             </h6>
+             <Field name="razon"  class="form-control" type="email" :rules="validateRazon" />
+              <div class="col">
+                <ErrorMessage name="razon"  style="  font-size: 10px;  color: red; text-align: left;"/>
+              </div>
+         </div>
+         <div class="col">
              <h6
                  style="
                      font-size: 15px;
@@ -254,23 +325,6 @@
                 <ErrorMessage name="date"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
 </div>
-
-</div>
-<div class="row">
-         <div class="col">
-             <h6
-                 style="
-                     font-size: 15px;
-                     color: black;
-                     text-align: left;
-                 ">
-                 Teléfono*
-             </h6>
-             <Field name="celular"  class="form-control" type="email" :rules="validateCell" />
-              <div class="col">
-                <ErrorMessage name="celular"  style="  font-size: 10px;  color: red; text-align: left;"/>
-              </div>
-         </div>
          <div class="col">
              <h6
                  style="
@@ -288,29 +342,24 @@
                  <option value="2">Otro</option>
              </select>
          </div>
-         <div class="col">
+
+       </div>
+       <div class="row g-3">
+        <div class="col">
              <h6
                  style="
                      font-size: 15px;
                      color: black;
                      text-align: left;
                  ">
-                 Estado
+                 Teléfono*
              </h6>
-             <div class="form-check form-switch">
-                 <input
-                     class="form-check-input"
-                     type="checkbox"
-                     role="switch"
-                     id="flexSwitchCheckDefault" />
-                 <label
-                     class="form-check-label"
-                     for="flexSwitchCheckDefault"></label>
-             </div>
+             <Field name="celular"  class="form-control" type="email" :rules="validateCell" />
+              <div class="col">
+                <ErrorMessage name="celular"  style="  font-size: 10px;  color: red; text-align: left;"/>
+              </div>
          </div>
-       </div>
-       <div class="row g-3">
-           <div class="col">
+         <div class="col">
                      <h6
                          style="
                              font-size: 15px;
@@ -339,7 +388,10 @@
                 <ErrorMessage name="ciudad"  style="  font-size: 10px;  color: red; text-align: left;"/>
               </div>
          </div>
-         <div class="col">
+
+   </div>
+   <div class="row g-3">
+    <div class="col">
              <h6
                  style="
                      font-size: 15px;
@@ -354,8 +406,6 @@
               </div>
 
          </div>
-   </div>
-   <div class="row g-3">
        <div class="col">
                      <h6
                          style="
@@ -377,17 +427,20 @@
                      color: black;
                      text-align: left;
                  ">
-                 Rol:
+                 Estado
              </h6>
-             <select
-                 class="form-select"
-                 aria-label="Default select example">
-                 <option selected>Cajero</option>
-                 <option value="1">Vendedor</option>
-                 <option value="2">Two</option>
-                 <option value="3">Three</option>
-             </select>
+             <div class="form-check form-switch">
+                 <input
+                     class="form-check-input"
+                     type="checkbox"
+                     role="switch"
+                     id="flexSwitchCheckDefault" />
+                 <label
+                     class="form-check-label"
+                     for="flexSwitchCheckDefault"></label>
+             </div>
          </div>
+
 
              </div>
 
