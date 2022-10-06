@@ -66,7 +66,7 @@
         },
         formatter: {
             type: Function as PropType<Mapper<string>>,
-            default: () => null,
+            default: identity,
         },
     })
 
@@ -140,7 +140,6 @@
 
     function emitValue(e: Event) {
         let value = (e.target as HTMLInputElement).value
-        console.log('value form input: ', value)
         if (props.modelModifiers?.capitalize) {
             value = value.charAt(0).toUpperCase() + value.slice(1)
         }
@@ -159,7 +158,7 @@
         if (props.modelModifiers?.alpha) {
             value = value.replace(/[0-9]/g, '')
         }
-        if (props.formatter != null && typeof props.formatter == 'function') {
+        if ((props.formatter?? undefined) != undefined && typeof props.formatter == 'function') {
             value = props.formatter(value)
         }
         // ;(e.target as HTMLInputElement).value = value
