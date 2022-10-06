@@ -66,7 +66,7 @@
         },
         formatter: {
             type: Function as PropType<Mapper<string>>,
-            default: () => identity<string>,
+            default: identity,
         },
     })
 
@@ -159,10 +159,9 @@
         if (props.modelModifiers?.alpha) {
             value = value.replace(/[0-9]/g, '')
         }
-        if (props.formatter != null && typeof props.formatter == 'function') {
+        if ((props.formatter?? undefined) != undefined && typeof props.formatter == 'function') {
             value = props.formatter(value)
         }
-        // ;(e.target as HTMLInputElement).value = value
         emit('update:modelValue', value)
     }
 </script>
