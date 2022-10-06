@@ -27,4 +27,5 @@ __all__ = [
     "PermissionsViewSet",
     "ItemView",
     "ItemViewSet",
+    "PaginatedItemViewSet",
 ]
