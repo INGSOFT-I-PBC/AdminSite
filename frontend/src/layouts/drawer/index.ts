@@ -98,15 +98,16 @@ export const menus: MenuItem[] = [
         children: [],
     },
     {
-        id: 'logout',
-        label: 'Cerrar Sesión',
-        forceRender: true,
-        icon: 'log-out',
-    },
-    {
         label: 'Facturación',
         icon: 'clipboard',
         children: [],
         path: '/facturacion',
     },
+    {
+        id: 'logout',
+        label: 'Cerrar Sesión',
+        forceRender: true,
+        icon: 'log-out',
+    },
+   
 ]
