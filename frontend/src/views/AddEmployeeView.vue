@@ -319,10 +319,13 @@
                          ">
                          Provincia *
                      </h6>
-                     <Field name="provincia"  class="form-control" type="email" :rules="validateProvincia" />
-              <div class="col">
-                <ErrorMessage name="provincia"  style="  font-size: 10px;  color: red; text-align: left;"/>
-              </div>
+                     <select
+                 class="form-select"
+                 aria-label="Default select example">
+                 <option value="1">Manabí</option>
+                 <option value="2">Esmeraldas</option>
+                 <option value="3">Pastaza</option>
+             </select>
 
              </div>
              <div class="col">
@@ -334,10 +337,13 @@
                  ">
                  Ciudad *
              </h6>
-             <Field name="ciudad"  class="form-control" type="email" :rules="validateCiudad"/>
-              <div class="col">
-                <ErrorMessage name="ciudad"  style="  font-size: 10px;  color: red; text-align: left;"/>
-              </div>
+             <select
+                 class="form-select"
+                 aria-label="Default select example">
+                 <option value="1">Guayaquil</option>
+                 <option value="2">Quito</option>
+                 <option value="3">Riobamba</option>
+             </select>
          </div>
          <div class="col">
              <h6
