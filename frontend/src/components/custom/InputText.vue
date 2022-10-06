@@ -66,7 +66,7 @@
         },
         formatter: {
             type: Function as PropType<Mapper<string>>,
-            default: () => identity<string>,
+            default: () => null,
         },
     })
 
