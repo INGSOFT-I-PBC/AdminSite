@@ -1,4 +1,4 @@
-import type { Employee } from "./user.model"
+import type { Employee } from './user.model'
 
 export type MetaData = Record<string, any>
 
@@ -14,7 +14,7 @@ export interface Item {
     brand: string
     category: Maybe<Category>
     created_by: Maybe<Employee>
-    img:string
+    img: string
     iva: number
     model: string
     name: string

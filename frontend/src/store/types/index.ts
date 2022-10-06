@@ -6,7 +6,7 @@ export type {
     PaginatedAPIResponse,
 } from './requests'
 
-export { isMessage } from './requests'
+export { isMessage } from './typesafe'
 
 export type { MinimalWarehouse, Warehouse } from './warehouse.model'
 

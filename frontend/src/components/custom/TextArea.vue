@@ -133,6 +133,6 @@
 <style lang="scss">
     .t-text-area {
         @apply tw-rounded tw-bg-neutral-500/5 dark:tw-bg-slate-900
-        dark:tw-ring-neutral-500 tw-ring-1 tw-ring-slate-800 tw-px-2 tw-py-1.5 tw-max-w-full;
+        dark:tw-ring-neutral-500 tw-ring-1 tw-ring-neutral-300 tw-shadow-md tw-px-2 tw-py-1.5 tw-max-w-full;
     }
 </style>

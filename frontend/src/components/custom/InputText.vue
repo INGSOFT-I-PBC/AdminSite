@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { computed, type PropType } from 'vue'
     import type { ColorTheme } from '@components-types'
+    import { identity } from '@/components/types/checkers'
 
     const props = defineProps({
         modelValue: {
@@ -8,8 +9,8 @@
             default: '',
         },
         modelModifiers: {
-            type: Object,
-            default: () => ({} as Record<string, unknown>),
+            type: Object as PropType<Record<string, boolean>>,
+            default: () => ({} as Record<string, boolean>),
         },
         type: {
             type: String,
@@ -25,7 +26,7 @@
         },
         labelStyle: {
             type: String,
-            default: 'tw-font-bold tw-text-smd tw-text-left',
+            default: 'form-label',
         },
         infoLabel: {
             type: String,
@@ -57,7 +58,15 @@
         },
         theme: {
             type: String as PropType<ColorTheme>,
-            default: 'auto',
+            default: () => 'auto',
+        },
+        readonly: {
+            type: Boolean,
+            default: () => false,
+        },
+        formatter: {
+            type: Function as PropType<Mapper<string>>,
+            default: () => identity<string>,
         },
     })
 
@@ -65,6 +74,9 @@
         'update:modelValue',
         'rightIconClick',
         'leftIconClick',
+        'keydown',
+        'keyup',
+        'change',
     ])
 
     const infoClass = computed(() => {
@@ -118,6 +130,7 @@
     })
 
     function interactionStart(event: Event) {
+        emit('keydown')
         const target = event.target as HTMLButtonElement
         if (props.disabled) {
             event.preventDefault()
@@ -127,6 +140,7 @@
 
     function emitValue(e: Event) {
         let value = (e.target as HTMLInputElement).value
+        console.log('value form input: ', value)
         if (props.modelModifiers?.capitalize) {
             value = value.charAt(0).toUpperCase() + value.slice(1)
         }
@@ -140,11 +154,15 @@
             value = value.toLowerCase()
         }
         if (props.modelModifiers?.number || props.type === 'number') {
-            value = value.replace(/[^0-9]/g, '')
+            value = value.replace(/\D/g, '')
         }
         if (props.modelModifiers?.alpha) {
             value = value.replace(/[0-9]/g, '')
         }
+        if (props.formatter != null && typeof props.formatter == 'function') {
+            value = props.formatter(value)
+        }
+        // ;(e.target as HTMLInputElement).value = value
         emit('update:modelValue', value)
     }
 </script>
@@ -170,11 +188,14 @@
             <input
                 @mousedown="interactionStart"
                 @keydown="interactionStart"
+                @keyup="$emit('keyup')"
+                @change="$emit('change')"
                 :value="modelValue"
                 @input="emitValue"
                 :placeholder="placeholder"
-                class="t-input tw-py-1 lg:tw-py-1.5 tw-px-1 tw-bg-transparent tw-outline-none min-w-full tw-flex-1"
+                class="t-input tw-py-1.5 lg:tw-py-2 xl:tw-py-2.5' tw-px-1 tw-bg-transparent tw-outline-none min-w-full tw-flex-1"
                 :class="inputClass"
+                :readonly="readonly"
                 :type="type" />
             <button
                 class="tw-text-center tw-p-0.5 tw-content-center tw-grid focus:tw-outline-none"
@@ -195,6 +216,9 @@
 </template>
 
 <style lang="scss">
+    .form-label {
+        @apply tw-font-bold tw-text-md lg:tw-text-base tw-text-left;
+    }
     .t-input-text {
         @apply tw-overflow-hidden tw-rounded-md focus:tw-outline-none tw-ring-1 dark:tw-ring-neutral-600 tw-shadow-md tw-flex tw-flex-row tw-justify-between tw-justify-items-stretch tw-content-center tw-gap-1 tw-px-1 tw-place-content-stretch tw-ring-neutral-300;
     }

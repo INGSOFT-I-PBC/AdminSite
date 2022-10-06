@@ -4,13 +4,19 @@ import type {
     MessageResponse,
     PaginatedAPIResponse,
 } from '@store-types'
+import { isMessage } from '@/store/types/typesafe'
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import type { Ref } from 'vue'
+import { computed, type Ref } from 'vue'
 
-export const itemStore = defineStore('item-store', () => {
+export const useItemStore = defineStore('item-store', () => {
     let item: Ref<Optional<Item>> = ref(null)
     let paginatedItems: Ref<Optional<PaginatedAPIResponse<Item>>> = ref(null)
+    let currentPaginatedItemPage = computed(() => {
+        let pitem = paginatedItems.value
+        if (isMessage(pitem)) return undefined
+        return pitem?.page
+    })
 
     let allItems: Ref<Optional<Item[]>> = ref(null)
 
@@ -21,7 +27,9 @@ export const itemStore = defineStore('item-store', () => {
     }
     async function fetchItemsPaginated(options: PaginationOptions) {
         const data = await (
-            await axios.get('/api/v1/items', { params: options })
+            await axios.get<PaginatedAPIResponse<Item>>('/api/v1/list/items', {
+                params: options,
+            })
         ).data
         paginatedItems.value = data
         return data
@@ -81,6 +89,7 @@ export const itemStore = defineStore('item-store', () => {
         item,
         paginatedItems,
         allItems,
+        currentPaginatedItemPage,
         fetchItemById,
         fetchAllItems,
         fetchItemsPaginated,

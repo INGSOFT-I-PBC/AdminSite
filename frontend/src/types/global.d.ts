@@ -11,6 +11,8 @@ declare global {
 
     type Functor<I, O> = (I) => O
 
+    type Mapper<T> = (T) => T
+
     /**
      * A item used by default or base on the component
      * `ListBox`

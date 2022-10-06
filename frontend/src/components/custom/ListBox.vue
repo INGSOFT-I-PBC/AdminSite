@@ -43,7 +43,9 @@
 <template>
     <Listbox v-model="selectedItem">
         <div class="tw-relative">
-            <span v-if="topLabel" class="tw-pl-0.5 tw-font-bold tw-text-smd">
+            <span
+                v-if="topLabel"
+                class="tw-pl-0.5 tw-font-bold tw-text-md lg:tw-text-base">
                 {{ topLabel }}
             </span>
             <ListboxButton class="t-listbox-button">
@@ -114,10 +116,10 @@
 
 <style lang="scss">
     .t-listbox-options {
-        @apply tw-absolute tw-mt-2 tw-transform-gpu tw-z-10 tw-bg-white dark:tw-bg-slate-700 tw-w-full tw-overflow-auto tw-rounded-md tw-py-1 tw-text-base tw-max-h-60 focus:tw-outline-none sm:tw-text-sm tw-ring-1 tw-ring-black tw-ring-opacity-20 tw-shadow-xl;
+        @apply tw-absolute tw-mt-2 tw-transform-gpu tw-z-10 tw-bg-white dark:tw-bg-slate-700 tw-w-full tw-overflow-auto tw-rounded-md tw-py-1.5 tw-text-base tw-max-h-60 focus:tw-outline-none sm:tw-text-sm tw-ring-1 tw-ring-black tw-ring-opacity-20 tw-shadow-xl;
     }
     .t-listbox-button {
-        @apply tw-relative tw-w-full tw-cursor-default tw-rounded-lg tw-bg-neutral-500/5 dark:tw-bg-slate-900 tw-py-1 lg:tw-py-1.5 tw-pl-3 tw-pr-10 tw-text-left tw-shadow-md focus:tw-outline-none focus-visible:tw-border-indigo-500 focus-visible:tw-ring-2 focus-visible:tw-ring-white focus-visible:tw-ring-opacity-75 focus-visible:tw-ring-offset-2 focus-visible:tw-ring-offset-orange-300 sm:tw-text-sm tw-ring-1 tw-ring-zinc-300 dark:tw-ring-neutral-600;
+        @apply tw-relative tw-w-full tw-cursor-default tw-rounded-lg tw-bg-neutral-500/5 dark:tw-bg-slate-900 tw-py-2 tw-pl-3 tw-pr-10 tw-text-left tw-shadow-md focus:tw-outline-none focus-visible:tw-border-indigo-500 focus-visible:tw-ring-2 focus-visible:tw-ring-white focus-visible:tw-ring-opacity-75 focus-visible:tw-ring-offset-2 focus-visible:tw-ring-offset-orange-300 sm:tw-text-md tw-text-md lg:tw-text-base tw-ring-1 tw-ring-zinc-300 dark:tw-ring-neutral-600;
     }
     .t-listbox-item {
         @apply tw-relative tw-cursor-default tw-select-none tw-py-2 tw-pl-10 tw-pr-4 tw-text-gray-900 dark:tw-text-gray-300;

@@ -29,7 +29,7 @@
 
 <style lang="scss" module="elevation">
     .md {
-        @apply tw-shadow-sm;
+        @apply tw-shadow-md;
     }
     .sm {
         @apply tw-shadow-sm;

@@ -38,7 +38,7 @@
 </script>
 <template>
     <!-- class="tw-flex tw-flex-row tw-flex-grow-0 tw-flex-shrink-0 tw-basis-auto tw-flex-wrap tw-gap-2 tw-max-w-full" -->
-    <div c-type="row" class="row" :class="alignClass">
+    <div c-type="row" class="row gy-2" :class="alignClass">
         <slot></slot>
     </div>
 </template>

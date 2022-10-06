@@ -10,16 +10,14 @@ export type APIResponse<T> = MessageResponse | DataResponse<T>
 export type PaginatedResponse<T> = {
     data: T[]
     page: number
-    lastPage: Optional<number>
+    lastPage: number
+    total: number
+    next?: string
+    previous?: string
 }
 
 export type PaginatedAPIResponse<T> = PaginatedResponse<T> | MessageResponse
 
 type RequestParams = Record<string, any>
-
-
-export function isMessage(response: APIResponse<T> | PaginatedAPIResponse<T>): response is MessageResponse {
-    return response.message ?? undefined === undefined
-}
 
 export default PaginatedResponse
