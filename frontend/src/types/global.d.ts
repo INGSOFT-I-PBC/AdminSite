@@ -4,8 +4,14 @@ import type { RouteRecordRaw } from 'vue-router'
 declare global {
     type Optional<T> = T | null
     type Nullable<T> = Optional<T>
-
+    type Nullish = null | undefined
     type Maybe<T> = T | undefined
+
+    type TypeChecker<T> = (arg0: T) => arg0 is T
+
+    type Functor<I, O> = (I) => O
+
+    type Mapper<T> = (T) => T
 
     /**
      * A item used by default or base on the component
@@ -89,6 +95,11 @@ declare global {
         text: string
         active?: boolean
         href?: string
+    }
+
+    export type PaginationOptions = {
+        perPage?: number
+        page: number
     }
 }
 

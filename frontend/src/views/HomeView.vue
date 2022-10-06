@@ -7,7 +7,7 @@
 
 <template>
     <main>
-        <ECard theme="tw-bg-gray-900">
+        <ECard theme="secondary" card-elevation="xl">
             <h1
                 class="tw-align-center tw-text-center tw-text-xl lg:tw-text-2xl tw-font-bold tw-text-primary-dark">
                 Bienvenido
@@ -18,8 +18,8 @@
             </h2>
             <p
                 class="tw-text-primary-light tw-justify-center tw-text-center tw-text-md lg:tw-text-lg">
-                Para comenzar a utilizar la plataforma, selecciona alguna opción del
-                menú al lado izquierdo.
+                Para comenzar a utilizar la plataforma, selecciona alguna opción
+                del menú al lado izquierdo.
             </p>
         </ECard>
     </main>

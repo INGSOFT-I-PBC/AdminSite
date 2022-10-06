@@ -1,32 +1,30 @@
 {
-  "[python]": {
-    "editor.autoIndent": "full",
-    "editor.formatOnSave": true,
-  },
-  "[vue]": {
-    "outline.showFunctions": true,
-    "editor.formatOnSave": true,
-  },
-  "python.formatting.provider": "black",
-  "python.formatting.blackPath": "black",
-  "eslint.codeAction.showDocumentation": {
-    "enable": true
-  },
-  "eslint.codeActionsOnSave.mode": "all",
-  "eslint.format.enable": true,
-  "prettier.endOfLine": "lf",
-  "python.linting.enabled": true,
-  "eslint.packageManager": "pnpm",
-  "eslint.workingDirectories": [
-    "./frontend",
-    "./frontend/src"
-  ],
-  "typescript.inlayHints.enumMemberValues.enabled": true,
-  "typescript.inlayHints.parameterNames.enabled": "literals",
-  "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
-  "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
-  "typescript.inlayHints.variableTypes.suppressWhenTypeMatchesName": true,
-  "typescript.inlayHints.variableTypes.enabled": true,
-  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
-  "typescript.inlayHints.parameterTypes.enabled": true,
+    "[python]": {
+        "editor.autoIndent": "full",
+        "editor.formatOnSave": true
+    },
+    "[vue]": {
+        "outline.showFunctions": true,
+        "editor.formatOnSave": true
+    },
+    "python.formatting.provider": "black",
+    "python.formatting.blackPath": "black",
+    "eslint.codeAction.showDocumentation": {
+        "enable": true
+    },
+    "eslint.codeActionsOnSave.mode": "all",
+    "eslint.format.enable": true,
+    "prettier.endOfLine": "lf",
+    "python.linting.enabled": true,
+    "eslint.packageManager": "pnpm",
+    "eslint.workingDirectories": ["./frontend", "./frontend/src"],
+    "typescript.inlayHints.enumMemberValues.enabled": true,
+    "typescript.inlayHints.parameterNames.enabled": "literals",
+    "typescript.inlayHints.parameterNames.suppressWhenArgumentMatchesName": true,
+    "typescript.inlayHints.propertyDeclarationTypes.enabled": true,
+    "typescript.inlayHints.variableTypes.suppressWhenTypeMatchesName": true,
+    "typescript.inlayHints.variableTypes.enabled": true,
+    "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+    "typescript.inlayHints.parameterTypes.enabled": true,
+    "cSpell.words": ["viewsets"]
 }

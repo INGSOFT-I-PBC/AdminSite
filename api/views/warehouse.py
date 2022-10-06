@@ -35,6 +35,7 @@ class WarehouseView(APIView):
 class WarehouseViewSet(ReadOnlyModelViewSet):
     queryset = Warehouse.objects.all().order_by("name")
     serializer_class = FullWarehouseSerializer
+    pagination_class = None
 
 
 class OrderRequestViewSet(ReadOnlyModelViewSet):

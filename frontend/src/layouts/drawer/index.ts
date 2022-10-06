@@ -55,14 +55,19 @@ export const menus: MenuItem[] = [
         icon: 'package',
         children: [
             {
-                label: 'Gestión pedidos',
-                path: '/bodegas/pedidos',
-                routeName: 'pedidos-view',
-            },
-            {
-                label: 'Solcitar Pedido',
-                path: '/bodegas/nueva-orden',
-                routeName: 'warehouse-new-order',
+                label: 'Pedidos',
+                children: [
+                    {
+                        label: 'Gestión pedidos',
+                        path: '/bodegas/pedidos',
+                        routeName: 'pedidos-view',
+                    },
+                    {
+                        label: 'Solicitar Pedido',
+                        path: '/bodegas/nueva-orden',
+                        routeName: 'warehouse-new-order',
+                    },
+                ]
             },
             {
                 label: 'Tomas físicas',
@@ -109,5 +114,4 @@ export const menus: MenuItem[] = [
         forceRender: true,
         icon: 'log-out',
     },
-   
 ]
