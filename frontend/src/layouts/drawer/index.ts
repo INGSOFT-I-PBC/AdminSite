@@ -97,16 +97,17 @@ export const menus: MenuItem[] = [
         icon: 'shopping-bag',
         children: [],
     },
-    {
-        id: 'logout',
-        label: 'Cerrar Sesión',
-        forceRender: true,
-        icon: 'log-out',
-    },
+    ,
     {
         label: 'Facturación',
         icon: 'clipboard',
         children: [],
         path: '/facturacion',
     },
+    {
+        id: 'logout',
+        label: 'Cerrar Sesión',
+        forceRender: true,
+        icon: 'log-out',
+    }
 ]
