@@ -3,70 +3,158 @@
     import type Item from '@/interfaz/items'
     import type Item3 from '@/interfaz/Items3'
     import ItemDataService from '@/store/item'
+    import { useAuthStore } from '@store'
 
     import axios from 'axios'
+    import { employee } from '@/router/routes/employee'
 
     export default defineComponent({
-        name: 'EditProductView',
+        name: 'AddProductView',
         data() {
             const route = useRoute()
+            const authStore = useAuthStore()
+            const name = authStore.userData?.name
+            const employee_id = authStore.userData?.employee as number
+            const tiempoTranscurrido = Date.now()
+            const hoy = new Date(tiempoTranscurrido)
 
             return {
                 route,
+                hoy,
                 items: {} as Item,
                 fecha_hora: {
                     fecha: String,
                     hora: String,
                 },
                 imagenM: '',
-                image_field: null,
-                data: {
-                    created_at: '2022-09-14T04:31:55Z',
-                    updated_at: '2022-09-14T04:31:55Z',
-                    deleted_at: null,
-                    brand: 'marca',
-                    category_id: 1,
-                    created_by_id: 1,
-                    img: this.image_field,
-                    iva: '0.13',
-                    model: 'modelo',
-                    name: 'blusa',
-                    price: '20.000',
-                    status_id: 1,
+                image_field: '',
+                category: [],
+                warehouses: [],
+                authStore,
+                name,
+                employee_id,
+                entrada: {
+                    brand: '',
+                    category_id: 0,
+                    iva: 0,
+                    model: '',
+                    name: '',
+                    price: 0,
+                    status_id: 0,
+                    warehouse_id: 0,
+                    quantity: 0,
+                    item_id: 0,
                 },
             }
         },
         methods: {
+            validarCheckbox() {
+                const checkbox = document.getElementById('check') as HTMLInputElement
+                console.log(checkbox.checked)
+                if (checkbox.checked) {
+                    this.entrada.status_id = 1
+                } else {
+                    this.entrada.status_id = 3
+                }
+            },
+            async showAllCategory() {
+                ItemDataService.getAllCategory()
+                    .then(response => {
+                        this.category = response.data
+                        console.log(this.category)
+                        console.log(this.authStore.userData?.employee)
+                    })
+                    .catch((e: Error) => {
+                        console.log(e)
+                    })
+            },
+            async showAllWarehouses() {
+                ItemDataService.getAllWarehouses()
+                    .then(response => {
+                        this.warehouses = response.data
+                        console.log(this.warehouses)
+                    })
+                    .catch((e: Error) => {
+                        console.log(e)
+                    })
+            },
             obtenerImagen(e: any) {
-                let file = e.target.files[0]
+                const file = e.target.files[0]
                 console.log(file)
                 this.cargarImagen(file)
 
                 this.image_field = file
-                this.performUpload(this.image_field)
-                //this.items["0"].img=file
+                //this.performUpload(this.image_field)
             },
 
-            performUpload(image_field: any) {
-                let formData = new FormData()
-                formData.append('created_at', '2022-09-14T04:31:55Z')
-                formData.append('updated_at', '2022-09-14T04:31:55Z')
-                //formData.append('updated_at', '2022-09-14T04:31:55Z')
-                formData.append('brand', 'brand')
-                formData.append('img', image_field)
-                formData.append('iva', '0.10')
-                formData.append('model', 'model')
-                formData.append('name', 'name')
-                formData.append('price', '90.00')
-                formData.append('category_id', '1')
-                formData.append('created_by', '1')
-                formData.append('status_id', '1')
-                //this.image_field = formData
+            performUpload() {
+                const formDataItem = new FormData()
+                formDataItem.append('id', '')
+                formDataItem.append('created_at', this.hoy.toISOString())
+                formDataItem.append('updated_at', this.hoy.toISOString())
+                formDataItem.append('brand', this.entrada.brand)
+                formDataItem.append('img', this.image_field)
+                formDataItem.append('iva', this.entrada.iva.toString())
+                formDataItem.append('model', this.entrada.model)
+                formDataItem.append('name', this.entrada.name)
+                formDataItem.append('price', this.entrada.price.toString())
+                formDataItem.append(
+                    'category_id',
+                    this.entrada.category_id.toString()
+                )
+                formDataItem.append('created_by', this.employee_id.toString())
+                this.validarCheckbox()
+                formDataItem.append('status_id', this.entrada.status_id.toString())
+                return formDataItem
+            },
+            performUploadInventory(id: number) {
+                const formDataInventory = new FormData()
 
-                return ItemDataService.createItem(formData)
+                formDataInventory.append('created_at', this.hoy.toISOString())
+                formDataInventory.append('updated_at', this.hoy.toISOString())
+                formDataInventory.append('deleted_at', this.hoy.toISOString())
+
+                formDataInventory.append(
+                    'quantity',
+
+                    this.entrada.quantity.toString()
+                )
+                formDataInventory.append('item_id', id.toString())
+                formDataInventory.append(
+                    'updated_by_id',
+                    this.employee_id.toString()
+                )
+                formDataInventory.append(
+                    'warehouse_id',
+                    this.entrada.warehouse_id.toString()
+                )
+
+                return formDataInventory
+            },
+            async guardarDatos(formDataItem: FormData) {
+                //console.log(formDataInventory.getAll('warehouse_id'))
+                //console.log(formDataInventory)
+                ItemDataService.createItem(formDataItem)
+                    .then(response => {
+                        const ite = response.data
+
+                        this.entrada.item_id = ite.id
+                        const formData = this.performUploadInventory(ite.id)
+                        console.log(formData.getAll('quantity'))
+
+                        ItemDataService.createInventory(formData).then(response => {
+                            console.log(response.data)
+                        })
+                    })
+                    .catch((e: Error) => {
+                        console.log(e)
+                    })
+
+                // console.log(item.data)
+                //ItemDataService.createInventory(formDataInventory)
             },
             cargarImagen(file: any) {
-                let reader = new FileReader()
+                const reader = new FileReader()
                 reader.onload = (e: any) => {
                     this.imagenM = e.target.result
                     //console.log(this.imagenM)
@@ -79,7 +167,13 @@
                 return this.imagenM
             },
         },
-        mounted() {},
+        mounted() {
+            this.showAllCategory()
+            this.showAllWarehouses()
+
+            console.log(this.name)
+            console.log(this.employee_id)
+        },
     })
 </script>
 <script setup lang="ts">
@@ -140,7 +234,8 @@
                                         type="text"
                                         class="form-control"
                                         placeholder="15:00"
-                                        aria-label="First name" />
+                                        aria-label="First name"
+                                        v-model="entrada.name" />
                                 </div>
 
                                 <div class="col">
@@ -156,7 +251,8 @@
                                         type="text"
                                         class="form-control"
                                         placeholder="Admin"
-                                        aria-label="First name" />
+                                        aria-label="First name"
+                                        v-model="entrada.brand" />
                                 </div>
 
                                 <div class="col">
@@ -171,8 +267,9 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        placeholder="Admin"
-                                        aria-label="First name" />
+                                        placeholder=""
+                                        aria-label="First name"
+                                        v-model="entrada.model" />
                                 </div>
                             </div>
                         </div>
@@ -192,11 +289,14 @@
                                 Categoría*
                             </h6>
                             <select
+                                v-model="entrada.category_id"
                                 class="form-select"
                                 aria-label="Default select example">
-                                <option selected>Femenino</option>
-                                <option value="1">Masculino</option>
-                                <option value="2">Unisex</option>
+                                <option
+                                    v-for="catego in category"
+                                    :value="catego['id']">
+                                    {{ catego['name'] }}
+                                </option>
                             </select>
                         </div>
 
@@ -229,7 +329,8 @@
                                 type="text"
                                 class="form-control"
                                 placeholder=""
-                                aria-label="First name" />
+                                aria-label="First name"
+                                v-model="entrada.price" />
                         </div>
                         <div class="col">
                             <h6
@@ -281,7 +382,8 @@
                                 type="text"
                                 class="form-control"
                                 placeholder=""
-                                aria-label="First name" />
+                                aria-label="First name"
+                                v-model="entrada.iva" />
                         </div>
 
                         <div class="col">
@@ -298,7 +400,8 @@
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault" />
+                                    id="check"
+                                    @change="validarCheckbox()" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>
@@ -358,7 +461,8 @@
                                 class="form-control"
                                 placeholder="Admin"
                                 disabled="false"
-                                aria-label="First name" />
+                                aria-label="First name"
+                                v-model="name" />
                         </div>
                     </div>
                 </div>
@@ -376,18 +480,23 @@
                                         ">
                                         Elegir Bodega
                                     </h6>
-                                    <input type="checkbox" id="jack" value="Jack" />
-                                    <label for="jack"> Bodega 1 </label>
-                                    <input type="checkbox" id="john" value="John" />
-                                    <label for="john"> Bodega 2 </label>
-                                    <input type="checkbox" id="mike" value="Mike" />
-                                    <label for="mike"> Bodega 3 </label>
+                                    <select
+                                        v-model="entrada.warehouse_id"
+                                        class="form-select"
+                                        aria-label="Default select example">
+                                        <option
+                                            v-for="warehouse in warehouses"
+                                            :value="warehouse['id']">
+                                            {{ warehouse['name'] }}
+                                        </option>
+                                    </select>
                                 </div>
 
                                 <div class="col">
                                     <InputText
                                         label="Cantidad del Producto"
-                                        type="number" />
+                                        type="number"
+                                        :v-model="entrada.quantity" />
                                 </div>
 
                                 <div class="col">
@@ -435,7 +544,11 @@
 
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
-                        <EButton type="secondary" @click="go2">Guardar </EButton>
+                        <EButton
+                            type="secondary"
+                            @click="guardarDatos(performUpload())"
+                            >Guardar
+                        </EButton>
                     </div>
                 </div>
 

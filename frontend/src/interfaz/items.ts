@@ -1,6 +1,5 @@
-
 export default interface Item {
-    [key:string]:any
+    [key: string]: any
     /*id: number
     created_at: string
     updated_at: string | null
@@ -14,6 +13,4 @@ export default interface Item {
     status_id: number
     category_id: number
     created_by: number*/
-
 }
-

@@ -1,9 +1,17 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import { SessionExpiredException, UndersiredStateError, UserNotLoggedInError } from '@/exceptions'
+import {
+    SessionExpiredException,
+    UndersiredStateError,
+    UserNotLoggedInError,
+} from '@/exceptions'
 
-const savedToken:JWTToken|null = JSON.parse(localStorage.getItem('accessToken')??'null')
-const savedUserData: Nullable<UserInfo> = JSON.parse(localStorage.getItem("userData") ?? 'null')
+const savedToken: JWTToken | null = JSON.parse(
+    localStorage.getItem('accessToken') ?? 'null'
+)
+const savedUserData: Nullable<UserInfo> = JSON.parse(
+    localStorage.getItem('userData') ?? 'null'
+)
 /**
  * This store contains the data from the user authentication. Also
  * contains method to handle the API authorization and authentication.
@@ -15,7 +23,9 @@ export const useAuthStore = defineStore('auth-store', {
     }),
     getters: {
         /** Get the list of permission of the current user */
-        getToken(state): Nullable<JWTToken> { return state.jwtData },
+        getToken(state): Nullable<JWTToken> {
+            return state.jwtData
+        },
         getPermissions: (state): Array<string> => state.userData?.permissions || [],
     },
     actions: {
@@ -27,12 +37,16 @@ export const useAuthStore = defineStore('auth-store', {
          */
         async refreshToken() {
             try {
-                const data = await (await axios.post<JWTAccessToken>('/api/v1/token-refresh', {
-                    refresh: this.jwtData!.refresh,
-                })).data
+                const data = await (
+                    await axios.post<JWTAccessToken>('/api/v1/token-refresh', {
+                        refresh: this.jwtData!.refresh,
+                    })
+                ).data
                 this.jwtData!.access = data.access
                 localStorage.setItem('accessToken', JSON.stringify(this.jwtData))
-                axios.defaults.headers.common['Authorization'] = `Bearer ${data.access}`
+                axios.defaults.headers.common[
+                    'Authorization'
+                ] = `Bearer ${data.access}`
             } catch (error) {
                 if (this.jwtData) throw new SessionExpiredException()
                 throw new UserNotLoggedInError()
@@ -66,46 +80,48 @@ export const useAuthStore = defineStore('auth-store', {
         /**
          * Validate with the backend if user's credentials is correct.
          */
-        login(datos:{username: string, password: string}){
+        login(datos: { username: string; password: string }) {
             return new Promise<JWTToken>((commit, reject) => {
-              axios
-                .post<JWTToken>('http://127.0.0.1:8000/api/v1/login', datos)
-                .then(({ data }) => {
-                  this.jwtData = data
-                  localStorage.setItem('accessToken', JSON.stringify(data))
-                  axios.defaults.headers.common = {
-                    ...axios.defaults.headers.common,
-                    Authorization: `Bearer ${this.jwtData?.access}`,
-                  }
-                  commit(data)
-                })
-                .catch(err => {
-                  reject(err)
-                })
+                axios
+                    .post<JWTToken>('/api/v1/login', datos)
+                    .then(({ data }) => {
+                        this.jwtData = data
+                        localStorage.setItem('accessToken', JSON.stringify(data))
+                        axios.defaults.headers.common = {
+                            ...axios.defaults.headers.common,
+                            Authorization: `Bearer ${this.jwtData?.access}`,
+                        }
+                        commit(data)
+                    })
+                    .catch(err => {
+                        reject(err)
+                    })
             })
         },
 
         async fetchUserData() {
-            const data = await(await axios.get<UserInfo>('/api/v1/auth/me')).data
+            const data = await (await axios.get<UserInfo>('/api/v1/auth/me')).data
             this.userData = data
-            localStorage.setItem("userData", JSON.stringify(data))
+            localStorage.setItem('userData', JSON.stringify(data))
             return data
         },
 
-        async logout(){
+        async logout() {
             try {
                 const data = await axios.post('/api/v1/logout', {
                     refresh: this.jwtData?.refresh || '',
                 })
                 this.jwtData = null
             } catch (error) {
-                if (!this.jwtData) throw new UndersiredStateError("The user has tried log out without login previously")
+                if (!this.jwtData)
+                    throw new UndersiredStateError(
+                        'The user has tried log out without login previously'
+                    )
                 throw error
-            }finally {
+            } finally {
                 localStorage.removeItem('accessToken')
                 localStorage.removeItem('userData')
             }
-        }
-
+        },
     },
 })

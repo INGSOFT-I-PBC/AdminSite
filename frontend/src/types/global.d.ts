@@ -53,6 +53,7 @@ declare global {
      * This is the type of a user that is returned from the Backend
      */
     export interface UserInfo {
+        employee:number
         name: string
         username: string
         role: string

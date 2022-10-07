@@ -63,19 +63,18 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.isAuthenticated) {
-      const authStore = useAuthStore()
-      authStore.refreshToken()
-      .catch((err) => {
-        console.error(err)
-        next({path:'/login'})
-      })
-    //   try {
-    //     await authStore.refreshToken()
-    //   } catch (err) {
-    //     next({ path: '/login' })
-    //   }
+        const authStore = useAuthStore()
+        authStore.refreshToken().catch(err => {
+            console.error(err)
+            next({ path: '/login' })
+        })
+        //   try {
+        //     await authStore.refreshToken()
+        //   } catch (err) {
+        //     next({ path: '/login' })
+        //   }
     }
     next()
-  })
+})
 
 export default router

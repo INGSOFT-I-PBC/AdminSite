@@ -94,6 +94,7 @@ def user_data(request: Request):
         permissions.append(gperm.permission.name)
     return JsonResponse(
         {
+            "employee": user.employee.id,
             "name": user.employee.name,
             "username": user.username,
             "role": role.name,

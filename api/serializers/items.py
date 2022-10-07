@@ -35,6 +35,7 @@ class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = [
+            "id",
             "created_at",
             "updated_at",
             "deleted_at",

@@ -1,7 +1,7 @@
 <script setup lang="ts">
     import ECard from '@components/custom/ECard.vue'
     import EButton from '@components/custom/EButton.vue'
-    import { useAuthStore } from '@store/auth'
+    import { useAuthStore } from '@store'
     import { useRouter } from 'vue-router'
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
@@ -25,6 +25,7 @@
         toggleUsername.value = username.value === '' ? true : false
         togglePassword.value = password.value === '' ? true : false
         if (toggleUsername.value === false && togglePassword.value === false) {
+            console.log(import.meta.env.VITE_BACKEND_URL)
             authStore
                 .login({
                     username: username.value,

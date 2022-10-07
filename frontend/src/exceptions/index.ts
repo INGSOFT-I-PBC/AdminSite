@@ -6,12 +6,14 @@ export class UserNotLoggedInError extends Error {
 
 export class SessionExpiredException extends Error {
     constructor() {
-        super("The current session has been expired")
+        super('The current session has been expired')
     }
 }
 
 export class UndersiredStateError extends Error {
-    constructor(message: Maybe<string> = "The current state of execution is not allowed") {
+    constructor(
+        message: Maybe<string> = 'The current state of execution is not allowed'
+    ) {
         super(message)
     }
 }

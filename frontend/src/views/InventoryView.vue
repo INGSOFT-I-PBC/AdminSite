@@ -3,8 +3,6 @@
     import ItemDataService from '@/store/item'
     import type Item from '@/interfaz/items'
     import type Item3 from '@/interfaz/Items3'
-
-
 </script>
 
 <script setup lang="ts">
@@ -117,10 +115,9 @@
 
     async function showAllProducts() {
         ItemDataService.getAll()
-            .then((response) => {
+            .then(response => {
                 items = response.data
                 console.log(items)
-
 
                 for (let i = 0; i < items.length; i++) {
                     items2.push({
@@ -150,13 +147,11 @@
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
     function goAgregar(): void {
-
-        router.push({ path: "/inventario/agregar" })
+        router.push({ path: '/inventario/agregar' })
     }
     onMounted(() => {
         return showAllProducts()
     })
-
 </script>
 
 <template>
@@ -204,19 +199,20 @@
             <Table :header="tableSettings">
                 <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div v-if="colIdx == 8">
-                        <div class="form-check form-switch" >
-                            <input v-if="items2[rowIdx].state==1"
+                        <div class="form-check form-switch">
+                            <input
+                                v-if="items2[rowIdx].state == 1"
                                 class="form-check-input"
                                 type="checkbox"
                                 role="switch"
                                 id="flexSwitchCheckDefault"
                                 checked />
-                            <input v-else
+                            <input
+                                v-else
                                 class="form-check-input"
                                 type="checkbox"
                                 role="switch"
-                                id="flexSwitchCheckDefault"
-                                 />
+                                id="flexSwitchCheckDefault" />
                             <label
                                 class="form-check-label"
                                 for="flexSwitchCheckDefault"></label>
@@ -245,11 +241,8 @@
                 </template>
             </Table>
 
-
-
             <!-- </ECol>
             </ERow> -->
         </ECard>
-
     </main>
 </template>

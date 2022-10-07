@@ -5,7 +5,7 @@
     import { menus as menuItems } from '@/layouts/drawer'
     import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
     import DrawerMenu from '@components/custom/DrawerMenu.vue'
-    import { useAuthStore } from '@store/auth'
+    import { useAuthStore } from '@store'
     import { useRouter } from 'vue-router'
     defineProps({
         title: {
