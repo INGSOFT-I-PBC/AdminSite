@@ -167,7 +167,6 @@ class WarehouseViewSet(ReadOnlyModelViewSet):
 
 class OrderRequestViewSet(ReadOnlyModelViewSet):
     queryset = OrderRequest.objects.all().order_by("id")
-<<<<<<< HEAD
     serializer_class = WarehouseSerializer(queryset, many=True)
 
     def list(self, request):
@@ -211,14 +210,6 @@ class WhOrderRequestView(APIView):
                 {"error": True, "message": "Invalid query"},
                 status=400,
             )
-=======
-    serializer_class = WarehouseSerializer
-
-
-class WhOrderRequestView(APIView):
-    def get(self):
-        pass
->>>>>>> b678c36ff337d4be23d85883ce9bfd2b42196c1e
 
     def post(self):
 
