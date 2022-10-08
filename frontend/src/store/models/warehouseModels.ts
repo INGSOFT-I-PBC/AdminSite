@@ -1,12 +1,10 @@
 export interface MinimalWarehouse {
-    name: string;
-    status: { description: string, name: string, id: string };
+    name: string
+    status: { description: string; name: string; id: string }
 }
 
 export interface Warehouse extends MinimalWarehouse {
-    id: number;
+    id: number
 }
 
 export const a = 'a'
-
-

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-   import ECard from '@components/custom/ECard.vue'
+    import ECard from '@components/custom/ECard.vue'
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
     import ListBox from '@components/custom/ListBox.vue'
@@ -65,7 +65,7 @@
                 date: '12/03/2022',
                 hour: '15:00',
                 create: 'Admin',
-                type_id:'cédula',
+                type_id: 'cédula',
                 id: '09467493043',
                 name: 'Pamela Rugel',
             },
@@ -76,7 +76,7 @@
         date: string
         hour: string
         create: string
-        type_id:string
+        type_id: string
         id: string
         name: string
     }
@@ -97,7 +97,6 @@
     function go3(): void {
         router.push({ path: '/usuarios/cliente/agregar' })
     }
-
 </script>
 
 <template>
@@ -135,7 +134,6 @@
                             Search
                         </button>
                     </form>
-
                 </div>
             </nav>
 

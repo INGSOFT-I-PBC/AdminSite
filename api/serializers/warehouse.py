@@ -78,4 +78,4 @@ class InventorySerializer(ModelSerializer):
 
     class Meta:
         model = Inventory
-        fields = ["item", "quantity", "created_at", "updated_at", "updated_by"]
+        fields = ["item", "quantity", "updated_by"]

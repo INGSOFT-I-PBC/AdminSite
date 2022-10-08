@@ -91,7 +91,9 @@
                     class="tw-ml-5 tw-mt-2"
                     v-if="hasChilds && toggleChild"
                     ref="sub_item">
-                    <template v-for="(childItem, idx) of data.children" :key="idx">
+                    <template
+                        v-for="(childItem, idx) of data.children"
+                        :key="idx">
                         <DrawerMenuItem
                             :data="childItem"
                             :child="hasChilds"

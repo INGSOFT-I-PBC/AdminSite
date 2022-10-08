@@ -2,7 +2,9 @@
     <main>
         <ECard> </ECard>
 
-        <div class="container" style="background-color: white; border-radius: 5px">
+        <div
+            class="container"
+            style="background-color: white; border-radius: 5px">
             <!--BOTONES Usuario-->
             <div class="container text-center" style="padding: 10px">
                 <div class="row">
@@ -129,7 +131,9 @@
                             </div>
 
                             <div class="col">
-                                <button type="button" class="btn btn-outline-dark">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-dark">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="16"
@@ -148,7 +152,9 @@
                             </div>
 
                             <div class="col">
-                                <button type="button" class="btn btn-outline-dark">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-dark">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="16"
@@ -204,7 +210,9 @@
                             </div>
 
                             <div class="col">
-                                <button type="button" class="btn btn-outline-dark">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-dark">
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         width="16"

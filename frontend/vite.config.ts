@@ -44,8 +44,12 @@ export default ({ mode }: { mode: string }) => {
                 '@components': fileURLToPath(
                     new URL('./src/components', import.meta.url)
                 ),
-                '@views': fileURLToPath(new URL('./src/views', import.meta.url)),
-                '@store': fileURLToPath(new URL('./src/store', import.meta.url)),
+                '@views': fileURLToPath(
+                    new URL('./src/views', import.meta.url)
+                ),
+                '@store': fileURLToPath(
+                    new URL('./src/store', import.meta.url)
+                ),
                 '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
             },
         },

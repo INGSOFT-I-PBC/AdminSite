@@ -67,7 +67,7 @@ export const menus: MenuItem[] = [
                         path: '/bodegas/nueva-orden',
                         routeName: 'warehouse-new-order',
                     },
-                ]
+                ],
             },
             {
                 label: 'Tomas físicas',

@@ -10,15 +10,15 @@ import { defineStore } from 'pinia'
 import { computed, type Ref } from 'vue'
 
 export const useItemStore = defineStore('item-store', () => {
-    let item: Ref<Optional<Item>> = ref(null)
-    let paginatedItems: Ref<Optional<PaginatedAPIResponse<Item>>> = ref(null)
-    let currentPaginatedItemPage = computed(() => {
-        let pitem = paginatedItems.value
+    const item: Ref<Optional<Item>> = ref(null)
+    const paginatedItems: Ref<Optional<PaginatedAPIResponse<Item>>> = ref(null)
+    const currentPaginatedItemPage = computed(() => {
+        const pitem = paginatedItems.value
         if (isMessage(pitem)) return undefined
         return pitem?.page
     })
 
-    let allItems: Ref<Optional<Item[]>> = ref(null)
+    const allItems: Ref<Optional<Item[]>> = ref(null)
 
     async function fetchAllItems() {
         const data = await (await axios.get<Item[]>('/api/v1/list/items')).data
