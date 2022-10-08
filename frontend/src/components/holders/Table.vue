@@ -17,13 +17,15 @@
 
 <template>
     <div class="tw-overflow-x-auto">
-        <table class="tw-min-w-full">
-            <thead class="tw-overflow-hidden tw-bg-zinc-300 tw-border-b">
+        <table class="t-table">
+            <thead class="t-table-head">
                 <tr>
                     <template v-for="(cfg, idx) of header?.headers" :key="idx">
                         <th :class="cfg.style ? cfg.style : 'tw-px-2 tw-py-3'">
                             <slot name="head-cell">
-                                <span class="tw-text-center">{{ cfg.label }}</span>
+                                <span class="tw-text-center">{{
+                                    cfg.label
+                                }}</span>
                             </slot>
                         </th>
                     </template>
@@ -38,7 +40,9 @@
                         <slot
                             name="body-cell"
                             :cell-data="
-                                column?.morphFunc ? column.morphFunc(data) : data
+                                column?.morphFunc
+                                    ? column.morphFunc(data)
+                                    : data
                             "
                             :column-data="column"
                             :row-idx="idx"
@@ -61,3 +65,13 @@
         </table>
     </div>
 </template>
+<style>
+    .t-table {
+        min-width: 100%;
+    }
+    .t-table-head {
+        @apply tw-overflow-hidden tw-bg-secondary dark:tw-bg-secondary-night tw-border-b tw-text-white;
+    }
+    .t-table-row {
+    }
+</style>

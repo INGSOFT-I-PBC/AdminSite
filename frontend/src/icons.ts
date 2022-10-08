@@ -35,6 +35,7 @@ import {
     faLock,
     faPlus,
     faPlusCircle,
+    faSpinner,
 } from '@fortawesome/free-solid-svg-icons'
 import {
     faVuejs,
@@ -88,4 +89,5 @@ export const awesomeIcons: Array<IconDefinition> = [
     faLock,
     faPlus,
     faPlusCircle,
+    faSpinner,
 ]

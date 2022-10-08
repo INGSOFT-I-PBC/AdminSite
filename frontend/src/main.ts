@@ -9,13 +9,15 @@ import VueFeather from 'vue-feather'
 import ECard from './components/custom/ECard.vue'
 import ECol from './components/custom/ECol.vue'
 import ERow from './components/custom/ERow.vue'
-
+import BootstrapVue3 from 'bootstrap-vue-3'
 
 import './types'
 
 import App from './App.vue'
 import router from './router'
 
+import 'bootstrap/dist/css/bootstrap.css'
+import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import '@/scss/styles.scss'
 // import * as bootstrap from 'bootstrap'
 import './assets/main.css'
@@ -32,9 +34,11 @@ const defToastOptions: PluginOptions = {
 }
 awesomeIcons.forEach(icon => library.add(icon))
 
-if (!import.meta.env.VITE_BACKEND_URL) throw new Error('No API url was provided')
+if (!import.meta.env.VITE_BACKEND_URL)
+    throw new Error('No API url was provided')
 
 app.use(createPinia())
+app.use(BootstrapVue3)
 app.use(router)
 app.use(Toast, defToastOptions)
 app.component('FontAwesomeIcon', FontAwesomeIcon)

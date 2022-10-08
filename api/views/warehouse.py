@@ -159,10 +159,8 @@ class WarehouseView(APIView):
 class WarehouseViewSet(ReadOnlyModelViewSet):
 
     queryset = Warehouse.objects.all().order_by("name")
-    serializer_class = WarehouseSerializer(queryset, many=True)
-
-    def list(self, request):
-        return Response(self.serializer_class.data)
+    serializer_class = FullWarehouseSerializer
+    pagination_class = None
 
 
 class OrderRequestViewSet(ReadOnlyModelViewSet):
