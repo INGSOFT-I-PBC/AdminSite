@@ -13,8 +13,15 @@
   ],
   "compilerOptions": {
     "isolatedModules": true,
-    "types": ["naive-ui/volar", "axios", "vue", "@components-types", "vue-feather", "@store-types"],
-    "strict": true,
+    "types": [
+      "naive-ui/volar",
+      "axios",
+      "vue",
+      "@components-types",
+      "vue-feather",
+      "@store-types"
+    ],
+    "strict": false,
     "allowJs": false,
     "pretty": true
   }
