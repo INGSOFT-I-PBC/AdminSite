@@ -7,12 +7,14 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from .views import *
+from .views.orders import OrderRequestView
 from .views.warehouse import WhOrderRequestView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
 router.register(r"permissions", views.PermissionsViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
+router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items/all", views.ItemViewSet, "itemViewSet")
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
@@ -27,6 +29,9 @@ urlpatterns = [
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
+    path("item/<int:id>", views.find_item, name="item"),
+    path("item/<int:id>/properties", views.get_item_properties),
+    path("order", OrderRequestView.as_view()),
     path("auth/reset-password", reset_password, name="reset-user-password")
     # path('users'),
 ]
