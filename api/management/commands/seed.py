@@ -154,7 +154,7 @@ def generate_items(cmd, force_meta=False):
     while True:
         item = None
         try:
-            name = faker.word()
+            name: str = faker.word()
             item = Item(
                 category=cat,
                 name=name,
@@ -163,6 +163,7 @@ def generate_items(cmd, force_meta=False):
                 iva=random() * 0.12836234,
                 price=(random() + 0.001753) * randint(5, 1000),
                 model=faker.word(),
+                codename=f'{name}.{faker.word()}.{cat.name}'.lower().replace(' ', '_'),
                 created_by=root
             )
             item.save()
