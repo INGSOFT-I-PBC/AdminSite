@@ -158,10 +158,7 @@
         if (props.modelModifiers?.alpha) {
             value = value.replace(/[0-9]/g, '')
         }
-        if (
-            (props.formatter ?? undefined) != undefined &&
-            typeof props.formatter == 'function'
-        ) {
+        if ((props.formatter?? undefined) != undefined && typeof props.formatter == 'function') {
             value = props.formatter(value)
         }
         emit('update:modelValue', value)
