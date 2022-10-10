@@ -1,6 +1,7 @@
 export interface MessageResponse {
     error: Optional<boolean>
     message: string
+    code?: string
 }
 
 export type DataResponse<T> = T
