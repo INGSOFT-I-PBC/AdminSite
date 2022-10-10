@@ -14,13 +14,13 @@
     import {
         isMessage,
         type Item,
-        MessageResponse,
+        type MessageResponse,
         type Warehouse,
     } from '@store/types'
-    import { type TableField } from 'bootstrap-vue-3'
+    import type { TableField } from 'bootstrap-vue-3'
     import { useItemStore } from '@store/items'
     import { useToast } from 'vue-toastification'
-    import { ServerOptions } from 'vue3-easy-data-table'
+    import type { ServerOptions } from 'vue3-easy-data-table'
     import type { ItemProps } from '@store/types/items.model'
     import type { OrderSaveData } from '@store/types/orders.model'
     import { useOrderStore } from '@store/order'
@@ -63,7 +63,7 @@
      * Definition of page-used form
      */
     type Form = {
-        bodega: Optional<Warehouse>
+        bodega?: Warehouse
         comentario: string
         items: QuantifiedItem[]
     }
@@ -87,7 +87,7 @@
         'Acciones',
     ]
     const form = ref<Form>({
-        bodega: null,
+        bodega: undefined,
         comentario: '',
         items: [],
     })
@@ -132,9 +132,6 @@
         itemForm.value.item = selectedItem
         productModalShow.value = false
     }
-    function onQuantityChange() {
-        console.log('haosdfasfdklaj;sdfjka;s')
-    }
     function addToTable() {
         const targetItem = itemForm.value.item
         if (!targetItem) {
@@ -178,7 +175,7 @@
             .then(() => {
                 toast.success('Order registrada correctamente')
                 data.comentario = ''
-                data.bodega = null
+                data.bodega = undefined
                 data.items.splice(0, data.items.length)
             })
             .catch((it: MessageResponse) => {
@@ -235,9 +232,7 @@
                             <div
                                 class="tw-rounded tw-ring-1 tw-ring-slate-500 tw-py-1 col-12 col-md-5 tw-mx-2"
                                 v-if="
-                                    k !== 'category' &&
-                                    k !== 'img' &&
-                                    k !== 'quantity'
+                                    !['category', 'img', 'quantity'].includes(k)
                                 ">
                                 <div class="row">
                                     <span class="tw-w-1/2 tw-font-bold col-6"
@@ -343,8 +338,7 @@
                             <InputText
                                 label="Cantidad del Producto"
                                 v-model.number="itemForm.quantity"
-                                :formatter="(it: string) => it.replace(/\D/g, '')"
-                                @change="onQuantityChange" />
+                                :formatter="(it: string) => it.replace(/\D/g, '')" />
                         </ECol>
                         <ECol cols="12" lg="auto">
                             <EButton

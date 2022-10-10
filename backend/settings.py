@@ -10,19 +10,24 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
-from pathlib import Path
+import os
 from datetime import timedelta
+from pathlib import Path
 
 # Module for load environment variables from .env file
 import environ
-import os
 
-env = environ.Env()
+env = environ.Env(
+    APP_URL=str,
+    ALLOWED_HOSTS=(str, "*"),
+    APP_HOST=(str, "http://localhost:8000"),
+    DB_ENGINE=(str, "mysql"),
+    ALLOW_ALL_ORIGINS=(bool, False)
+)
 environ.Env.read_env(".env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
@@ -35,7 +40,12 @@ DEBUG = env("DEBUG").lower().strip() == "true"
 
 print("Running this server in mode: ", "debug" if DEBUG else "production")
 
-ALLOWED_HOSTS = ["localhost", "127.0.0.1", env("APP_URL"), env("APP_HOST")]
+E_ALLOWED_HOSTS = env.list("ALLOWED_HOSTS")
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", env("APP_URL")]
+if E_ALLOWED_HOSTS:
+    print("Allowed host:", E_ALLOWED_HOSTS)
+    ALLOWED_HOSTS.extend(E_ALLOWED_HOSTS)
+
 CORS_ALLOWED_ORIGINS = ["http://localhost:5173", env("APP_URL"), env("APP_HOST")]
 CORS_ALLOW_CREDENTIALS = True
 
@@ -93,7 +103,6 @@ TEMPLATES = [
 INTERNAL_IPS = ("127.0.0.1",)
 
 WSGI_APPLICATION = "backend.wsgi.application"
-
 
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
@@ -161,7 +170,7 @@ LOGGING = {
             "class": "logging.handlers.RotatingFileHandler",
             "filename": "backend/storage/logs/django.log",
             "formatter": "standard",
-            "maxBytes": 50 * (1024**2),  # Máx 50MiB log
+            "maxBytes": 50 * (1024 ** 2),  # Máx 50MiB log
             "backupCount": 10,
             "mode": "a",
             "encoding": "utf-8",
@@ -247,7 +256,6 @@ TIME_ZONE = "UTC"
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/

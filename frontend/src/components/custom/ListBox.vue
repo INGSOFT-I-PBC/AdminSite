@@ -5,7 +5,7 @@
         ListboxOption,
         ListboxOptions,
     } from '@headlessui/vue'
-    import { computed, PropType } from 'vue'
+    import { computed, type PropType } from 'vue'
     import VueFeather from 'vue-feather'
 
     type ValidListboxItem = ListboxItem & Record<string | number, unknown>
@@ -23,7 +23,7 @@
             default: 'label',
         },
         options: {
-            type: Array as PropType<ValidListboxItem>,
+            type: Array as PropType<ValidListboxItem[]>,
             default: () => [],
             validator: (value: Optional<unknown>) =>
                 (value ?? null) !== null && Array.isArray(value),
