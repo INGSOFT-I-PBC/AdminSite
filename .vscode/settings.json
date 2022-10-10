@@ -26,5 +26,7 @@
     "typescript.inlayHints.variableTypes.enabled": true,
     "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
     "typescript.inlayHints.parameterTypes.enabled": true,
-    "cSpell.words": ["viewsets"]
+    "cSpell.words": ["viewsets"],
+    "spellright.language": [],
+    "spellright.documentTypes": ["markdown", "latex", "plaintext"]
 }
