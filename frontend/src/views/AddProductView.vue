@@ -292,11 +292,20 @@
                                         ">
                                         Elegir Bodega
                                     </h6>
-                                    <input type="checkbox" id="jack" value="Jack" />
+                                    <input
+                                        type="checkbox"
+                                        id="jack"
+                                        value="Jack" />
                                     <label for="jack"> Bodega 1 </label>
-                                    <input type="checkbox" id="john" value="John" />
+                                    <input
+                                        type="checkbox"
+                                        id="john"
+                                        value="John" />
                                     <label for="john"> Bodega 2 </label>
-                                    <input type="checkbox" id="mike" value="Mike" />
+                                    <input
+                                        type="checkbox"
+                                        id="mike"
+                                        value="Mike" />
                                     <label for="mike"> Bodega 3 </label>
                                 </div>
 
@@ -342,7 +351,9 @@
 
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
-                        <EButton type="secondary" @click="go2">Guardar </EButton>
+                        <EButton type="secondary" @click="go2"
+                            >Guardar
+                        </EButton>
                     </div>
                 </div>
 

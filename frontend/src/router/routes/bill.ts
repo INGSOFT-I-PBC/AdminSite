@@ -16,10 +16,7 @@ export const bill: Array<RouteConfig> = [
         meta: {
             pageTitle: 'Facturas',
             permission: 'view_dashboard',
-            breadcrumb: [
-                { text: 'Facturacion', href: '/facturacion' },
-            ],
+            breadcrumb: [{ text: 'Facturacion', href: '/facturacion' }],
         },
     },
-    
 ]

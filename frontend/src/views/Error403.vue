@@ -26,8 +26,10 @@
             class="tw-text-3xl tw-font-bold tw-p-3 tw-text-amber-700 dark:tw-text-amber-500">
             Sin autorización
         </h3>
-        <span class="lg:tw-w-1/2 tw-mx-10 dark:tw-font-bold dark:tw-text-gray-400">
-            Lo sentimos, no está autorizado a visualizar el recurso solicitado.<br />
+        <span
+            class="lg:tw-w-1/2 tw-mx-10 dark:tw-font-bold dark:tw-text-gray-400">
+            Lo sentimos, no está autorizado a visualizar el recurso
+            solicitado.<br />
             Pero puedes seguir hacia la página principal.
         </span>
         <div class="tw-p-5">

@@ -1,5 +1,11 @@
 <script setup lang="ts">
-    import { TabGroup, TabList, TabPanel, TabPanels, Tab } from '@headlessui/vue'
+    import {
+        TabGroup,
+        TabList,
+        TabPanel,
+        TabPanels,
+        Tab,
+    } from '@headlessui/vue'
 
     const props = defineProps({
         verticalTabs: {
@@ -11,7 +17,7 @@
             default: 0,
         },
         tabs: {
-            type: Array<String>,
+            type: Array<string>,
             default: ['Tab1'],
         },
         selectedTab: {
@@ -37,8 +43,8 @@
                 v-slot="{ selected }">
                 <slot
                     name="tab"
-                    :tabTitle="tabTitle"
-                    :tabIndex="index"
+                    :tab-title="tabTitle"
+                    :tab-index="index"
                     :selected="selected">
                     <button
                         class="tw-tab-button"

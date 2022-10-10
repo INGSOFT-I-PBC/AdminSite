@@ -2,8 +2,12 @@
     <main>
         <ECard> </ECard>
 
-        <div class="container" style="background-color: white; border-radius: 5px">
-            <div class="container" style="background-color: white; padding: 10px">
+        <div
+            class="container"
+            style="background-color: white; border-radius: 5px">
+            <div
+                class="container"
+                style="background-color: white; padding: 10px">
                 <h6 style="font-size: 15px; color: black">Enviar a:</h6>
 
                 <select class="form-select" aria-label="Default select example">
@@ -46,7 +50,9 @@
                             </div>
 
                             <div class="col">
-                                <button type="button" class="btn btn-outline-dark">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-dark">
                                     Añadir Producto
                                 </button>
                             </div>
