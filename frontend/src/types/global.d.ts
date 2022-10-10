@@ -47,6 +47,7 @@ declare global {
     export interface JWTAccessToken {
         access: string
     }
+
     /**
      * The definition of response type for:
      * JWT authentication
@@ -55,6 +56,7 @@ declare global {
         access: string
         refresh: string
     }
+
     /**
      * This is the type of a user that is returned from the Backend
      */
@@ -64,6 +66,7 @@ declare global {
         role: string
         permissions: string[]
     }
+
     /**
      * The state of the Authorization
      */
@@ -98,7 +101,7 @@ declare global {
     }
 
     export type PaginationOptions = {
-        perPage?: number
+        per_page?: number
         page: number
     }
 }
