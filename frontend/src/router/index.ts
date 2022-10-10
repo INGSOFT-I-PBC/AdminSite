@@ -1,5 +1,10 @@
 // vim: set tw=4:sw=4
-import { createRouter, createWebHashHistory, type RouteRecordRaw } from 'vue-router'
+import {
+    createRouter,
+    createWebHashHistory,
+    useRouter,
+    type RouteRecordRaw,
+} from 'vue-router'
 import LoginView from '../views/auth/LoginView.vue'
 import Error404 from '../views/Error404.vue'
 import Error403 from '../views/Error403.vue'

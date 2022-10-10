@@ -30,4 +30,8 @@ __all__ = [
     "InventoryView",
     "user_data",
     "PermissionsViewSet",
+    "ItemView",
+    "ItemViewSet",
+    "PaginatedItemViewSet",
+    "FullWarehouseViewSet",
 ]

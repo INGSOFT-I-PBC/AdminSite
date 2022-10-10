@@ -2,7 +2,9 @@
     <main>
         <ECard> </ECard>
 
-        <div class="container" style="background-color: white; border-radius: 5px">
+        <div
+            class="container"
+            style="background-color: white; border-radius: 5px">
             <!--BOTONES Usuario-->
             <div class="container text-center" style="padding: 10px">
                 <div class="row">
@@ -288,7 +290,9 @@
 
                         <div class="row g-3" style="padding: 10px">
                             <div class="col">
-                                <button type="button" class="btn btn-outline-dark">
+                                <button
+                                    type="button"
+                                    class="btn btn-outline-dark">
                                     Guardar Informacion
                                 </button>
                             </div>

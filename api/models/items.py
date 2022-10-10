@@ -1,6 +1,7 @@
 from dataclasses import field
 from distutils.command.upload import upload
 from django.db import models
+
 from .common import Status, TimestampModel
 from .users import Employee
 from django.core.validators import MinValueValidator
@@ -55,7 +56,7 @@ def filepath(request, filename):
 
 class Item(TimestampModel):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    codename = models.CharField(default=None, unique=True, max_length=16)
+    # codename = models.CharField(default=None, unique=True, max_length=16)
 
     brand = models.CharField(max_length=128)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
@@ -70,6 +71,9 @@ class Item(TimestampModel):
         validators=[MinValueValidator(0)], max_digits=14, decimal_places=3
     )
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
+    codename = models.CharField(
+        max_length=128, unique=True, help_text="The codename or identifier for the item"
+    )
 
     class Meta:
         db_table = "items"

@@ -5,9 +5,12 @@
     import { useRouter } from 'vue-router'
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
+    import LoadingBar from '../../components/custom/LoadingBar.vue'
+
     const router = useRouter()
     const toggle = ref(false)
     const username = ref('')
+    const isLoading = ref(false)
     const toggleUsername = ref(false)
     const password = ref('')
     const togglePassword = ref(false)
@@ -22,30 +25,32 @@
     const authStore = useAuthStore()
     function access() {
         error.value = false
-        toggleUsername.value = username.value === '' ? true : false
-        togglePassword.value = password.value === '' ? true : false
+        toggleUsername.value = (username.value ?? '') === ''
+        togglePassword.value = (password.value ?? '') === ''
         if (toggleUsername.value === false && togglePassword.value === false) {
-            console.log(import.meta.env.VITE_BACKEND_URL)
+            isLoading.value = true
             authStore
                 .login({
                     username: username.value,
                     password: password.value,
                 })
-                .then(it => authStore.fetchUserData())
-                .then(it => {
+                .then(() => authStore.fetchUserData())
+                .then(() => {
                     router.push({ path: '/' })
                 })
-                .catch(it => {
+                .catch(() => {
                     error.value = true
                 })
+               /* .finally(() => {
+                    isLoading.value = false
+                })*/
         }
     }
 </script>
 
 <template>
-    <div
-        class="tw-h-screen tw-w-screen tw-flex tw-flex-col tw-justify-center tw-justify-items-center tw-items-center tw-bg-gray-200 dark:tw-bg-gray-900">
-        <ECard class="tw-bg-gray-900">
+    <div class="login-view">
+        <ECard id="login-card">
             <img
                 src="../../assets/img/nova.png"
                 class="tw-max-w-full tw-h-auto tw-rounded-lg"
@@ -53,6 +58,7 @@
             <form @onsubmit="inactive">
                 <InputText
                     label="Usuario"
+                    :disabled="isLoading"
                     :info-label="toggleUsername ? 'campo requerido' : ''"
                     placeholder="usuario"
                     v-model="username"
@@ -60,6 +66,7 @@
                 <!--<span class="text-xs tracking-wide text-red-600">Email field is required </span>-->
                 <div class="mt-4">
                     <InputText
+                        :disabled="isLoading"
                         label="Contraseña"
                         :info-label="togglePassword ? 'campo requerido' : ''"
                         placeholder="contraseña"
@@ -72,12 +79,17 @@
                     </InputText>
                     <!--rightIcon="eye"-->
                 </div>
+
+                <LoadingBar v-show="isLoading" class="tw-mt-5" />
+
                 <div class="tw-text-center">
                     <div class="mt-4" v-if="error">
                         <p class="tw-text-red-700">{{ errorMessage }}</p>
                     </div>
                     <div class="mt-4">
-                        <EButton type="primary" @click="access">Acceder </EButton>
+                        <EButton type="primary" @click="access"
+                            >Acceder
+                        </EButton>
                     </div>
                     <div class="flex items-baseline justify-between mt-4">
                         <a class="text-sm text-blue-600 hover:underline"
@@ -89,3 +101,12 @@
         </ECard>
     </div>
 </template>
+
+<style lang="scss">
+    .login-view {
+        @apply tw-min-h-full tw-py-0 md:tw-py-5 tw-w-screen tw-flex tw-flex-col tw-justify-center tw-justify-items-center tw-items-center tw-bg-gray-200 dark:tw-bg-gray-900;
+    }
+    .login-view > #login-card {
+        @apply tw-h-full tw-min-h-full;
+    }
+</style>

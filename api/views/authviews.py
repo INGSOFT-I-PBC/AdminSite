@@ -3,7 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
 # from django.shortcuts import render
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -52,11 +52,16 @@ class LogoutViewSet(APIView):
             token: OutstandingToken
             for token in OutstandingToken.objects.filter(user=request.user):
                 _, _ = BlacklistedToken.objects.get_or_create(token=token)
-            return Response({"status": "goodbye"})
+            return Response({"message": "goodbye"})
         refresh_token = self.request.data.get("refresh_token")
+        if not refresh_token:
+            return JsonResponse(
+                {"message": "You cannot logout, 'refresh_token' field is required"},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
         token = RefreshToken(token=refresh_token)
         token.blacklist()
-        return Response({"status": "OK, goodbye"})
+        return Response({"message": "OK, goodbye"})
 
 
 class PermissionsView(APIView):

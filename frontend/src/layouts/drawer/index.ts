@@ -55,14 +55,19 @@ export const menus: MenuItem[] = [
         icon: 'package',
         children: [
             {
-                label: 'Gestión pedidos',
-                path: '/bodegas/pedidos',
-                routeName: 'pedidos-view',
-            },
-            {
-                label: 'Solcitar Pedido',
-                path: '/bodegas/nueva-orden',
-                routeName: 'warehouse-new-order',
+                label: 'Pedidos',
+                children: [
+                    {
+                        label: 'Gestión pedidos',
+                        path: '/bodegas/pedidos',
+                        routeName: 'pedidos-view',
+                    },
+                    {
+                        label: 'Solicitar Pedido',
+                        path: '/bodegas/nueva-orden',
+                        routeName: 'warehouse-new-order',
+                    },
+                ],
             },
             {
                 label: 'Tomas físicas',
@@ -98,15 +103,15 @@ export const menus: MenuItem[] = [
         children: [],
     },
     {
-        id: 'logout',
-        label: 'Cerrar Sesión',
-        forceRender: true,
-        icon: 'log-out',
-    },
-    {
         label: 'Facturación',
         icon: 'clipboard',
         children: [],
         path: '/facturacion',
+    },
+    {
+        id: 'logout',
+        label: 'Cerrar Sesión',
+        forceRender: true,
+        icon: 'log-out',
     },
 ]

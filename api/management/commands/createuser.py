@@ -1,8 +1,10 @@
-from django.core.management.base import BaseCommand, CommandError, CommandParser
-from api.models import Employee, Group, Role, User
-from django.db.utils import IntegrityError
-from django.contrib.auth.hashers import make_password
 from getpass import getpass
+
+from django.contrib.auth.hashers import make_password
+from django.core.management.base import BaseCommand, CommandError, CommandParser
+from django.db.utils import IntegrityError
+
+from api.models import Employee, Group, Role, User
 
 
 class Command(BaseCommand):
@@ -28,7 +30,7 @@ class Command(BaseCommand):
         while username == "":
             username = (
                 input("Insert username: ").lower().lstrip().rstrip().replace(" ", "_")
-            )
+            ).lstrip().rstrip()
         email = input("Email: ")
         name = input("Name: ")
         lastname = input("Lastname: ")
@@ -36,7 +38,8 @@ class Command(BaseCommand):
         user_role = None
         user_group = None
         if options["admin"]:
-            user_role = Group.objects.get(codename="sys.admin")
+            user_role = Role.objects.get(codename="sys.admin")
+            user_group = Group.objects.get(codename="sys.admin")
             if not user_role:
                 raise CommandError(
                     "Admin permission group is not registered on Database"
@@ -59,26 +62,26 @@ class Command(BaseCommand):
                     continue
                 user_group = all_groups[int(index)]
 
-        all_roles = Role.objects.all()
-        print(
-            "*************************",
-            "*  Role selection menu  *",
-            "*************************",
-        )
-        role_quantity = len(all_roles)
-        if role_quantity == 0:
-            raise Exception("There is not roles registered on system, aborting...")
-        for i in range(role_quantity):
-            role = all_roles[i]
-            print(f"- [{i}] {role.name}")
+            all_roles = Role.objects.all()
+            print(
+                "*************************",
+                "*  Role selection menu  *",
+                "*************************",
+            )
+            role_quantity = len(all_roles)
+            if role_quantity == 0:
+                raise Exception("There is not roles registered on system, aborting...")
+            for i in range(role_quantity):
+                role = all_roles[i]
+                print(f"- [{i}] {role.name}")
 
-        while not user_role:
-            selected = input("Insert selection: ")
-            if not selected.isnumeric() or not (0 <= int(selected) < role_quantity):
-                print("Inserted value is not correct")
-                continue
-            user_role = all_roles[int(selected)]
-
+            while not user_role:
+                selected = input("Insert selection: ")
+                if not selected.isnumeric() or not (0 <= int(selected) < role_quantity):
+                    print("Inserted value is not correct")
+                    continue
+                user_role = all_roles[int(selected)]
+        employee_obj = None
         try:
             employee_obj = Employee(
                 name=name, lastname=lastname, cid=document, role=user_role
@@ -95,5 +98,7 @@ class Command(BaseCommand):
         except IntegrityError as e:
             print("ID Document is not valid, already registered")
             print(e)
+            if employee_obj is not None:
+                employee_obj.delete()
             return
         print(f"Successfully created user '{username}'")

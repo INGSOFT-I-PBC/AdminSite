@@ -4,8 +4,14 @@ import type { RouteRecordRaw } from 'vue-router'
 declare global {
     type Optional<T> = T | null
     type Nullable<T> = Optional<T>
-
+    type Nullish = null | undefined
     type Maybe<T> = T | undefined
+
+    type TypeChecker<T> = (arg0: T) => arg0 is T
+
+    type Functor<I, O> = (I) => O
+
+    type Mapper<T> = (T) => T
 
     /**
      * A item used by default or base on the component
@@ -41,6 +47,7 @@ declare global {
     export interface JWTAccessToken {
         access: string
     }
+
     /**
      * The definition of response type for:
      * JWT authentication
@@ -49,6 +56,7 @@ declare global {
         access: string
         refresh: string
     }
+
     /**
      * This is the type of a user that is returned from the Backend
      */
@@ -59,6 +67,7 @@ declare global {
         role: string
         permissions: string[]
     }
+
     /**
      * The state of the Authorization
      */
@@ -93,7 +102,11 @@ declare global {
     }
     export interface Auth {
         token: string | null
-        isAuthenticated: boolean | null
+        isAuthenticated: boolean | null}
+
+    export type PaginationOptions = {
+        per_page?: number
+        page: number
     }
 }
 

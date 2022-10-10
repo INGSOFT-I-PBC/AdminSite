@@ -37,6 +37,10 @@ class WarehouseViewSet(ReadOnlyModelViewSet):
     serializer_class = FullWarehouseSerializer
 
 
+class FullWarehouseViewSet(WarehouseViewSet):
+    pagination_class = None
+
+
 class OrderRequestViewSet(ReadOnlyModelViewSet):
     queryset = OrderRequest.objects.all().order_by("id")
     serializer_class = WarehouseSerializer

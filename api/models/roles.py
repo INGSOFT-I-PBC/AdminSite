@@ -21,7 +21,7 @@ class Role(models.Model):
     )
 
     def __str__(self):
-        return f"{self.name} <{self.nick}>"
+        return f"{self.name} <{self.codename}>"
 
     class Meta:
         db_table = "roles"

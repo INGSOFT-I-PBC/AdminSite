@@ -1,6 +1,10 @@
-<scrip setup lang="ts"></scrip>
 <template>
-    <div class="tw-h-screen tw-justify-center tw-items-center">
+    <div class="fullscreen-layout">
         <slot></slot>
     </div>
 </template>
+<style lang="scss">
+    #app > div.fullscreen-layout {
+        @apply tw-justify-center tw-items-center tw-overflow-y-auto tw-flex;
+    }
+</style>

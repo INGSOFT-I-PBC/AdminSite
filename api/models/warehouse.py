@@ -1,8 +1,9 @@
-from django.db import models
-from .common import Status, TimestampModel
-from .users import Employee
-from .items import Item
 from django.core.validators import MinValueValidator
+from django.db import models
+
+from .common import Status, TimestampModel
+from .items import Item
+from .users import Employee
 
 
 class Warehouse(TimestampModel):
@@ -14,12 +15,17 @@ class Warehouse(TimestampModel):
 
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
+    def __str__(self):
+        return f"Warehouse '{self.name}'"
+
     class Meta:
         db_table = "warehouse"
+        indexes = [
+            models.Index(fields=['name']),
+        ]
 
 
 class Inventory(TimestampModel):
-
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
     warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
@@ -29,6 +35,9 @@ class Inventory(TimestampModel):
     delete_at = None
 
     updated_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
+
+    def __str__(self):
+        return f"Inventory of '{self.warehouse.name}'"
 
     class Meta:
         db_table = "inventory"

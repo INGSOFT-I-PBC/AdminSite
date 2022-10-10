@@ -1,5 +1,7 @@
 <script setup lang="ts">
-    import { computed } from 'vue'
+    import { computed, type PropType } from 'vue'
+    import type { ColorTheme } from '@components-types'
+    import { identity } from '@/components/types/checkers'
 
     const props = defineProps({
         modelValue: {
@@ -7,8 +9,8 @@
             default: '',
         },
         modelModifiers: {
-            type: Object,
-            default: () => ({} as Record<string, unknown>),
+            type: Object as PropType<Record<string, boolean>>,
+            default: () => ({} as Record<string, boolean>),
         },
         type: {
             type: String,
@@ -24,7 +26,7 @@
         },
         labelStyle: {
             type: String,
-            default: 'tw-font-bold tw-text-smd tw-text-left',
+            default: 'form-label',
         },
         infoLabel: {
             type: String,
@@ -54,12 +56,27 @@
             type: String,
             default: null,
         },
+        theme: {
+            type: String as PropType<ColorTheme>,
+            default: () => 'auto',
+        },
+        readonly: {
+            type: Boolean,
+            default: () => false,
+        },
+        formatter: {
+            type: Function as PropType<Mapper<string>>,
+            default: identity,
+        },
     })
 
     const emit = defineEmits([
         'update:modelValue',
         'rightIconClick',
         'leftIconClick',
+        'keydown',
+        'keyup',
+        'change',
     ])
 
     const infoClass = computed(() => {
@@ -98,13 +115,14 @@
 
     const inputClass = computed(() => {
         if (props.disabled) {
-            return 'tw-bg-gray-200 tw-text-gray-400 dark:tw-bg-slate-900 dark:tw-text-slate-500 hover:tw-cursor-not-allowed tw-ring-neutral-300'
+            return 't-disabled'
         }
-        let classes = 'tw-bg-neutral-50 dark:tw-bg-slate-800 '
+        let classes = '-tw-bg-neutral-50 dark:tw-bg-slate-800'
         if (props.status === true) {
             classes += 'tw-text-green-700 dark:tw-text-green-300'
         } else if (props.status === false) {
-            classes += 'tw-text-red-500 dark:tw-text-400'
+            // classes += 'tw-text-red-500 dark:tw-text-400'
+            classes += 't-danger'
         } else {
             classes += 'tw-text-black dark:tw-text-neutral-300'
         }
@@ -112,6 +130,7 @@
     })
 
     function interactionStart(event: Event) {
+        emit('keydown')
         const target = event.target as HTMLButtonElement
         if (props.disabled) {
             event.preventDefault()
@@ -134,10 +153,13 @@
             value = value.toLowerCase()
         }
         if (props.modelModifiers?.number || props.type === 'number') {
-            value = value.replace(/[^0-9]/g, '')
+            value = value.replace(/\D/g, '')
         }
         if (props.modelModifiers?.alpha) {
             value = value.replace(/[0-9]/g, '')
+        }
+        if ((props.formatter?? undefined) != undefined && typeof props.formatter == 'function') {
+            value = props.formatter(value)
         }
         emit('update:modelValue', value)
     }
@@ -149,8 +171,9 @@
             {{ label }}
         </label>
         <div
-            class="tw-overflow-hidden tw-rounded-md focus:tw-outline-none tw-ring-1 dark:tw-ring-neutral-600 tw-shadow-md tw-flex tw-flex-row tw-justify-between tw-justify-items-stretch tw-content-center gap-1 tw-px-1 tw-place-content-stretch"
-            :class="inputDivClass">
+            class="t-input-text"
+            :class="[colorscheme[theme]]"
+            :classa="[inputDivClass, colorscheme[theme]]">
             <button
                 class="tw-text-center tw-ml-1 tw-grid tw-content-center focus:tw-outline-none"
                 :class="disabled ? 'hover:tw-cursor-not-allowed' : ''"
@@ -163,11 +186,14 @@
             <input
                 @mousedown="interactionStart"
                 @keydown="interactionStart"
+                @keyup="$emit('keyup')"
+                @change="$emit('change')"
                 :value="modelValue"
                 @input="emitValue"
                 :placeholder="placeholder"
-                class="tw-py-1 lg:tw-py-1.5 tw-px-1 tw-bg-transparent tw-outline-none min-w-full tw-flex-1"
+                class="t-input tw-py-1.5 lg:tw-py-2 xl:tw-py-2.5' tw-px-1 tw-bg-transparent tw-outline-none min-w-full tw-flex-1"
                 :class="inputClass"
+                :readonly="readonly"
                 :type="type" />
             <button
                 class="tw-text-center tw-p-0.5 tw-content-center tw-grid focus:tw-outline-none"
@@ -186,3 +212,50 @@
         </slot>
     </div>
 </template>
+
+<style lang="scss">
+    .form-label {
+        @apply tw-font-bold tw-text-md lg:tw-text-base tw-text-left;
+    }
+    .t-input-text {
+        @apply tw-overflow-hidden tw-rounded-md focus:tw-outline-none tw-ring-1 dark:tw-ring-neutral-600 tw-shadow-md tw-flex tw-flex-row tw-justify-between tw-justify-items-stretch tw-content-center tw-gap-1 tw-px-1 tw-place-content-stretch tw-ring-neutral-300;
+    }
+    .t-input-text.t-disabled {
+        @apply tw-bg-gray-200 tw-text-gray-400 dark:tw-bg-slate-900 dark:tw-text-slate-500 hover:tw-cursor-not-allowed tw-ring-neutral-300;
+    }
+    .t-input-root {
+        @apply tw-bg-neutral-600/10 dark:tw-bg-slate-800;
+    }
+    .t-input-text.t-success {
+    }
+    .t-input-text.danger {
+        @apply tw-text-red-500 dark:tw-text-red-400;
+    }
+    .t-input.t-danger {
+    }
+    .t-input.t-success {
+    }
+    .t-input.t-disabled {
+    }
+</style>
+
+<style lang="scss" module="colorscheme">
+    .auto {
+        @apply tw-bg-neutral-500/5 dark:tw-bg-slate-900;
+    }
+    .outline {
+    }
+    .daynight {
+        @apply tw-bg-neutral-500/5 dark:tw-bg-slate-900 tw-text-black dark:tw-text-white;
+    }
+    .light {
+        @apply tw-bg-neutral-500/5 tw-text-black;
+        .light-auto {
+            @apply dark:tw-bg-neutral-500/75;
+        }
+    }
+    .dark,
+    .dark-auto {
+        @apply tw-bg-slate-800 tw-text-white dark:tw-bg-slate-900;
+    }
+</style>

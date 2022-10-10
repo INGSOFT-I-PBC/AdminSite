@@ -9,7 +9,10 @@
         @mouseleave="mouseStopInteraction">
         &ZeroWidthSpace;
         <template v-if="leftIcon">
-            <FontAwesomeIcon class="tw-mr-1" v-if="useAwesome" :icon="leftIcon" />
+            <FontAwesomeIcon
+                class="tw-mr-1"
+                v-if="useAwesome"
+                :icon="leftIcon" />
             <VueFeather v-else :type="leftIcon" class="tw-mr-1" />
         </template>
         <slot>Button</slot>
