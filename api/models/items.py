@@ -1,8 +1,8 @@
-from dataclasses import field
+from django.core.validators import MinValueValidator
 from django.db import models
+
 from .common import Status, TimestampModel
 from .users import Employee
-from django.core.validators import MinValueValidator
 
 
 class Category(TimestampModel):
@@ -75,7 +75,7 @@ class ItemMetaData(models.Model):
 
     item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     param = models.ForeignKey(CategoryParam, on_delete=models.RESTRICT)
-    value = models.CharField(max_length=100)
+    value = models.CharField(max_length=100, null=True)
 
     class Meta:
         db_table = "item_meta_data"

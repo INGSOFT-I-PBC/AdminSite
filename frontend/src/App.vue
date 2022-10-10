@@ -1,6 +1,7 @@
-<script setup lang="ts">
+<script lang="ts" setup>
     import { computed, defineAsyncComponent, provide } from 'vue'
-    import { useRoute, RouterView } from 'vue-router'
+    import { RouterView, useRoute } from 'vue-router'
+
     const FullLayout = defineAsyncComponent(
         () => import('./layouts/FullLayout.vue')
     )
@@ -51,7 +52,7 @@
         enter-active-class="tw-transition-all tw-duration-300"
         enter-from-class="tw-opacity-0"
         enter-to-class="tw-opacity-100"> -->
-    <component :is="layout" :title="currentTitle" :breadcrumb="breadcrumb">
+    <component :is="layout" :breadcrumb="breadcrumb" :title="currentTitle">
         <RouterView v-slot="{ Component }">
             <Transition>
                 <component :is="Component" />

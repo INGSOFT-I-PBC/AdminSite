@@ -14,8 +14,12 @@
              -->
         </ECard>
 
-        <div class="container" style="background-color: white; border-radius: 5px">
-            <div class="container" style="background-color: white; padding: 10px">
+        <div
+            class="container"
+            style="background-color: white; border-radius: 5px">
+            <div
+                class="container"
+                style="background-color: white; padding: 10px">
                 <h1 style="font-size: 35px; color: black">Bodega 1</h1>
             </div>
 
@@ -71,7 +75,9 @@
             <div class="container text-center">
                 <div class="row">
                     <div class="col">
-                        <button type="button" class="btn btn-outline-dark btn-lg">
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark btn-lg">
                             Limpiar Filtros
                         </button>
                     </div>
@@ -117,7 +123,9 @@
                     </div>
 
                     <div class="col">
-                        <button type="button" class="btn btn-outline-dark btn-lg">
+                        <button
+                            type="button"
+                            class="btn btn-outline-dark btn-lg">
                             Solicitar Nuevo Pedido
                         </button>
                     </div>

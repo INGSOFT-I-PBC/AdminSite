@@ -1,10 +1,10 @@
-<script setup lang="ts">
+<script lang="ts" setup>
     import {
         Dialog,
         DialogPanel,
         DialogTitle,
-        TransitionRoot,
         TransitionChild,
+        TransitionRoot,
     } from '@headlessui/vue'
     import { computed, type PropType } from 'vue'
     import type { ComponentSize } from '@components-types'
@@ -47,18 +47,22 @@
         },
     })
     const emit = defineEmits(['update:show', 'close', 'cancel', 'ok'])
+
     function onCloseHandler() {
         emit('update:show', false)
         emit('close')
     }
+
     function okClicked() {
         emit('ok')
         emit('update:show', false)
     }
+
     function cancelClicked() {
         emit('cancel')
         emit('update:show', false)
     }
+
     const classes = computed(() => [
         't-dialog',
         'tw-relative',
@@ -80,20 +84,20 @@
 </script>
 
 <template>
-    <TransitionRoot appear :show="show" as="template">
-        <Dialog as="div" :open="show" @close="onCloseHandler" :class="classes">
+    <TransitionRoot :show="show" appear as="template">
+        <Dialog :class="classes" :open="show" as="div" @close="onCloseHandler">
             <!-- Dialog drop shadow -->
             <TransitionChild
                 as="template"
                 enter="tw-duration-300 tw-ease-out"
                 enter-from="tw-opacity-0"
                 enter-to="tw-opacity-100"
-                leave="tw-duration-200 tw-ease-in"
+                leave="tw-duration-300 tw-ease-in"
                 leave-from="tw-opacity-100"
                 leave-to="tw-opacity-0">
                 <div
-                    class="tw-fixed tw-inset-0 tw-bg-black/30 tw-backdrop-blur-sm"
-                    aria-hidden="true" />
+                    aria-hidden="true"
+                    class="tw-fixed tw-inset-0 tw-bg-black/30 tw-backdrop-blur-sm" />
             </TransitionChild>
             <!-- Dialog Content Below -->
             <TransitionChild
@@ -103,12 +107,12 @@
                 enter-to="tw-opacity-100 tw-scale-100"
                 leave="tw-duration-300 tw-ease-in"
                 leave-from="tw-opacity-100 tw-scale-100"
-                leave-to="tw-opacity-0 tw-scale-0">
+                leave-to="tw-opacity-0 tw-scale-50">
                 <div
                     class="tw-fixed tw-inset-0 tw-transform-gpu tw-flex tw-items-center tw-justify-center">
                     <DialogPanel
-                        class="tw-w-full tw-flex tw-flex-col tw-max-h-screen md:tw-max-h-[95%] tw-rounded tw-bg-gray-100 dark:tw-bg-slate-700"
-                        :class="sizeClasses">
+                        :class="sizeClasses"
+                        class="tw-w-full tw-flex tw-flex-col tw-max-h-screen md:tw-max-h-[95%] tw-rounded tw-bg-gray-100 dark:tw-bg-slate-700">
                         <DialogTitle v-if="!hideTitle">
                             <div class="tw-px-4 tw-py-4 tw-text-xl">
                                 <slot name="dialog-title">
@@ -124,7 +128,7 @@
                             <slot>Hello Modal</slot>
                         </div>
                         <div
-                            class="tw-px-2 tw-py-3 tw-flex tw-flex-row-reverse tw-gap-2">
+                            class="tw-px-2 tw-py-3 tw-flex tw-flex-row-reverse tw-gap-2 tw-z-0">
                             <slot name="dialog-buttons">
                                 <EButton
                                     v-if="
@@ -141,8 +145,8 @@
                                             buttonType
                                         )
                                     "
-                                    @click="cancelClicked"
-                                    type="cancel">
+                                    type="cancel"
+                                    @click="cancelClicked">
                                     {{ cancelText }}
                                 </EButton>
                             </slot>
@@ -157,6 +161,6 @@
 <style lang="scss">
     .e-modal-content {
         // tw-overflow-y-auto tw-max-h-full
-        @apply tw-px-5 tw-py-3;
+        @apply tw-px-5 tw-py-3 tw-z-10 tw-max-h-full tw-overflow-y-auto;
     }
 </style>

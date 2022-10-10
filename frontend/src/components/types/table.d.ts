@@ -7,8 +7,8 @@ export interface TableColumn {
 }
 
 export type TableItem<T = Record<string, unknown>> = T & {
-    rowVariants?: Object
-    cellVariants?: Object
+    rowVariants?: unknown
+    cellVariants?: unknown
     showDetails?: boolean
 }
 

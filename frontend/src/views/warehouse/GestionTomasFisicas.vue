@@ -14,8 +14,12 @@
              -->
         </ECard>
 
-        <div class="container" style="background-color: white; border-radius: 5px">
-            <div class="container" style="background-color: white; padding: 10px">
+        <div
+            class="container"
+            style="background-color: white; border-radius: 5px">
+            <div
+                class="container"
+                style="background-color: white; padding: 10px">
                 <h1 style="font-size: 35px; color: black">Bodegas</h1>
 
                 <nav class="navbar">

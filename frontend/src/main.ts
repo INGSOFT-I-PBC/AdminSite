@@ -10,6 +10,7 @@ import ECard from './components/custom/ECard.vue'
 import ECol from './components/custom/ECol.vue'
 import ERow from './components/custom/ERow.vue'
 import BootstrapVue3 from 'bootstrap-vue-3'
+import Vue3EasyDataTable from 'vue3-easy-data-table'
 
 import './types'
 
@@ -23,6 +24,7 @@ import '@/scss/styles.scss'
 import './assets/main.css'
 import 'vue-toastification/dist/index.css'
 import './index.css'
+import 'vue3-easy-data-table/dist/style.css'
 
 const app = createApp(App)
 
@@ -31,6 +33,7 @@ const defToastOptions: PluginOptions = {
     closeOnClick: true,
     pauseOnHover: true,
     maxToasts: 5,
+    shareAppContext: true,
 }
 awesomeIcons.forEach(icon => library.add(icon))
 
@@ -41,6 +44,7 @@ app.use(createPinia())
 app.use(BootstrapVue3)
 app.use(router)
 app.use(Toast, defToastOptions)
+app.component('EasyDataTable', Vue3EasyDataTable)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 app.component(VueFeather.name, VueFeather)
 app.component('ECard', ECard)

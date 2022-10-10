@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import type { Warehouse } from './models/warehouseModels'
+import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
 import type { PaginatedAPIResponse } from '@store-types'
 
 export interface WarehouseState {
@@ -20,9 +20,9 @@ export const useWarehouseStore = defineStore('warehouse-store', {
     },
 
     actions: {
-        async fetchWarehouses(options: Optional<PaginationOptions> = null) {
+        async fetchWarehouses(options: Optional<WarehouseQuery> = null) {
             const result = await (
-                await axios.get<Warehouse[]>('/api/v1/list/warehouses', {
+                await axios.get<Warehouse[]>('/api/v1/list/warehouses/all', {
                     params: options,
                 })
             ).data
@@ -30,7 +30,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
         },
         async fetchPaginatedWarehouses(options: PaginationOptions) {
             const result = await (
-                await await axios.get<PaginatedAPIResponse<Warehouse>>(
+                await axios.get<PaginatedAPIResponse<Warehouse>>(
                     '/api/v1/list/warehouses',
                     { params: options }
                 )

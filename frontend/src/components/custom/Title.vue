@@ -21,9 +21,13 @@
             type: String,
             default: 'bold',
             validate: (weight: string) =>
-                ['normal', 'bold', 'italic', 'bold-italic', 'semibold'].includes(
-                    weight
-                ),
+                [
+                    'normal',
+                    'bold',
+                    'italic',
+                    'bold-italic',
+                    'semibold',
+                ].includes(weight),
         },
         textColorClass: {
             type: String,

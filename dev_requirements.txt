@@ -7,5 +7,7 @@ Markdown==3.4.1
 # black formatter
 black>=22.6.0
 
+faker>=15.0.0
+
 # load the default requiredments
 -r requirements.txt

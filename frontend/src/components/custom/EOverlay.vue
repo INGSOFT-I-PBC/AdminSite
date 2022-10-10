@@ -1,7 +1,10 @@
 <script setup lang="ts">
     import type { BorderRadius } from '@components-types'
     import type { PropType } from 'vue'
-    defineProps({
+    import { watch } from 'vue'
+    const overlayContainer = ref(null)
+    const overlayBg = ref()
+    const props = defineProps({
         show: {
             type: Boolean,
             default: false,
@@ -11,10 +14,16 @@
             default: 'md',
         },
     })
+    watch(
+        () => props.show,
+        async (_oldValue: unknown, newValue: unknown) => {
+            if (!newValue) return
+        }
+    )
 </script>
 
 <template>
-    <div class="t-overlay">
+    <div ref="overlayContainer" class="t-overlay">
         <Transition
             class=""
             enter-active-class="tw-transition-all tw-duration-300"
@@ -24,6 +33,7 @@
             leave-from-class="tw-opacity-100"
             leave-to-class="tw-opacity-0">
             <div
+                ref="overlayBg"
                 class="t-overlay-content"
                 v-show="show"
                 :class="border[rounded]">

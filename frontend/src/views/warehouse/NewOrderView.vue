@@ -7,128 +7,63 @@
     import EButton from '../../components/custom/EButton.vue'
     import ModalDialog from '../../components/custom/ModalDialog.vue'
     import Title from '../../components/custom/Title.vue'
-    import Table from '../../components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
+    import { computed, watch } from 'vue'
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     import { useWarehouseStore } from '@store/warehouse'
     import TextArea from '../../components/custom/TextArea.vue'
-    import { isMessage, type Item, type Warehouse } from '@store/types'
-    import { BTable, type TableField, BFormInput } from 'bootstrap-vue-3'
+    import {
+        isMessage,
+        type Item,
+        type MessageResponse,
+        type Warehouse,
+    } from '@store/types'
+    import type { TableField } from 'bootstrap-vue-3'
     import { useItemStore } from '@store/items'
+    import { useToast } from 'vue-toastification'
+    import type { ServerOptions } from 'vue3-easy-data-table'
+    import type { ItemProps } from '@store/types/items.model'
+    import type { OrderSaveData } from '@store/types/orders.model'
+    import { useOrderStore } from '@store/order'
     /**
      * Utility object definitions
      */
     const itemStore = useItemStore()
-
+    const toast = useToast()
     /**
      * View Holders
      */
     const warehouse = useWarehouseStore()
-    const model = ref({})
-    const showWaitOverlay = ref(true)
-    const productModalShow = ref(false)
-    // const currentItem = ref<Item | null>(null)
-    // const selectedProduct = null
-    const tableSettings = reactive<TableHeaderSettings>({
-        headers: [
-            {
-                label: 'Nombre del producto',
-                attribute: 'name',
-            },
-            {
-                label: 'Código',
-                attribute: 'code',
-            },
-            {
-                label: 'Cantidad',
-                attribute: 'quantity',
-            },
-            {
-                label: 'Detalles',
-                attribute: 'detail',
-            },
-            {
-                label: 'Opciones',
-                attribute: '',
-            },
-        ],
-        rows: [
-            {
-                name: 'Zapatos Marca X',
-                code: '102-XFSOE',
-                quantity: 10,
-                detail: '',
-            },
-            {
-                name: 'Camiseta deportiva',
-                code: '102-XFSOE',
-                quantity: 10,
-                detail: '',
-            },
-            {
-                name: 'Camiseta deportiva modelo c',
-                code: '102-XFSOE',
-                quantity: 10,
-                detail: '',
-            },
-            {
-                name: 'Zapatos Marca X',
-                code: '102-XFSOE',
-                quantity: 10,
-                detail: '',
-            },
-            {
-                name: 'Zapatos Marca X',
-                code: '102-XFSOE',
-                quantity: 10,
-                detail: '',
-            },
-            {
-                name: 'Zapatos Marca X',
-                code: '102-XFSOE',
-                quantity: 10,
-                detail: '',
-            },
-            {
-                name: 'Zapatos Marca X',
-                code: '102-XFSOE',
-                quantity: 10,
-                detail: '',
-            },
-        ],
+    const order = useOrderStore()
+    const showWaitOverlay = ref<boolean>(true)
+    const productModalShow = ref<boolean>(false)
+    const itemInfoShow = ref<boolean>(false)
+    const serverOpts = ref<ServerOptions>({
+        page: 1,
+        rowsPerPage: 5,
     })
-    const cols: TableField[] = [
-        '#',
-        { label: 'Producto', key: 'name' },
-        { label: 'Código', key: 'description' },
-        { label: 'Marca', key: 'brand' },
-    ]
+    const itemLoading = ref(false)
+    const itemPaginationOptions = computed<PaginationOptions>(() => ({
+        page: serverOpts.value.page,
+        per_page: serverOpts.value.rowsPerPage,
+    }))
 
-    const subTotal = computed(() => 0)
-    const iva = computed(() => subTotal.value * 0.12)
-    interface productModel {
-        name: string
-        code: string
-        quantity: number
-        detail: string
-    }
-    let selectedProduct: Optional<productModel> = null
-    function showProduct(product: productModel) {
-        selectedProduct = product
-        console.log(selectedProduct)
-        productModalShow.value = true
-    }
-    function removeItem(index: number) {
-        tableSettings.rows?.splice(index, 1)
-    }
-
+    const itemPageLength = computed(() => {
+        const items = itemStore.paginatedItems
+        if (items == null || isMessage(items)) return 0
+        return items.total
+    })
     type QuantifiedItem = Item & { quantity: number }
+    type SelectedItem = { item: Item | null; props: ItemProps[] }
+    const detailSelectedItem = ref<SelectedItem>({
+        item: null,
+        props: [],
+    })
 
     /**
      * Definition of page-used form
      */
     type Form = {
-        bodega: Optional<Warehouse>
+        bodega?: Warehouse
         comentario: string
         items: QuantifiedItem[]
     }
@@ -136,15 +71,23 @@
         item: Item | null
         quantity: string
     }
+    const itemHeader = [
+        { text: 'Código', value: 'id' },
+        { text: 'Nombre de producto', value: 'name' },
+        { text: 'Marca', value: 'brand' },
+        { text: 'Modelo', value: 'model' },
+        { text: 'Categoría', value: 'category.name' },
+    ]
     const formFields: TableField[] = [
         '#',
         { label: 'Nombre de producto', key: 'name' },
-        { label: 'Código', key: 'descripcion' },
+        { label: 'Código', key: 'id' },
         { label: 'Marca', key: 'brand' },
+        { label: 'Cantidad', key: 'quantity' },
         'Acciones',
     ]
     const form = ref<Form>({
-        bodega: null,
+        bodega: undefined,
         comentario: '',
         items: [],
     })
@@ -162,12 +105,25 @@
         showWaitOverlay.value = false
     })
 
+    const iformShow = computed(() => ({
+        nombre: itemForm.value.item?.name ?? '',
+        detalle: itemForm.value.item?.category?.description ?? '',
+        codigo: itemForm.value.item?.id?.toString(),
+    }))
+    const loadItems = async () => {
+        itemLoading.value = true
+        await itemStore.fetchItemsPaginated(itemPaginationOptions.value)
+        itemLoading.value = false
+    }
+
     /**
      * Event definitions
      */
+    function removeItem(index: number) {
+        form.value.items.splice(index, 1)
+    }
     function onShowModalClick() {
-        console.log('Hola mudno')
-        itemStore.fetchItemsPaginated({ page: 1 })
+        loadItems()
         productModalShow.value = true
     }
 
@@ -176,17 +132,67 @@
         itemForm.value.item = selectedItem
         productModalShow.value = false
     }
-    function onQuantityChange() {
-        console.log('haosdfasfdklaj;sdfjka;s')
-    }
     function addToTable() {
+        const targetItem = itemForm.value.item
+        if (!targetItem) {
+            toast.error('Seleccione un ítem para añadirlo a la tabla')
+            return
+        }
+        if (form.value.items.findIndex(it => targetItem.id == it.id) >= 0) {
+            toast.warning('El ítem ya está añadido')
+            return
+        }
         form.value.items.push({
             ...itemForm.value.item,
             quantity: Number(itemForm.value.quantity),
         } as QuantifiedItem)
         itemForm.value.item = null
         itemForm.value.quantity = '0'
+        toast.success('Item añadido a la tabla')
     }
+
+    function saveOrder() {
+        const { value: data } = form
+        if (data.bodega == null || data.items.length == 0) {
+            toast.error(
+                data.items.length == 0
+                    ? 'No hay ítems en la tabla para guardar'
+                    : 'Seleccione una bodega para continuar'
+            )
+            return
+        }
+        const saveData: OrderSaveData = {
+            warehouse: data.bodega.id,
+            comment: data.comentario,
+            items: data.items.map(it => ({
+                item: it.id,
+                quantity: it.quantity,
+            })),
+        }
+        showWaitOverlay.value = true
+        order
+            .saveOrder(saveData)
+            .then(() => {
+                toast.success('Order registrada correctamente')
+                data.comentario = ''
+                data.bodega = undefined
+                data.items.splice(0, data.items.length)
+            })
+            .catch((it: MessageResponse) => {
+                toast.error(`No se pudo guardar la orden [${it.code}]`)
+            })
+            .finally(() => {
+                showWaitOverlay.value = false
+            })
+    }
+    async function showItem(item: Item) {
+        detailSelectedItem.value.item = item
+        detailSelectedItem.value.props = await itemStore.fetchItemProperties(
+            item.id
+        )
+        itemInfoShow.value = true
+    }
+    watch(serverOpts, loadItems)
 </script>
 
 <template>
@@ -199,30 +205,70 @@
                 title="Lista de productos">
                 <!-- <div
                     class="tw-overflow-y-auto tw-max-h-72 tw-text-black dark:tw-text-white"> -->
-                <BTable
-                    :fields="cols"
-                    sticky-header
-                    hover="true"
-                    striped="true"
+                <EasyDataTable
+                    :headers="itemHeader"
                     :items="items"
-                    responsive
-                    head-variant="dark"
-                    :current-page="itemStore.currentPaginatedItemPage"
-                    @row-clicked="onRowClick">
-                    <template #cell(#)="d">
-                        <b>{{
-                            itemStore.currentPaginatedItemPage! + d.index
-                        }}</b>
-                    </template>
-                </BTable>
-                <!-- </div> -->
+                    buttons-pagination
+                    :rows-items="[5, 10, 15, 20]"
+                    v-model:server-options="serverOpts"
+                    :server-items-length="itemPageLength"
+                    table-class-name="custom-data-table"
+                    :loading="itemLoading"
+                    @click-row="onRowClick" />
+            </ModalDialog>
+            <ModalDialog v-model:show="itemInfoShow" size="xl">
+                <template #dialog-title>
+                    <b class="tw-text-2xl"
+                        >Detalle del Ítem {{ detailSelectedItem.item?.name }}</b
+                    >
+                </template>
+                <div class="container">
+                    <h3 class="tw-text-xl tw-font-bold">Detalle</h3>
+                    <div
+                        class="row tw-pb-3 align-content-center justify-content-center gy-2">
+                        <template
+                            v-for="(d, k) in detailSelectedItem.item"
+                            :key="k">
+                            <div
+                                class="tw-rounded tw-ring-1 tw-ring-slate-500 tw-py-1 col-12 col-md-5 tw-mx-2"
+                                v-if="
+                                    !['category', 'img', 'quantity'].includes(k)
+                                ">
+                                <div class="row">
+                                    <span class="tw-w-1/2 tw-font-bold col-6"
+                                        >{{ k }}:</span
+                                    >
+                                    <span class="col-6">{{ d }}</span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+                    <div
+                        v-if="detailSelectedItem.props"
+                        class="tw-ring-1 tw-ring-slate-500 tw-rounded tw-pb-3 row">
+                        <h3 class="col-12 tw-text-xl tw-py-1.5">
+                            <b>Caracteríticas del Ítem</b>
+                        </h3>
+                        <template
+                            v-for="(param, idx) in detailSelectedItem.props"
+                            :key="idx">
+                            <div class="col-6 col-md-3 col-xl-2 tw-text-md">
+                                <b>{{ param.name }}:</b>
+                            </div>
+                            <div class="col-6 col-md-3 col-xl-2">
+                                {{ param.value }}
+                            </div>
+                        </template>
+                    </div>
+                </div>
             </ModalDialog>
             <ECard>
                 <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="4">
                         <ListBox
-                            v-model="model"
-                            top-label="Seleccione un filtro"
+                            v-model="form.bodega"
+                            top-label="Seleccione una Bodega"
+                            placeholder="No ha seleccionado una bodega"
                             :options="warehouse.getWarehouseList ?? []"
                             label="name" />
                     </ECol>
@@ -264,16 +310,15 @@
                         <ECol cols="12" lg="6">
                             <InputText
                                 label="Producto seleccionado"
-                                :model-value="itemForm.item?.name"
+                                placeholder="Seleccione un ítem"
+                                :model-value="iformShow.nombre"
                                 readonly />
                         </ECol>
                         <ECol cols="12" lg="6">
                             <InputText
                                 label="Código de producto"
-                                :model-value="
-                                    itemForm.item?.id?.toString() ??
-                                    'Item no tiene código de producto'
-                                "
+                                placeholder="Código no disponible (Seleccione un ítem)"
+                                :model-value="iformShow.codigo"
                                 readonly />
                         </ECol>
                         <ECol cols="12" lg="6">
@@ -283,10 +328,7 @@
                                 </label>
                                 <TextArea
                                     id="prod-det"
-                                    :model-value="
-                                        itemForm.item?.category?.description ??
-                                        'Item no tiene descripcion'
-                                    "
+                                    :model-value="iformShow.detalle"
                                     readonly
                                     placeholder="Cargue un ítem para ver su descripción"
                                     resize="vertical" />
@@ -296,8 +338,7 @@
                             <InputText
                                 label="Cantidad del Producto"
                                 v-model.number="itemForm.quantity"
-                                :formatter="(it: string) => it.replace(/\D/g, '')"
-                                @change="onQuantityChange" />
+                                :formatter="(it: string) => it.replace(/\D/g, '')" />
                         </ECol>
                         <ECol cols="12" lg="auto">
                             <EButton
@@ -317,42 +358,39 @@
                     <!-- Item quantity fields -->
                 </ECard>
                 <div class="tw-overflow-x-auto">
-                    <BTable :fields="formFields" :items="form.items"> </BTable>
-                    <Table :header="tableSettings" v-show="false">
-                        <template #body-cell="{ cellData, colIdx, rowIdx }">
-                            <div
-                                v-if="colIdx > 3"
-                                class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
-                                <button
-                                    class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
-                                    @click="
-                                        showProduct(cellData as productModel)
-                                    ">
-                                    Ver más detalles
-                                </button>
-                                <button
-                                    class="tw-bg-red-600 tw-py-1 tw-text-white"
-                                    @click="removeItem(rowIdx)">
-                                    Eliminar
-                                </button>
+                    <BTable :fields="formFields" :items="form.items">
+                        <template #cell(#)="{ index }">
+                            {{ index + 1 }}
+                        </template>
+                        <template #cell(Acciones)="{ item, index }">
+                            <div class="t-button-group">
+                                <e-button
+                                    left-icon="fa-eye"
+                                    @click="showItem(item)"
+                                    type="secondary"
+                                    >Ver detalles</e-button
+                                >
+                                <e-button
+                                    left-icon="fa-trash-can"
+                                    type="cancel"
+                                    @click="removeItem(index)">
+                                    <span
+                                        class="tw-invisible md:tw-visible tw-font-bold"
+                                        >Eliminar</span
+                                    ></e-button
+                                >
                             </div>
                         </template>
-                    </Table>
+                    </BTable>
                 </div>
                 <ERow>
                     <ECol class="tw-content-end tw-justify-end">
-                        <div
-                            v-show="false"
-                            class="tw-flex tw-flex-col tw-font-bold tw-content-end tw-items-center tw-justify-between">
-                            <span>Sub Total: ${{ subTotal.toFixed(3) }}</span>
-                            <!-- <div> -->
-                            <span>IVA 12%: ${{ iva.toFixed(3) }}</span>
-                            <span
-                                >Total: ${{ (subTotal + iva).toFixed(3) }}</span
-                            >
-                            <!-- </div> -->
-                        </div>
-                        <EButton left-icon="save">Guardar</EButton>
+                        <EButton
+                            left-icon="fa-floppy-disk"
+                            icon-provider="awesome"
+                            @click="saveOrder">
+                            Guardar
+                        </EButton>
                     </ECol>
                 </ERow>
                 <!-- </ECol>
@@ -371,6 +409,32 @@
             --bs-table-striped-color: theme(colors.zinc.400);
             --bs-table-hover-color: theme('colors.primary.light');
             --bs-table-hover-bg: theme(colors.primary.light / 15%);
+        }
+    }
+    .custom-data-table {
+        --easy-table-header-background-color: theme(colors.secondary.DEFAULT);
+        --easy-table-header-font-color: theme(colors.white);
+        --easy-table-border: transparentize();
+        --easy-table-footer-background-color: theme(colors.secondary.DEFAULT);
+        --easy-table-footer-font-color: white;
+
+        @media (prefers-color-scheme: dark) {
+            --easy-table-body-row-background-color: theme(
+                colors.secondary.light
+            );
+            --easy-table-body-row-font-color: white;
+            --easy-table-row-border: theme(colors.secondary.DEFAULT);
+        }
+    }
+    .t-button-group {
+        max-width: fit-content !important;
+        @apply tw-rounded tw-overflow-hidden tw-flex tw-place-content-stretch tw-place-items-stretch;
+        > t-button,
+        > button {
+            border-radius: 0;
+            margin: 0;
+            min-width: auto;
+            max-width: 100%;
         }
     }
 </style>

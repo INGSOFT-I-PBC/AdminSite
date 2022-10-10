@@ -1,5 +1,5 @@
 <script setup lang="ts">
-   import ECard from '@components/custom/ECard.vue'
+    import ECard from '@components/custom/ECard.vue'
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
     import ListBox from '@components/custom/ListBox.vue'
@@ -9,8 +9,6 @@
     import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
     import { computed, reactive } from 'vue'
-    
-    
 
     import { useRouter } from 'vue-router'
     const router = useRouter()
@@ -62,7 +60,7 @@
                 id: '250222',
                 state: 'Activa',
                 employee: 'Alejandra Quimi',
-                client:'Carlos Arévalo',
+                client: 'Carlos Arévalo',
                 date: '28/09/2022',
                 total: '19.99',
             },
@@ -73,7 +71,7 @@
         id: string
         state: string
         employee: string
-        client:string
+        client: string
         date: string
         total: string
     }
@@ -94,7 +92,6 @@
     function go3(): void {
         router.push({ path: '/facturacion/agregar' })
     }
-
 </script>
 
 <template>
@@ -134,8 +131,6 @@
                             Search
                         </button>
                     </form>
-                    
-
                 </div>
             </nav>
 
