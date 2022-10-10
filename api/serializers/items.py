@@ -17,6 +17,7 @@ class FullItemSerializer(ModelSerializer):
             "deleted_at",
             "brand",
             "img",
+            "codename",
             "iva",
             "model",
             "name",
@@ -47,5 +48,6 @@ class ItemSerializer(ModelSerializer):
             "price",
             "category_id",
             "created_by",
+            "codename",
             "status_id",
         ]

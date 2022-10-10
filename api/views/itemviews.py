@@ -4,7 +4,7 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
-from api.models import Category, Item,Status
+from api.models import Category, Item, Status
 
 from django.http import JsonResponse
 import json
@@ -21,7 +21,7 @@ class ItemView(APIView):
     This View holds multiple methods for the Items
     """
 
-    #authentication_classes = (TokenAuthentication,)
+    # authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
     parser_classes = (JSONParser, FormParser, MultiPartParser)
 
@@ -47,20 +47,19 @@ class ItemView(APIView):
 
     def post(self, request: Request):
 
-        serializer=ItemSerializer(data=request.data)
-        cateid=self.request.data.get("category_id")
-        staid=self.request.data.get("status_id")
-
+        serializer = ItemSerializer(data=request.data)
+        cateid = self.request.data.get("category_id")
+        staid = self.request.data.get("status_id")
 
         if serializer.is_valid():
             serializer.save(
                 category=Category.objects.get(pk=cateid),
-                status=Status.objects.get(pk=staid)
+                status=Status.objects.get(pk=staid),
             )
-            return Response(serializer.data,status=200)
+            return Response(serializer.data, status=200)
         else:
-            return Response(serializer.errors,status=400)
-        '''if request.FILES:
+            return Response(serializer.errors, status=400)
+        """if request.FILES:
             form = UploadForm(request.POST, request.FILES)
             if form.is_valid():
                 img = form.cleaned_data.get("image_field")
@@ -82,7 +81,7 @@ class ItemView(APIView):
                 obj.save()
                 print(obj)
                 datos = {"message": "Success"}
-                return JsonResponse(datos)'''
+                return JsonResponse(datos)"""
 
     def put(self, request: Request, id):
         jd = json.loads(request.body)

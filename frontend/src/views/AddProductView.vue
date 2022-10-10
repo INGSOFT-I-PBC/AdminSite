@@ -4,9 +4,9 @@
     import type Item3 from '@/interfaz/Items3'
     import ItemDataService from '@/store/item'
     import { useAuthStore } from '@store'
-
+    import EButton from '@components/custom/EButton.vue'
+    import ModalDialog from '@components/custom/ModalDialog.vue'
     import axios from 'axios'
-    import { employee } from '@/router/routes/employee'
 
     export default defineComponent({
         name: 'AddProductView',
@@ -17,10 +17,18 @@
             const employee_id = authStore.userData?.employee as number
             const tiempoTranscurrido = Date.now()
             const hoy = new Date(tiempoTranscurrido)
+            const normalValue=ref('')
+            const productModalShow = ref(false)
+            const productModalShowError = ref(false)
+            const msm400 = ref('')
+            const router = useRouter()
+
 
             return {
-                route,
+                route,router,
                 hoy,
+                normalValue,
+                productModalShow,productModalShowError,msm400,
                 items: {} as Item,
                 fecha_hora: {
                     fecha: String,
@@ -42,12 +50,16 @@
                     price: 0,
                     status_id: 0,
                     warehouse_id: 0,
-                    quantity: 0,
+                    quantity: normalValue,
                     item_id: 0,
+                    codigo:''
                 },
             }
         },
         methods: {
+            showProduct() {
+                this.productModalShow = true
+            },
             validarCheckbox() {
                 const checkbox = document.getElementById('check') as HTMLInputElement
                 console.log(checkbox.checked)
@@ -103,8 +115,11 @@
                     this.entrada.category_id.toString()
                 )
                 formDataItem.append('created_by', this.employee_id.toString())
+
+
                 this.validarCheckbox()
                 formDataItem.append('status_id', this.entrada.status_id.toString())
+                formDataItem.append('codename', this.entrada.codigo)
                 return formDataItem
             },
             performUploadInventory(id: number) {
@@ -117,7 +132,7 @@
                 formDataInventory.append(
                     'quantity',
 
-                    this.entrada.quantity.toString()
+                    this.normalValue
                 )
                 formDataInventory.append('item_id', id.toString())
                 formDataInventory.append(
@@ -130,12 +145,17 @@
                 )
 
                 return formDataInventory
+            }, emitValue(e: Event) {
+                let value = (e.target as HTMLInputElement).value
+                this.normalValue=value
+                console.log(this.normalValue)
             },
             async guardarDatos(formDataItem: FormData) {
-                //console.log(formDataInventory.getAll('warehouse_id'))
-                //console.log(formDataInventory)
+
                 ItemDataService.createItem(formDataItem)
                     .then(response => {
+
+                        console.log(response)
                         const ite = response.data
 
                         this.entrada.item_id = ite.id
@@ -144,14 +164,22 @@
 
                         ItemDataService.createInventory(formData).then(response => {
                             console.log(response.data)
+                        }).then(response=>{
+                            this.$router.push({ path: '/inventario' })
+
                         })
+
+
                     })
-                    .catch((e: Error) => {
-                        console.log(e)
+                    .catch((error) => {
+
+                        if (error.response.status==400)
+                            console.log(error.response.status)
+                            console.log(JSON.stringify(error.response.data))
+                            this.productModalShowError = true
+                            this.msm400=JSON.stringify(error.response.data)
                     })
 
-                // console.log(item.data)
-                //ItemDataService.createInventory(formDataInventory)
             },
             cargarImagen(file: any) {
                 const reader = new FileReader()
@@ -182,22 +210,40 @@
     import ECol from '@components/custom/ECol.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import InputText from '@components/custom/InputText.vue'
-    import EButton from '@components/custom/EButton.vue'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
+
     import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
     import { computed, reactive } from 'vue'
 
     import { useRoute, useRouter } from 'vue-router'
-    const router = useRouter()
+   /* const router = useRouter()
 
     function go2(): void {
         router.push({ path: '/inventario' })
-    }
+    }*/
 </script>
 
 <template>
     <main>
+
+        <ModalDialog
+            id="product-modal-error"
+            v-model:show="productModalShowError"
+            title="Información"
+            >
+            <h1>{{ msm400 }}</h1>
+        </ModalDialog>
+        <ModalDialog
+            id="product-modal"
+            v-model:show="productModalShow"
+            title="Agregar Producto"
+            okText="Guardar"
+            @ok=" guardarDatos(performUpload())"
+            buttonType="ok-cancel"
+            >
+            <h1>¿Esta seguro de guardar el producto?</h1>
+        </ModalDialog>
+
         <ECard>
             <div class="container" style="border-radius: 5px">
                 <!--BOTONES Usuario-->
@@ -217,8 +263,9 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        placeholder="23/08/2022"
-                                        aria-label="First name" />
+                                        placeholder="Codigo"
+                                        aria-label="First name"
+                                        v-model="entrada.codigo"/>
                                 </div>
 
                                 <div class="col">
@@ -496,7 +543,9 @@
                                     <InputText
                                         label="Cantidad del Producto"
                                         type="number"
-                                        :v-model="entrada.quantity" />
+                                        @input="emitValue"
+
+                                         />
                                 </div>
 
                                 <div class="col">
@@ -546,7 +595,7 @@
                     <div class="row">
                         <EButton
                             type="secondary"
-                            @click="guardarDatos(performUpload())"
+                            @click="showProduct()"
                             >Guardar
                         </EButton>
                     </div>

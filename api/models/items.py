@@ -55,6 +55,7 @@ def filepath(request, filename):
 
 class Item(TimestampModel):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+    codename = models.CharField(default=None, unique=True, max_length=16)
 
     brand = models.CharField(max_length=128)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
