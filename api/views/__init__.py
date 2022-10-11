@@ -6,13 +6,8 @@ from .authviews import (
     PermissionsViewSet,
     user_data,
 )
-from .warehouse import (
-    WarehouseView,
-    WhOrderRequestView,
-    WarehouseViewSet,
-    OrderRequestViewSet,
-)
 from .itemview import *
+from .warehouse import *
 
 __all__ = [
     "UserViewSet",
@@ -28,4 +23,5 @@ __all__ = [
     "ItemView",
     "ItemViewSet",
     "PaginatedItemViewSet",
+    "FullWarehouseViewSet",
 ]

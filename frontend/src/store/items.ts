@@ -8,6 +8,7 @@ import { isMessage } from '@/store/types/typesafe'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 import { computed, type Ref } from 'vue'
+import type { ItemProps } from '@store/types/items.model'
 
 export const useItemStore = defineStore('item-store', () => {
     const item: Ref<Optional<Item>> = ref(null)
@@ -25,6 +26,7 @@ export const useItemStore = defineStore('item-store', () => {
         allItems.value = data
         return data
     }
+
     async function fetchItemsPaginated(options: PaginationOptions) {
         const data = await (
             await axios.get<PaginatedAPIResponse<Item>>('/api/v1/list/items', {
@@ -56,9 +58,8 @@ export const useItemStore = defineStore('item-store', () => {
      * @returns the response of the backend
      */
     async function editItem(id: number, data: Item) {
-        return await (
-            await axios.put<APIResponse<Item>>(`/api/v1/item/${id}`, data)
-        ).data
+        return (await axios.put<APIResponse<Item>>(`/api/v1/item/${id}`, data))
+            .data
     }
 
     /**
@@ -68,9 +69,7 @@ export const useItemStore = defineStore('item-store', () => {
      * @returns the message of the backend.
      */
     async function removeItem(id: number) {
-        return await (
-            await axios.delete<MessageResponse>(`/api/v1/item/${id}`)
-        ).data
+        return (await axios.delete<MessageResponse>(`/api/v1/item/${id}`)).data
     }
 
     /**
@@ -80,9 +79,12 @@ export const useItemStore = defineStore('item-store', () => {
      * @returns the Item result of the search
      */
     async function fetchItemById(id: number) {
-        return await (
-            await axios.get<APIResponse<Item>>(`/api/v1/item/${id}`)
-        ).data
+        return (await axios.get<APIResponse<Item>>(`/api/v1/item/${id}`)).data
+    }
+
+    async function fetchItemProperties(id: number) {
+        return (await axios.get<ItemProps[]>(`/api/v1/item/${id}/properties`))
+            .data
     }
 
     return {
@@ -96,5 +98,6 @@ export const useItemStore = defineStore('item-store', () => {
         saveItem,
         editItem,
         removeItem,
+        fetchItemProperties,
     }
 })

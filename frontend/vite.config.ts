@@ -18,7 +18,7 @@ export default ({ mode }: { mode: string }) => {
             manifest: true,
             assetsDir: '',
             emptyOutDir: true,
-            minify: true,
+            minify: 'esbuild',
             outDir: resolve('../static/dist'),
             rollupOptions: {
                 input: {

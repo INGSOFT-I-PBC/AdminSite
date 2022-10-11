@@ -5,10 +5,12 @@
     import { useRouter } from 'vue-router'
     import InputText from '../../components/custom/InputText.vue'
     import { ref } from 'vue'
+    import LoadingBar from '../../components/custom/LoadingBar.vue'
 
     const router = useRouter()
     const toggle = ref(false)
     const username = ref('')
+    const isLoading = ref(false)
     const toggleUsername = ref(false)
     const password = ref('')
     const togglePassword = ref(false)
@@ -27,21 +29,25 @@
 
     function access() {
         error.value = false
-        toggleUsername.value = username.value === '' ? true : false
-        togglePassword.value = password.value === '' ? true : false
+        toggleUsername.value = (username.value ?? '') === ''
+        togglePassword.value = (password.value ?? '') === ''
 
         if (toggleUsername.value === false && togglePassword.value === false) {
+            isLoading.value = true
             authStore
                 .login({
                     username: username.value,
                     password: password.value,
                 })
-                .then(it => authStore.fetchUserData())
-                .then(it => {
+                .then(() => authStore.fetchUserData())
+                .then(() => {
                     router.push({ path: '/' })
                 })
-                .catch(it => {
+                .catch(() => {
                     error.value = true
+                })
+                .finally(() => {
+                    isLoading.value = false
                 })
         }
     }
@@ -57,6 +63,7 @@
             <form @onsubmit="inactive">
                 <InputText
                     label="Usuario"
+                    :disabled="isLoading"
                     :info-label="toggleUsername ? 'campo requerido' : ''"
                     placeholder="usuario"
                     v-model="username"
@@ -64,6 +71,7 @@
                 <!--<span class="text-xs tracking-wide text-red-600">Email field is required </span>-->
                 <div class="mt-4">
                     <InputText
+                        :disabled="isLoading"
                         label="Contraseña"
                         :info-label="togglePassword ? 'campo requerido' : ''"
                         placeholder="contraseña"
@@ -76,6 +84,9 @@
                     </InputText>
                     <!--rightIcon="eye"-->
                 </div>
+
+                <LoadingBar v-show="isLoading" class="tw-mt-5" />
+
                 <div class="tw-text-center">
                     <div class="mt-4" v-if="error">
                         <p class="tw-text-red-700">{{ errorMessage }}</p>

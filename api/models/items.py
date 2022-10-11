@@ -1,8 +1,8 @@
-from dataclasses import field
+from django.core.validators import MinValueValidator
 from django.db import models
+
 from .common import Status, TimestampModel
 from .users import Employee
-from django.core.validators import MinValueValidator
 
 
 class Category(TimestampModel):
@@ -59,6 +59,8 @@ class Item(TimestampModel):
         validators=[MinValueValidator(0)], max_digits=14, decimal_places=3
     )
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
+    codename = models.CharField(max_length=128, unique=True,
+                                help_text="The codename or identifier for the item")
 
     class Meta:
         db_table = "items"
@@ -67,6 +69,7 @@ class Item(TimestampModel):
             models.Index(fields=["price"], name="idx_item_price"),
             models.Index(fields=["category"], name="idx_item_category"),
             models.Index(fields=["brand"], name="idx_item_brand"),
+            models.Index(fields=["codename"])
         ]
 
 
@@ -75,7 +78,7 @@ class ItemMetaData(models.Model):
 
     item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     param = models.ForeignKey(CategoryParam, on_delete=models.RESTRICT)
-    value = models.CharField(max_length=100)
+    value = models.CharField(max_length=100, null=True)
 
     class Meta:
         db_table = "item_meta_data"

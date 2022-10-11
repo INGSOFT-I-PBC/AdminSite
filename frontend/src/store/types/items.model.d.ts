@@ -20,8 +20,15 @@ export interface Item {
     name: string
     price: string
 }
+
 export interface FullItem extends Item {
     meta: Optional<MetaData>
+}
+
+export interface ItemProps {
+    name: string
+    type: string
+    value: Optional<string>
 }
 
 export default {}

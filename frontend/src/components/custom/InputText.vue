@@ -140,7 +140,6 @@
 
     function emitValue(e: Event) {
         let value = (e.target as HTMLInputElement).value
-        console.log('value form input: ', value)
         if (props.modelModifiers?.capitalize) {
             value = value.charAt(0).toUpperCase() + value.slice(1)
         }

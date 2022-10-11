@@ -7,4 +7,11 @@ export interface Warehouse extends MinimalWarehouse {
     id: number
 }
 
+export type WarehouseQuery = {
+    name?: string
+    id?: number
+    latitud?: number
+    longitud?: number
+}
+
 export const a = 'a'

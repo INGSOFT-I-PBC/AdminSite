@@ -166,6 +166,9 @@ class WarehouseViewSet(ReadOnlyModelViewSet):
         .order_by("name")
     )
     serializer_class = FullWarehouseSerializer
+
+
+class FullWarehouseViewSet(WarehouseViewSet):
     pagination_class = None
 
 
