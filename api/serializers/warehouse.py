@@ -20,7 +20,6 @@ class FullWarehouseSerializer(ModelSerializer):
     longitude = DecimalField(
         max_digits=10, decimal_places=6, required=False, allow_null=True
     )
-    status = StatusSerializer()
 
     def create(self, validated_data):
         return Warehouse(**validated_data)
@@ -73,8 +72,6 @@ class InventorySerializer(ModelSerializer):
 
     item = SimpleItemSerializer()
     quantity = IntegerField()
-    created_at = DateTimeField()
-    updated_at = DateTimeField()
 
     class Meta:
         model = Inventory

@@ -50,7 +50,7 @@ class ItemSerializer(ModelSerializer):
         ]
 
 
-class SimpleItemSerializer:
+class SimpleItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = [
@@ -58,5 +58,4 @@ class SimpleItemSerializer:
             "name",
             "iva",
             "price",
-            "status",
         ]

@@ -4,6 +4,7 @@ from rest_framework.serializers import CharField, IntegerField, DateTimeField
 from api.models import OrderRequest, OrderRequestDetail, OrderStatus
 from api.serializers import WarehouseSerializer
 from api.serializers.common import EmployeeSerializer, StatusSerializer
+from api.serializers.items import SimpleItemSerializer
 
 
 class OrderSerializer(ModelSerializer):
@@ -52,7 +53,7 @@ class OrderStatusSerializer(ModelSerializer):
         fields = ["order", "status", "created_by", "created_at"]
 
 
-class OrderDetailsSerializer:
+class OrderDetailsSerializer(ModelSerializer):
 
     id = IntegerField()
     order_request = OrderSerializer()
@@ -63,12 +64,12 @@ class OrderDetailsSerializer:
         fields = ["id", "order", "item", "quantity"]
 
 
-class FullOrderDetailsSerializer:
+class FullOrderDetailsSerializer(ModelSerializer):
 
     id = IntegerField()
     order_request = OrderSerializer()
     quantity = IntegerField()
-    # Item Serializer
+    item = SimpleItemSerializer()
 
     class Meta:
         model = OrderRequestDetail

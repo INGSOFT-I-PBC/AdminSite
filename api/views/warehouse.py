@@ -1,3 +1,4 @@
+from unicodedata import name
 from api.models.common import Status
 from api.models import (
     Warehouse,
@@ -158,7 +159,12 @@ class WarehouseView(APIView):
 
 class WarehouseViewSet(ReadOnlyModelViewSet):
 
-    queryset = Warehouse.objects.all().order_by("name")
+    queryset = (
+        Warehouse.objects.all()
+        .order_by("name")
+        .exclude(status__name="inactive")
+        .order_by("name")
+    )
     serializer_class = FullWarehouseSerializer
     pagination_class = None
 
