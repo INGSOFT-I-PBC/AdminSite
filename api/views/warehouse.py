@@ -46,11 +46,9 @@ class WarehouseView(APIView):
                 if key in ["id", "name", "latitude", "longitude"]:
                     filters[key] = value
 
-            inactive_obj = Status.objects.get(name="inactive")
-
             warehouse_qset = Warehouse.objects.filter(**filters)
 
-            warehouse_qset = warehouse_qset.exclude(status=inactive_obj).latest("id")
+            warehouse_qset = warehouse_qset.exclude(status__name="invalid").latest("id")
 
             serializer = WarehouseSerializer(warehouse_qset)
 
@@ -159,12 +157,7 @@ class WarehouseView(APIView):
 
 class WarehouseViewSet(ReadOnlyModelViewSet):
 
-    queryset = (
-        Warehouse.objects.all()
-        .order_by("name")
-        .exclude(status__name="inactive")
-        .order_by("name")
-    )
+    queryset = Warehouse.objects.all().order_by("name").exclude(status__name="inactive")
     serializer_class = FullWarehouseSerializer
 
 
