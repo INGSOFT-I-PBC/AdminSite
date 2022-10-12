@@ -51,3 +51,27 @@ class ItemSerializer(ModelSerializer):
             "codename",
             "status_id",
         ]
+
+
+class ItemSerializer2(ModelSerializer):
+    """
+    Serializer class that show the essential data of a warehouse model object
+    """
+
+    class Meta:
+        model = Item
+        fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "brand",
+            "img",
+            "iva",
+            "model",
+            "name",
+            "price",
+            "category_id",
+            "created_by",
+            "status_id",
+        ]

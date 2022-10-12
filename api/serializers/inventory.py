@@ -30,6 +30,7 @@ class FullInventorySerializer(ModelSerializer):
             "category_name_Item",
             "status_id_Item",
             "created_by_Item",
+            "codename_Item",
         ]
 
 

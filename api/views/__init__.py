@@ -11,6 +11,7 @@ from .warehouse import (
     WhOrderRequestView,
     WarehouseViewSet,
     OrderRequestViewSet,
+    FullWarehouseViewSet,
 )
 from .itemviews import ItemView
 from .categoryviews import CategoryView
@@ -31,7 +32,6 @@ __all__ = [
     "user_data",
     "PermissionsViewSet",
     "ItemView",
-    "ItemViewSet",
-    "PaginatedItemViewSet",
+    # "PaginatedItemViewSet",
     "FullWarehouseViewSet",
 ]

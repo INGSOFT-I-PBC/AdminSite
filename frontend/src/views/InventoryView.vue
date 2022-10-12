@@ -109,6 +109,7 @@
         stock: string | number
         state: number | string
         actions: number | string
+        id: number
     }
     let items: Item[]
     const items2: product[] = []
@@ -121,7 +122,7 @@
 
                 for (let i = 0; i < items.length; i++) {
                     items2.push({
-                        code: items[i].item_id,
+                        code: items[i].codename_Item,
                         name: items[i].nombreItem,
                         marc: items[i].brandItem,
                         model: items[i].modelItem,
@@ -131,6 +132,7 @@
                         stock: items[i].quantity,
                         state: items[i].status_id_Item,
                         actions: items[i].item_id,
+                        id: items[i].id,
                     })
                 }
 
@@ -229,7 +231,7 @@
                         </button>
                         <button
                             class="tw-bg-green-600 tw-py-1 tw-text-white"
-                            @click="go(items2[rowIdx].code)">
+                            @click="go(items2[rowIdx].id)">
                             Editar
                         </button>
                         <button

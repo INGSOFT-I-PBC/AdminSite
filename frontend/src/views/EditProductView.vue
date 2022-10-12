@@ -8,23 +8,67 @@
         name: 'EditProductView',
         data() {
             const route = useRoute()
+            const normalValue=ref('')
+            const tiempoTranscurrido = Date.now()
+            const hoy = new Date(tiempoTranscurrido)
+
 
             return {
                 route,
                 items: {} as Item,
+                hoy,
                 fecha_hora: {
                     fecha: String,
                     hora: String,
                 },
                 imagenM: '',
+                category: [],
+                warehouses: [],
+                entrada: {
+                    brand: '',
+                    category_id: 0,
+                    iva: 0,
+                    model: '',
+                    name: '',
+                    price: 0,
+                    status_id: 0,
+                    warehouse_id: 0,
+                    quantity: normalValue,
+                    item_id: 0,
+                    codigo:'',
+                    created_by:''
+                },
             }
         },
         methods: {
+            async showAllCategory() {
+                ItemDataService.getAllCategory()
+                    .then(response => {
+                        this.category = response.data
+
+                    })
+                    .catch((e: Error) => {
+                        console.log(e)
+                    })
+            },
+            async showAllWarehouses() {
+                ItemDataService.getAllWarehouses()
+                    .then(response => {
+                        this.warehouses = response.data
+                    })
+                    .catch((e: Error) => {
+                        console.log(e)
+                    })
+            },
             async showAllProducts(id: string) {
                 ItemDataService.get(String(id))
                     .then(response => {
                         this.items = response.data
                         console.log(this.items)
+                        this.entrada.category_id=this.items['0'].category_id_Item
+                        this.imagenM="http://127.0.0.1:8000/storage/"+this.items['0'].imgItem
+                        this.entrada.warehouse_id=this.items['0'].warehouse_id
+                        this.entrada.created_by=this.items['0'].created_by_Item.name+' '+this.items['0'].created_by_Item.lastname
                         this.fecha_hora.fecha = this.items['0'].created_at.substring(
                             0,
                             10
@@ -61,6 +105,8 @@
         mounted() {
             if (typeof this.route.params.id === 'string')
                 this.showAllProducts(String(this.route.params.id))
+            this.showAllCategory()
+            this.showAllWarehouses()
         },
     })
 </script>
@@ -76,7 +122,7 @@
     import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
     import { computed, reactive, onMounted, onBeforeMount } from 'vue'
-    import ItemDataService from '@/store/item'
+    import ItemDataService from '@store/item'
 
     const router = useRouter()
 
@@ -106,7 +152,7 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        v-model="item.id"
+                                        v-model="item.codename_Item"
                                         disabled="false"
                                         aria-label="First name" />
                                 </div>
@@ -123,7 +169,7 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        v-model="item.name"
+                                        v-model="item.nombreItem"
                                         aria-label="First name" />
                                 </div>
 
@@ -140,7 +186,7 @@
                                         type="text"
                                         class="form-control"
                                         placeholder="Admin"
-                                        v-model="item.brand"
+                                        v-model="item.brandItem"
                                         aria-label="First name" />
                                 </div>
 
@@ -157,7 +203,7 @@
                                         type="text"
                                         class="form-control"
                                         placeholder="Admin"
-                                        v-model="item.model"
+                                        v-model="item.modelItem"
                                         aria-label="First name" />
                                 </div>
                             </div>
@@ -178,29 +224,17 @@
                                 Categoría*
                             </h6>
                             <select
+                                v-model="entrada.category_id"
                                 class="form-select"
-                                aria-label="Default select example">
-                                <option selected>Femenino</option>
-                                <option value="1">Masculino</option>
-                                <option value="2">Unisex</option>
+                                aria-label="Default select example"
+                               >
+                                <option
+                                    v-for="catego in category"
+                                    :value="catego['id']">
+                                    {{ catego['name'] }}
+                                </option>
                             </select>
-                        </div>
 
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Descripción *
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                v-model="item.model"
-                                aria-label="First name" />
                         </div>
 
                         <div class="col">
@@ -216,44 +250,9 @@
                                 type="text"
                                 class="form-control"
                                 placeholder=""
-                                v-model="item.price"
+                                v-model="item.priceItem"
                                 aria-label="First name" />
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Peso
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                aria-label="First name" />
-                        </div>
-                    </div>
-                </div>
 
-                <!--BOTONES Usuario-->
-                <div class="container text-center" style="padding: 10px">
-                    <div class="row">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Tipo*
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                aria-label="First name" />
                         </div>
 
                         <div class="col">
@@ -269,8 +268,29 @@
                                 type="text"
                                 class="form-control"
                                 placeholder=""
-                                v-model="item.iva"
+                                v-model="item.ivaItem"
                                 aria-label="First name" />
+
+
+                        </div>
+
+                    </div>
+                </div>
+
+                <!--BOTONES Usuario-->
+                <div class="container text-center" style="padding: 10px">
+                    <div class="row">
+
+
+                        <div class="col">
+                            <InputText
+                                label="Cantidad del Producto"
+                                v-model="item.quantity"
+                                type="number" />
+
+                        </div>
+                        <div class="col">
+
                         </div>
 
                         <div class="col">
@@ -284,7 +304,7 @@
                             </h6>
                             <div class="form-check form-switch">
                                 <input
-                                    v-if="item.status_id === 1"
+                                    v-if="item.status_id_Item === 1"
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
@@ -354,8 +374,7 @@
                             <input
                                 type="text"
                                 class="form-control"
-                                placeholder="Admin"
-                                v-model="item.created_by"
+                                v-model="entrada.created_by"
                                 disabled="false"
                                 aria-label="First name" />
                         </div>
@@ -375,34 +394,20 @@
                                         ">
                                         Elegir Bodega
                                     </h6>
-                                    <input type="checkbox" id="jack" value="Jack" />
-                                    <label for="jack"> Bodega 1 </label>
-                                    <input type="checkbox" id="john" value="John" />
-                                    <label for="john"> Bodega 2 </label>
-                                    <input type="checkbox" id="mike" value="Mike" />
-                                    <label for="mike"> Bodega 3 </label>
+                                    <select
+                                        v-model="entrada.warehouse_id"
+                                        class="form-select"
+                                        aria-label="Default select example">
+                                        <option
+                                            v-for="warehouse in warehouses"
+                                            :value="warehouse['id']">
+                                            {{ warehouse['name'] }}
+                                        </option>
+                                    </select>
                                 </div>
 
-                                <div class="col">
-                                    <InputText
-                                        label="Cantidad del Producto"
-                                        type="number" />
-                                </div>
 
-                                <div class="col">
-                                    <h6
-                                        style="
-                                            font-size: 15px;
-                                            color: black;
-                                            text-align: left;
-                                        ">
-                                        Descuento
-                                    </h6>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        aria-label="First name" />
-                                </div>
+
                             </div>
                         </div>
                     </div>

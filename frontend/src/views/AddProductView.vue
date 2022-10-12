@@ -62,7 +62,6 @@
             },
             validarCheckbox() {
                 const checkbox = document.getElementById('check') as HTMLInputElement
-                console.log(checkbox.checked)
                 if (checkbox.checked) {
                     this.entrada.status_id = 1
                 } else {
@@ -73,8 +72,7 @@
                 ItemDataService.getAllCategory()
                     .then(response => {
                         this.category = response.data
-                        console.log(this.category)
-                        console.log(this.authStore.userData?.employee)
+
                     })
                     .catch((e: Error) => {
                         console.log(e)
@@ -84,21 +82,15 @@
                 ItemDataService.getAllWarehouses()
                     .then(response => {
                         this.warehouses = response.data
-                        console.log(this.warehouses)
                     })
                     .catch((e: Error) => {
                         console.log(e)
                     })
             },
             obtenerImagen(e: any) {
-                const file = e.target.files[0]
-                console.log(file)
-                this.cargarImagen(file)
-
-                this.image_field = file
-                //this.performUpload(this.image_field)
+                this.image_field = e.target.files[0]
+                this.cargarImagen(this.image_field)
             },
-
             performUpload() {
                 const formDataItem = new FormData()
                 formDataItem.append('id', '')
@@ -146,38 +138,26 @@
 
                 return formDataInventory
             }, emitValue(e: Event) {
-                let value = (e.target as HTMLInputElement).value
-                this.normalValue=value
-                console.log(this.normalValue)
+                this.normalValue=(e.target as HTMLInputElement).value
             },
             async guardarDatos(formDataItem: FormData) {
 
                 ItemDataService.createItem(formDataItem)
                     .then(response => {
-
-                        console.log(response)
                         const ite = response.data
-
                         this.entrada.item_id = ite.id
-                        const formData = this.performUploadInventory(ite.id)
-                        console.log(formData.getAll('quantity'))
-
-                        ItemDataService.createInventory(formData).then(response => {
-                            console.log(response.data)
-                        }).then(response=>{
+                        ItemDataService.createInventory(this.performUploadInventory(ite.id))
+                        .then(response=>{
                             this.$router.push({ path: '/inventario' })
 
                         })
-
-
                     })
                     .catch((error) => {
 
-                        if (error.response.status==400)
-                            console.log(error.response.status)
-                            console.log(JSON.stringify(error.response.data))
+                        if (error.response.status==400){
                             this.productModalShowError = true
                             this.msm400=JSON.stringify(error.response.data)
+                        }
                     })
 
             },
@@ -185,7 +165,6 @@
                 const reader = new FileReader()
                 reader.onload = (e: any) => {
                     this.imagenM = e.target.result
-                    //console.log(this.imagenM)
                 }
                 reader.readAsDataURL(file)
             },
@@ -198,29 +177,14 @@
         mounted() {
             this.showAllCategory()
             this.showAllWarehouses()
-
-            console.log(this.name)
-            console.log(this.employee_id)
         },
     })
 </script>
 <script setup lang="ts">
     import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
     import InputText from '@components/custom/InputText.vue'
-
-    import Title from '@components/custom/Title.vue'
-    import Table from '@components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
-
     import { useRoute, useRouter } from 'vue-router'
-   /* const router = useRouter()
 
-    function go2(): void {
-        router.push({ path: '/inventario' })
-    }*/
 </script>
 
 <template>
@@ -346,23 +310,6 @@
                                 </option>
                             </select>
                         </div>
-
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Descripción *
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                aria-label="First name" />
-                        </div>
-
                         <div class="col">
                             <h6
                                 style="
@@ -379,42 +326,14 @@
                                 aria-label="First name"
                                 v-model="entrada.price" />
                         </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Peso
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                aria-label="First name" />
-                        </div>
+
                     </div>
                 </div>
 
                 <!--BOTONES Usuario-->
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Tipo*
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                aria-label="First name" />
-                        </div>
+
 
                         <div class="col">
                             <h6
@@ -548,20 +467,6 @@
                                          />
                                 </div>
 
-                                <div class="col">
-                                    <h6
-                                        style="
-                                            font-size: 15px;
-                                            color: black;
-                                            text-align: left;
-                                        ">
-                                        Descuento
-                                    </h6>
-                                    <input
-                                        type="text"
-                                        class="form-control"
-                                        aria-label="First name" />
-                                </div>
                             </div>
                         </div>
                     </div>

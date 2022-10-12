@@ -16,15 +16,19 @@ import './types'
 
 import App from './App.vue'
 import router from './router'
-
-import 'bootstrap/dist/css/bootstrap.css'
-import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import '@/scss/styles.scss'
 // import * as bootstrap from 'bootstrap'
 import './assets/main.css'
 import 'vue-toastification/dist/index.css'
 import './index.css'
-import 'vue3-easy-data-table/dist/style.css'
+//import 'bootstrap/dist/css/bootstrap.css'
+//import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
+//import '@/scss/styles.scss'
+// import * as bootstrap from 'bootstrap'
+//import './assets/main.css'
+/*import 'vue-toastification/dist/index.css'
+import './index.css'
+import 'vue3-easy-data-table/dist/style.css'*/
 
 const app = createApp(App)
 

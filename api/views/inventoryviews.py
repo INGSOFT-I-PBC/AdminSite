@@ -21,28 +21,33 @@ class InventoryView(APIView):
     permission_classes = (IsAuthenticated,)
     parser_classes = (JSONParser, FormParser, MultiPartParser)
 
-    def get(self, request: Request, id=0):
-        if id > 0:
-            items = Inventory.objects.filter(id=id)
-            serializer = FullInventorySerializer(
-                items, context={"request": request}, many=True
-            )
+    def get(self, request: Request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        if pk != None:
+            if pk > 0:
+                items = Inventory.objects.filter(id=pk)
+                serializer = FullInventorySerializer(
+                    items, context={"request": request}, many=True
+                )
 
-            if len(items) > 0:
-                datos = Response(serializer.data)
+                if len(list(items)) > 0:
+                    datos2 = Response(serializer.data)
 
-            return datos
+                return datos2
 
         else:
             items = Inventory.objects.all().order_by("id")
             serializer = FullInventorySerializer(
                 items, context={"request": request}, many=True
             )
-            if len(items) > 0:
-                datos = Response(serializer.data)
-                print(datos)
 
-            return datos
+            if len(list(items)) > 0:
+                datos1 = Response(serializer.data)
+
+            else:
+                datos1 = JsonResponse({"message": "Items not found .."})
+
+            return datos1
 
     def post(self, request: Request):
         serializer = InventorySerializer(data=request.data)
@@ -59,22 +64,19 @@ class InventoryView(APIView):
             return Response(serializer.data, status=200)
         else:
             return Response(serializer.errors, status=400)
-        """
-        jd = json.loads(request.body)
-        Inventory.objects.create(
-            created_at=jd["created_at"],
-            updated_at=jd["updated_at"],
-            deleted_at=jd["deleted_at"],
-            quantity=jd["quantity"],
-            item_id=jd["item_id"],
-            updated_by_id=jd["updated_by_id"],
-            warehouse_id=jd["warehouse_id"],
-        )
-        datos = {"message": "Success"}
-        return JsonResponse(datos)"""
 
     def put(self, request: Request, id):
         pass
 
-    def delete(self, request: Request, id):
-        pass
+    def delete(self, request: Request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        inventory = Inventory.objects.filter(id=pk)
+        # items = list(Item.objects.filter(id=id).values())
+        if len(list(inventory)) > 0:
+            inventory.delete()
+            datos3 = {"message": "Success"}
+
+        else:
+            datos3 = {"message": "Items not found .."}
+
+        return JsonResponse(datos3)

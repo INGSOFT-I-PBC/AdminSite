@@ -18,7 +18,7 @@ class ItemDataService {
         })
     }
     async getAllWarehouses(): Promise<any> {
-        return await axios.get('/api/v1/list/warehouses', {
+        return await axios.get('/api/v1/list/warehouses/all', {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -26,7 +26,7 @@ class ItemDataService {
     }
 
     async get(id: string): Promise<AxiosResponse<Item>> {
-        return await axios.get(`/api/v1/items/${id}`, {
+        return await axios.get(`/api/v1/inventory/${id}`, {
             headers: {
                 'Content-Type': 'application/json',
             },
@@ -48,18 +48,37 @@ class ItemDataService {
         })
     }
 
-    update(id: any, data: any): Promise<any> {
+    updateItem(id: any, data: any): Promise<any> {
         return axios.put(
             `/api/v1/items/${id}`,
             {
-                headers: {},
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            },
+            data
+        )
+    }
+    updateInventory(id: any, data: any): Promise<any> {
+        return axios.put(
+            `/api/v1/inventory/${id}`,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
             },
             data
         )
     }
 
-    delete(id: any): Promise<any> {
+    deleteItem(id: any): Promise<any> {
         return axios.delete(`/api/v1/items/${id}`, {
+            headers: {},
+        })
+    }
+
+    deleteInventory(id: any): Promise<any> {
+        return axios.delete(`/api/v1/inventory/${id}`, {
             headers: {},
         })
     }

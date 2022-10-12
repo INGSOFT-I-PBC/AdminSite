@@ -21,7 +21,7 @@ class Warehouse(TimestampModel):
     class Meta:
         db_table = "warehouse"
         indexes = [
-            models.Index(fields=['name']),
+            models.Index(fields=["name"]),
         ]
 
 
@@ -53,7 +53,7 @@ class Inventory(TimestampModel):
 
     def imgItem(self):
         return self.item.img.name
-        #imgItem
+        # imgItem
 
     def ivaItem(self):
         return self.item.iva
@@ -78,6 +78,9 @@ class Inventory(TimestampModel):
 
     def status_id_Item(self):
         return self.item.status_id
+
+    def codename_Item(self):
+        return self.item.codename
 
 
 class WarehouseTransaction(models.Model):

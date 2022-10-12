@@ -84,6 +84,23 @@ class Item(TimestampModel):
             models.Index(fields=["brand"], name="idx_item_brand"),
         ]
 
+    def remove_on_image_update(self):
+        try:
+            # is the object in the database yet?
+            obj = Item.objects.get(id=self.id)
+        except Item.DoesNotExist:
+            # object is not in db, nothing to worry about
+            return
+        # is the save due to an update of the actual image file?
+        if obj.img and self.img and obj.img != self.img:
+            # delete the old image file from the storage in favor of the new file
+            obj.img.delete()
+
+    def save(self, *args, **kwargs):
+        # object is possibly being updated, if so, clean up.
+        self.remove_on_image_update()
+        return super(Item, self).save(*args, **kwargs)
+
 
 class ItemMetaData(models.Model):
     id = models.BigAutoField(primary_key=True, auto_created=True, editable=False)
