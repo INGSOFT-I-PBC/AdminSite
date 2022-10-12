@@ -109,8 +109,12 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="go">+ Crear factura </EButton>
-                    <EButton type="secondary" @click="go">Notas de crédito </EButton>
+                    <EButton type="secondary" @click="go"
+                        >+ Crear factura
+                    </EButton>
+                    <EButton type="secondary" @click="go"
+                        >Notas de crédito
+                    </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="model"

@@ -4,25 +4,21 @@
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
     import * as VeeValidate from 'vee-validate'
-     import { Field, ErrorMessage } from 'vee-validate'
+    import { Field, ErrorMessage } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
     import { useRoute, useRouter } from 'vue-router'
     const model = ref(null)
     const router = useRouter()
-
 
     const array = ['Cajero', 'Vendedor', 'Bodeguero']
 
     const tiposeleccion = ref(0)
     const datos = []
 
-    function onSubmit(value:any) {
-     console.log(value)
-     tiposeleccion.value = 0
-
-
- }
-
+    function onSubmit(value: any) {
+        console.log(value)
+        tiposeleccion.value = 0
+    }
 
     function btn_guardar(): void {
         tiposeleccion.value = 0
@@ -36,28 +32,26 @@
         tiposeleccion.value = 1
     }
 
-    function obtenerdatos(item:string): void {
+    function obtenerdatos(item: string): void {
         tiposeleccion.value = 2
     }
 
-    function validateName(value:any) {
-       // if the field is empty
-       if (!value) {
-         return 'Este campo es requerido';
-       }
-       if(!isNaN(value)){
-         return 'Inválido';
+    function validateName(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if (!isNaN(value)) {
+            return 'Inválido'
+        }
+        const regex = /^[a-zA-ZÀ-ÿ ]+$/
 
-       }
-       var regex = /^[a-zA-ZÀ-ÿ ]+$/
+        if (!regex.test(value)) {
+            return 'Inválido'
+        }
 
-       if(!regex.test(value)){
-         return 'Inválido';
-
-       }
-
-       return true;
-     }
+        return true
+    }
 
     // hello
 </script>
@@ -101,10 +95,9 @@
                             leave-from-class="tw-scale-105"
                             leave-to-class="tw-scale-10 tw-opacity-20 -tw-translate-x-full">
                             <div v-for="item in array" :key="item">
-
                                 <EButton
                                     @click="obtenerdatos(item)"
-                                    style="display:flex;margin-top:10px"
+                                    style="display: flex; margin-top: 10px"
                                     class="hover:tw-text-primary hover:tw-font-bold"
                                     >{{ item }}</EButton
                                 >
@@ -141,60 +134,97 @@
 
                 <div v-else-if="tiposeleccion == 1">
                     <EForm @submit="onSubmit">
-                    <h6 style="font-size: 15px; color: black; text-align: left">
-                        Nombre del rol: *
-                    </h6>
-                    <Field name="name"  class="form-control" type="email" :rules="validateName" />
-                    <div class="col">
-                        <ErrorMessage name="name"  style="  font-size: 10px;  color: red; text-align: left;"/>
-                    </div>
+                        <h6
+                            style="
+                                font-size: 15px;
+                                color: black;
+                                text-align: left;
+                            ">
+                            Nombre del rol: *
+                        </h6>
+                        <Field
+                            name="name"
+                            class="form-control"
+                            type="email"
+                            :rules="validateName" />
+                        <div class="col">
+                            <ErrorMessage
+                                name="name"
+                                style="
+                                    font-size: 10px;
+                                    color: red;
+                                    text-align: left;
+                                " />
+                        </div>
 
-                    <h6 style="font-size: 15px; color: black; text-align: left">
-                        Fecha de creación:
-                    </h6>
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder="23/08/2022"
-                        disabled="false"
-                        aria-label="First name" />
+                        <h6
+                            style="
+                                font-size: 15px;
+                                color: black;
+                                text-align: left;
+                            ">
+                            Fecha de creación:
+                        </h6>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="23/08/2022"
+                            disabled="false"
+                            aria-label="First name" />
 
-                    <h6 style="font-size: 15px; color: black; text-align: left">
-                        Hora de creación:
-                    </h6>
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder="23/08/2022"
-                        disabled="false"
-                        aria-label="First name" />
+                        <h6
+                            style="
+                                font-size: 15px;
+                                color: black;
+                                text-align: left;
+                            ">
+                            Hora de creación:
+                        </h6>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="23/08/2022"
+                            disabled="false"
+                            aria-label="First name" />
 
-                    <h6 style="font-size: 15px; color: black; text-align: left">
-                        Creado por:
-                    </h6>
-                    <input
-                        type="text"
-                        class="form-control"
-                        placeholder="23/08/2022"
-                        disabled="false"
-                        aria-label="First name" />
+                        <h6
+                            style="
+                                font-size: 15px;
+                                color: black;
+                                text-align: left;
+                            ">
+                            Creado por:
+                        </h6>
+                        <input
+                            type="text"
+                            class="form-control"
+                            placeholder="23/08/2022"
+                            disabled="false"
+                            aria-label="First name" />
 
-                    <h6 style="font-size: 15px; color: black; text-align: left">
-                        Permisos:
-                    </h6>
-                    <button  style="
-                     font-size: 15px;
-                     color: black;
-                     text-align: center;
-                     width:50%;
-                     margin-left:25%;
-                     margin-right:25%;
-                     margin-top:10px;
-                     color: white;
-                     background-color: #555555;
-
-                 ">  Guardar </button>
-                </EForm>
+                        <h6
+                            style="
+                                font-size: 15px;
+                                color: black;
+                                text-align: left;
+                            ">
+                            Permisos:
+                        </h6>
+                        <button
+                            style="
+                                font-size: 15px;
+                                color: black;
+                                text-align: center;
+                                width: 50%;
+                                margin-left: 25%;
+                                margin-right: 25%;
+                                margin-top: 10px;
+                                color: white;
+                                background-color: #555555;
+                            ">
+                            Guardar
+                        </button>
+                    </EForm>
                 </div>
 
                 <div v-else-if="tiposeleccion == 2">

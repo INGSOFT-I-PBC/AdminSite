@@ -199,9 +199,9 @@
             id="product-modal"
             v-model:show="productModalShow"
             title="Agregar Producto"
-            okText="Guardar"
+            ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
-            buttonType="ok-cancel">
+            button-type="ok-cancel">
             <h1>¿Esta seguro de guardar el producto?</h1>
         </ModalDialog>
 
@@ -303,7 +303,7 @@
                                 <option
                                     v-for="catego in category"
                                     :value="catego['id']"
-                                    v-bind:key="catego['id']">
+                                    :key="catego['id']">
                                     {{ catego['name'] }}
                                 </option>
                             </select>
@@ -448,7 +448,7 @@
                                         <option
                                             v-for="warehouse in warehouses"
                                             :value="warehouse['id']"
-                                            v-bind:key="warehouse['id']">
+                                            :key="warehouse['id']">
                                             {{ warehouse['name'] }}
                                         </option>
                                     </select>

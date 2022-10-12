@@ -22,7 +22,6 @@
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
 
-
     const templateList = [
         { label: 'Por código', value: '1' },
         { label: 'Por nombre', value: '2' },
@@ -81,7 +80,7 @@
                 attribute: 'actions',
             },
         ],
-        rows:[],
+        rows: [],
     })
 
     interface productModel {
@@ -112,9 +111,8 @@
         stock: string | number
         state: number | string
         actions: number | string
-        id_item:number
+        id_item: number
         id: number
-
     }
     let items: Item[]
     const items2: product[] = []
@@ -137,7 +135,7 @@
                         stock: items[i].quantity,
                         state: items[i].status_id_Item,
                         actions: items[i].item_id,
-                        id_item:items[i].item_id,
+                        id_item: items[i].item_id,
                         id: items[i].id,
                     })
                 }
@@ -156,19 +154,20 @@
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
-    function deleteProduct(index:number): void {
-        ItemDataService.deleteInventory(items2[index].id).then(response=>{
-            console.log(response.data)
-            ItemDataService.deleteItem(items2[index].id_item).then(response=>{
-            console.log(response.data)
-            removeItem(index)
-
-        })
-
-        }).catch((e: Error) => {
+    function deleteProduct(index: number): void {
+        ItemDataService.deleteInventory(items2[index].id)
+            .then(response => {
+                console.log(response.data)
+                ItemDataService.deleteItem(items2[index].id_item).then(
+                    response => {
+                        console.log(response.data)
+                        removeItem(index)
+                    }
+                )
+            })
+            .catch((e: Error) => {
                 console.log(e)
             })
-
     }
     function goAgregar(): void {
         router.push({ path: '/inventario/agregar' })
@@ -181,96 +180,94 @@
 <template>
     <main>
         <WaitOverlay :show="showWaitOverlay">
+            <ModalDialog
+                id="product-modal"
+                v-model:show="productModalShow"
+                title="Detalle del producto">
+                <h1>nombre: {{ selectedProduct?.name }}</h1>
+            </ModalDialog>
 
-        <ModalDialog
-            id="product-modal"
-            v-model:show="productModalShow"
-            title="Detalle del producto">
-            <h1>nombre: {{ selectedProduct?.name }}</h1>
-        </ModalDialog>
+            <ECard>
+                <ERow>
+                    <h1 style="font-size: 35px; color: black">Inventario</h1>
+                </ERow>
+                <nav class="navbar">
+                    <div class="container-fluid">
+                        <EButton type="secondary" @click="goAgregar"
+                            >+ Agregar producto
+                        </EButton>
 
-        <ECard>
-            <ERow>
-                <h1 style="font-size: 35px; color: black">Inventario</h1>
-            </ERow>
-            <nav class="navbar">
-                <div class="container-fluid">
-                    <EButton type="secondary" @click="goAgregar"
-                        >+ Agregar producto
-                    </EButton>
+                        <ECol cols="9" md="6" xl="4">
+                            <ListBox
+                                v-model="model"
+                                top-label="Seleccione un filtro"
+                                :options="templateList" />
+                        </ECol>
 
-                    <ECol cols="9" md="6" xl="4">
-                        <ListBox
-                            v-model="model"
-                            top-label="Seleccione un filtro"
-                            :options="templateList" />
-                    </ECol>
+                        <form class="d-flex" role="search">
+                            <input
+                                class="form-control me-2"
+                                type="search"
+                                placeholder="Buscar productos"
+                                aria-label="Search" />
+                            <button class="btn btn-outline-black" type="submit">
+                                Search
+                            </button>
+                        </form>
+                    </div>
+                </nav>
 
-                    <form class="d-flex" role="search">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Buscar productos"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
-                </div>
-            </nav>
-
-            <!-- <ERow>
+                <!-- <ERow>
                 <ECol cols="12"> -->
 
-            <Table :header="tableSettings" >
-                <template #body-cell="{ cellData, colIdx, rowIdx }">
-                    <div v-if="colIdx == 8">
-                        <div class="form-check form-switch">
-                            <input
-                                v-if="items2[rowIdx].state == 1"
-                                class="form-check-input"
-                                type="checkbox"
-                                role="switch"
-                                id="flexSwitchCheckDefault"
-                                checked />
-                            <input
-                                v-else
-                                class="form-check-input"
-                                type="checkbox"
-                                role="switch"
-                                id="flexSwitchCheckDefault" />
-                            <label
-                                class="form-check-label"
-                                for="flexSwitchCheckDefault"></label>
+                <Table :header="tableSettings">
+                    <template #body-cell="{ cellData, colIdx, rowIdx }">
+                        <div v-if="colIdx == 8">
+                            <div class="form-check form-switch">
+                                <input
+                                    v-if="items2[rowIdx].state == 1"
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="flexSwitchCheckDefault"
+                                    checked />
+                                <input
+                                    v-else
+                                    class="form-check-input"
+                                    type="checkbox"
+                                    role="switch"
+                                    id="flexSwitchCheckDefault" />
+                                <label
+                                    class="form-check-label"
+                                    for="flexSwitchCheckDefault"></label>
+                            </div>
                         </div>
-                    </div>
 
-                    <div
-                        v-else-if="colIdx > 8"
-                        class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
-                        <button
-                            class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
-                            @click="showProduct(cellData as productModel)">
-                            Ver más detalles
-                        </button>
-                        <button
-                            class="tw-bg-green-600 tw-py-1 tw-text-white"
-                            @click="go(items2[rowIdx].id)">
-                            Editar
-                        </button>
-                        <button
-                            class="tw-bg-red-600 tw-py-1 tw-text-white"
-                            @click="deleteProduct(rowIdx)">
-                            Eliminar
-                        </button>
-                    </div>
-                </template>
-            </Table>
+                        <div
+                            v-else-if="colIdx > 8"
+                            class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
+                            <button
+                                class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
+                                @click="showProduct(cellData as productModel)">
+                                Ver más detalles
+                            </button>
+                            <button
+                                class="tw-bg-green-600 tw-py-1 tw-text-white"
+                                @click="go(items2[rowIdx].id)">
+                                Editar
+                            </button>
+                            <button
+                                class="tw-bg-red-600 tw-py-1 tw-text-white"
+                                @click="deleteProduct(rowIdx)">
+                                Eliminar
+                            </button>
+                        </div>
+                    </template>
+                </Table>
 
-            <!-- </ECol>
+                <!-- </ECol>
             </ERow> -->
-        </ECard>
-    </WaitOverlay >
-
+            </ECard>
+        </WaitOverlay>
     </main>
 </template>

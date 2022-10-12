@@ -61,7 +61,7 @@ declare global {
      * This is the type of a user that is returned from the Backend
      */
     export interface UserInfo {
-        employee:number
+        employee: number
         name: string
         username: string
         role: string
@@ -102,7 +102,8 @@ declare global {
     }
     export interface Auth {
         token: string | null
-        isAuthenticated: boolean | null}
+        isAuthenticated: boolean | null
+    }
 
     export type PaginationOptions = {
         per_page?: number

@@ -41,7 +41,7 @@
                 .catch(() => {
                     error.value = true
                 })
-               /* .finally(() => {
+            /* .finally(() => {
                     isLoading.value = false
                 })*/
         }
