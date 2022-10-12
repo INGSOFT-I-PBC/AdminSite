@@ -17,18 +17,20 @@
             const employee_id = authStore.userData?.employee as number
             const tiempoTranscurrido = Date.now()
             const hoy = new Date(tiempoTranscurrido)
-            const normalValue=ref('')
+            const normalValue = ref('')
             const productModalShow = ref(false)
             const productModalShowError = ref(false)
             const msm400 = ref('')
             const router = useRouter()
 
-
             return {
-                route,router,
+                route,
+                router,
                 hoy,
                 normalValue,
-                productModalShow,productModalShowError,msm400,
+                productModalShow,
+                productModalShowError,
+                msm400,
                 items: {} as Item,
                 fecha_hora: {
                     fecha: String,
@@ -52,7 +54,7 @@
                     warehouse_id: 0,
                     quantity: normalValue,
                     item_id: 0,
-                    codigo:''
+                    codigo: '',
                 },
             }
         },
@@ -61,7 +63,9 @@
                 this.productModalShow = true
             },
             validarCheckbox() {
-                const checkbox = document.getElementById('check') as HTMLInputElement
+                const checkbox = document.getElementById(
+                    'check'
+                ) as HTMLInputElement
                 if (checkbox.checked) {
                     this.entrada.status_id = 1
                 } else {
@@ -72,7 +76,6 @@
                 ItemDataService.getAllCategory()
                     .then(response => {
                         this.category = response.data
-
                     })
                     .catch((e: Error) => {
                         console.log(e)
@@ -108,9 +111,11 @@
                 )
                 formDataItem.append('created_by', this.employee_id.toString())
 
-
                 this.validarCheckbox()
-                formDataItem.append('status_id', this.entrada.status_id.toString())
+                formDataItem.append(
+                    'status_id',
+                    this.entrada.status_id.toString()
+                )
                 formDataItem.append('codename', this.entrada.codigo)
                 return formDataItem
             },
@@ -137,29 +142,27 @@
                 )
 
                 return formDataInventory
-            }, emitValue(e: Event) {
-                this.normalValue=(e.target as HTMLInputElement).value
+            },
+            emitValue(e: Event) {
+                this.normalValue = (e.target as HTMLInputElement).value
             },
             async guardarDatos(formDataItem: FormData) {
-
                 ItemDataService.createItem(formDataItem)
                     .then(response => {
                         const ite = response.data
                         this.entrada.item_id = ite.id
-                        ItemDataService.createInventory(this.performUploadInventory(ite.id))
-                        .then(response=>{
+                        ItemDataService.createInventory(
+                            this.performUploadInventory(ite.id)
+                        ).then(response => {
                             this.$router.push({ path: '/inventario' })
-
                         })
                     })
-                    .catch((error) => {
-
-                        if (error.response.status==400){
+                    .catch(error => {
+                        if (error.response.status == 400) {
                             this.productModalShowError = true
-                            this.msm400=JSON.stringify(error.response.data)
+                            this.msm400 = JSON.stringify(error.response.data)
                         }
                     })
-
             },
             cargarImagen(file: any) {
                 const reader = new FileReader()
@@ -184,17 +187,14 @@
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import { useRoute, useRouter } from 'vue-router'
-
 </script>
 
 <template>
     <main>
-
         <ModalDialog
             id="product-modal-error"
             v-model:show="productModalShowError"
-            title="Información"
-            >
+            title="Información">
             <h1>{{ msm400 }}</h1>
         </ModalDialog>
         <ModalDialog
@@ -202,9 +202,8 @@
             v-model:show="productModalShow"
             title="Agregar Producto"
             okText="Guardar"
-            @ok=" guardarDatos(performUpload())"
-            buttonType="ok-cancel"
-            >
+            @ok="guardarDatos(performUpload())"
+            buttonType="ok-cancel">
             <h1>¿Esta seguro de guardar el producto?</h1>
         </ModalDialog>
 
@@ -229,7 +228,7 @@
                                         class="form-control"
                                         placeholder="Codigo"
                                         aria-label="First name"
-                                        v-model="entrada.codigo"/>
+                                        v-model="entrada.codigo" />
                                 </div>
 
                                 <div class="col">
@@ -305,7 +304,8 @@
                                 aria-label="Default select example">
                                 <option
                                     v-for="catego in category"
-                                    :value="catego['id']">
+                                    :value="catego['id']"
+                                    v-bind:key="catego['id']">
                                     {{ catego['name'] }}
                                 </option>
                             </select>
@@ -326,15 +326,12 @@
                                 aria-label="First name"
                                 v-model="entrada.price" />
                         </div>
-
                     </div>
                 </div>
 
                 <!--BOTONES Usuario-->
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
-
-
                         <div class="col">
                             <h6
                                 style="
@@ -452,7 +449,8 @@
                                         aria-label="Default select example">
                                         <option
                                             v-for="warehouse in warehouses"
-                                            :value="warehouse['id']">
+                                            :value="warehouse['id']"
+                                            v-bind:key="warehouse['id']">
                                             {{ warehouse['name'] }}
                                         </option>
                                     </select>
@@ -462,11 +460,8 @@
                                     <InputText
                                         label="Cantidad del Producto"
                                         type="number"
-                                        @input="emitValue"
-
-                                         />
+                                        @input="emitValue" />
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -498,9 +493,7 @@
 
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
-                        <EButton
-                            type="secondary"
-                            @click="showProduct()"
+                        <EButton type="secondary" @click="showProduct()"
                             >Guardar
                         </EButton>
                     </div>
