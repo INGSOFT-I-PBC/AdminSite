@@ -17,8 +17,11 @@
     import Table from '@components/holders/Table.vue'
     import { computed, reactive, onMounted } from 'vue'
     import { useRouter } from 'vue-router'
+    import WaitOverlay from '../components/custom/WaitOverlay.vue'
     //useAuthStore().refreshToken()
     const router = useRouter()
+    const showWaitOverlay = ref<boolean>(true)
+
 
     const templateList = [
         { label: 'Por código', value: '1' },
@@ -140,6 +143,8 @@
                 }
 
                 tableSettings.rows = items2
+                showWaitOverlay.value = false
+
                 console.log(tableSettings.rows)
             })
             .catch((e: Error) => {
@@ -175,6 +180,8 @@
 
 <template>
     <main>
+        <WaitOverlay :show="showWaitOverlay">
+
         <ModalDialog
             id="product-modal"
             v-model:show="productModalShow"
@@ -215,7 +222,7 @@
             <!-- <ERow>
                 <ECol cols="12"> -->
 
-            <Table :header="tableSettings">
+            <Table :header="tableSettings" >
                 <template #body-cell="{ cellData, colIdx, rowIdx }">
                     <div v-if="colIdx == 8">
                         <div class="form-check form-switch">
@@ -263,5 +270,7 @@
             <!-- </ECol>
             </ERow> -->
         </ECard>
+    </WaitOverlay >
+
     </main>
 </template>
