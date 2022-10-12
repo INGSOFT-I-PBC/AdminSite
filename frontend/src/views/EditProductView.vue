@@ -3,28 +3,40 @@
     import { stringifyQuery, useRoute, useRouter } from 'vue-router'
     import type Item from '@/interfaz/items'
     import type Item3 from '@/interfaz/Items3'
+    import { useAuthStore } from '@store'
 
     export default defineComponent({
         name: 'EditProductView',
         data() {
+            const authStore = useAuthStore()
             const route = useRoute()
             const normalValue=ref('')
             const tiempoTranscurrido = Date.now()
             const hoy = new Date(tiempoTranscurrido)
+            const productModalShow = ref(false)
+            const productModalShowError = ref(false)
+            const msm400 = ref('')
+            const router = useRouter()
+            const employee_id = authStore.userData?.employee as number
 
 
             return {
                 route,
+                normalValue,employee_id,
+                productModalShow,productModalShowError,msm400,router,
                 items: {} as Item,
                 hoy,
                 fecha_hora: {
                     fecha: String,
                     hora: String,
-                },
-                imagenM: '',
+                },imagenM:'',
+
+                image_field: '',
                 category: [],
                 warehouses: [],
                 entrada: {
+                    created_at:'',
+                    updated_at:'',
                     brand: '',
                     category_id: 0,
                     iva: 0,
@@ -36,11 +48,107 @@
                     quantity: normalValue,
                     item_id: 0,
                     codigo:'',
-                    created_by:''
+                    created_by:'',
+                    created_id:0
                 },
             }
         },
         methods: {
+            showProduct() {
+                this.productModalShow = true
+            },
+            validarCheckbox() {
+                const checkbox = document.getElementById('check') as HTMLInputElement
+                if (checkbox.checked) {
+                    this.entrada.status_id = 1
+                } else {
+                    this.entrada.status_id = 3
+                }
+            },
+            performUpload() {
+                const formDataItem = new FormData()
+                console.log(typeof this.image_field)
+                formDataItem.append('created_at', this.entrada.created_at)
+                formDataItem.append('updated_at', this.entrada.updated_at)
+                formDataItem.append('brand', this.entrada.brand)
+                if(typeof this.image_field != "string"){
+                    formDataItem.append('img', this.image_field)
+
+                }
+                formDataItem.append('iva', this.entrada.iva.toString())
+                formDataItem.append('model', this.entrada.model)
+                formDataItem.append('name', this.entrada.name)
+                formDataItem.append('price', this.entrada.price.toString())
+                formDataItem.append(
+                    'category_id',
+                    this.entrada.category_id.toString()
+                )
+                formDataItem.append('created_by',this.entrada.created_id.toString())
+                console.log(this.entrada.created_id)
+
+
+                this.validarCheckbox()
+                formDataItem.append('status_id', this.entrada.status_id.toString())
+                formDataItem.append('codename', this.entrada.codigo)
+                return formDataItem
+            },
+            performUploadInventory() {
+                const formDataInventory = new FormData()
+
+                formDataInventory.append('created_at', this.entrada.created_at)
+                formDataInventory.append('updated_at', this.entrada.updated_at)
+
+                formDataInventory.append(
+                    'quantity',
+
+                    this.normalValue
+                )
+                formDataInventory.append('item_id', this.entrada.item_id.toString())
+                formDataInventory.append(
+                    'updated_by_id',
+                    this.employee_id.toString()
+                )
+                formDataInventory.append(
+                    'warehouse_id',
+                    this.entrada.warehouse_id.toString()
+                )
+
+                return formDataInventory
+            }, emitValue(e: Event) {
+                this.normalValue=(e.target as HTMLInputElement).value
+            },
+            async guardarDatos(formDataItem: FormData) {
+                /*ItemDataService.updateItem(this.entrada.item_id, formDataItem)
+                        .then(response=>{
+                            this.$router.push({ path: '/inventario' })
+
+                        })  .catch((error) => {
+
+                                if (error.response.status==400){
+                                    this.productModalShowError = true
+                                    this.msm400=JSON.stringify(error.response.data)
+                                }
+                                })*/
+
+                ItemDataService.updateInventory(Number(this.route.params.id),this.performUploadInventory())
+                .then(response => {
+                        const ite = response.data
+
+                        ItemDataService.updateItem(this.entrada.item_id, formDataItem)
+                        .then(response=>{
+                            this.$router.push({ path: '/inventario' })
+
+                        })
+                    })
+                .catch((error) => {
+
+                        if (error.response.status==400){
+                            this.productModalShowError = true
+                            this.msm400=JSON.stringify(error.response.data)
+                        }
+                    })
+
+                },
             async showAllCategory() {
                 ItemDataService.getAllCategory()
                     .then(response => {
@@ -67,8 +175,22 @@
                         console.log(this.items)
                         this.entrada.category_id=this.items['0'].category_id_Item
                         this.imagenM="http://127.0.0.1:8000/storage/"+this.items['0'].imgItem
+                        console.log( this.imagenM)
                         this.entrada.warehouse_id=this.items['0'].warehouse_id
                         this.entrada.created_by=this.items['0'].created_by_Item.name+' '+this.items['0'].created_by_Item.lastname
+                        this.entrada.created_at=this.items['0'].created_at
+                        this.entrada.updated_at=this.hoy.toISOString()
+                        this.entrada.created_id=this.items['0'].created_by_Item.created_by
+                        console.log("hh"+this.entrada.created_id)
+                        this.entrada.item_id=this.items['0'].item_id
+                        this.entrada.codigo=this.items['0'].codename_Item
+                        this.entrada.brand=this.items['0'].brandItem
+                        this.entrada.price=this.items['0'].priceItem
+                        this.entrada.model=this.items['0'].modelItem
+                        this.entrada.iva=this.items['0'].ivaItem
+                        this.entrada.quantity=this.items['0'].quantity
+                        this.entrada.name=this.items['0'].nombreItem
+                        this.entrada.status_id=this.items['0'].status_id_Item
                         this.fecha_hora.fecha = this.items['0'].created_at.substring(
                             0,
                             10
@@ -84,10 +206,10 @@
                     })
             },
             obtenerImagen(e: any) {
-                const file = e.target.files[0]
-                console.log(file)
-                this.cargarImagen(file)
-                //this.items["0"].img=file
+                this.image_field = e.target.files[0]
+                console.log( this.image_field)
+                console.log(typeof this.image_field)
+                this.cargarImagen(this.image_field)
             },
             cargarImagen(file: any) {
                 const reader = new FileReader()
@@ -133,7 +255,24 @@
 
 <template>
     <main>
-        <ECard v-for="item in items" :key="item.id">
+        <ModalDialog
+            id="product-modal-error"
+            v-model:show="productModalShowError"
+            title="Información"
+            >
+            <h1>{{ msm400 }}</h1>
+        </ModalDialog>
+        <ModalDialog
+            id="product-modal"
+            v-model:show="productModalShow"
+            title="Modificar Producto"
+            okText="Guardar"
+            @ok=" guardarDatos(performUpload())"
+            buttonType="ok-cancel"
+            >
+            <h1>¿Esta seguro de modificar el producto?</h1>
+        </ModalDialog>
+        <ECard >
             <div class="container" style="border-radius: 5px">
                 <!--BOTONES Usuario-->
                 <div class="container text-center" style="padding: 10px">
@@ -152,7 +291,7 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        v-model="item.codename_Item"
+                                        v-model="entrada.codigo"
                                         disabled="false"
                                         aria-label="First name" />
                                 </div>
@@ -169,7 +308,7 @@
                                     <input
                                         type="text"
                                         class="form-control"
-                                        v-model="item.nombreItem"
+                                        v-model="entrada.name"
                                         aria-label="First name" />
                                 </div>
 
@@ -186,7 +325,7 @@
                                         type="text"
                                         class="form-control"
                                         placeholder="Admin"
-                                        v-model="item.brandItem"
+                                        v-model="entrada.brand"
                                         aria-label="First name" />
                                 </div>
 
@@ -203,7 +342,7 @@
                                         type="text"
                                         class="form-control"
                                         placeholder="Admin"
-                                        v-model="item.modelItem"
+                                        v-model="entrada.model"
                                         aria-label="First name" />
                                 </div>
                             </div>
@@ -250,7 +389,7 @@
                                 type="text"
                                 class="form-control"
                                 placeholder=""
-                                v-model="item.priceItem"
+                                v-model="entrada.price"
                                 aria-label="First name" />
 
                         </div>
@@ -268,7 +407,7 @@
                                 type="text"
                                 class="form-control"
                                 placeholder=""
-                                v-model="item.ivaItem"
+                                v-model="entrada.iva"
                                 aria-label="First name" />
 
 
@@ -285,8 +424,9 @@
                         <div class="col">
                             <InputText
                                 label="Cantidad del Producto"
-                                v-model="item.quantity"
-                                type="number" />
+                                v-model="entrada.quantity"
+                                type="number"
+                                @input="emitValue"/>
 
                         </div>
                         <div class="col">
@@ -304,18 +444,20 @@
                             </h6>
                             <div class="form-check form-switch">
                                 <input
-                                    v-if="item.status_id_Item === 1"
+                                    v-if="entrada.status_id === 1"
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault"
+                                    id="check"
+                                    @change="validarCheckbox()"
                                     checked />
                                 <input
                                     v-else
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault" />
+                                    id="check"
+                                    @change="validarCheckbox()" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>
@@ -439,7 +581,7 @@
 
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
-                        <EButton type="secondary" @click="go2">Guardar </EButton>
+                        <EButton type="secondary" @click="showProduct()">Guardar </EButton>
                     </div>
                 </div>
 

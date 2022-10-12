@@ -109,7 +109,9 @@
         stock: string | number
         state: number | string
         actions: number | string
+        id_item:number
         id: number
+
     }
     let items: Item[]
     const items2: product[] = []
@@ -132,6 +134,7 @@
                         stock: items[i].quantity,
                         state: items[i].status_id_Item,
                         actions: items[i].item_id,
+                        id_item:items[i].item_id,
                         id: items[i].id,
                     })
                 }
@@ -147,6 +150,20 @@
     function go(id: number): void {
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
+    }
+    function deleteProduct(index:number): void {
+        ItemDataService.deleteInventory(items2[index].id).then(response=>{
+            console.log(response.data)
+            ItemDataService.deleteItem(items2[index].id_item).then(response=>{
+            console.log(response.data)
+            removeItem(index)
+
+        })
+
+        }).catch((e: Error) => {
+                console.log(e)
+            })
+
     }
     function goAgregar(): void {
         router.push({ path: '/inventario/agregar' })
@@ -236,7 +253,7 @@
                         </button>
                         <button
                             class="tw-bg-red-600 tw-py-1 tw-text-white"
-                            @click="removeItem(rowIdx)">
+                            @click="deleteProduct(rowIdx)">
                             Eliminar
                         </button>
                     </div>

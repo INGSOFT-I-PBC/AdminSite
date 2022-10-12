@@ -5,6 +5,7 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 from api.models import Inventory, Item
 from django.http import JsonResponse
 import json
+from django.shortcuts import get_object_or_404
 from api.models import Warehouse, Item, Employee
 from api.serializers import FullInventorySerializer, InventorySerializer
 from rest_framework import serializers
@@ -65,8 +66,14 @@ class InventoryView(APIView):
         else:
             return Response(serializer.errors, status=400)
 
-    def put(self, request: Request, id):
-        pass
+    def put(self, request: Request, *args, **kwargs):
+        pk = self.kwargs.get("pk")
+        save_allowance = get_object_or_404(Inventory.objects.all(), pk=pk)
+        serializer = InventorySerializer(save_allowance, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
 
     def delete(self, request: Request, *args, **kwargs):
         pk = self.kwargs.get("pk")

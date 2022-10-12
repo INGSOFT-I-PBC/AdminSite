@@ -48,37 +48,37 @@ class ItemDataService {
         })
     }
 
-    updateItem(id: any, data: any): Promise<any> {
+    updateItem(pk: number, data: any): Promise<any> {
         return axios.put(
-            `/api/v1/items/${id}`,
+            `/api/v1/items/${pk}`,data,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             },
-            data
+
         )
     }
-    updateInventory(id: any, data: any): Promise<any> {
+    updateInventory(pk: number, data: any): Promise<any> {
         return axios.put(
-            `/api/v1/inventory/${id}`,
+            `/api/v1/inventory/${pk}`,data,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             },
-            data
+
         )
     }
 
-    deleteItem(id: any): Promise<any> {
-        return axios.delete(`/api/v1/items/${id}`, {
+    deleteItem(pk: number): Promise<any> {
+        return axios.delete(`/api/v1/items/${pk}`, {
             headers: {},
         })
     }
 
-    deleteInventory(id: any): Promise<any> {
-        return axios.delete(`/api/v1/inventory/${id}`, {
+    deleteInventory(pk: number): Promise<any> {
+        return axios.delete(`/api/v1/inventory/${pk}`, {
             headers: {},
         })
     }

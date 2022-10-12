@@ -72,6 +72,7 @@ class Inventory(TimestampModel):
 
     def created_by_Item(self):
         return {
+            "created_by": self.item.created_by.id,
             "name": self.item.created_by.name,
             "lastname": self.item.created_by.lastname,
         }
