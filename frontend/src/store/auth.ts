@@ -26,7 +26,8 @@ export const useAuthStore = defineStore('auth-store', {
         getToken(state): Nullable<JWTToken> {
             return state.jwtData
         },
-        getPermissions: (state): Array<string> => state.userData?.permissions || [],
+        getPermissions: (state): Array<string> =>
+            state.userData?.permissions ?? [],
     },
     actions: {
         /**
@@ -43,7 +44,10 @@ export const useAuthStore = defineStore('auth-store', {
                     })
                 ).data
                 this.jwtData!.access = data.access
-                localStorage.setItem('accessToken', JSON.stringify(this.jwtData))
+                localStorage.setItem(
+                    'accessToken',
+                    JSON.stringify(this.jwtData)
+                )
                 axios.defaults.headers.common[
                     'Authorization'
                 ] = `Bearer ${data.access}`
@@ -86,7 +90,10 @@ export const useAuthStore = defineStore('auth-store', {
                     .post<JWTToken>('/api/v1/login', datos)
                     .then(({ data }) => {
                         this.jwtData = data
-                        localStorage.setItem('accessToken', JSON.stringify(data))
+                        localStorage.setItem(
+                            'accessToken',
+                            JSON.stringify(data)
+                        )
                         axios.defaults.headers.common = {
                             ...axios.defaults.headers.common,
                             Authorization: `Bearer ${this.jwtData?.access}`,
@@ -100,7 +107,9 @@ export const useAuthStore = defineStore('auth-store', {
         },
 
         async fetchUserData() {
-            const data = await (await axios.get<UserInfo>('/api/v1/auth/me')).data
+            const data = await (
+                await axios.get<UserInfo>('/api/v1/auth/me')
+            ).data
             this.userData = data
             localStorage.setItem('userData', JSON.stringify(data))
             return data

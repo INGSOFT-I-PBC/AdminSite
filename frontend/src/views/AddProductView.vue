@@ -7,6 +7,9 @@
     import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import axios from 'axios'
+    import ECard from '@components/custom/ECard.vue'
+    import InputText from '@components/custom/InputText.vue'
+    import { useRoute, useRouter } from 'vue-router'
 
     export default defineComponent({
         name: 'AddProductView',
@@ -182,11 +185,6 @@
             this.showAllWarehouses()
         },
     })
-</script>
-<script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import InputText from '@components/custom/InputText.vue'
-    import { useRoute, useRouter } from 'vue-router'
 </script>
 
 <template>

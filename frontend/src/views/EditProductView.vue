@@ -5,6 +5,12 @@
     import type Item3 from '@/interfaz/Items3'
     import { useAuthStore } from '@store'
 
+    import ECard from '@components/custom/ECard.vue'
+    import InputText from '@components/custom/InputText.vue'
+    import EButton from '@components/custom/EButton.vue'
+    import ModalDialog from '@components/custom/ModalDialog.vue'
+    import ItemDataService from '@store/item'
+
     export default defineComponent({
         name: 'EditProductView',
         data() {
@@ -251,26 +257,6 @@
             this.showAllWarehouses()
         },
     })
-</script>
-
-<script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
-    import EButton from '@components/custom/EButton.vue'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
-    import Title from '@components/custom/Title.vue'
-    import Table from '@components/holders/Table.vue'
-    import { computed, reactive, onMounted, onBeforeMount } from 'vue'
-    import ItemDataService from '@store/item'
-
-    const router = useRouter()
-
-    function go2(): void {
-        router.push({ path: '/inventario' })
-    }
 </script>
 
 <template>
