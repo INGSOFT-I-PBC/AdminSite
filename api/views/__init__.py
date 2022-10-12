@@ -13,6 +13,7 @@ from .warehouse import (
     OrderRequestViewSet,
     FullWarehouseViewSet,
 )
+from .itemview import *
 from .itemviews import ItemView
 from .categoryviews import CategoryView
 from .inventoryviews import InventoryView
@@ -32,6 +33,6 @@ __all__ = [
     "user_data",
     "PermissionsViewSet",
     "ItemView",
-    # "PaginatedItemViewSet",
+    "PaginatedItemViewSet",
     "FullWarehouseViewSet",
 ]

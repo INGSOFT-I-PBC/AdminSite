@@ -78,7 +78,7 @@
                 attribute: 'actions',
             },
         ],
-        rows: [],
+        rows:[],
     })
 
     interface productModel {

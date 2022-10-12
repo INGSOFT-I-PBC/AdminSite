@@ -17,7 +17,7 @@ router.register(r"permissions", views.PermissionsViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
-# router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
+router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 
 urlpatterns = [
     # List return paths
@@ -35,8 +35,8 @@ urlpatterns = [
     path("inventory", InventoryView.as_view(), name="inventory-list"),
     path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
-    #   "" path("item/<int:id>", views.find_item, name="item"),
-    # path("item/<int:id>/properties", views.get_item_properties),
+    path("item/<int:id>", views.find_item, name="item"),
+    path("item/<int:id>/properties", views.get_item_properties),
     path("order", OrderRequestView.as_view()),
     path("auth/reset-password", reset_password, name="reset-user-password")
     # path('users'),
