@@ -1,28 +1,21 @@
 {
-  "files": [],
-  "references": [
-    {
-      "path": "./tsconfig.config.json"
-    },
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.vitest.json"
-    }
-  ],
-  "compilerOptions": {
-    "isolatedModules": true,
-    "types": [
-      "naive-ui/volar",
-      "axios",
-      "vue",
-      "@components-types",
-      "vue-feather",
-      "@store-types"
+    "files": [],
+    "references": [
+        {
+            "path": "./tsconfig.config.json"
+        },
+        {
+            "path": "./tsconfig.app.json"
+        },
+        {
+            "path": "./tsconfig.vitest.json"
+        }
     ],
-    "strict": false,
-    "allowJs": false,
-    "pretty": true
-  }
+    "compilerOptions": {
+        "isolatedModules": true,
+        "types": ["naive-ui/volar"],
+        "strict": true,
+        "allowJs": false,
+        "pretty": true
+    }
 }

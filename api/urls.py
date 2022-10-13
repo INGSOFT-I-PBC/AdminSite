@@ -7,8 +7,9 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from .views import *
+from .views.itemviews import ItemView
 from .views.orders import OrderRequestView
-from .views.warehouse import WhOrderRequestView
+from .views.warehouse import *
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
@@ -16,7 +17,6 @@ router.register(r"permissions", views.PermissionsViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
-router.register(r"items/all", views.ItemViewSet, "itemViewSet")
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 
 urlpatterns = [
@@ -28,6 +28,12 @@ urlpatterns = [
     path("auth/me", user_data, name="user-data"),
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
+    path("items", ItemView.as_view(), name="item-list"),
+    path("items/<int:pk>", ItemView.as_view(), name="item_process"),
+    path("category", CategoryView.as_view(), name="category-list"),
+    path("category/<int:id>", CategoryView.as_view(), name="category_process"),
+    path("inventory", InventoryView.as_view(), name="inventory-list"),
+    path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     path("item/<int:id>", views.find_item, name="item"),
     path("item/<int:id>/properties", views.get_item_properties),

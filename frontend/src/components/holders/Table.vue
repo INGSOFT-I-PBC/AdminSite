@@ -8,6 +8,11 @@
             require: true,
             default: () => ({} as TableHeaderSettings),
         },
+        rows: {
+            type: Array<unknown>,
+
+            default: [],
+        },
         columns: {
             type: Array<unknown>,
             default: [],

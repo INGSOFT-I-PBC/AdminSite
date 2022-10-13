@@ -9,23 +9,23 @@ export interface HeaderSetup {
      * If `morphFunc` is provided the attribute must be
      * the attribute of the result object.
      */
-    readonly attribute: Optional<string>
+    attribute: Optional<string>
     /**
      * An utility function
      */
-    readonly morphFunc?: <I, O>(input: I) => O
+    morphFunc?: <I, O>(input: I) => O
     /**
      * The style class applied to the header
      */
-    readonly style?: string
+    style?: string
 }
 /**
  * This class represents the configuration of a table
  * would help to develop settings for custom tables
  */
 export class TableHeaderSettings {
-    readonly headers: Array<HeaderSetup>
-    readonly rows?: Array<unknown>
+    headers: Array<HeaderSetup>
+    rows?: Array<unknown>
 
     constructor() {
         this.headers = []

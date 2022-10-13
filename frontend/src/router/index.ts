@@ -16,7 +16,7 @@ import { warehouses } from './routes/warehouse'
 import { employee } from './routes/employee'
 import { client } from './routes/client'
 import { role } from './routes/role'
-import { useAuthStore } from '@/store'
+import { useAuthStore } from '@/store/auth'
 import { bill } from './routes/bill'
 
 const routes = [
@@ -68,12 +68,10 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.isAuthenticated) {
-        // const router = useRouter()
         const authStore = useAuthStore()
         authStore.refreshToken().catch(err => {
             console.error(err)
-            router.push({ path: '/login' })
-            // next({ path: '/login' })
+            next({ path: '/login' })
         })
         //   try {
         //     await authStore.refreshToken()
