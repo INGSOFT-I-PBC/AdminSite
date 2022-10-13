@@ -10,6 +10,10 @@
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import { useRoute, useRouter } from 'vue-router'
+    import * as VeeValidate from 'vee-validate'
+    import { Field, ErrorMessage } from 'vee-validate'
+    import { Form as EForm } from 'vee-validate'
+    import { computed, reactive } from 'vue'
 
     export default defineComponent({
         name: 'AddProductView',
@@ -25,6 +29,8 @@
             const productModalShowError = ref(false)
             const msm400 = ref('')
             const router = useRouter()
+
+            
 
             return {
                 route,
@@ -61,10 +67,11 @@
                 },
             }
         },
+        components: {
+            EForm, Field,ErrorMessage, VeeValidate, ECard,computed, reactive,ModalDialog,InputText
+         },
         methods: {
-            showProduct() {
-                this.productModalShow = true
-            },
+           
             validarCheckbox() {
                 const checkbox = document.getElementById(
                     'check'
@@ -174,18 +181,93 @@
                 }
                 reader.readAsDataURL(file)
             },
+            onSubmit(value: any) {
+            console.log("probando")
+            this.productModalShow = true
+           },
+            validateCode(value: any) {
+            if (!value) {
+                 return 'Este campo es requerido'
+            } 
+            if ( isNaN(value)) {
+            return 'Inválido'
+        }
+            
+            return true
+        },
+        validateName(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if (!isNaN(value)) {
+            return 'Inválido'
+        }
+        const regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+        if (!regex.test(value)) {
+            return 'Inválido'
+        }
+
+        return true
+    },
+    validateMarca(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if (!isNaN(value)) {
+            return 'Inválido'
+        }
+        const regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+        if (!regex.test(value)) {
+            return 'Inválido'
+        }
+
+        return true
+    },
+    validateCategoria(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        
+
+        return true
+    },
+    validatePrecio(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if ( isNaN(value)) {
+            return 'Inválido'
+        }
+        
+
+        return true
+    },
+
         },
         computed: {
             imagen() {
                 return this.imagenM
             },
+            
         },
         mounted() {
             this.showAllCategory()
             this.showAllWarehouses()
         },
+        
+
+          
     })
 </script>
+
+
+
 
 <template>
     <main>
@@ -202,13 +284,16 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-            <h1>¿Esta seguro de guardar el producto?</h1>
+           
         </ModalDialog>
 
         <ECard>
+            <EForm @submit="onSubmit">
             <div class="container" style="border-radius: 5px">
+                
                 <!--BOTONES Usuario-->
                 <div class="container text-center" style="padding: 10px">
+                    
                     <div class="row">
                         <div class="col">
                             <div class="row g-3">
@@ -219,14 +304,18 @@
                                             color: black;
                                             text-align: left;
                                         ">
-                                        Código *
+                                        Codigo *
                                     </h6>
-                                    <input
+                                    <Field
+                                        name="code"
+                                        
                                         type="text"
                                         class="form-control"
-                                        placeholder="Codigo"
-                                        aria-label="First name"
-                                        v-model="entrada.codigo" />
+                                        :rules="validateCode" 
+                                        v-model="entrada.codigo"/>
+                                        <div class="col">
+                                            <ErrorMessage name="code" style=" font-size: 10px; color: red; text-align: left; " />
+                                        </div>
                                 </div>
 
                                 <div class="col">
@@ -238,12 +327,15 @@
                                         ">
                                         Nombre *
                                     </h6>
-                                    <input
+                                    <Field
+                                        name="name"
                                         type="text"
                                         class="form-control"
-                                        placeholder="15:00"
-                                        aria-label="First name"
+                                        :rules="validateName" 
                                         v-model="entrada.name" />
+                                        <div class="col">
+                                            <ErrorMessage name="name" style=" font-size: 10px; color: red; text-align: left; " />
+                                        </div>
                                 </div>
 
                                 <div class="col">
@@ -255,12 +347,15 @@
                                         ">
                                         Marca *
                                     </h6>
-                                    <input
+                                    <Field
+                                        name="marca"
                                         type="text"
                                         class="form-control"
-                                        placeholder="Admin"
-                                        aria-label="First name"
+                                        :rules="validateMarca" 
                                         v-model="entrada.brand" />
+                                        <div class="col">
+                                            <ErrorMessage name="marca" style=" font-size: 10px; color: red; text-align: left; " />
+                                        </div>
                                 </div>
 
                                 <div class="col">
@@ -297,6 +392,7 @@
                                 Categoría*
                             </h6>
                             <select
+                                
                                 v-model="entrada.category_id"
                                 class="form-select"
                                 aria-label="Default select example">
@@ -317,12 +413,16 @@
                                 ">
                                 Precio*
                             </h6>
-                            <input
+                            <Field
+                                name="precio"
                                 type="text"
                                 class="form-control"
-                                placeholder=""
-                                aria-label="First name"
+                                
+                                :rules="validatePrecio"
                                 v-model="entrada.price" />
+                                <div class="col">
+                                    <ErrorMessage name="precio" style=" font-size: 10px; color: red; text-align: left; " />
+                                </div>
                         </div>
                     </div>
                 </div>
@@ -489,17 +589,24 @@
                     </form>
                 </div>
 
-                <div class="container text-center" style="padding: 10px">
-                    <div class="row">
-                        <EButton type="secondary" @click="showProduct()"
+                    
+                        <button style="
+                        font-size: 15px;
+                        color: black;
+                        text-align: center;
+                        width: 50%;
+                        margin-left: 25%;
+                        margin-right: 25%;
+                        margin-top: 10px;
+                        color: white;
+                        background-color: #555555;
+                    " type="secondary"  
                             >Guardar
-                        </EButton>
-                    </div>
-                </div>
+                    </button>
 
                 <!--Espacio demas-->
-                <div class="container text-center" style="padding: 10px"></div>
             </div>
+           </EForm>
         </ECard>
     </main>
 </template>
