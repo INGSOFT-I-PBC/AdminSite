@@ -600,7 +600,7 @@
                         margin-top: 10px;
                         color: white;
                         background-color: #555555;
-                    " type="secondary"  
+                    " 
                             >Guardar
                     </button>
 
