@@ -68,7 +68,7 @@
             }
         },
         components: {
-            EForm, Field,ErrorMessage, VeeValidate, ECard,computed, reactive,ModalDialog,InputText
+            EForm, Field,ErrorMessage, ECard,ModalDialog,InputText
          },
         methods: {
            
