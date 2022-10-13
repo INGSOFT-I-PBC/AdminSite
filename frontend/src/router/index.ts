@@ -68,10 +68,12 @@ const router = createRouter({
 
 router.beforeEach(async (to, from, next) => {
     if (to.meta.isAuthenticated) {
+        const router = useRouter()
         const authStore = useAuthStore()
         authStore.refreshToken().catch(err => {
             console.error(err)
-            next({ path: '/login' })
+            router.push({ path: "/login" })
+            // next({ path: '/login' })
         })
         //   try {
         //     await authStore.refreshToken()
