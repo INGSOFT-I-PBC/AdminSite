@@ -4,7 +4,6 @@
     import type Item3 from '@/interfaz/Items3'
     import ItemDataService from '@/store/item'
     import { useAuthStore } from '@store'
-    import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import axios from 'axios'
     import ECard from '@components/custom/ECard.vue'
@@ -68,7 +67,7 @@
             }
         },
         components: {
-            EForm, Field,ErrorMessage, ECard,ModalDialog,InputText,EButton
+            EForm, Field,ErrorMessage, ECard,ModalDialog,InputText
          },
         methods: {
 
@@ -184,8 +183,8 @@
                 reader.readAsDataURL(file)
             },
             onSubmit(value: any) {
-            console.log("probando")
-            this.productModalShow = true
+                console.log("probando")
+                this.productModalShow = true
            },
             validateCode(value: any) {
             if (!value) {
@@ -590,8 +589,6 @@
                         </div>
                     </form>
                 </div>
-
-
                         <button style="
                         font-size: 15px;
                         color: black;
