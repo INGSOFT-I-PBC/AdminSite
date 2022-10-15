@@ -1,20 +1,70 @@
+from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
-from api.models import User, Permission
+
+from api.models import Employee, Group, Permission, User
+
+
+class UpdateUserSerializer(serializers.Serializer):
+    """
+    Serializer class
+    ================
+
+    This class show/validate the data that is available to modify externally
+    by someone using the API
+    """
+
+    username = serializers.CharField(
+        max_length=15, allow_blank=False, allow_null=False, required=False
+    )
+    email = serializers.EmailField(
+        max_length=100, allow_blank=False, allow_null=False, required=False
+    )
+    group = serializers.PrimaryKeyRelatedField(
+        queryset=Group.objects.all(), required=False, allow_null=False
+    )
+    employee = serializers.PrimaryKeyRelatedField(
+        queryset=Employee.objects.all(), required=False, allow_null=False
+    )
+    password = serializers.CharField(
+        max_length=255, allow_blank=False, allow_null=False, required=False
+    )
+
+    def create(self, validated_data):
+        if validated_data.get("password", None):
+            validated_data["password"] = make_password(validated_data["password"])
+        return User(**validated_data)
+
+    def update(self, instance: User, validated_data):
+        instance.username = validated_data.get("username", instance.username)
+        instance.email = validated_data.get("email", instance.email)
+        instance.group = validated_data.get("group", instance.group)
+        instance.employee = validated_data.get("employee", instance.employee)
+        password = validated_data.get("password", None)
+        if password:
+            instance.password = make_password(password)
+        instance.save()
+        return instance
+
+
+class PublicUserSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=15)
+    email = serializers.EmailField(max_length=100)
+    group = serializers.PrimaryKeyRelatedField(read_only=True)
+    employee = serializers.PrimaryKeyRelatedField(read_only=True)
+    is_active = serializers.BooleanField(read_only=True)
+
+    def create(self, validated_data):
+        return User(**validated_data)
+
+    def update(self, instance, validated_data):
+        # TODO: Complete the update of the User
+        return instance
 
 
 class UserSerializer(serializers.ModelSerializer):
-    def update(self, instance, validated_data):
-        pass
-
-    def create(self, validated_data):
-        pass
-
-    username = serializers.CharField(max_length=30)
-    email = serializers.CharField(max_length=100)
-
     class Meta:
         model = User
-        fields = ["username", "password"]
+        fields = ["id", "username", "email", "is_active", "group", "employee"]
 
 
 class PermissionSerializer(serializers.ModelSerializer):
@@ -23,4 +73,4 @@ class PermissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Permission
-        fields = ['codename', 'name']
+        fields = ["codename", "name"]

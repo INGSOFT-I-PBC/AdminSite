@@ -1,6 +1,6 @@
 from .auth import *
-from .warehouse import *
 from .item import *
+from .warehouse import *
 
 __all__ = [
     "PermissionSerializer",
@@ -9,4 +9,5 @@ __all__ = [
     "WarehouseSerializer",
     "ItemSerializer",
     "FullItemSerializer",
+    "PublicUserSerializer",
 ]

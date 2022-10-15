@@ -1,12 +1,13 @@
 from .authviews import (
-    UserViewSet,
     LogoutViewSet,
     PermissionsView,
-    reset_password,
     PermissionsViewSet,
+    UserViewSet,
+    reset_password,
     user_data,
 )
 from .itemview import *
+from .userview import *
 from .warehouse import *
 
 __all__ = [
@@ -24,4 +25,8 @@ __all__ = [
     "ItemViewSet",
     "PaginatedItemViewSet",
     "FullWarehouseViewSet",
+    "EmployeeView",
+    "UserView",
+    "create_user",
+    "create_employee",
 ]
