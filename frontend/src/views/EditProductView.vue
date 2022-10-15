@@ -4,8 +4,6 @@
     import type Item from '@/interfaz/items'
     import type Item3 from '@/interfaz/Items3'
     import { useAuthStore } from '@store'
-    import { Field, ErrorMessage } from 'vee-validate'
-    import { Form as EForm } from 'vee-validate'
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
@@ -257,7 +255,7 @@
             this.showAllCategory()
             this.showAllWarehouses()
         },components: {
-            EForm, Field,ErrorMessage, ECard,ModalDialog,InputText,EButton
+            ECard,ModalDialog,InputText,EButton
          }
     })
 </script>
