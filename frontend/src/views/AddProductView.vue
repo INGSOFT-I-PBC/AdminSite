@@ -55,10 +55,10 @@
                 entrada: {
                     brand: '',
                     category_id: 0,
-                    iva: 0,
+                    iva:null ,
                     model: '',
                     name: '',
-                    price: 0,
+                    price: null,
                     status_id: 0,
                     warehouse_id: 0,
                     quantity: normalValue,
@@ -244,6 +244,36 @@
         if ( isNaN(value)) {
             return 'Inválido'
         }
+        if(value<0){
+            return 'Inválido'
+
+        }
+        
+
+        return true
+    },
+    
+
+    validateIva(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if ( isNaN(value)) {
+            return 'Inválido'
+        }
+        if(value<0){
+            return 'Inválido'
+
+        }
+        if(value==0 || value==12){
+            return true
+        }
+        else{
+            return 'Inválido'
+
+        }
+        
         
 
         return true
@@ -391,7 +421,7 @@
                                 ">
                                 Categoría*
                             </h6>
-                            <select
+                            <select 
                                 
                                 v-model="entrada.category_id"
                                 class="form-select"
@@ -439,12 +469,17 @@
                                 ">
                                 Iva*
                             </h6>
-                            <input
+                            <Field
+                                name="iva"
                                 type="text"
                                 class="form-control"
                                 placeholder=""
                                 aria-label="First name"
+                                :rules="validateIva"
                                 v-model="entrada.iva" />
+                                <div class="col">
+                                    <ErrorMessage name="iva" style=" font-size: 10px; color: red; text-align: left; " />
+                                </div>
                         </div>
 
                         <div class="col">
@@ -489,6 +524,7 @@
                                 placeholder="23/08/2022"
                                 disabled="false"
                                 aria-label="First name" />
+                                
                         </div>
 
                         <div class="col">
@@ -557,7 +593,7 @@
                                 <div class="col">
                                     <InputText
                                         label="Cantidad del Producto"
-                                        type="number"
+                                        type="number" 
                                         @input="emitValue" />
                                 </div>
                             </div>
