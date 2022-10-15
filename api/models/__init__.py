@@ -11,6 +11,7 @@ from .warehouse import Warehouse, WarehouseTransaction, WhTransactionDetails, In
 from .roles import Role
 from .users import Employee
 from .common import Status
+from .clients import Client,Gender
 
 __all__ = [
     "User",
@@ -44,5 +45,7 @@ __all__ = [
     "WarehouseTransaction",
     "WhTransactionDetails",
     "Inventory",
-    "Status"
+    "Status",
+    "Client",
+    "Gender"
 ]
