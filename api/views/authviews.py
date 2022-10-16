@@ -4,7 +4,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
 # from django.shortcuts import render
-from rest_framework import status, viewsets
+from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -18,8 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from api.models import Employee, GroupPermission, Permission, Role, User
 from api.serializers import EmployeeSerializer, PermissionSerializer, UserSerializer
-
-# Create your views here.
+from api.utils import bool_param
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -27,8 +26,28 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    queryset = User.objects.all().order_by("username")
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        params = self.request.query_params.copy()
+
+        status = params.pop(
+            "active",
+            [None],
+        )[0]
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+        if status is not None:
+            queryset = queryset.filter(is_active=bool_param(status))
+        if params.get("username", None):
+            queryset = queryset.filter(username__icontains=params.get("username"))
+        if params.get("email", None):
+            queryset = queryset.filter(email__icontains=params.get("email"))
+
+        return queryset
 
 
 class EmployeeViewSet(viewsets.ReadOnlyModelViewSet):

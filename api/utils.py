@@ -49,6 +49,13 @@ def error_response(err: str, code: str = None, status: int = 400):
     return JsonResponse(errres, status=status)
 
 
+def bool_param(value: str):
+    if value is None:
+        return False
+    formatted = value.rstrip().lstrip().lower()
+    return formatted in ["1", "true", "t"]
+
+
 def response(message: str, code: str = "SUCCESS", status: int = 200):
     return JsonResponse(
         {"message": message, "code": code, "error": False}, status=status
