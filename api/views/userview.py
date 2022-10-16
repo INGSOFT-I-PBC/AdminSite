@@ -1,11 +1,12 @@
 from django.contrib.auth.hashers import make_password
+from django.db.models import Model
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.views import APIView
 
 from api.models import Employee, User
-from api.serializers import PublicUserSerializer, UpdateUserSerializer, UserSerializer
+from api.serializers.auth import *
 from api.utils import error_response, response, teapot
 
 
@@ -15,14 +16,34 @@ class EmployeeView(APIView):
     Employee model.
     """
 
-    def get(self, request: Request):
-        pass
+    def get(self, request: Request, *args, **kwargs):
+        if not Employee.objects.filter(**kwargs, is_active=True).exists():
+            return error_response("the given employee doesn't exists")
+        employee = Employee.objects.get(**kwargs)
+        return JsonResponse(data=EmployeeSerializer(employee).data)
 
-    def put(self, request: Request):
-        pass
+    def put(self, request: Request, *args, **kwargs):
+        if not Employee.objects.filter(**kwargs, is_active=True).exists():
+            return error_response("The given employee doesn't exists")
+        if not request.data:
+            return error_response("No data provided")
+        employee = Employee.objects.get(**kwargs)
+        updated_model = UpdatableEmployeeSerializer(employee, data=request.data)
+        updated_model.is_valid(raise_exception=True)
+        updated_model.save()
+        return response("The employee was updated successfully")
 
-    def delete(self, request: Request):
-        pass
+    def delete(self, request: Request, *args, **kwargs):
+        if not Employee.objects.filter(**kwargs, is_active=True).exists():
+            return error_response("The given employee doesn't exists")
+        employee = Employee.objects.get(**kwargs)
+        employee.is_active = False
+        employee_user = User.objects.filter(employee=employee)
+        if employee_user.exists():
+            employee_user.first().is_active = False
+            employee_user.first().save()
+        employee.save()
+        return response("employee deleted successfully")
 
 
 class UserView(APIView):
@@ -30,8 +51,6 @@ class UserView(APIView):
     This class handle the request with a single element of the
     Employee model.
     """
-
-    # id: int,
 
     def get(self, request: Request, *args, **kwargs):
         if not User.objects.filter(**kwargs, is_active=True).exists():
@@ -103,7 +122,7 @@ def create_user(request: Request, *args, **kwargs):
             return JsonResponse(
                 {
                     "error": False,
-                    "message": "User activated succesffuly",
+                    "message": "User activated successfully",
                     "code": "USR_ACT_SUCC",
                 }
             )
@@ -118,4 +137,45 @@ def create_user(request: Request, *args, **kwargs):
 
 @api_view(["POST"])
 def create_employee(request: Request, *args, **kwargs):
-    return teapot()
+    if not request.data:
+        return error_response("No data was provided")
+    new_employee = EmployeeSerializer(data=request.data)
+    new_employee.is_valid(raise_exception=True)
+    new_employee.save()
+    return JsonResponse(data=new_employee.data)
+
+
+@api_view(["POST"])
+def activate_user(request: Request, *args, **kwargs):
+    """
+    This endpoint activate a given user from the request
+    if, and only if it's inactive, else return an error
+    message to the consumer.
+    """
+    return __activate_entity(User, "user", **kwargs)
+
+
+@api_view(["POST"])
+def activate_employee(request: Request, *args, **kwargs):
+    """
+    This endpoint activate a given employee from the request
+    if, and only if it's inactive, else return an error
+    message to the consumer.
+    """
+    return __activate_entity(Employee, "employee", **kwargs)
+
+
+def __activate_entity(entity_class: Model, entity_name: str, **kwargs):
+    """
+    This function activate the given model and return a message
+    of completion that can be used as response
+    """
+    entity = entity_class.objects.filter(**kwargs)
+    if not entity.exists():
+        return error_response(f"The given {entity_name} doesn't exists")
+    target = entity.first()
+    if target.is_active:
+        return error_response(f"The given {entity_name} is already active")
+    target.is_active = True
+    target.save()
+    return response(f"The {entity_name} was successfully re-activated")

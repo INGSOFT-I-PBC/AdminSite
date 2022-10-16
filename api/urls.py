@@ -19,6 +19,7 @@ router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items/all", views.ItemViewSet, "itemViewSet")
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
+router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 
 urlpatterns = [
     # List return paths
@@ -30,14 +31,21 @@ urlpatterns = [
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
+    # Item management
     path("item/<int:id>", views.find_item, name="item"),
     path("item/<int:id>/properties", views.get_item_properties),
+    # User management
     path("user/<int:id>", views.UserView.as_view()),
     path("user/<str:username>", views.UserView.as_view()),
+    path("user/<int:id>/activate", views.activate_user),
+    path("user/<str:username>/activate", views.activate_user),
     path("user", views.create_user),
+    # Employee management
     path("employee/<int:id>", views.EmployeeView.as_view()),
+    path("employee/<str:cid>", views.EmployeeView.as_view()),
+    path("employee/<str:cid>/activate", views.activate_employee),
     path("employee", views.create_employee),
+    # Order management
     path("order", OrderRequestView.as_view()),
-    path("auth/reset-password", reset_password, name="reset-user-password")
-    # path('users'),
+    path("auth/reset-password", reset_password, name="reset-user-password"),
 ]

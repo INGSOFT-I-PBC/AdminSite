@@ -1,23 +1,23 @@
 from tokenize import group
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
 # from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.token_blacklist.models import (
-    OutstandingToken,
     BlacklistedToken,
+    OutstandingToken,
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models import User, Permission, GroupPermission, Role
-from api.serializers import UserSerializer, PermissionSerializer
-
+from api.models import Employee, GroupPermission, Permission, Role, User
+from api.serializers import EmployeeSerializer, PermissionSerializer, UserSerializer
 
 # Create your views here.
 
@@ -27,8 +27,17 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    queryset = User.objects.all().order_by("id")
+    queryset = User.objects.all().order_by("username")
     serializer_class = UserSerializer
+
+
+class EmployeeViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allow the preview of employees
+    """
+
+    queryset = Employee.objects.all().order_by("name", "lastname")
+    serializer_class = EmployeeSerializer
 
 
 class PermissionsViewSet(viewsets.ModelViewSet):

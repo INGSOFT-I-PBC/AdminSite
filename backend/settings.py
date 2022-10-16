@@ -22,7 +22,9 @@ env = environ.Env(
     ALLOWED_HOSTS=(str, "*"),
     APP_HOST=(str, "http://localhost:8000"),
     DB_ENGINE=(str, "mysql"),
-    ALLOW_ALL_ORIGINS=(bool, False)
+    ALLOW_ALL_ORIGINS=(bool, False),
+    DJANGO_QUERY_LOG=(str, "/tmp/django_query.log"),
+    DJANGO_LOG=(str, "/tmp/django.log"),
 )
 environ.Env.read_env(".env")
 
@@ -148,7 +150,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Logging Settings
 LOGGING = {
     "version": 1,
-    "formatters": {"standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"}},
+    "formatters": {
+        "standard": {"format": "%(asctime)s [%(levelname)s] %(name)s: %(message)s"}
+    },
     "filters": {
         "require_debug_true": {"()": "django.utils.log.RequireDebugTrue"},
         "production_mode": {"()": "django.utils.log.RequireDebugFalse"},
@@ -162,15 +166,15 @@ LOGGING = {
         "query_log": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            "filename": "backend/storage/logs/django_query.log",
+            "filename": env("DJANGO_QUERY_LOG"),
             "filters": ["require_debug_true"],
         },
         "logfile": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": "backend/storage/logs/django.log",
+            "filename": env("DJANGO_LOG"),
             "formatter": "standard",
-            "maxBytes": 50 * (1024 ** 2),  # Máx 50MiB log
+            "maxBytes": 50 * (1024**2),  # Máx 50MiB log
             "backupCount": 10,
             "mode": "a",
             "encoding": "utf-8",
@@ -192,7 +196,9 @@ REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
     ],
-    "DEFAULT_AUTHENTICATION_CLASSES": ("rest_framework_simplejwt.authentication.JWTAuthentication",),
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
+    ),
     "DEFAULT_PERMISSION_CLASSES": ("rest_framework.permissions.IsAuthenticated",),
     "COMPACT_JSON": True,
     "DEFAULT_PARSER_CLASSES": (
@@ -271,7 +277,9 @@ DJANGO_VITE_DEV_MODE = DEBUG
 STATICFILES_DIRS = [BASE_DIR / DJANGO_VITE_ASSETS_PATH]
 DJANGO_VITE_DEV_SERVER_PORT = 5173
 DJANGO_VITE_STATIC_URL_PREFIX = ""
-DJANGO_VITE_MANIFEST_PATH = os.path.join(BASE_DIR, DJANGO_VITE_ASSETS_PATH, "manifest.json")
+DJANGO_VITE_MANIFEST_PATH = os.path.join(
+    BASE_DIR, DJANGO_VITE_ASSETS_PATH, "manifest.json"
+)
 if DEBUG:
     STATICFILES_DIRS += ["frontend/src/assets", "frontend/src/"]
 

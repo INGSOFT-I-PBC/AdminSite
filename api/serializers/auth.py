@@ -1,7 +1,7 @@
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from api.models import Employee, Group, Permission, User
+from api.models import Employee, Group, Permission, Role, User
 
 
 class UpdateUserSerializer(serializers.Serializer):
@@ -65,6 +65,38 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ["id", "username", "email", "is_active", "group", "employee"]
+
+
+class UpdatableEmployeeSerializer(serializers.Serializer):
+    name = serializers.CharField(
+        max_length=128, allow_blank=False, allow_null=False, required=False
+    )
+    lastname = serializers.CharField(
+        max_length=128, allow_blank=False, allow_null=False, required=False
+    )
+    # TODO: add a validator to `cid` field
+    cid = serializers.CharField(
+        max_length=11, allow_blank=False, allow_null=False, required=False
+    )
+    role = serializers.PrimaryKeyRelatedField(
+        queryset=Role.objects.all(), required=False
+    )
+
+    def create(self, validated_data):
+        return Employee(**validated_data)
+
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get("name", instance.name)
+        instance.lastname = validated_data.get("lastname", instance.lastname)
+        instance.cid = validated_data.get("cid", instance.cid)
+        instance.role = validated_data.get("role", instance.role)
+        return instance
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ["id", "name", "lastname", "cid", "role"]
 
 
 class PermissionSerializer(serializers.ModelSerializer):
