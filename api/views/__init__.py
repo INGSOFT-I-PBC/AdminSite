@@ -6,8 +6,17 @@ from .authviews import (
     PermissionsViewSet,
     user_data,
 )
+from .warehouse import (
+    WarehouseView,
+    WhOrderRequestView,
+    WarehouseViewSet,
+    OrderRequestViewSet,
+    FullWarehouseViewSet,
+)
 from .itemview import *
-from .warehouse import *
+from .itemviews import ItemView
+from .categoryviews import CategoryView
+from .inventoryviews import InventoryView
 
 __all__ = [
     "UserViewSet",
@@ -18,10 +27,12 @@ __all__ = [
     "WhOrderRequestView",
     "WarehouseViewSet",
     "OrderRequestViewSet",
+    "ItemView",
+    "CategoryView",
+    "InventoryView",
     "user_data",
     "PermissionsViewSet",
     "ItemView",
-    "ItemViewSet",
     "PaginatedItemViewSet",
     "FullWarehouseViewSet",
 ]

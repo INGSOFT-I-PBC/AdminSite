@@ -34,35 +34,35 @@ class ItemViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def find_item(request, id: int):
     item = Item.objects.filter(pk=id).first()
     if item is None:
-        return JsonResponse({
-            'error': True,
-            'message': 'Item not found',
-            'code': 'NOT_FOUND'
-        }, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse(
+            {"error": True, "message": "Item not found", "code": "NOT_FOUND"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     serializer = FullItemSerializer(item)
     return JsonResponse(serializer.data)
 
 
-@api_view(['GET'])
+@api_view(["GET"])
 def get_item_properties(request, id: int):
     item = Item.objects.filter(pk=id).first()
     if item is None:
-        return JsonResponse({
-            'error': True,
-            'message': 'Item not found',
-            'code': 'NOT_FOUND'
-        }, status=status.HTTP_404_NOT_FOUND)
+        return JsonResponse(
+            {"error": True, "message": "Item not found", "code": "NOT_FOUND"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
     props = ItemMetaData.objects.filter(item=item)
     out = []
     for prop in props:
         fallback = prop.param.default_value
-        out.append({
-            'name': prop.param.field,
-            'type': prop.param.field_type,
-            'value': fallback if prop.value is None else prop.value
-        })
+        out.append(
+            {
+                "name": prop.param.field,
+                "type": prop.param.field_type,
+                "value": fallback if prop.value is None else prop.value,
+            }
+        )
     return JsonResponse(out, safe=False)

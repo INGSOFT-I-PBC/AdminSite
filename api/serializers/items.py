@@ -17,6 +17,7 @@ class FullItemSerializer(ModelSerializer):
             "deleted_at",
             "brand",
             "img",
+            "codename",
             "iva",
             "model",
             "name",
@@ -35,27 +36,42 @@ class ItemSerializer(ModelSerializer):
     class Meta:
         model = Item
         fields = [
+            "id",
             "created_at",
             "updated_at",
             "deleted_at",
             "brand",
-            "category_id",
-            "created_by",
             "img",
             "iva",
             "model",
             "name",
-            "status_id",
             "price",
+            "category_id",
+            "created_by",
+            "codename",
+            "status_id",
         ]
 
 
-class SimpleItemSerializer(ModelSerializer):
+class ItemSerializer2(ModelSerializer):
+    """
+    Serializer class that show the essential data of a warehouse model object
+    """
+
     class Meta:
         model = Item
         fields = [
             "id",
-            "name",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "brand",
+            "img",
             "iva",
+            "model",
+            "name",
             "price",
+            "category_id",
+            "created_by",
+            "status_id",
         ]

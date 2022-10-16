@@ -14,24 +14,19 @@
     const toggleUsername = ref(false)
     const password = ref('')
     const togglePassword = ref(false)
-
     const error = ref(false)
     const errorMessage = 'El usuario y/o contraseña no coinciden'
-
     function switchVisibility() {
         toggle.value = !toggle.value
     }
-
     function inactive(e: Event) {
         e.preventDefault()
     }
     const authStore = useAuthStore()
-
     function access() {
         error.value = false
         toggleUsername.value = (username.value ?? '') === ''
         togglePassword.value = (password.value ?? '') === ''
-
         if (toggleUsername.value === false && togglePassword.value === false) {
             isLoading.value = true
             authStore
@@ -46,9 +41,9 @@
                 .catch(() => {
                     error.value = true
                 })
-                .finally(() => {
+            /* .finally(() => {
                     isLoading.value = false
-                })
+                })*/
         }
     }
 </script>
