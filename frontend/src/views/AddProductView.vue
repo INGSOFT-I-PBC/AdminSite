@@ -55,10 +55,10 @@
                 entrada: {
                     brand: '',
                     category_id: 0,
-                    iva:null ,
+                    iva:0 ,
                     model: '',
                     name: '',
-                    price: null,
+                    price: 0,
                     status_id: 0,
                     warehouse_id: 0,
                     quantity: normalValue,
@@ -256,9 +256,6 @@
 
     validateIva(value: any) {
         // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
         if ( isNaN(value)) {
             return 'Inválido'
         }
