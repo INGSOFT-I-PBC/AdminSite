@@ -4,7 +4,6 @@
     import type Item3 from '@/interfaz/Items3'
     import ItemDataService from '@/store/item'
     import { useAuthStore } from '@store'
-    import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import axios from 'axios'
     import ECard from '@components/custom/ECard.vue'
@@ -30,7 +29,7 @@
             const msm400 = ref('')
             const router = useRouter()
 
-            
+
 
             return {
                 route,
@@ -71,7 +70,7 @@
             EForm, Field,ErrorMessage, ECard,ModalDialog,InputText
          },
         methods: {
-           
+
             validarCheckbox() {
                 const checkbox = document.getElementById(
                     'check'
@@ -141,6 +140,7 @@
 
                     this.normalValue
                 )
+                console.log(this.normalValue)
                 formDataInventory.append('item_id', id.toString())
                 formDataInventory.append(
                     'updated_by_id',
@@ -155,6 +155,7 @@
             },
             emitValue(e: Event) {
                 this.normalValue = (e.target as HTMLInputElement).value
+                console.log(this.normalValue)
             },
             async guardarDatos(formDataItem: FormData) {
                 ItemDataService.createItem(formDataItem)
@@ -182,17 +183,17 @@
                 reader.readAsDataURL(file)
             },
             onSubmit(value: any) {
-            console.log("probando")
-            this.productModalShow = true
+                console.log("probando")
+                this.productModalShow = true
            },
             validateCode(value: any) {
             if (!value) {
                  return 'Este campo es requerido'
-            } 
+            }
             if ( isNaN(value)) {
             return 'Inválido'
         }
-            
+
             return true
         },
         validateName(value: any) {
@@ -241,7 +242,7 @@
         if (!value) {
             return 'Este campo es requerido'
         }
-        
+
 
         return true
     },
@@ -279,8 +280,6 @@
             return 'Inválido'
 
         }
-        
-        
 
         return true
     },
@@ -290,15 +289,15 @@
             imagen() {
                 return this.imagenM
             },
-            
+
         },
         mounted() {
             this.showAllCategory()
             this.showAllWarehouses()
         },
-        
 
-          
+
+
     })
 </script>
 
@@ -320,16 +319,16 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-           
+
         </ModalDialog>
 
         <ECard>
             <EForm @submit="onSubmit">
             <div class="container" style="border-radius: 5px">
-                
+
                 <!--BOTONES Usuario-->
                 <div class="container text-center" style="padding: 10px">
-                    
+
                     <div class="row">
                         <div class="col">
                             <div class="row g-3">
@@ -344,10 +343,10 @@
                                     </h6>
                                     <Field
                                         name="code"
-                                        
+
                                         type="text"
                                         class="form-control"
-                                        :rules="validateCode" 
+                                        :rules="validateCode"
                                         v-model="entrada.codigo"/>
                                         <div class="col">
                                             <ErrorMessage name="code" style=" font-size: 10px; color: red; text-align: left; " />
@@ -367,7 +366,7 @@
                                         name="name"
                                         type="text"
                                         class="form-control"
-                                        :rules="validateName" 
+                                        :rules="validateName"
                                         v-model="entrada.name" />
                                         <div class="col">
                                             <ErrorMessage name="name" style=" font-size: 10px; color: red; text-align: left; " />
@@ -387,7 +386,7 @@
                                         name="marca"
                                         type="text"
                                         class="form-control"
-                                        :rules="validateMarca" 
+                                        :rules="validateMarca"
                                         v-model="entrada.brand" />
                                         <div class="col">
                                             <ErrorMessage name="marca" style=" font-size: 10px; color: red; text-align: left; " />
@@ -432,8 +431,7 @@
                                 ">
                                 Categoría*
                             </h6>
-                            <select 
-                                
+                            <select
                                 v-model="entrada.category_id"
                                 class="form-select"
                                 aria-label="Default select example">
@@ -458,7 +456,7 @@
                                 name="precio"
                                 type="text"
                                 class="form-control"
-                                
+
                                 :rules="validatePrecio"
                                 v-model="entrada.price" />
                                 <div class="col">
@@ -635,8 +633,6 @@
                         </div>
                     </form>
                 </div>
-
-                    
                         <button style="
                         font-size: 15px;
                         color: black;
@@ -647,7 +643,7 @@
                         margin-top: 10px;
                         color: white;
                         background-color: #555555;
-                    " 
+                    "
                             >Guardar
                     </button>
 
