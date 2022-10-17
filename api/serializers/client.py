@@ -2,7 +2,7 @@
 import rest_framework.serializers as serializers
 
 
-from api.models import Client, Gender,Province,City
+from api.models import Client, Gender,Province,City,Employee
 
 class GenderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,16 +15,21 @@ class CitySerializer(serializers.ModelSerializer):
 class ProvinceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Province
-        fields = ['id', 'name', 'short_name']
-
+        fields = ['id', 'name']
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ['name','lastname','cid','role']
 
 class FullClientSerializer(serializers.ModelSerializer):
     """
     Serializer class that show all the data of the Warehouse model
     """
     gender = GenderSerializer()
-    city= GenderSerializer()
-    province= GenderSerializer()
+    city= CitySerializer()
+    province= ProvinceSerializer()
+    created_by=EmployeeSerializer()
+
     class Meta:
         model = Client
         fields = [
@@ -39,7 +44,7 @@ class FullClientSerializer(serializers.ModelSerializer):
             'name',
             'phone_number',
             'city',
-            'created_by_id',
+            'created_by',
             'gender',
             'province',
             'status_id'
