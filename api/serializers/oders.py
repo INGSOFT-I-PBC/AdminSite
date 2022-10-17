@@ -4,7 +4,7 @@ from rest_framework.serializers import CharField, IntegerField, DateTimeField
 from api.models import OrderRequest, OrderRequestDetail, OrderStatus
 from api.serializers import WarehouseSerializer
 from api.serializers.common import EmployeeSerializer, StatusSerializer
-from api.serializers.items import SimpleItemSerializer
+from api.serializers.item import SimpleItemSerializer
 
 
 class OrderSerializer(ModelSerializer):

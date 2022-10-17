@@ -3,7 +3,7 @@ from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import CharField, DecimalField, IntegerField
 
 from api.models import Warehouse, Inventory
-from api.serializers.items import SimpleItemSerializer
+from api.serializers.item import SimpleItemSerializer
 from .common import StatusSerializer
 
 

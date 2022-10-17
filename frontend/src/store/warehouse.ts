@@ -38,5 +38,14 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             this.paginatedWarehouse = result
             return result
         },
+        async fetchWarehousesInventory(options: Optional<WarehouseQuery>) {
+            const result = await (
+                await axios.get<PaginatedAPIResponse<Warehouse>>(
+                    '/api/v1/list/warehouses',
+                    { params: options }
+                )
+            ).data
+            return result
+        },
     },
 })

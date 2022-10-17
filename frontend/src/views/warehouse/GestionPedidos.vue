@@ -3,17 +3,59 @@ import EButton from '@components/custom/EButton.vue'
 import ECard from '@components/custom/ECard.vue'
 import { useWarehouseStore } from '@store/warehouse'
 import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+import type { Warehouse, WarehouseQuery } from '/../store/models/warehouseModels'
 import { ref } from 'vue'
 
 const showWaitOverlay = ref(true)
 
+const whPageCount = ref(15)
+let currentPage = ref(1)
+let whRows = ref(0)
+let paginatedWarehouse = ref()
+let searchInput = ref("")
+const showAllWarehouses = ref(true)
+let activeWharehouse = ref(-1)
+
 const warehouse = useWarehouseStore()
 
-const showAllWarehouses = ref(true)
+function paginate(page_size: number, page_number: number) {
+
+    let itemsToParse = warehouse.getWarehouseList ?? []
+
+    paginatedWarehouse.value = itemsToParse.slice(
+        page_number * page_size,
+        (page_number + 1) * page_size
+    );
+}
+
+function filteredList() {
+    return (warehouse.getWarehouseList ?? []).filter((warehouse) =>
+        warehouse.name.toLowerCase().includes(searchInput.value.toLowerCase())
+    );
+}
+
+function onPageChanged(event: any, page: number) {
+    paginate(whPageCount.value, page - 1);
+}
+
+function wharehouseButtonPressed(event: any, whId: number) {
+    showAllWarehouses.value = false
+
+    activeWharehouse.value = whId
+
+}
 
 warehouse.fetchWarehouses().then(it => {
+
+    whRows.value = (warehouse.getWarehouseList ?? []).length
+
+    paginate(whPageCount.value, 0)
+
     showWaitOverlay.value = false
+
 })
+
+
 
 
 </script>
@@ -24,15 +66,30 @@ warehouse.fetchWarehouses().then(it => {
 
             <div class="row d-inline-flex allign-content-center">
                 <div class="col-2 mx-1" style="background-color: white">
-                    <form class="mt-2" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search" />
-                    </form>
 
-                    <b-list-group>
+                    <h2 class="mt-2">Bodegas Disponibles</h2>
 
-                        <b-list-group-item active button> Todas las bodegas</b-list-group-item>
-                        <b-list-group-item button v-for="wh in warehouse.getWarehouseList ?? []">
+                    <b-form class="mt-2" role="search">
 
+                        <b-form-input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search"
+                            @change="">
+
+                        </b-form-input>
+                    </b-form>
+
+                    <b-pagination v-model="currentPage" :total-rows="whRows" :per-page="whPageCount"
+                        aria-controls="b-list-warehouses" align="center" @page-click="onPageChanged" :limit=3
+                        hide-goto-end-buttons></b-pagination>
+
+
+                    <b-list-group :per-page="whPageCount" :current-page="currentPage">
+
+                        <b-list-group-item :class="{ active: activeWharehouse === -1}" button
+                            @click="showAllWarehouses = true;activeWharehouse= -1"> Todas las bodegas
+                        </b-list-group-item>
+                        <b-list-group-item v-for="wh, index in paginatedWarehouse " button
+                            :class="{ active: wh.id === activeWharehouse}" :key="wh.id" :id="'whbtn-' + wh.id"
+                            @click="($event)=> { wharehouseButtonPressed($event,wh.id)}">
                             {{wh.name}}
 
                         </b-list-group-item>
@@ -40,118 +97,63 @@ warehouse.fetchWarehouses().then(it => {
 
                 </div>
 
-                <div class="col-md" style="background-color: white; border-radius: 5px">
+                <div v-if="showAllWarehouses" class="col-md" style="background-color: white; border-radius: 5px">
 
-                    <h1 class="my-1" style="font-size: 35px; color: black">Bodegas disponibles</h1>
+                    <h1 class="my-1" style="font-size: 35px; color: black">Bodegas disponible</h1>
 
-                    <EButton class="" >Limpiar Filtros</EButton>
+                    <EButton class="">Limpiar Filtros</EButton>
 
                     <b-form inline>
 
-                        <b-form-input id="wh-search" class=""
-                            placeholder="Busqueda de Bodega">
+                        <b-form-input id="wh-search" class="" placeholder="Busqueda de Bodega">
                         </b-form-input>
 
                     </b-form>
 
-                    <b-table head-variant=light></b-table>
                 </div>
 
                 <!-- Specific warehouse card  -->
 
-                <div v-if="!showAllWarehouses" class="col-md" style="background-color: white; border-radius: 5px">
+                <div v-else class="col-md" style="background-color: white; border-radius: 5px">
                     <div class="row" style="background-color: white; padding: 10px">
                         <h1 style="font-size: 35px; color: black">Bodega 1</h1>
                     </div>
 
-                    <!--GRUPO DE BOTONES-->
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group"
-                        style="padding: 10px">
-                        <input type="radio" class="btn-check" name="btnradio" id="btnInventario" autocomplete="off"
-                            checked />
-                        <label class="btn btn-outline-dark" for="btnInventario">Inventario</label>
+                    <b-tabs active-tab-class="" content-class="mt-3" pills>
 
-                        <input type="radio" class="btn-check" name="btnradio" id="btnPedidos" autocomplete="off" />
-                        <label class="btn btn-outline-dark" for="btnPedidos">Historia Pedidos</label>
+                        <b-tab title="Inventario" active>
 
-                        <input type="radio" class="btn-check" name="btnradio" id="btnTomasF" autocomplete="off" />
-                        <label class="btn btn-outline-dark" for="btnTomasF">Tomas Fisicas</label>
+                            <button type="button" class="btn btn-outline-dark btn-lg">
+                                Limpiar Filtros
+                            </button>
 
-                        <input type="radio" class="btn-check" name="btnradio" id="btnMovimientos" autocomplete="off" />
-                        <label class="btn btn-outline-dark" for="btnMovimientos">Movimientos</label>
-                    </div>
 
-                    <!--DIV DE BOTONES Y NAV-->
-                    <div class="container text-center">
-                        <div class="row">
-                            <div class="col">
-                                <button type="button" class="btn btn-outline-dark btn-lg">
-                                    Limpiar Filtros
-                                </button>
-                            </div>
+                        </b-tab>
 
-                            <div class="col">
-                                <nav class="navbar">
-                                    <div class="container-fluid">
-                                        <form class="d-flex" role="search">
-                                            <input class="form-control me-2" type="search" placeholder="Buscar"
-                                                aria-label="Search" />
-                                            <button class="btn btn-outline-black" type="submit">
-                                                Search
-                                            </button>
-                                        </form>
-                                    </div>
-                                </nav>
-                            </div>
+                        <b-tab title="Historial de Pedidos">
 
-                            <div class="col">
-                                <!--RANGO MIN MAX-->
-                                <h6 style="color: black">Rango de stock</h6>
-                                <div class="row g-3">
-                                    <div class="col">
-                                        <input type="text" class="form-control" placeholder="min"
-                                            aria-label="First name" />
-                                    </div>
-                                    <div class="col">
-                                        <input type="text" class="form-control" placeholder="max"
-                                            aria-label="Last name" />
-                                    </div>
-                                </div>
-                            </div>
+                            <button type="button" class="btn btn-outline-dark btn-lg">
+                                Limpiar Filtros
+                            </button>
 
-                            <div class="col">
-                                <button type="button" class="btn btn-outline-dark btn-lg">
-                                    Solicitar Nuevo Pedido
-                                </button>
-                            </div>
-                        </div>
-                    </div>
 
-                    <!--TABLA DE BODEGAS-->
-                    <div class="container" style="background-color: white">
-                        <table class="table table-bordered">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th scope="col">Código del Producto</th>
-                                    <th scope="col">Descripcion del Producto</th>
-                                    <th scope="col">Stock</th>
-                                    <th scope="col">Costo</th>
-                                    <th scope="col">P.Venta</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <th>GST00236</th>
-                                    <td>Calentador Nike</td>
-                                    <td>10</td>
-                                    <td>$35.06</td>
-                                    <td>$37.06</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
+                        </b-tab>
+
+                        <b-tab title="Toma Física" disabled>
+                            <!-- TODO cuando esten las migraciones-->
+
+
+                        </b-tab>
+
+                        <b-tab title="Movimientos">
+                            <button type="button" class="btn btn-outline-dark btn-lg">
+                                Limpiar Filtros
+                            </button>
+
+
+                        </b-tab>
+                    </b-tabs>
                 </div>
-
             </div>
         </ECard>
     </WaitOverlay>
