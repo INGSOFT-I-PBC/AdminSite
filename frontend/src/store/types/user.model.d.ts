@@ -1,3 +1,4 @@
+
 export interface Role {
     id: number
     name: string
@@ -10,12 +11,42 @@ export interface Permission {
     codename: string
 }
 
+/**
+ * A complete user with all parsed things and with support of the
+ * simple user, aka only id references
+ */
 export interface User {
-    id: string
+    id?: string
     username: string
     email: string
-    employee: Maybe<Employee>
+    employee: Employee
+    group: number
     created_at: string
+}
+/**
+ * A model of an User without all the `parsed` things, only with minimal information
+ * aka: id's
+ */
+export interface SimpleUser {
+    id?: number
+    username: string
+    email: string
+    employee: number
+    group: number
+    is_active?: boolean
+}
+
+/**
+ * A user class used for forms, all values are optional, but useful
+ * for sending request and type-safety
+ */
+export type UserForm = {
+    username?: string
+    email?: string
+    employee?: number
+    group?: number
+    password?: string
+    password_confirm: string
 }
 
 export interface Employee {
