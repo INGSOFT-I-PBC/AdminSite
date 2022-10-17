@@ -18,7 +18,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from api.models import Employee, GroupPermission, Permission, Role, User
 from api.serializers import EmployeeSerializer, PermissionSerializer, UserSerializer
-from api.utils import bool_param
+from api.utils import bool_param, error_response, response
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -99,22 +99,19 @@ class PermissionsView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        user = request.user
-        permission_list = []
-        try:
-            group = GroupPermission.objects.filter(group=user.group)
-            for permgroup in group:
-                permission_list.append(permgroup.permission.name)
-        except ObjectDoesNotExist as ex:
-            print("Not found: ", ex)
-        return Response(
-            {
-                "user.name": user.employee.name,
-                "user.lastname": user.employee.lastname,
-                "user.username": user.username,
-                "permissions": permission_list,
-            }
-        )
+        perms = Permission.objects.filter(**kwargs)
+        if not perms.exists():
+            return error_response("No permission was found")
+        return JsonResponse(data=PermissionSerializer(perms.first()).data)
+
+    def put(self, request: Request, *args, **kwargs):
+        perms = Permission.objects.filter(**kwargs)
+        if not perms.exists():
+            return error_response("No permission was found")
+        new_data = PermissionSerializer(perms.first(), request.data)
+        new_data.is_valid(raise_exception=True)
+        new_data.save()
+        return response("permission updated successfully")
 
 
 @api_view(["GET"])
@@ -162,3 +159,32 @@ def reset_password(request: Request):
         )
 
     return JsonResponse({"error": False, "message": "Ok"})
+
+
+@api_view(["GET"])
+def self_permissions():
+    user = request.user
+    permission_list = []
+
+    group = GroupPermission.objects.filter(group=user.group)
+    for permgroup in group:
+        permission_list.append(permgroup.permission.name)
+
+    return Response(
+        {
+            "user.name": user.employee.name,
+            "user.lastname": user.employee.lastname,
+            "user.username": user.username,
+            "permissions": permission_list,
+        }
+    )
+
+
+@api_view(["POST"])
+def create_permission(request: Request, *args, **kwargs):
+    new_permission = PermissionSerializer(data=request.data)
+    new_permission.is_valid(raise_exception=True)
+    if Permission.objects.filter(codename=request.data["codename"]).exists():
+        return error_response("The given permission already exists")
+    new_permission.save()
+    return response("Permission created successfully")

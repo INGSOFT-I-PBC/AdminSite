@@ -23,4 +23,6 @@ __all__ = [
     "create_user",
     "create_employee",
     "EmployeeViewSet",
+    "self_permissions",
+    "create_permission",
 ]

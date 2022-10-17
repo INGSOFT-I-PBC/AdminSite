@@ -26,7 +26,7 @@ urlpatterns = [
     path("list/", include(router.urls)),
     # Auth paths
     path("logout", TokenBlacklistView.as_view(), name="logout"),
-    path("auth/me/permissions", PermissionsView.as_view(), name="user-permissions"),
+    path("auth/me/permissions", self_permissions, name="user-permissions"),
     path("auth/me", user_data, name="user-data"),
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
@@ -47,5 +47,9 @@ urlpatterns = [
     path("employee", views.create_employee),
     # Order management
     path("order", OrderRequestView.as_view()),
+    # Administration endpoints
+    path("admin/permission/<int:id>", PermissionsView.as_view()),
+    path("admin/permission/<str:codename>", PermissionsView.as_view()),
+    path("admin/permission", create_permission),
     path("auth/reset-password", reset_password, name="reset-user-password"),
 ]
