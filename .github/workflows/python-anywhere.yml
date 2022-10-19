@@ -1,0 +1,24 @@
+name: Deploy to production
+
+on:
+  push:
+    branches:
+      - main
+      
+jobs:
+  deployment:
+    runs-on: ubuntu-latest
+    environment: production
+     steps:
+      - name: Stablish connection with ssh
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{secrets.PORT }}
+          script: whoami
+      - name: Sync codebase (backend)
+      - name: Install backend deps
+      - name: Compile frontend
+      - name: Upload static files
