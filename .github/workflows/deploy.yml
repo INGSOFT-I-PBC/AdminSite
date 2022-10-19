@@ -31,9 +31,12 @@ jobs:
           with:
             version: 7
             run_install: false
+            
         - name: Configure .env
+          env:
+            BACKEND_HOST: ${{ secrets.BACKEND_HOST }}
           run: |
-            echo VITE_BACKEND_URL='${{ secrets.BACKEND_HOST }}' >> .env
+            echo "VITE_BACKEND_URL='$BACKEND_HOST'" >> .env
             cat .env
             
         - name: Install dependencies
