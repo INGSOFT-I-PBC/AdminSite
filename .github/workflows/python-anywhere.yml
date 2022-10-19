@@ -19,6 +19,10 @@ jobs:
             port: ${{secrets.PORT }}
             script: whoami
         - name: Sync codebase (backend)
+          run: echo 'Sync'
         - name: Install backend deps
+          run: echo 'Install backend'
         - name: Compile frontend
+          run: echo 'Compile front'
         - name: Upload static files
+          run: echo 'Upload'
