@@ -31,6 +31,10 @@ jobs:
           with:
             version: 7
             run_install: false
+        - name: Configure .env
+          run: |
+            echo VITE_BACKEND_URL='${{ secrets.PRODUCTION_HOST }}' >> .env
+            cat .env
             
         - name: Install dependencies
           run: |
@@ -40,6 +44,13 @@ jobs:
           run: |
             cd frontend
             pnpm build
+            
+  build_backend:
+    name: Build/Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+        - uses: actions/checkout@v3
     
   deploy:
     name: Deploy to PythonAnywhere
