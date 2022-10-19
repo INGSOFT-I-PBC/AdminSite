@@ -54,6 +54,8 @@ jobs:
     
     steps:
         - uses: actions/checkout@v3
+        - name: Test project status
+          run: ls -ahl
     
   deploy:
     name: Deploy to PythonAnywhere
