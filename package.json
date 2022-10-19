@@ -1,5 +1,5 @@
 {
   "dependencies": {
-    "vee-validate": "^4.6.9"
+    "vee-validate": "4.7.0"
   }
 }
