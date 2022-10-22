@@ -71,9 +71,13 @@ jobs:
 
         - name: Check for build status
           run: |
+            echo Showing root directory 
             ls .
+            echo Showing frontend directory ls
             ls frontend/
+            echo Showing static directory
             ls static
+            echo GIT STATUS
             git status
           
         - name: Stablish connection with ssh
