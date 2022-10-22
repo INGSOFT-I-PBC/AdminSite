@@ -59,22 +59,7 @@
         item: null,
     })*/
     const model = ref({})
-    //const productModalShow = ref(false)
 
-    /*interface productModel {
-        date: string
-        hour: string
-        create: string
-        type_id: string
-        id: string
-        name: string
-    }
-    let selectedProduct: Optional<productModel> = null
-    function showProduct(product: productModel) {
-        selectedProduct = product
-        console.log(selectedProduct)
-        productModalShow.value = true
-    }*/
     const loadItems = async () => {
         itemLoading.value = true
         form.value.items = await itemStore.fetchAllClient()
@@ -90,11 +75,19 @@
     }
     function removeItem(index: number) {
         console.log(index)
-        //tableSettings.rows?.splice(index, 1)
+        form.value.items.splice(index, 1)
+    }
+    function deleteProduct(id:number,index: number): void {
+        itemStore.removeClient(id)
+        removeItem(index)
     }
 
     function go(): void {
         router.push({ path: '/usuarios/cliente/agregar' })
+    }
+    function goEdit(id: number): void {
+        console.log(id)
+        router.push({ path: `/usuarios/cliente/editar/${String(id)}` })
     }
 
     onMounted(() => {
@@ -225,13 +218,13 @@
                             @click="showItem(item)"
                             >Ver detalles</e-button
                         >
-                        <e-button left-icon="fa-edit" type="success"
+                        <e-button left-icon="fa-edit" type="success" @click="goEdit(item['id'])"
                             >Editar</e-button
                         >
                         <e-button
                             left-icon="fa-trash-can"
                             type="cancel"
-                            @click="removeItem(index)">
+                            @click="deleteProduct(item['id'],index)">
                             <span
                                 class="tw-invisible md:tw-visible tw-font-bold"
                                 >Eliminar</span

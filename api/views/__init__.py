@@ -18,6 +18,9 @@ from .itemviews import ItemView
 from .categoryviews import CategoryView
 from .inventoryviews import InventoryView
 from .clientview import *
+from .statusview import *
+from .provinceview import *
+from .genderview import *
 
 __all__ = [
     "UserViewSet",
@@ -37,4 +40,8 @@ __all__ = [
     "PaginatedItemViewSet",
     "FullWarehouseViewSet",
     "FullClientViewSet",
+    "StatusView",
+    "ProvinceViewSet",
+    "ProvinceCityView",
+    "FullGenderViewSet"
 ]

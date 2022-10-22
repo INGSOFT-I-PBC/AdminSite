@@ -44,7 +44,7 @@ class ItemView(APIView):
                 if len(list(items)) > 0:
                     datos = Response(serializer.data)
 
-                return datos
+                    return datos
 
         else:
             items = list(Item.objects.values())
@@ -56,9 +56,9 @@ class ItemView(APIView):
 
     def post(self, request: Request):
 
-        serializer = ItemSerializer(data=request.data)
-        cateid = self.request.data.get("category_id")
-        staid = self.request.data.get("status_id")
+        serializer = ItemSerializer(data=request.data)  # type: ignore
+        cateid = self.request.data.get("category_id") # type: ignore
+        staid = self.request.data.get("status_id")# type: ignore
 
         if serializer.is_valid():
             serializer.save(

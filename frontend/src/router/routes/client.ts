@@ -22,4 +22,17 @@ export const client: Array<RouteConfig> = [
             ],
         },
     },
+    {
+        path: '/usuarios/cliente/editar/:id',
+        name: 'editclient-panel',
+        component: () => import('@views/client/EditClientView.vue'),
+        meta: {
+            pageTitle: 'Gestión de Clientes',
+            permission: 'view_dashboard',
+            breadcrumb: [
+                { text: 'Usuarios' },
+                { text: 'Clientes', href: '/usuarios/clientes' },
+            ],
+        },
+    },
 ]

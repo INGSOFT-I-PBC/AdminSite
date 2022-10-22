@@ -21,15 +21,12 @@
             const authStore = useAuthStore()
             const name = authStore.userData?.name
             const employee_id = authStore.userData?.employee as number
-            const tiempoTranscurrido = Date.now()
-            const hoy = new Date(tiempoTranscurrido)
+            const hoy =  new Date()
             const normalValue = ref('')
             const productModalShow = ref(false)
             const productModalShowError = ref(false)
             const msm400 = ref('')
             const router = useRouter()
-
-
 
             return {
                 route,
@@ -54,7 +51,7 @@
                 entrada: {
                     brand: '',
                     category_id: 0,
-                    iva:0 ,
+                    iva: 0,
                     model: '',
                     name: '',
                     price: 0,
@@ -67,10 +64,14 @@
             }
         },
         components: {
-            EForm, Field,ErrorMessage, ECard,ModalDialog,InputText
-         },
+            EForm,
+            Field,
+            ErrorMessage,
+            ECard,
+            ModalDialog,
+            InputText,
+        },
         methods: {
-
             validarCheckbox() {
                 const checkbox = document.getElementById(
                     'check'
@@ -183,126 +184,111 @@
                 reader.readAsDataURL(file)
             },
             onSubmit(value: any) {
-                console.log("probando")
+                console.log('probando')
                 this.productModalShow = true
-           },
+            },
             validateCode(value: any) {
-            if (!value) {
-                 return 'Este campo es requerido'
-            }
-            if ( isNaN(value)) {
-            return 'Inválido'
-        }
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
+                if (isNaN(value)) {
+                    return 'Inválido'
+                }
 
-            return true
-        },
-        validateName(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
+                return true
+            },
+            validateName(value: any) {
+                // if the field is empty
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
+                if (!isNaN(value)) {
+                    return 'Inválido'
+                }
+                const regex = /^[a-zA-ZÀ-ÿ ]+$/
 
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
+                if (!regex.test(value)) {
+                    return 'Inválido'
+                }
 
-        return true
-    },
-    validateMarca(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
+                return true
+            },
+            validateMarca(value: any) {
+                // if the field is empty
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
+                if (!isNaN(value)) {
+                    return 'Inválido'
+                }
+                const regex = /^[a-zA-ZÀ-ÿ ]+$/
 
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
+                if (!regex.test(value)) {
+                    return 'Inválido'
+                }
 
-        return true
-    },
+                return true
+            },
 
-    validateModelo(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-       
-        return true
-    },
-    validateCategoria(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
+            validateModelo(value: any) {
+                // if the field is empty
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
 
+                return true
+            },
+            validateCategoria(value: any) {
+                // if the field is empty
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
 
-        return true
-    },
-    validatePrecio(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if ( isNaN(value)) {
-            return 'Inválido'
-        }
-        if(value<0){
-            return 'Inválido'
+                return true
+            },
+            validatePrecio(value: any) {
+                // if the field is empty
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
+                if (isNaN(value)) {
+                    return 'Inválido'
+                }
+                if (value < 0) {
+                    return 'Inválido'
+                }
 
-        }
-        
+                return true
+            },
 
-        return true
-    },
-    
+            validateIva(value: any) {
+                // if the field is empty
+                if (isNaN(value)) {
+                    return 'Inválido'
+                }
+                if (value < 0) {
+                    return 'Inválido'
+                }
+                if (value == 0 || value == 12) {
+                    return true
+                } else {
+                    return 'Inválido'
+                }
 
-    validateIva(value: any) {
-        // if the field is empty
-        if ( isNaN(value)) {
-            return 'Inválido'
-        }
-        if(value<0){
-            return 'Inválido'
-
-        }
-        if(value==0 || value==12){
-            return true
-        }
-        else{
-            return 'Inválido'
-
-        }
-
-        return true
-    },
-
+                return true
+            },
         },
         computed: {
             imagen() {
                 return this.imagenM
             },
-
         },
         mounted() {
             this.showAllCategory()
             this.showAllWarehouses()
         },
-
-
-
     })
 </script>
-
-
-
 
 <template>
     <main>
@@ -319,337 +305,368 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-
         </ModalDialog>
 
         <ECard>
             <EForm @submit="onSubmit">
-            <div class="container" style="border-radius: 5px">
-
-                <!--BOTONES Usuario-->
-                <div class="container text-center" style="padding: 10px">
-
-                    <div class="row">
-                        <div class="col">
-                            <div class="row g-3">
-                                <div class="col">
-                                    <h6
-                                        style="
-                                            font-size: 15px;
-                                            color: black;
-                                            text-align: left;
-                                        ">
-                                        Codigo *
-                                    </h6>
-                                    <Field
-                                        name="code"
-
-                                        type="text"
-                                        class="form-control"
-                                        :rules="validateCode"
-                                        v-model="entrada.codigo"/>
+                <div class="container" style="border-radius: 5px">
+                    <!--BOTONES Usuario-->
+                    <div class="container text-center" style="padding: 10px">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row g-3">
+                                    <div class="col">
+                                        <h6
+                                            style="
+                                                font-size: 15px;
+                                                color: black;
+                                                text-align: left;
+                                            ">
+                                            Codigo *
+                                        </h6>
+                                        <Field
+                                            name="code"
+                                            type="text"
+                                            class="form-control"
+                                            :rules="validateCode"
+                                            v-model="entrada.codigo" />
                                         <div class="col">
-                                            <ErrorMessage name="code" style=" font-size: 10px; color: red; text-align: left; " />
+                                            <ErrorMessage
+                                                name="code"
+                                                style="
+                                                    font-size: 10px;
+                                                    color: red;
+                                                    text-align: left;
+                                                " />
                                         </div>
-                                </div>
+                                    </div>
 
-                                <div class="col">
-                                    <h6
-                                        style="
-                                            font-size: 15px;
-                                            color: black;
-                                            text-align: left;
-                                        ">
-                                        Nombre *
-                                    </h6>
-                                    <Field
-                                        name="name"
-                                        type="text"
-                                        class="form-control"
-                                        :rules="validateName"
-                                        v-model="entrada.name" />
+                                    <div class="col">
+                                        <h6
+                                            style="
+                                                font-size: 15px;
+                                                color: black;
+                                                text-align: left;
+                                            ">
+                                            Nombre *
+                                        </h6>
+                                        <Field
+                                            name="name"
+                                            type="text"
+                                            class="form-control"
+                                            :rules="validateName"
+                                            v-model="entrada.name" />
                                         <div class="col">
-                                            <ErrorMessage name="name" style=" font-size: 10px; color: red; text-align: left; " />
+                                            <ErrorMessage
+                                                name="name"
+                                                style="
+                                                    font-size: 10px;
+                                                    color: red;
+                                                    text-align: left;
+                                                " />
                                         </div>
-                                </div>
+                                    </div>
 
-                                <div class="col">
-                                    <h6
-                                        style="
-                                            font-size: 15px;
-                                            color: black;
-                                            text-align: left;
-                                        ">
-                                        Marca *
-                                    </h6>
-                                    <Field
-                                        name="marca"
-                                        type="text"
-                                        class="form-control"
-                                        :rules="validateMarca"
-                                        v-model="entrada.brand" />
+                                    <div class="col">
+                                        <h6
+                                            style="
+                                                font-size: 15px;
+                                                color: black;
+                                                text-align: left;
+                                            ">
+                                            Marca *
+                                        </h6>
+                                        <Field
+                                            name="marca"
+                                            type="text"
+                                            class="form-control"
+                                            :rules="validateMarca"
+                                            v-model="entrada.brand" />
                                         <div class="col">
-                                            <ErrorMessage name="marca" style=" font-size: 10px; color: red; text-align: left; " />
+                                            <ErrorMessage
+                                                name="marca"
+                                                style="
+                                                    font-size: 10px;
+                                                    color: red;
+                                                    text-align: left;
+                                                " />
                                         </div>
-                                </div>
+                                    </div>
 
-                                <div class="col">
-                                    <h6
-                                        style="
-                                            font-size: 15px;
-                                            color: black;
-                                            text-align: left;
-                                        ">
-                                        Modelo*
-                                    </h6>
-                                    <Field
-                                         name="modelo"
-                                        type="text"
-                                        class="form-control"
-                                        placeholder=""
-                                        aria-label="First name"
-                                        :rules="validateModelo"
-                                        v-model="entrada.model" />
+                                    <div class="col">
+                                        <h6
+                                            style="
+                                                font-size: 15px;
+                                                color: black;
+                                                text-align: left;
+                                            ">
+                                            Modelo*
+                                        </h6>
+                                        <Field
+                                            name="modelo"
+                                            type="text"
+                                            class="form-control"
+                                            placeholder=""
+                                            aria-label="First name"
+                                            :rules="validateModelo"
+                                            v-model="entrada.model" />
                                         <div class="col">
-                                            <ErrorMessage name="marca" style=" font-size: 10px; color: red; text-align: left; " />
+                                            <ErrorMessage
+                                                name="marca"
+                                                style="
+                                                    font-size: 10px;
+                                                    color: red;
+                                                    text-align: left;
+                                                " />
                                         </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!--DIV DE BOTONES Y NAV-->
-                <div class="container text-center">
-                    <div class="row">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Categoría*
-                            </h6>
-                            <select
-                                v-model="entrada.category_id"
-                                class="form-select"
-                                aria-label="Default select example">
-                                <option
-                                    v-for="catego in category"
-                                    :value="catego['id']"
-                                    :key="catego['id']">
-                                    {{ catego['name'] }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Precio*
-                            </h6>
-                            <Field
-                                name="precio"
-                                type="text"
-                                class="form-control"
-
-                                :rules="validatePrecio"
-                                v-model="entrada.price" />
+                    <!--DIV DE BOTONES Y NAV-->
+                    <div class="container text-center">
+                        <div class="row">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Categoría*
+                                </h6>
+                                <select
+                                    v-model="entrada.category_id"
+                                    class="form-select"
+                                    aria-label="Default select example">
+                                    <option
+                                        v-for="catego in category"
+                                        :value="catego['id']"
+                                        :key="catego['id']">
+                                        {{ catego['name'] }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Precio*
+                                </h6>
+                                <Field
+                                    name="precio"
+                                    type="text"
+                                    class="form-control"
+                                    :rules="validatePrecio"
+                                    v-model="entrada.price" />
                                 <div class="col">
-                                    <ErrorMessage name="precio" style=" font-size: 10px; color: red; text-align: left; " />
+                                    <ErrorMessage
+                                        name="precio"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
                                 </div>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!--BOTONES Usuario-->
-                <div class="container text-center" style="padding: 10px">
-                    <div class="row">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Iva*
-                            </h6>
-                            <Field
-                                name="iva"
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                aria-label="First name"
-                                :rules="validateIva"
-                                v-model="entrada.iva" />
+                    <!--BOTONES Usuario-->
+                    <div class="container text-center" style="padding: 10px">
+                        <div class="row">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Iva*
+                                </h6>
+                                <Field
+                                    name="iva"
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    aria-label="First name"
+                                    :rules="validateIva"
+                                    v-model="entrada.iva" />
                                 <div class="col">
-                                    <ErrorMessage name="iva" style=" font-size: 10px; color: red; text-align: left; " />
+                                    <ErrorMessage
+                                        name="iva"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
                                 </div>
-                        </div>
+                            </div>
 
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Estado
-                            </h6>
-                            <div class="form-check form-switch">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Estado
+                                </h6>
+                                <div class="form-check form-switch">
+                                    <input
+                                        class="form-check-input"
+                                        type="checkbox"
+                                        role="switch"
+                                        id="check"
+                                        @change="validarCheckbox()" />
+                                    <label
+                                        class="form-check-label"
+                                        for="flexSwitchCheckDefault"></label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!--DIV DE BOTONES Y NAV-->
+                    <div class="container text-center">
+                        <div class="row">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Fecha de creación
+                                </h6>
                                 <input
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="check"
-                                    @change="validarCheckbox()" />
-                                <label
-                                    class="form-check-label"
-                                    for="flexSwitchCheckDefault"></label>
+                                    type="text"
+                                    class="form-control"
+                                    :placeholder="hoy.toLocaleDateString()"
+                                    disabled="false"
+                                    aria-label="First name" />
+                            </div>
+
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Hora de creación
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    :placeholder="hoy.toLocaleTimeString()"
+                                    disabled="false"
+                                    aria-label="First name" />
+                            </div>
+
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Creado por
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder="Admin"
+                                    disabled="false"
+                                    aria-label="First name"
+                                    v-model="name" />
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!--DIV DE BOTONES Y NAV-->
-                <div class="container text-center">
-                    <div class="row">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Fecha de creación
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="23/08/2022"
-                                disabled="false"
-                                aria-label="First name" />
-                                
-                        </div>
+                    <div class="container text-center">
+                        <div class="row">
+                            <div class="col">
+                                <div class="row g-3">
+                                    <div class="col">
+                                        <h6
+                                            style="
+                                                font-size: 15px;
+                                                color: black;
+                                                text-align: left;
+                                            ">
+                                            Elegir Bodega
+                                        </h6>
+                                        <select
+                                            v-model="entrada.warehouse_id"
+                                            class="form-select"
+                                            aria-label="Default select example">
+                                            <option
+                                                v-for="warehouse in warehouses"
+                                                :value="warehouse['id']"
+                                                :key="warehouse['id']">
+                                                {{ warehouse['name'] }}
+                                            </option>
+                                        </select>
+                                    </div>
 
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Hora de creación
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="15:00"
-                                disabled="false"
-                                aria-label="First name" />
-                        </div>
-
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Creado por
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder="Admin"
-                                disabled="false"
-                                aria-label="First name"
-                                v-model="name" />
-                        </div>
-                    </div>
-                </div>
-
-                <div class="container text-center">
-                    <div class="row">
-                        <div class="col">
-                            <div class="row g-3">
-                                <div class="col">
-                                    <h6
-                                        style="
-                                            font-size: 15px;
-                                            color: black;
-                                            text-align: left;
-                                        ">
-                                        Elegir Bodega
-                                    </h6>
-                                    <select
-                                        v-model="entrada.warehouse_id"
-                                        class="form-select"
-                                        aria-label="Default select example">
-                                        <option
-                                            v-for="warehouse in warehouses"
-                                            :value="warehouse['id']"
-                                            :key="warehouse['id']">
-                                            {{ warehouse['name'] }}
-                                        </option>
-                                    </select>
-                                </div>
-
-                                <div class="col">
-                                    <InputText
-                                        label="Cantidad del Producto"
-                                        type="number" 
-                                        @input="emitValue" />
+                                    <div class="col">
+                                        <InputText
+                                            label="Cantidad del Producto"
+                                            type="number"
+                                            @input="emitValue" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="container text-left col">
-                    <form enctype="multipart/form-data">
-                        <div class="col form-group">
-                            <div class="row">
-                                <label for="imagen">Imagen</label>
+                    <div class="container text-left col">
+                        <form enctype="multipart/form-data">
+                            <div class="col form-group">
+                                <div class="row">
+                                    <label for="imagen">Imagen</label>
+                                </div>
+                                <input
+                                    type="file"
+                                    ref="file"
+                                    @change="obtenerImagen"
+                                    class="form-control-file" />
+
+                                <figure>
+                                    <img
+                                        width="200"
+                                        height="200"
+                                        :src="imagen"
+                                        alt="Foto del producto"
+                                        v-if="imagenM" />
+                                </figure>
                             </div>
-                            <input
-                                type="file"
-                                ref="file"
-                                @change="obtenerImagen"
-                                class="form-control-file" />
-
-                            <figure>
-                                <img
-                                    width="200"
-                                    height="200"
-                                    :src="imagen"
-                                    alt="Foto del producto"
-                                    v-if="imagenM" />
-                            </figure>
-                        </div>
-                    </form>
-                </div>
-                        <button style="
-                        font-size: 15px;
-                        color: black;
-                        text-align: center;
-                        width: 50%;
-                        margin-left: 25%;
-                        margin-right: 25%;
-                        margin-top: 10px;
-                        color: white;
-                        background-color: #555555;
-                    "
-                            >Guardar
+                        </form>
+                    </div>
+                    <button
+                        style="
+                            font-size: 15px;
+                            color: black;
+                            text-align: center;
+                            width: 50%;
+                            margin-left: 25%;
+                            margin-right: 25%;
+                            margin-top: 10px;
+                            color: white;
+                            background-color: #555555;
+                        ">
+                        Guardar
                     </button>
 
-                <!--Espacio demas-->
-            </div>
-           </EForm>
+                    <!--Espacio demas-->
+                </div>
+            </EForm>
         </ECard>
     </main>
 </template>

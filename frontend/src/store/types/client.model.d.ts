@@ -2,6 +2,10 @@ import type { Employee } from './user.model'
 import type { MetaData } from '@store-types'
 
 //export type MetaDataClient = Record<string, any>
+export interface Status {
+    id: number
+    name: string
+}
 
 export interface Gender {
     id: number
@@ -21,20 +25,21 @@ export interface Province {
 export interface Client {
     number_id: string
     name: string
-    id: number
-    created_at: string
-    updated_at: string
-    deleted_at: string
+    id?: number
+    created_at?: string
+    updated_at?: string
+    deleted_at?: string
     address: string
     business_name: string
     email: string
     phone_number: string
-    city: Maybe<City>
-    province: Maybe<Province>
-    created_by: Maybe<Employee>
-    gender: Maybe<Gender>
-    status_id: number
+    city: Maybe<City> | null
+    province: Maybe<Province> | null
+    created_by: Maybe<Employee> | null | number
+    gender: Maybe<Gender> | null
+    status: number
 }
+
 
 export interface FullClient extends Client {
     meta: Optional<MetaData>

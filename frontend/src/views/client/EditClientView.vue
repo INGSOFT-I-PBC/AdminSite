@@ -3,10 +3,10 @@
 <script setup lang="ts">
     import { Field, ErrorMessage } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
-    import { useRouter } from 'vue-router'
+    import { useRouter, useRoute } from 'vue-router'
     import ECard from '@components/custom/ECard.vue'
     import { useAuthStore } from '@store'
-    import { onMounted } from 'vue'
+    import { onMounted, type Ref } from 'vue'
     import { useClientStore } from '@store/client'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import type {
@@ -16,6 +16,7 @@
         Client,
         Gender,
         MetaData,
+        APIResponse,
     } from '@store/types'
     const hoy = new Date()
     const itemLoading = ref(false)
@@ -26,6 +27,7 @@
     const nameEmployee = authStore.userData?.name
     const router = useRouter()
     const itemStore = useClientStore()
+    const route = useRoute()
     const form = ref<Form>({
         provinces: [],
     })
@@ -64,11 +66,18 @@
         gender: null,
         status: 0,
     })
+    const loadClient = async () => {
+        itemLoading.value = true
+        formClient.value = await itemStore.fetchClientById(
+            Number(route.params.id)
+        )
+        onShowModalCityClick()
+        itemLoading.value = false
+    }
 
     const loadProvince = async () => {
         itemLoading.value = true
         form.value.provinces = await itemStore.fetchAllProvince()
-        console.log(form.value.provinces)
         itemLoading.value = false
     }
     const loadCity = async () => {
@@ -79,15 +88,12 @@
             formCity.value.cities = await itemStore.fetchAllCity(
                 Number(formClient.value.province)
             )
-
-            console.log(formCity.value.cities)
         }
+        console.log(formClient.value.city)
     }
     const loadStatus = async (name: string) => {
         formStatus.value = await itemStore.fetchStatus(name)
         formClient.value.status = formStatus.value.id
-
-        console.log(formStatus.value)
     }
     const loadGender = async () => {
         formGender.value.genders = await itemStore.fetchAllGender()
@@ -114,9 +120,9 @@
     function onShowModalClick() {
         loadProvince()
     }
-    function saveClient() {
+    function editClient() {
         itemStore
-            .saveClient(formClient.value)
+            .editClient(Number(route.params.id), formClient.value)
             .then(() => {
                 router.push({ path: '/usuarios/clientes' })
             })
@@ -130,6 +136,7 @@
 
     onMounted(() => {
         return (
+            loadClient(),
             onShowModalClick(),
             loadStatus(formStatus.value.name),
             onShowModalGender()
@@ -309,10 +316,10 @@
             v-model:show="productModalShow"
             title="Agregar Producto"
             ok-text="Guardar"
-            @ok="saveClient"
+            @ok="editClient()"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Esta seguro de guardar al Cliente?
+                ¿Esta seguro de modificar al Cliente?
             </h1>
         </ModalDialog>
         <div class="container" style="border-radius: 5px">
@@ -569,6 +576,7 @@
                                     --Seleccione--
                                 </option>
                                 <option
+                                    selected
                                     v-for="city in formCity.cities"
                                     :value="city.id"
                                     :key="city.id">

@@ -254,9 +254,13 @@
                 this.showAllProducts(String(this.route.params.id))
             this.showAllCategory()
             this.showAllWarehouses()
-        },components: {
-            ECard,ModalDialog,InputText,EButton
-         }
+        },
+        components: {
+            ECard,
+            ModalDialog,
+            InputText,
+            EButton,
+        },
     })
 </script>
 

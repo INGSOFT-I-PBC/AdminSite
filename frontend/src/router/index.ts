@@ -72,7 +72,7 @@ router.beforeEach(async (to, from, next) => {
         const authStore = useAuthStore()
         authStore.refreshToken().catch(err => {
             console.error(err)
-            router.push({ path: "/login" })
+            router.push({ path: '/login' })
             // next({ path: '/login' })
         })
         //   try {
