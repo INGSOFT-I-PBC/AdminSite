@@ -59,7 +59,7 @@ class Client(TimestampModel):
     created_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
     email = models.EmailField(max_length=32)
     gender = models.ForeignKey(Gender, null=True, on_delete=models.RESTRICT)
-    number_id = models.CharField(max_length=16,unique=True)
+    number_id = models.CharField(max_length=12,unique=True)
     name = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=16)
     province = models.ForeignKey(Province, null=True, on_delete=models.RESTRICT)
