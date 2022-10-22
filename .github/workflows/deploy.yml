@@ -63,9 +63,18 @@ jobs:
     runs-on: ubuntu-latest
 #    needs: build_front
     environment: production
+    env:
+      GIT_PASSPHRASE: ${{ secrets.GIT_PASSPHRASE }}
     
     steps:
         - uses: actions/checkout@v3
+
+        - name: Check for build status
+          run:
+            ls
+            ls frontend/
+            ls static
+            git status
           
         - name: Stablish connection with ssh
           uses: appleboy/ssh-action@master
@@ -75,6 +84,6 @@ jobs:
             password: ${{ secrets.PASSWORD }}
             port: ${{secrets.PORT }}
             script: |
-              whoami
-              ls
+              cd ERPt
+              git pull 
         
