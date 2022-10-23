@@ -1,4 +1,5 @@
 from .authviews import *
+from .groups import *
 from .itemview import *
 from .userview import *
 from .warehouse import *
@@ -25,4 +26,6 @@ __all__ = [
     "EmployeeViewSet",
     "self_permissions",
     "create_permission",
+    "GroupViewSet",
+    "UnpaginatedGroupViewSet",
 ]

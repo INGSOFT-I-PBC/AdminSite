@@ -11,4 +11,5 @@ __all__ = [
     "FullItemSerializer",
     "PublicUserSerializer",
     "EmployeeSerializer",
+    "GroupSerializer",
 ]

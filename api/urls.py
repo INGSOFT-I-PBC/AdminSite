@@ -14,6 +14,8 @@ from .views.warehouse import WhOrderRequestView
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
 router.register(r"permissions", views.PermissionsViewSet)
+router.register(r"groups/all", views.UnpaginatedGroupViewSet)
+router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
