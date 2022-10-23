@@ -46,6 +46,8 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(username__icontains=params.get("username"))
         if params.get("email", None):
             queryset = queryset.filter(email__icontains=params.get("email"))
+        if params.get("is_active", None):
+            queryset = queryset.filter(is_active=bool(params.get("is_active", False)))
 
         return queryset
 
