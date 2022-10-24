@@ -44,7 +44,7 @@ specifiers:
   vitest: 0.24.3
   vue: 3.2.41
   vue-feather: 2.0.0
-  vue-router: 4.1.5
+  vue-router: 4.1.6
   vue-toastification: 2.0.0-rc.5
   vue-tsc: 1.0.8
   vue3-easy-data-table: 1.5.7
@@ -67,7 +67,7 @@ dependencies:
   vee-validate: 4.7.0_vue@3.2.41
   vue: 3.2.41
   vue-feather: 2.0.0_rc4brm7xcb5v24sddtzxnqmk5u
-  vue-router: 4.1.5_vue@3.2.41
+  vue-router: 4.1.6_vue@3.2.41
   vue-toastification: 2.0.0-rc.5_vue@3.2.41
   vue3-easy-data-table: 1.5.7
 
@@ -992,6 +992,10 @@ packages:
 
   /@vue/devtools-api/6.4.4:
     resolution: {integrity: sha512-Ku31WzpOV/8cruFaXaEZKF81WkNnvCSlBY4eOGtz5WMSdJvX1v1WWlSMGZeqUwPtQ27ZZz7B62erEMq8JDjcXw==}
+    dev: false
+
+  /@vue/devtools-api/6.4.5:
+    resolution: {integrity: sha512-JD5fcdIuFxU4fQyXUu3w2KpAJHzTVdN+p4iOX2lMWSHMOoQdMAcpFLZzm9Z/2nmsoZ1a96QEhZ26e50xLBsgOQ==}
     dev: false
 
   /@vue/eslint-config-prettier/7.0.0_znq2sm4m5bonjw4qqm6mwhbe2q:
@@ -4484,12 +4488,12 @@ packages:
       vue: 3.2.41
     dev: false
 
-  /vue-router/4.1.5_vue@3.2.41:
-    resolution: {integrity: sha512-IsvoF5D2GQ/EGTs/Th4NQms9gd2NSqV+yylxIyp/OYp8xOwxmU8Kj/74E9DTSYAyH5LX7idVUngN3JSj1X4xcQ==}
+  /vue-router/4.1.6_vue@3.2.41:
+    resolution: {integrity: sha512-DYWYwsG6xNPmLq/FmZn8Ip+qrhFEzA14EI12MsMgVxvHFDYvlr4NXpVF5hrRH1wVcDP8fGi5F4rxuJSl8/r+EQ==}
     peerDependencies:
       vue: ^3.2.0
     dependencies:
-      '@vue/devtools-api': 6.4.4
+      '@vue/devtools-api': 6.4.5
       vue: 3.2.41
     dev: false
 
