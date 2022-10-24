@@ -1,6 +1,7 @@
 #from rest_framework.serializers import ModelSerializer
 from asyncore import read
 import rest_framework.serializers as serializers
+from rest_framework.validators import UniqueValidator
 
 
 from api.models import Client, Gender,Province,City,Employee,Status
@@ -62,7 +63,7 @@ class ClientSerializer(serializers.Serializer):
     business_name = serializers.CharField(max_length=128)
     email = serializers.EmailField(max_length=32)
     name = serializers.CharField(max_length=60)
-    number_id = serializers.CharField(max_length=16)
+    number_id = serializers.CharField(max_length=16,validators=[UniqueValidator(queryset=Client.objects.all(),message=("El número de cédula ya existe"))])
     phone_number = serializers.CharField(max_length=16)
     city = serializers.PrimaryKeyRelatedField(queryset=City.objects.all())
     created_by = serializers.PrimaryKeyRelatedField(queryset=Employee.objects.all())

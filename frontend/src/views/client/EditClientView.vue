@@ -9,6 +9,7 @@
     import { onMounted, type Ref } from 'vue'
     import { useClientStore } from '@store/client'
     import ModalDialog from '@components/custom/ModalDialog.vue'
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     import type {
         Province,
         City,
@@ -16,9 +17,9 @@
         Client,
         Gender,
         MetaData,
-        APIResponse,
     } from '@store/types'
     const hoy = new Date()
+    const showWaitOverlay = ref<boolean>(false)
     const itemLoading = ref(false)
     const productModalShowError = ref(false)
     const productModalShow = ref(false)
@@ -130,6 +131,8 @@
                 if (error.response.status == 400) {
                     productModalShowError.value = true
                     formClientError2.value = error.response.data
+                    showWaitOverlay.value = false
+
                 }
             })
     }
@@ -156,6 +159,7 @@
 
     function onSubmit(value: any) {
         productModalShow.value = true
+        showWaitOverlay.value = true
     }
     function validateID(value: any) {
         // if the field is empty
@@ -290,393 +294,397 @@
 
 <template>
     <main>
-        <ModalDialog v-model:show="productModalShowError" size="xl">
-            <template #dialog-title>
-                <b class="tw-text-2xl">ERROR</b>
-            </template>
-            <div class="container">
-                <div
-                    class="row tw-pb-3 align-content-center justify-content-center gy-2">
-                    <template
-                        v-for="[k, d] of Object.entries(formClientError2.value)"
-                        :key="k">
-                        <div class="row">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >{{ k }}:
-                            </span>
-                            <span class="col-6">{{ d?.toString() }}</span>
-                        </div>
-                    </template>
+        <WaitOverlay :show="showWaitOverlay">
+            <ModalDialog v-model:show="productModalShowError" size="xl">
+                <template #dialog-title>
+                    <b class="tw-text-2xl">ERROR</b>
+                </template>
+                <div class="container">
+                    <div
+                        class="row tw-pb-3 align-content-center justify-content-center gy-2">
+                        <template
+                            v-for="[k, d] of Object.entries(
+                                formClientError2.value
+                            )"
+                            :key="k">
+                            <div class="row">
+                                <span class="tw-w-1/2 tw-font-bold col-6"
+                                    >{{ k }}:
+                                </span>
+                                <span class="col-6">{{ d?.toString() }}</span>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-            </div>
-        </ModalDialog>
+            </ModalDialog>
 
-        <ModalDialog
-            id="product-modal"
-            v-model:show="productModalShow"
-            title="Agregar Producto"
-            ok-text="Guardar"
-            @ok="editClient()"
-            button-type="ok-cancel">
-            <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Esta seguro de modificar al Cliente?
-            </h1>
-        </ModalDialog>
-        <div class="container" style="border-radius: 5px">
-            <ECard>
-                <EForm @submit="onSubmit">
-                    <div class="row g-3">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Fecha de creación
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                :placeholder="hoy.toLocaleDateString()"
-                                disabled="false"
-                                aria-label="Firs
-                            t name" />
-                        </div>
-
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Hora de creación
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                disabled="false"
-                                aria-label="First name"
-                                :placeholder="hoy.toLocaleTimeString()" />
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Creado por
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                disabled="false"
-                                aria-label="First name"
-                                v-model="nameEmployee" />
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Tipo de identificación:
-                            </h6>
-
-                            <select
-                                @change="changeCountry($event)"
-                                class="form-select"
-                                aria-label="Default select example">
-                                <option selected value="1">Cédula</option>
-                                <option value="2">RUC</option>
-                            </select>
-                        </div>
-
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Identificación*
-                            </h6>
-                            <Field
-                                name="email"
-                                v-model="formClient.number_id"
-                                class="form-control"
-                                type="email"
-                                :rules="validateID" />
+            <ModalDialog
+                id="product-modal"
+                v-model:show="productModalShow"
+                title="Agregar Producto"
+                ok-text="Guardar"
+                @ok="editClient()"
+                button-type="ok-cancel">
+                <h1 style="font-size: 15px; color: black; text-align: left">
+                    ¿Esta seguro de modificar al Cliente?
+                </h1>
+            </ModalDialog>
+            <div class="container" style="border-radius: 5px">
+                <ECard>
+                    <EForm @submit="onSubmit">
+                        <div class="row g-3">
                             <div class="col">
-                                <ErrorMessage
-                                    name="email"
+                                <h6
                                     style="
-                                        font-size: 10px;
-                                        color: red;
+                                        font-size: 15px;
+                                        color: black;
                                         text-align: left;
-                                    " />
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Nombres y apellidos *
-                            </h6>
-                            <Field
-                                name="name"
-                                class="form-control"
-                                type="email"
-                                v-model="formClient.name"
-                                :rules="validateName" />
-                            <div class="col">
-                                <ErrorMessage
-                                    name="name"
-                                    style="
-                                        font-size: 10px;
-                                        color: red;
-                                        text-align: left;
-                                    " />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Razón Social
-                            </h6>
-                            <Field
-                                name="business_name"
-                                class="form-control"
-                                type="email"
-                                v-model="formClient.business_name"
-                                :rules="validateRazon" />
-                            <div class="col">
-                                <ErrorMessage
-                                    name="razon"
-                                    style="
-                                        font-size: 10px;
-                                        color: red;
-                                        text-align: left;
-                                    " />
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Sexo
-                            </h6>
-                            <select
-                                required
-                                id="selectGender"
-                                name="gender"
-                                class="form-select"
-                                v-model="formClient.gender"
-                                aria-label="Default select example">
-                                <option :value="null" selected disabled>
-                                    --Seleccione--
-                                </option>
-                                <option
-                                    v-for="gender in formGender.genders"
-                                    :value="gender.id"
-                                    :key="gender.id">
-                                    {{ gender.name }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Teléfono*
-                            </h6>
-                            <Field
-                                name="celular"
-                                class="form-control"
-                                type="email"
-                                v-model="formClient.phone_number"
-                                :rules="validateCell" />
-                            <div class="col">
-                                <ErrorMessage
-                                    name="celular"
-                                    style="
-                                        font-size: 10px;
-                                        color: red;
-                                        text-align: left;
-                                    " />
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Provincia *
-                            </h6>
-                            <select
-                                @change="onShowModalCityClick()"
-                                :required="true"
-                                name="province"
-                                id="selectProvincia"
-                                class="form-select"
-                                v-model="formClient.province">
-                                <option :value="null" selected disabled>
-                                    --Seleccione--
-                                </option>
-                                <option
-                                    v-for="prov in form.provinces"
-                                    :key="prov.id"
-                                    :value="prov.id">
-                                    {{ prov.name }}
-                                </option>
-                            </select>
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Ciudad *
-                            </h6>
-                            <select
-                                required
-                                id="selectCiudad"
-                                name="city"
-                                class="form-select"
-                                aria-label="Default select example"
-                                v-model="formClient.city">
-                                <option :value="null" selected disabled>
-                                    --Seleccione--
-                                </option>
-                                <option
-                                    selected
-                                    v-for="city in formCity.cities"
-                                    :value="city.id"
-                                    :key="city.id">
-                                    {{ city.name }}
-                                </option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row g-3">
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Correo*
-                            </h6>
-                            <Field
-                                name="correo"
-                                class="form-control"
-                                type="email"
-                                v-model="formClient.email"
-                                :rules="validateEmail" />
-                            <div class="col">
-                                <ErrorMessage
-                                    name="correo"
-                                    style="
-                                        font-size: 10px;
-                                        color: red;
-                                        text-align: left;
-                                    " />
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Dirección domiciliaria*
-                            </h6>
-                            <Field
-                                name="address"
-                                class="form-control"
-                                type="email"
-                                v-model="formClient.address"
-                                :rules="validateDireccion" />
-                            <div class="col">
-                                <ErrorMessage
-                                    name="direccion"
-                                    style="
-                                        font-size: 10px;
-                                        color: red;
-                                        text-align: left;
-                                    " />
-                            </div>
-                        </div>
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Estado
-                            </h6>
-                            <div class="form-check form-switch">
+                                    ">
+                                    Fecha de creación
+                                </h6>
                                 <input
-                                    class="form-check-input"
-                                    name="status"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="checkClient"
-                                    @change="validarCheckbox()"
-                                    checked />
-                                <label
-                                    class="form-check-label"
-                                    for="flexSwitchCheckDefault"></label>
+                                    type="text"
+                                    class="form-control"
+                                    :placeholder="hoy.toLocaleDateString()"
+                                    disabled="false"
+                                    aria-label="Firs
+                            t name" />
+                            </div>
+
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Hora de creación
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    disabled="false"
+                                    aria-label="First name"
+                                    :placeholder="hoy.toLocaleTimeString()" />
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Creado por
+                                </h6>
+                                <input
+                                    type="text"
+                                    class="form-control"
+                                    placeholder=""
+                                    disabled="false"
+                                    aria-label="First name"
+                                    v-model="nameEmployee" />
                             </div>
                         </div>
-                    </div>
+                        <div class="row g-3">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Tipo de identificación:
+                                </h6>
 
-                    <button
-                        style="
-                            font-size: 15px;
-                            color: black;
-                            text-align: center;
-                            width: 50%;
-                            margin-left: 25%;
-                            margin-right: 25%;
-                            margin-top: 10px;
-                            color: white;
-                            background-color: #555555;
-                        ">
-                        Guardar
-                    </button>
-                </EForm>
-            </ECard>
-        </div>
+                                <select
+                                    @change="changeCountry($event)"
+                                    class="form-select"
+                                    aria-label="Default select example">
+                                    <option selected value="1">Cédula</option>
+                                    <option value="2">RUC</option>
+                                </select>
+                            </div>
+
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Identificación*
+                                </h6>
+                                <Field
+                                    name="email"
+                                    v-model="formClient.number_id"
+                                    class="form-control"
+                                    type="email"
+                                    :rules="validateID" />
+                                <div class="col">
+                                    <ErrorMessage
+                                        name="email"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Nombres y apellidos *
+                                </h6>
+                                <Field
+                                    name="name"
+                                    class="form-control"
+                                    type="email"
+                                    v-model="formClient.name"
+                                    :rules="validateName" />
+                                <div class="col">
+                                    <ErrorMessage
+                                        name="name"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Razón Social
+                                </h6>
+                                <Field
+                                    name="business_name"
+                                    class="form-control"
+                                    type="email"
+                                    v-model="formClient.business_name"
+                                    :rules="validateRazon" />
+                                <div class="col">
+                                    <ErrorMessage
+                                        name="razon"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Sexo
+                                </h6>
+                                <select
+                                    required
+                                    id="selectGender"
+                                    name="gender"
+                                    class="form-select"
+                                    v-model="formClient.gender"
+                                    aria-label="Default select example">
+                                    <option :value="null" selected disabled>
+                                        --Seleccione--
+                                    </option>
+                                    <option
+                                        v-for="gender in formGender.genders"
+                                        :value="gender.id"
+                                        :key="gender.id">
+                                        {{ gender.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Teléfono*
+                                </h6>
+                                <Field
+                                    name="celular"
+                                    class="form-control"
+                                    type="email"
+                                    v-model="formClient.phone_number"
+                                    :rules="validateCell" />
+                                <div class="col">
+                                    <ErrorMessage
+                                        name="celular"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Provincia *
+                                </h6>
+                                <select
+                                    @change="onShowModalCityClick()"
+                                    :required="true"
+                                    name="province"
+                                    id="selectProvincia"
+                                    class="form-select"
+                                    v-model="formClient.province">
+                                    <option :value="null" selected disabled>
+                                        --Seleccione--
+                                    </option>
+                                    <option
+                                        v-for="prov in form.provinces"
+                                        :key="prov.id"
+                                        :value="prov.id">
+                                        {{ prov.name }}
+                                    </option>
+                                </select>
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Ciudad *
+                                </h6>
+                                <select
+                                    required
+                                    id="selectCiudad"
+                                    name="city"
+                                    class="form-select"
+                                    aria-label="Default select example"
+                                    v-model="formClient.city">
+                                    <option :value="null" selected disabled>
+                                        --Seleccione--
+                                    </option>
+                                    <option
+                                        selected
+                                        v-for="city in formCity.cities"
+                                        :value="city.id"
+                                        :key="city.id">
+                                        {{ city.name }}
+                                    </option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Correo*
+                                </h6>
+                                <Field
+                                    name="correo"
+                                    class="form-control"
+                                    type="email"
+                                    v-model="formClient.email"
+                                    :rules="validateEmail" />
+                                <div class="col">
+                                    <ErrorMessage
+                                        name="correo"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Dirección domiciliaria*
+                                </h6>
+                                <Field
+                                    name="address"
+                                    class="form-control"
+                                    type="email"
+                                    v-model="formClient.address"
+                                    :rules="validateDireccion" />
+                                <div class="col">
+                                    <ErrorMessage
+                                        name="direccion"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
+                                </div>
+                            </div>
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Estado
+                                </h6>
+                                <div class="form-check form-switch">
+                                    <input
+                                        class="form-check-input"
+                                        name="status"
+                                        type="checkbox"
+                                        role="switch"
+                                        id="checkClient"
+                                        @change="validarCheckbox()"
+                                        checked />
+                                    <label
+                                        class="form-check-label"
+                                        for="flexSwitchCheckDefault"></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button
+                            style="
+                                font-size: 15px;
+                                color: black;
+                                text-align: center;
+                                width: 50%;
+                                margin-left: 25%;
+                                margin-right: 25%;
+                                margin-top: 10px;
+                                color: white;
+                                background-color: #555555;
+                            ">
+                            Guardar
+                        </button>
+                    </EForm>
+                </ECard>
+            </div>
+        </WaitOverlay>
     </main>
 </template>
