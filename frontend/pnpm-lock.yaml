@@ -47,7 +47,7 @@ specifiers:
   vue-router: 4.1.5
   vue-toastification: 2.0.0-rc.5
   vue-tsc: 1.0.8
-  vue3-easy-data-table: 1.5.7
+  vue3-easy-data-table: 1.5.8
 
 dependencies:
   '@fortawesome/fontawesome-svg-core': 6.2.0
@@ -69,7 +69,7 @@ dependencies:
   vue-feather: 2.0.0_rc4brm7xcb5v24sddtzxnqmk5u
   vue-router: 4.1.5_vue@3.2.41
   vue-toastification: 2.0.0-rc.5_vue@3.2.41
-  vue3-easy-data-table: 1.5.7
+  vue3-easy-data-table: 1.5.8
 
 devDependencies:
   '@rushstack/eslint-patch': 1.2.0
@@ -4528,8 +4528,8 @@ packages:
       '@vue/server-renderer': 3.2.41_vue@3.2.41
       '@vue/shared': 3.2.41
 
-  /vue3-easy-data-table/1.5.7:
-    resolution: {integrity: sha512-b3aRWIDetbUkhvha52Lmc7Hvb9QiMmwDICmJ2QdCFJSpKoXKdqbmk0RMmc7KVgwoF4t5nazg8TkPgBSsLQi6mQ==}
+  /vue3-easy-data-table/1.5.8:
+    resolution: {integrity: sha512-M8W+MZat256Vi3PW7dDEfQqzNaCYejKRZXHkmJojWxv8h7yb0eYpcLFxPaN3YbxqxMf/2ZTArgWuVXgtOawJOA==}
     dependencies:
       vue: 3.2.41
     dev: false
