@@ -1,7 +1,6 @@
 <template>
     <button
-        type="button"
-        @click="buttonClick"
+        @click="$emit('click', $event)"
         @mouseenter="buttonHover"
         class="hover:tw-transition-all tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md"
         :class="style"
@@ -91,7 +90,8 @@
                 classes +=
                     'tw-bg-secondary hover:tw-bg-secondary-light focus:tw-bg-secondary-light tw-text-on-secondary dark:tw-bg-secondary-night dark:hover:tw-bg-secondary-night-dark dark:focus:tw-bg-secondary-night-dark dark:hover:tw-ring-1 dark:hover:tw-ring-slate-700'
         }
-        if (disabled) classes += ' hover:tw-cursor-default'
+        if (disabled)
+            classes += ' hover:tw-cursor-default tw-pointer-events-none'
         else classes += ' hover:tw-shadow-lg focus:tw-shadow-sm'
         // if (disabled)
         //     classes =
@@ -100,9 +100,6 @@
         // return `bg-${props.type} text-on-${props.type} px-4 py-1 rounded hover:bg-gray-500 bg-primary`
     })
 
-    function buttonClick() {
-        if (!props.disabled) emit('click')
-    }
     function buttonHover() {
         emit('hover')
     }

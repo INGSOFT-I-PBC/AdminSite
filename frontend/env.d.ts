@@ -14,9 +14,9 @@ declare module '@components-types' {
     export * from '@/components/types'
 }
 
-declare module '@store-types' {
-    export * from '@store/types'
-}
+// declare module '@store-types' {
+//     export * from '@store/types'
+// }
 
 /**
  * This interface enable the intelli-sense for .env

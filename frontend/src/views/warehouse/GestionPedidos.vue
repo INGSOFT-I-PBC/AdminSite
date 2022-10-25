@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import EButton from '@components/custom/EButton.vue'
 import ECard from '@components/custom/ECard.vue'
+import Table from '@components/holders/Table.vue'
 import { useWarehouseStore } from '@store/warehouse'
 import WaitOverlay from '../../components/custom/WaitOverlay.vue'
-import { ref } from 'vue'
-import { type Item, type Warehouse,} from '@store/types'
+import { ref, reactive } from 'vue'
+import { type Item, type Warehouse} from '@store/types'
+import { table } from 'console'
 
 const showWaitOverlay = ref(true)
 
@@ -19,11 +21,11 @@ let activeWharehouseButton = ref(-1)
 type QuantifiedItem = Item & { quantity: number }
 
 type warehouseInformation = {
-        bodega?: Warehouse
-        inventory?: QuantifiedItem[]
-        orders?: []
-        tomas_fisicas?: []
-    }
+    bodega?: Warehouse
+    inventory?: QuantifiedItem[]
+    orders?: []
+    tomas_fisicas?: []
+}
 
 let activeWhInformation = ref(<warehouseInformation>{})
 
@@ -45,7 +47,7 @@ function filteredList() {
     );
 }
 
-function onPageChanged(event:any, page: number) {
+function onPageChanged(event: any, page: number) {
     paginate(whPageCount.value, page - 1);
 }
 
@@ -58,9 +60,12 @@ function wharehouseButtonPressed(event: any, whId: number) {
     console.log(event.target)
     console.log(whId)
 
-    // warehouse.fetchPaginatedWarehouseInventory({id:whId},0).then(it => {
-    //     activeWhInformation.value.inventory = it.data
-    // })
+    warehouse.fetchPaginatedWarehouseInventory({id:whId},0).then(it => {
+        console.log(it)
+        activeWhInformation.value.inventory = it
+        console.log(activeWhInformation.value.inventory)
+        tableSettings.rows = activeWhInformation.value.inventory
+    })
 
     // warehouse.fetchPaginatedWarehousesOrder({id:whId},0).then(it=>{
 
@@ -80,7 +85,31 @@ warehouse.fetchWarehouses().then(it => {
 
 })
 
-
+const tableSettings = reactive<TableHeaderSettings>({
+        headers: [
+            {
+                label: 'Código Producto',
+                attribute: 'codename',
+            },
+            {
+                label: 'Nombre Producto',
+                attribute: 'name',
+            },
+            {
+                label: 'Stock',
+                attribute: 'quantity',
+            },
+            {
+                label: 'Precio',
+                attribute: 'price',
+            },
+            {
+                label: 'P. Venta',
+                attribute: 'sale_price',
+            }
+        ],
+        rows: [],
+    })
 
 
 </script>
@@ -109,13 +138,13 @@ warehouse.fetchWarehouses().then(it => {
 
                     <b-list-group :per-page="whPageCount" :current-page="currentPage">
 
-                        <b-list-group-item :class="{ active: activeWharehouseButton === -1}" button
-                            @click="showAllWarehouses = true;activeWharehouseButton= -1"> Todas las bodegas
+                        <b-list-group-item :class="{ active: activeWharehouseButton === -1 }" button
+                            @click="showAllWarehouses = true; activeWharehouseButton = -1"> Todas las bodegas
                         </b-list-group-item>
                         <b-list-group-item v-for="wh, index in paginatedWarehouse " button
-                            :class="{ active: wh.id === activeWharehouseButton}" :key="wh.id" :id="'whbtn-' + wh.id"
-                            @click="($event)=> { wharehouseButtonPressed($event,wh.id)}">
-                            {{wh.name}}
+                            :class="{ active: wh.id === activeWharehouseButton }" :key="wh.id" :id="'whbtn-' + wh.id"
+                            @click="($event:any) => { wharehouseButtonPressed($event, wh.id) }">
+                            {{ wh.name }}
 
                         </b-list-group-item>
                     </b-list-group>
@@ -148,9 +177,11 @@ warehouse.fetchWarehouses().then(it => {
 
                         <b-tab title="Inventario" active>
 
-                            <button type="button" class="btn btn-outline-dark btn-lg">
-                                Limpiar Filtros
-                            </button>
+                            <Table :header="tableSettings">
+                                <template #body-cell="{ cellData, colIdx, rowIdx }">
+
+                                </template>
+                            </Table>
 
 
                         </b-tab>

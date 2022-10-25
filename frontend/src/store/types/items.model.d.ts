@@ -19,6 +19,7 @@ export interface Item {
     model: string
     name: string
     price: string
+    codename: string
 }
 
 export interface FullItem extends Item {

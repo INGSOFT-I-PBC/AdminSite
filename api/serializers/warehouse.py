@@ -154,6 +154,17 @@ class WhTransactionSerializer(ModelSerializer):
 
         return representation
 
+    def to_internal_value(self, data):
+        """Move fields related to status to their own status dictionary."""
+        status_internal = {}
+        for key in SimpleStatusSerializer.Meta.fields:
+            if key in data:
+                status_internal[key] = data.pop(key)
+
+        internal = super().to_internal_value(data)
+        internal["status"] = status_internal
+        return internal
+
     class Meta:
         model = WarehouseTransaction
         fields = [
