@@ -1,3 +1,4 @@
+from datetime import datetime
 from tokenize import group
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -48,6 +49,10 @@ class UserViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(email__icontains=params.get("email"))
         if params.get("is_active", None):
             queryset = queryset.filter(is_active=bool(params.get("is_active", False)))
+        if params.get("group", None):
+            queryset = queryset.filter(group=params.get("group"))
+        if params.get("role", None):
+            queryset = queryset.filter(employee__role=params.get("role"))
 
         return queryset
 
@@ -153,6 +158,7 @@ def reset_password(request: Request):
                 status=400,
             )
         user.set_password(data["password"])
+        user.updated_at = datetime.now()
         user.save()
     except:
         return JsonResponse(

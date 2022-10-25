@@ -126,12 +126,13 @@ def create_user(request: Request, *args, **kwargs):
                     "code": "USR_ACT_SUCC",
                 }
             )
-    else:  # Create a new user
+        # else:  # Create a new user
         user = UserSerializer(data=request.data)
         user.is_valid(raise_exception=True)
         user.password = make_password(password)
-        user.save()
-        return JsonResponse(PublicUserSerializer(user))
+        user = user.save()
+        return JsonResponse(PublicUserSerializer(user).data)
+    print("Wtf")
     return error_response("No username was provided")
 
 
