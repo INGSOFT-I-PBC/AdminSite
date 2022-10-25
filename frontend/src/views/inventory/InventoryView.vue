@@ -184,59 +184,44 @@
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Codigo:</span
                             >
-                            <span class="col-6"
-                                >{{ k }}</span
-                            >
+                            <span class="col-6">{{ k }}</span>
                         </div>
                         <div class="row" v-if="d.toString() == 'name'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Nombre:</span
                             >
-                            <span class="col-6"
-                                >{{ k }}</span
-                            >
+                            <span class="col-6">{{ k }}</span>
                         </div>
                         <div class="row" v-if="d.toString() == 'marc'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Marca:</span
                             >
-                            <span class="col-6"
-                                >{{ k }}</span
-                            >
+                            <span class="col-6">{{ k }}</span>
                         </div>
                         <div class="row" v-if="d.toString() == 'model'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Modelo:</span
                             >
-                            <span class="col-6"
-                                >{{ k }}</span
-                            >
+                            <span class="col-6">{{ k }}</span>
                         </div>
                         <div class="row" v-if="d.toString() == 'category'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Categoria:</span
                             >
-                            <span class="col-6"
-                                >{{ k }}</span
-                            >
+                            <span class="col-6">{{ k }}</span>
                         </div>
                         <div class="row" v-if="d.toString() == 'price'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Precio:</span
                             >
-                            <span class="col-6"
-                                >{{ k }}</span
-                            >
+                            <span class="col-6">{{ k }}</span>
                         </div>
                         <div class="row" v-if="d.toString() == 'stock'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Stock:</span
                             >
-                            <span class="col-6"
-                                >{{ k }}</span
-                            >
+                            <span class="col-6">{{ k }}</span>
                         </div>
-
                     </template>
                 </div>
             </div>
@@ -276,7 +261,7 @@
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
                 <Table :header="tableSettings">
-                    <template #body-cell="{ cellData, colIdx, rowIdx }">
+                    <template #body-cell="{ colIdx, rowIdx }">
                         <div v-if="colIdx == 8">
                             <div class="form-check form-switch">
                                 <input
@@ -291,7 +276,8 @@
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault" />
+                                    id="flexSwitchCheckDefault"
+                                    checked />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>

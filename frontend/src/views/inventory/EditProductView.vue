@@ -2,7 +2,7 @@
     import { defineComponent } from 'vue'
     import { stringifyQuery, useRoute, useRouter } from 'vue-router'
     import type Item from '@/interfaz/items'
-    import type Item3 from '@/interfaz/Items3'
+    import type { Status } from '@store/types'
     import { useAuthStore } from '@store'
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
@@ -23,8 +23,13 @@
             const msm400 = ref('')
             const router = useRouter()
             const employee_id = authStore.userData?.employee as number
+            const formStatus = ref<Status>({
+                id: 0,
+                name: 'active',
+            })
 
             return {
+                formStatus,
                 route,
                 normalValue,
                 employee_id,
@@ -66,14 +71,21 @@
             showProduct() {
                 this.productModalShow = true
             },
+            async loadStatus(name: string) {
+                this.formStatus = await ItemDataService.fetchStatus(name)
+                this.entrada.status_id = this.formStatus.id
+                console.log(this.entrada.status_id)
+            },
             validarCheckbox() {
                 const checkbox = document.getElementById(
                     'check'
                 ) as HTMLInputElement
-                if (checkbox.checked) {
-                    this.entrada.status_id = 1
+                if (!checkbox.checked) {
+                    //this.entrada.status_id = 1
+                    this.loadStatus('inactive')
                 } else {
-                    this.entrada.status_id = 3
+                    //this.entrada.status_id = 3
+                    this.loadStatus('active')
                 }
             },
             performUpload() {
@@ -260,6 +272,7 @@
                 this.showAllProducts(String(this.route.params.id))
             this.showAllCategory()
             this.showAllWarehouses()
+            this.loadStatus(this.formStatus.name)
         },
         components: {
             ECard,
@@ -276,7 +289,7 @@
             id="product-modal-error"
             v-model:show="productModalShowError"
             title="Información">
-            <h1>{{ msm400 }}</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">{{ msm400 }}</h1>
         </ModalDialog>
         <ModalDialog
             id="product-modal"
@@ -285,7 +298,7 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-            <h1>¿Esta seguro de modificar el producto?</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">¿Esta seguro de modificar el producto?</h1>
         </ModalDialog>
         <ECard>
             <div class="container" style="border-radius: 5px">
@@ -449,20 +462,12 @@
                             </h6>
                             <div class="form-check form-switch">
                                 <input
-                                    v-if="entrada.status_id === 1"
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
                                     id="check"
                                     @change="validarCheckbox()"
                                     checked />
-                                <input
-                                    v-else
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="check"
-                                    @change="validarCheckbox()" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>

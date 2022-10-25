@@ -1,19 +1,15 @@
 <script lang="ts">
     import { defineComponent } from 'vue'
-    import type Item  from '@/interfaz/items'
-    import type Status  from '@/interfaz/items'
-    import type Item3 from '@/interfaz/Items3'
+    import type Item from '@/interfaz/items'
+    import type { Status } from '@store/types'
     import ItemDataService from '@/store/item'
     import { useAuthStore } from '@store'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import axios from 'axios'
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import { useRoute, useRouter } from 'vue-router'
-    import * as VeeValidate from 'vee-validate'
     import { Field, ErrorMessage } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
-
 
     export default defineComponent({
         name: 'AddProductView',
@@ -34,7 +30,8 @@
                 name: 'active',
             })
 
-            return {formStatus,
+            return {
+                formStatus,
                 route,
                 router,
                 hoy,
@@ -79,8 +76,8 @@
         },
         methods: {
             async loadStatus(name: string) {
-                this.formStatus.value = await ItemDataService.fetchStatus(name)
-                this.entrada.status_id=this.formStatus.value
+                this.formStatus = await ItemDataService.fetchStatus(name)
+                this.entrada.status_id = this.formStatus.id
                 console.log(this.entrada.status_id)
             },
             validarCheckbox() {
@@ -90,11 +87,9 @@
                 if (!checkbox.checked) {
                     //this.entrada.status_id = 1
                     this.loadStatus('inactive')
-
                 } else {
                     //this.entrada.status_id = 3
                     this.loadStatus('active')
-
                 }
             },
             async showAllCategory() {
@@ -301,7 +296,8 @@
         mounted() {
             this.showAllCategory()
             this.showAllWarehouses()
-            this.loadStatus(this.formStatus.value.name)
+            this.loadStatus(this.formStatus.name.toString())
+            //console.log("hola"+this.formStatus.value.name)
         },
     })
 </script>
@@ -312,7 +308,7 @@
             id="product-modal-error"
             v-model:show="productModalShowError"
             title="Información">
-            <h1>{{ msm400 }}</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">{{ msm400 }}</h1>
         </ModalDialog>
         <ModalDialog
             id="product-modal"
@@ -321,6 +317,7 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">¿Esta seguro de guardar el producto?</h1>
         </ModalDialog>
 
         <ECard>
