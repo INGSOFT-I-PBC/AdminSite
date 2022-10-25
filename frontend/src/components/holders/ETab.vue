@@ -26,14 +26,18 @@
         },
     })
     const emits = defineEmits(['change', 'update:selectedTab'])
+
+    function tabChange(tabIndex: Number) {
+        emits('update:selectedTab', tabIndex)
+    }
 </script>
 
 <template>
     <TabGroup
-        :selected-index="selectedTab"
         :vertical="verticalTabs"
         :default-index="props.defaultIndex"
-        @change="$emit('change')">
+        @change="tabChange"
+        >
         <TabList class="tw-tablist">
             <Tab
                 class="tw-tab"
@@ -43,8 +47,8 @@
                 v-slot="{ selected }">
                 <slot
                     name="tab"
-                    :tab-title="tabTitle"
-                    :tab-index="index"
+                    :tabTitle="tabTitle"
+                    :tabIndex="index"
                     :selected="selected">
                     <button
                         class="tw-tab-button"
@@ -62,7 +66,7 @@
 
 <style lang="scss">
     .tw-tablist {
-        @apply tw-flex tw-space-x-2 tw-rounded-xl tw-bg-on-primary/20 tw-p-1;
+        @apply tw-flex tw-space-x-2 tw-rounded-xl tw-bg-on-primary/5 tw-p-1;
     }
     .tw-rounded-button {
         @apply tw-rounded-md;
