@@ -1,10 +1,7 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-import Vue3EasyDataTable from 'vue3-easy-data-table'
-
 declare module '@vue/runtime-core' {
     export interface GlobalComponents {
-        EasyDataTable: typeof Vue3EasyDataTable
+        RouterLink: typeof import('vue-router')['RouterLink']
+        RouterView: typeof import('vue-router')['RouterView']
         FontAwesomeIcon: DefineComponent<FontAwesomeIconProps>
         FontAwesomeLayers: DefineComponent<FontAwesomeLayersProps>
         FontAwesomeLayersText: DefineComponent<FontAwesomeLayersTextProps>

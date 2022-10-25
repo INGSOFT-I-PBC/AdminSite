@@ -13,7 +13,7 @@ export function isMessage<T>(
         response != null &&
         'message' in response &&
         keylen > 0 &&
-        keylen <= 2 &&
+        keylen <= 3 &&
         typeof response.message == 'string'
     )
 }

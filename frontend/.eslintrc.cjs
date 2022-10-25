@@ -14,4 +14,7 @@ module.exports = {
             extends: ['plugin:cypress/recommended'],
         },
     ],
+    rules: {
+        "@typescript-eslint/no-explicit-any": "warning"
+    }
 }
