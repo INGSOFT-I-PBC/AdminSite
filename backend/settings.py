@@ -267,7 +267,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = "static/"
 MEDIA_URL = "/storage/"
-MEDIA_ROOT = BASE_DIR / "storage"
+MEDIA_ROOT = "backend/storage/public"
 
 APPEND_SLASH = False
 # Django  configuration Variables
