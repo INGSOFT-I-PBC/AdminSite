@@ -6,13 +6,14 @@
         "composite": true,
         "baseUrl": ".",
         "paths": {
-            "*": ["./src/types/*.d.ts", "./src/types/*.ts"],
-            "@/*": ["./src/*"],
             "@components/*": ["./src/components/*"],
             "@views/*": ["./src/views/*"],
+            "@store": ["./src/store"],
             "@store/*": ["./src/store/*"],
-            "@store": ["./src/store"]
-        },
-        "typeRoots": ["node_modules/@types", "./src/types"]
+            "@exceptions": ["./src/exceptions"],
+            "@components-types": ["./src/components/types"],
+            "@store-types": ["./src/store/types"],
+            "@/*": ["./src/*"]
+        }
     }
 }

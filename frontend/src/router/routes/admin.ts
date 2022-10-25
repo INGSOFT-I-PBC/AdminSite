@@ -17,7 +17,24 @@ export const admin: Array<RouteConfig> = [
             permission: 'can_edit_password',
         },
     },
-
+    {
+        path: '/admin/usuarios',
+        name: 'admin-user-mangement',
+        component: () => import('@views/admin/users/UserManagementView.vue'),
+        meta: {
+            pageTitle: 'Administrador de usuarios',
+            permission: 'can_manage_user',
+        },
+    },
+    {
+        path: '/admin/permisos',
+        name: 'admin-permission-manager',
+        component: () => import('@views/admin/PermissionManager.vue'),
+        meta: {
+            pageTitle: 'Administrador de permisos',
+            permission: 'can_manage_permissions',
+        },
+    },
     {
         path: '/admin/creacion-usuario',
         name: 'user-creation-view',

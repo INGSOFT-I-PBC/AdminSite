@@ -1,7 +1,11 @@
 {
     "[python]": {
         "editor.autoIndent": "full",
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": true,
+            "source.fixAll": true
+        }
     },
     "[vue]": {
         "outline.showFunctions": true,
@@ -9,13 +13,14 @@
     },
     "python.formatting.provider": "black",
     "python.formatting.blackPath": "black",
+
     "eslint.codeAction.showDocumentation": {
         "enable": true
     },
     "eslint.codeActionsOnSave.mode": "all",
     "eslint.format.enable": true,
-    "prettier.endOfLine": "lf",
     "python.linting.enabled": true,
+    "prettier.endOfLine": "lf",
     "eslint.packageManager": "pnpm",
     "eslint.workingDirectories": ["./frontend", "./frontend/src"],
     "typescript.inlayHints.enumMemberValues.enabled": true,
@@ -26,7 +31,7 @@
     "typescript.inlayHints.variableTypes.enabled": true,
     "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
     "typescript.inlayHints.parameterTypes.enabled": true,
-    "cSpell.words": ["viewsets"],
+    "cSpell.words": ["endregion", "viewsets"],
     "spellright.language": [],
     "spellright.documentTypes": ["markdown", "latex", "plaintext"]
 }

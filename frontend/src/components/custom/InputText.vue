@@ -2,6 +2,7 @@
     import { computed, type PropType } from 'vue'
     import type { ColorTheme } from '@components-types'
     import { identity } from '@/components/types/checkers'
+    import type { InputType } from 'bootstrap-vue-3'
 
     const props = defineProps({
         modelValue: {
@@ -13,7 +14,7 @@
             default: () => ({} as Record<string, boolean>),
         },
         type: {
-            type: String,
+            type: String as PropType<InputType>,
             default: 'text',
         },
         label: {
@@ -33,11 +34,11 @@
             default: null,
         },
         infoStyle: {
-            type: String,
-            default: 'tw-italic tw-text-tiny',
+            type: Object as PropType<string | string[]>,
+            default: ['tw-italic', 'tw-text-tiny'],
         },
         status: {
-            type: Boolean || null,
+            type: Boolean as PropType<Boolean | null>,
             default: null,
         },
         infoStatus: {
@@ -80,16 +81,19 @@
     ])
 
     const infoClass = computed(() => {
-        let styles = `${props.infoStyle || ''} `
+        let styles = Array.isArray(props.infoStyle)
+            ? [...props.infoStyle]
+            : props.infoStyle?.split(' ')
+        // let styles = `${props.infoStyle || ''} `
         switch (props.infoStatus) {
             case 'danger':
-                styles += 'tw-text-red-700 dark:tw-text-red-500'
+                styles.push('tw-text-red-700', 'dark:tw-text-red-500')
                 break
             case 'warning':
-                styles += 'tw-text-amber-800 dark:tw-text-yellow-500'
+                styles.push('tw-text-amber-800', 'dark:tw-text-yellow-500')
                 break
             case 'success':
-                styles += 'tw-text-green-600 dark:tw-text-emerald-500'
+                styles.push('tw-text-green-600', 'dark:tw-text-emerald-500')
                 break
             default: // No apply styles
         }
@@ -164,7 +168,11 @@
         ) {
             value = props.formatter(value)
         }
+
         emit('update:modelValue', value)
+        e.preventDefault()
+        let input = e.target as HTMLInputElement
+        input.value = value
     }
 </script>
 
@@ -178,6 +186,7 @@
             :class="[colorscheme[theme]]"
             :classa="[inputDivClass, colorscheme[theme]]">
             <button
+                type="button"
                 class="tw-text-center tw-ml-1 tw-grid tw-content-center focus:tw-outline-none"
                 :class="disabled ? 'hover:tw-cursor-not-allowed' : ''"
                 v-if="leftIcon"
@@ -199,6 +208,7 @@
                 :readonly="readonly"
                 :type="type" />
             <button
+                type="button"
                 class="tw-text-center tw-p-0.5 tw-content-center tw-grid focus:tw-outline-none"
                 v-if="rightIcon"
                 :class="disabled ? 'hover:tw-cursor-not-allowed' : ''"
@@ -209,9 +219,7 @@
             </button>
         </div>
         <slot name="info-label">
-            <small :class="infoClass">
-                {{ infoLabel }}
-            </small>
+            <small :class="infoClass"> {{ infoLabel }}&ZeroWidthSpace; </small>
         </slot>
     </div>
 </template>

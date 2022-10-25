@@ -34,7 +34,7 @@ declare global {
         readonly label: string
         readonly path?: string
         readonly icon?: Optional<string>
-        readonly children?: Optional<MenuItem[]>
+        children?: Optional<MenuItem[]>
         readonly forceRender?: boolean
         readonly routeName?: string
     }
