@@ -360,7 +360,7 @@
                 <div class="tw-overflow-x-auto">
                     <BTable :fields="formFields" :items="form.items">
                         <template #cell(#)="{ index }">
-                            {{ index + 1 }}
+                            hoal{{ index + 1 }}
                         </template>
                         <template #cell(Acciones)="{ item, index }">
                             <div class="t-button-group">

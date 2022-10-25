@@ -17,6 +17,7 @@ from .itemview import *
 from .itemviews import ItemView
 from .categoryviews import CategoryView
 from .inventoryviews import InventoryView
+from .clientview import *
 
 __all__ = [
     "UserViewSet",
@@ -35,4 +36,5 @@ __all__ = [
     "ItemView",
     "PaginatedItemViewSet",
     "FullWarehouseViewSet",
+    "FullClientViewSet",
 ]

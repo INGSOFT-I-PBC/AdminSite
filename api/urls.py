@@ -10,12 +10,14 @@ from .views import *
 from .views.itemviews import ItemView
 from .views.orders import OrderRequestView
 from .views.warehouse import *
+from .views.clientview import *
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
 router.register(r"permissions", views.PermissionsViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
+router.register(r"clients/all", views.FullClientViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 
