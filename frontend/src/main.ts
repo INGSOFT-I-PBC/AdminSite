@@ -3,12 +3,13 @@ import { createApp, ref } from 'vue'
 import { createPinia } from 'pinia'
 import Toast, { type PluginOptions, POSITION } from 'vue-toastification'
 import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import { awesomeIcons } from './icons'
 import VueFeather from 'vue-feather'
-// import ECard from './components/custom/ECard.vue'
-// import ECol from './components/custom/ECol.vue'
-// import ERow from './components/custom/ERow.vue'
+import {
+    FontAwesomeIcon,
+    FontAwesomeLayers,
+    FontAwesomeLayersText,
+} from '@fortawesome/vue-fontawesome'
 import BootstrapVue3 from 'bootstrap-vue-3'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 
@@ -46,6 +47,8 @@ app.use(router)
 app.use(Toast, defToastOptions)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
+app.component('FontAwesomeLayers', FontAwesomeLayers)
+app.component('FontAwesomeLayersText', FontAwesomeLayersText)
 app.component(VueFeather.name, VueFeather)
 globalThis.ref = ref
 app.mount('#app')
