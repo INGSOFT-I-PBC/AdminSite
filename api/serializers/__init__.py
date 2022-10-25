@@ -1,5 +1,9 @@
 from .auth import *
+from .category import *
+from .client import *
+from .inventory import *
 from .item import *
+from .items import *
 from .warehouse import *
 
 __all__ = [
@@ -7,9 +11,15 @@ __all__ = [
     "UserSerializer",
     "FullWarehouseSerializer",
     "WarehouseSerializer",
-    "ItemSerializer",
     "FullItemSerializer",
     "PublicUserSerializer",
     "EmployeeSerializer",
     "GroupSerializer",
+    "ItemSerializer",
+    "FullCategorySerializer",
+    "CategorySerializer",
+    "FullInventorySerializer",
+    "InventorySerializer",
+    "FullClientSerializer",
+    "ClientSerializer",
 ]

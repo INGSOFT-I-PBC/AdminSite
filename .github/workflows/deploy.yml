@@ -1,0 +1,77 @@
+name: Deploy to production
+
+concurrency: production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+ 
+permissions:
+    contents: read
+      
+# Definition of the jobs for deployment at pythonanywhere
+jobs:
+  build_front:
+    name: Build/Frontend
+    runs-on: ubuntu-latest
+    
+    steps:
+        - uses: actions/checkout@v3
+        
+        - name: Install NodeJS
+          uses: actions/setup-node@v3
+          with:
+            node-version: 16
+        
+        - uses: pnpm/action-setup@v2.2.4
+          name: Set-up pnpm
+          id: pnpm-install
+          with:
+            version: 7
+            run_install: false
+            
+        - name: Configure .env
+          env:
+            BACKEND_HOST: ${{ secrets.BACKEND_HOST }}
+          run: |
+            echo "VITE_BACKEND_URL='$BACKEND_HOST'" >> .env
+            cat .env
+            
+        - name: Install dependencies
+          run: |
+            cd frontend/
+            pnpm install
+        - name: Build static files
+          run: |
+            cd frontend
+            pnpm build
+            
+  build_backend:
+    name: Build/Backend
+    runs-on: ubuntu-latest
+    
+    steps:
+        - uses: actions/checkout@v3
+        - name: Test project status
+          run: ls -ahl
+    
+  deploy:
+    name: Deploy to PythonAnywhere
+    runs-on: ubuntu-latest
+    needs: build_front
+    environment: production
+    
+    steps:
+        - uses: actions/checkout@v3
+          
+        - name: Stablish connection with ssh
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWORD }}
+            port: ${{secrets.PORT }}
+            script: whoami
+        

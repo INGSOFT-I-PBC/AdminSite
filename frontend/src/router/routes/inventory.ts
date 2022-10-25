@@ -28,4 +28,14 @@ export const inventory: Array<RouteConfig> = [
             breadcrumb: [{ text: 'Inventario', href: '/inventario' }],
         },
     },
+    {
+        path: '/inventario/editar/:id',
+        name: 'editinventario-panel',
+        component: () => import('@views/EditProductView.vue'),
+        meta: {
+            pageTitle: 'Inventario',
+            permission: 'view_dashboard',
+            breadcrumb: [{ text: 'Inventario', href: '/inventario' }],
+        },
+    },
 ]

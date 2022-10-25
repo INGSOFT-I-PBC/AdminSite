@@ -1,6 +1,10 @@
 from .authviews import *
+from .categoryviews import CategoryView
+from .clientview import *
 from .groups import *
+from .inventoryviews import InventoryView
 from .itemview import *
+from .itemviews import ItemView
 from .userview import *
 from .warehouse import *
 
@@ -13,10 +17,12 @@ __all__ = [
     "WhOrderRequestView",
     "WarehouseViewSet",
     "OrderRequestViewSet",
+    "ItemView",
+    "CategoryView",
+    "InventoryView",
     "user_data",
     "PermissionsViewSet",
     "ItemView",
-    "ItemViewSet",
     "PaginatedItemViewSet",
     "FullWarehouseViewSet",
     "EmployeeView",
@@ -28,4 +34,5 @@ __all__ = [
     "create_permission",
     "GroupViewSet",
     "UnpaginatedGroupViewSet",
+    "FullClientViewSet",
 ]

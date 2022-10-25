@@ -25,7 +25,7 @@
         },
         hideButtons: {
             type: Boolean,
-            default: false,
+            default: true,
         },
         okText: {
             type: String,
