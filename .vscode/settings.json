@@ -1,11 +1,15 @@
 {
     "[python]": {
         "editor.autoIndent": "full",
+<<<<<<< Updated upstream
         "editor.formatOnSave": true,
         "editor.codeActionsOnSave": {
             "source.organizeImports": true,
             "source.fixAll": true
         }
+=======
+        "editor.formatOnSave": false
+>>>>>>> Stashed changes
     },
     "[vue]": {
         "outline.showFunctions": true,

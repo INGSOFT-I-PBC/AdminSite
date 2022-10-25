@@ -2,7 +2,7 @@ export const role: Array<RouteConfig> = [
     {
         path: '/admin/roles',
         name: 'role-panel',
-        component: () => import('@views/RoleView.vue'),
+        component: () => import('@views/users/RoleView.vue'),
         meta: {
             pageTitle: 'Roles',
             permission: 'view_dashboard',

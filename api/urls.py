@@ -6,12 +6,11 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
-
-from .views import *
-from .views.itemviews import ItemView
-from .views.orders import OrderRequestView
-from .views.warehouse import *
-from .views.clientview import *
+from api.views import *
+from api.views.clientview import *
+from api.views.itemviews import ItemView
+from api.views.orders import OrderRequestView
+from api.views.warehouse import *
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
@@ -57,9 +56,6 @@ urlpatterns = [
     path("employee", views.create_employee),
     # Order management
     path("order", OrderRequestView.as_view()),
-    # Administration endpoints
-    path("admin/permission/<int:id>", PermissionsView.as_view()),
-    path("admin/permission/<str:codename>", PermissionsView.as_view()),
-    path("admin/permission", create_permission),
-    path("auth/reset-password", reset_password, name="reset-user-password"),
+    path("auth/reset-password", reset_password, name="reset-user-password")
+    # path('users'),
 ]

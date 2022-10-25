@@ -10,18 +10,9 @@ export const inventory: Array<RouteConfig> = [
         },
     },
     {
-        path: '/user/reset-password',
-        name: 'user-change-password',
-        component: () => import('@views/auth/ResetPasswordView.vue'),
-        meta: {
-            pageTitle: 'Configuración de usuario',
-            permission: 'can_edit_password',
-        },
-    },
-    {
         path: '/inventario/agregar',
         name: 'addinventario-panel',
-        component: () => import('@views/AddProductView.vue'),
+        component: () => import('@views/inventory/AddProductView.vue'),
         meta: {
             pageTitle: 'Inventario',
             permission: 'view_dashboard',
@@ -31,7 +22,7 @@ export const inventory: Array<RouteConfig> = [
     {
         path: '/inventario/editar/:id',
         name: 'editinventario-panel',
-        component: () => import('@views/EditProductView.vue'),
+        component: () => import('@views/inventory/EditProductView.vue'),
         meta: {
             pageTitle: 'Inventario',
             permission: 'view_dashboard',

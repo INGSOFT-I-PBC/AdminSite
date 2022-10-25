@@ -2,7 +2,7 @@ export const employee: Array<RouteConfig> = [
     {
         path: '/usuarios/empleados',
         name: 'employee-management-panel',
-        component: () => import('@views/EmployeeView.vue'),
+        component: () => import('@views/users/EmployeeView.vue'),
         meta: {
             pageTitle: 'Gestión de Empleados',
             permission: 'view_dashboard',
@@ -12,7 +12,7 @@ export const employee: Array<RouteConfig> = [
     {
         path: '/usuarios/empleado/agregar',
         name: 'addemployee-panel',
-        component: () => import('@views/AddEmployeeView.vue'),
+        component: () => import('@views/users/AddEmployeeView.vue'),
         meta: {
             pageTitle: 'Gestión de Empleados',
             permission: 'view_dashboard',
