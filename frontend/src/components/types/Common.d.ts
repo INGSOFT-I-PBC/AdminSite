@@ -49,4 +49,29 @@ export type HorizontalAlignment =
 export type Alignment = VerticalAlignment | HorizontalAlignment
 export type Booleanish = 'true' | 'false' | '' | boolean
 
+export type InputType =
+    | 'text'
+    | 'checkbox'
+    | 'button'
+    | 'color'
+    | 'date'
+    | 'datetime'
+    | 'datetime-local'
+    | 'email'
+    | 'file'
+    | 'hidden'
+    | 'image'
+    | 'month'
+    | 'number'
+    | 'password'
+    | 'radio'
+    | 'range'
+    | 'reset'
+    | 'search'
+    | 'submit'
+    | 'tel'
+    | 'time'
+    | 'url'
+    | 'week'
+
 export default Elevation
