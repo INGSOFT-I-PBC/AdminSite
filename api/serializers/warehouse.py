@@ -2,9 +2,9 @@ from django.forms import DateTimeField
 from rest_framework.serializers import ModelSerializer
 from rest_framework.serializers import CharField, DecimalField, IntegerField
 
-from api.models import Warehouse, Inventory
-from api.serializers.item import SimpleItemSerializer
-from .common import StatusSerializer
+from api.models import Warehouse, WhTransactionDetails, WarehouseTransaction, Inventory
+from api.serializers.item import SimpleItemSerializer, ItemSerializer
+from .common import SimpleStatusSerializer, StatusSerializer
 
 
 class FullWarehouseSerializer(ModelSerializer):
@@ -68,11 +68,100 @@ class WarehouseSerializer(ModelSerializer):
         extra_kwargs = {"status": {"required": False}}
 
 
-class InventorySerializer(ModelSerializer):
+class WhInventorySerializer(ModelSerializer):
 
     item = SimpleItemSerializer()
     quantity = IntegerField()
 
+    def to_representation(self, obj):
+        """Move fields from item to inventory representation."""
+        representation = super().to_representation(obj)
+        item_representation = representation.pop("item")
+        for key in item_representation:
+            representation[key] = item_representation[key]
+
+        return representation
+
+    def to_internal_value(self, data):
+        """Move fields related to item to their own item dictionary."""
+        item_internal = {}
+        for key in ItemSerializer.Meta.fields:
+            if key in data:
+                item_internal[key] = data.pop(key)
+
+        internal = super().to_internal_value(data)
+        internal["item"] = item_internal
+        return internal
+
+    def update(self, instance, validated_data):
+        """Update inventory and item. Assumes there is a item for every inventory."""
+        item_data = validated_data.pop("item")
+        super().update(instance, validated_data)
+
+        item = instance.item
+        for attr, value in item_data.items():
+            setattr(item, attr, value)
+        item.save()
+
+        return instance
+
     class Meta:
         model = Inventory
-        fields = ["item", "quantity", "updated_by"]
+        fields = ["item", "updated_by", "updated_at", "quantity"]
+
+
+class WhTransactionDetailSerializer(ModelSerializer):
+    id = IntegerField()
+    item = SimpleItemSerializer()
+    quantity = IntegerField()
+
+    def to_representation(self, obj):
+        """Move fields from item to Transaction Detail representation."""
+        representation = super().to_representation(obj)
+        item_representation = representation.pop("item")
+        for key in item_representation:
+            representation[key] = item_representation[key]
+
+        return representation
+
+    def to_internal_value(self, data):
+        """Move fields related to item to their own item dictionary."""
+        item_internal = {}
+        for key in ItemSerializer.Meta.fields:
+            if key in data:
+                item_internal[key] = data.pop(key)
+
+        internal = super().to_internal_value(data)
+        internal["item"] = item_internal
+        return internal
+
+    class Meta:
+        model = WhTransactionDetails
+        fields = ["item", "quantity", "updated_at"]
+
+
+class WhTransactionSerializer(ModelSerializer):
+
+    id = IntegerField()
+    notes = CharField(max_length=300)
+    status = SimpleStatusSerializer()
+
+    def to_representation(self, obj):
+        """Move fields from status to Transaction representation."""
+        representation = super().to_representation(obj)
+        status_representation = representation.pop("status")
+        representation["status"] = status_representation["name"]
+
+        return representation
+
+    class Meta:
+        model = WarehouseTransaction
+        fields = [
+            "created_at",
+            "created_by",
+            "id",
+            "notes",
+            "status",
+            "warehouse_origin",
+            "warehouse_destiny",
+        ]

@@ -116,6 +116,7 @@ class WhTomasFisicas(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     done_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
+    novedad = models.CharField(max_length=300, blank=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
 
     class Meta:

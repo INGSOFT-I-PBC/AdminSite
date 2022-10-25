@@ -3,30 +3,29 @@ from api.models.common import Status
 from api.models import (
     Warehouse,
     OrderRequest,
-    OrderRequestDetail,
-    OrderStatus,
+    Purchase,
     Inventory,
-    Item,
+    PurchaseStatus,
+    warehouse,
 )
-from api.serializers import WarehouseSerializer, FullWarehouseSerializer
-from api.serializers.oders import OrderSerializer, OrderDetailsSerializer
+from api.serializers.warehouse import (
+    WarehouseSerializer,
+    FullWarehouseSerializer,
+    WhTransactionSerializer,
+)
+from api.serializers.order import OrderSerializer
+from api.serializers.purchase import PurchaseSerializer, PurchaseStatusSerializer
 
-from distutils.log import error
 from django.core.paginator import Paginator
 from django.db.models import Q
 from django.http import JsonResponse
-
-from email import message
 
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
-
-from tkinter import W
-from tkinter.tix import Tree
-
-from api.serializers.warehouse import InventorySerializer
+from api.utils import error_response
+from api.serializers.warehouse import WhInventorySerializer
 
 
 class WarehouseView(APIView):
@@ -52,18 +51,10 @@ class WarehouseView(APIView):
 
             serializer = WarehouseSerializer(warehouse_qset)
 
-            wh_inventory = InventorySerializer(warehouse_qset.inventory_set, many=True)
-
-            return JsonResponse(
-                {"warehouse": serializer.data, "inventory": wh_inventory.data}
-            )
+            return JsonResponse(serializer.data)
 
         except Exception as e:
-            print(e)
-            return JsonResponse(
-                {"error": True, "message": "Invalid query"},
-                status=400,
-            )
+            error_response("Invalid query")
 
     def put(self, request: Request):
 
@@ -84,11 +75,7 @@ class WarehouseView(APIView):
             return JsonResponse({"error": False, "message": serializer.data})
 
         except Exception as e:
-            print(e)
-            return JsonResponse(
-                {"error": True, "message": "Object not found"},
-                status=400,
-            )
+            error_response("Invalid query")
 
     def post(self, request: Request):
 
@@ -107,11 +94,7 @@ class WarehouseView(APIView):
             serializer.update()
 
         except Exception as e:
-
-            return JsonResponse(
-                {"error": True, "message": "Invalid attributes received"},
-                status=400,
-            )
+            error_response("Invalid query")
 
         return JsonResponse({"error": False, "message": "Ok"})
 
@@ -149,10 +132,7 @@ class WarehouseView(APIView):
 
         except Exception as e:
 
-            return JsonResponse(
-                {"error": True, "message": "Invalid query"},
-                status=400,
-            )
+            error_response("Invalid query")
 
 
 class WarehouseViewSet(ReadOnlyModelViewSet):
@@ -167,7 +147,7 @@ class FullWarehouseViewSet(WarehouseViewSet):
 
 class OrderRequestViewSet(ReadOnlyModelViewSet):
     queryset = OrderRequest.objects.all().order_by("id")
-    serializer_class = WarehouseSerializer(queryset, many=True)
+    serializer_class = OrderSerializer(queryset, many=True)
 
     def list(self, request):
 
@@ -182,6 +162,32 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
             return Response(OrderSerializer(page_obj, many=True).data)
 
         return Response(self.serializer_class.data)
+
+
+class WhInventoryView(APIView):
+    def get(self, request):
+
+        try:
+
+            wh_inventory = Inventory.objects.filter(
+                warehouse__pk=request.query_params.get("id")
+            ).order_by("-id")
+
+            page_number = request.query_params.get("page")
+
+            if page_number:
+
+                paginator = Paginator(wh_inventory, 50)
+
+                page_obj = paginator.get_page(page_number)
+
+                return Response(WhInventorySerializer(page_obj, many=True).data)
+
+            return Response(WhInventorySerializer(wh_inventory, many=True).data)
+
+        except Exception as e:
+            print(e)
+            return error_response("Invalid query")
 
 
 class WhOrderRequestView(APIView):
@@ -203,23 +209,93 @@ class WhOrderRequestView(APIView):
 
                 return Response(OrderSerializer(page_obj, many=True).data)
 
-            return Response(OrderSerializer(wh_orders, many=True))
+            return Response(OrderSerializer(wh_orders, many=True).data)
 
         except:
-            return JsonResponse(
-                {"error": True, "message": "Invalid query"},
-                status=400,
+            return error_response("Invalid query")
+
+
+class WhPurchaseView(APIView):
+    def get(self, request):
+        try:
+
+            wh_purchases = Purchase.objects.filter(
+                warehouse__pk=request.query_params.get("id")
+            ).order_by("-id")
+
+            page_number = request.query_params.get("page")
+
+            if page_number:
+
+                paginator = Paginator(wh_purchases, 50)
+
+                page_obj = paginator.get_page(page_number)
+
+                purchase_data = PurchaseSerializer(page_obj, many=True).data
+
+                for purchase in purchase_data:
+                    purchase_status = (
+                        PurchaseStatus.objects.select_related("status")
+                        .filter(purchase__id=purchase.get("id"))
+                        .latest("id")
+                    )
+
+                    purchase["status"] = purchase_status.status.name
+
+                return JsonResponse(purchase_data, safe=False)
+
+            purchases_data = PurchaseSerializer(wh_purchases, many=True).data
+
+            for purchase in purchases_data:
+                purchase_status = (
+                    PurchaseStatus.objects.select_related("status")
+                    .filter(purchase__id=purchase.get("id"))
+                    .latest("id")
+                )
+
+                purchase["status"] = purchase_status.status.name
+
+            return JsonResponse(purchases_data, safe=False)
+
+        except Exception as e:
+
+            return error_response("Invalid query")
+
+
+class WhTransactionView(APIView):
+    def get(self, request):
+        try:
+
+            wh_transaction_qs = (
+                warehouse.WarehouseTransaction.objects.select_related("status")
+                .filter(
+                    Q(warehouse_origin__pk=request.query_params.get("id"))
+                    | Q(warehouse_destiny__pk=request.query_params.get("id"))
+                )
+                .order_by("-id")
             )
 
-    def post(self):
+            page_number = request.query_params.get("page")
 
-        pass
+            if page_number:
 
-    def put(self):
-        pass
+                paginator = Paginator(wh_transaction_qs, 50)
 
-    def delete(self):
-        pass
+                page_obj = paginator.get_page(page_number)
+
+                transactions_data = WhTransactionSerializer(page_obj, many=True).data
+
+                return JsonResponse(transactions_data, safe=False)
+
+            transactions_data = WhTransactionSerializer(
+                wh_transaction_qs, many=True
+            ).data
+
+            return JsonResponse(transactions_data)
+
+        except Exception as e:
+            print(e)
+            return error_response("Invalid query")
 
 
 class WhOrderRequestViewSet(ReadOnlyModelViewSet):

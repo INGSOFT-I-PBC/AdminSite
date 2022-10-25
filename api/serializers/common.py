@@ -15,6 +15,14 @@ class StatusSerializer(ModelSerializer):
         fields = ["name", "description"]
 
 
+class SimpleStatusSerializer(ModelSerializer):
+    name = CharField(max_length=255)
+
+    class Meta:
+        model = Status
+        fields = ["name"]
+
+
 class FullStatusSerializer(ModelSerializer):
     id = IntegerField()
     name = CharField(max_length=255)

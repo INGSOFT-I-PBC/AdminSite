@@ -5,8 +5,8 @@ from api.models.items import Item
 from .warehouse import Warehouse
 
 from .provider import Provider
-from .orders import OrderStatus
-from .invoice import InvoiceDetails
+from .orders import OrderRequest
+from .invoice import Invoice
 from .users import Employee
 from django.core.validators import MinValueValidator
 
@@ -16,10 +16,12 @@ class Purchase(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
     provider = models.ForeignKey(Provider, on_delete=models.RESTRICT)
-    order_origin = models.ForeignKey(OrderStatus, on_delete=models.RESTRICT, null=True)
+    order_origin = models.ForeignKey(OrderRequest, on_delete=models.RESTRICT, null=True)
     reference = models.IntegerField()
     warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
-    invoice = models.ForeignKey(InvoiceDetails, on_delete=models.RESTRICT)
+    invoice = models.ForeignKey(
+        Invoice, null=True, default=None, on_delete=models.RESTRICT
+    )
     img_details = models.CharField(max_length=255, null=True)
 
     class Meta:

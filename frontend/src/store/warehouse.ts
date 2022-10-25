@@ -1,7 +1,9 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
-import type { PaginatedAPIResponse } from '@store-types'
+import type { PaginatedAPIResponse, Item } from '@store-types'
+
+type QuantifiedItem = Item & { quantity: number }
 
 export interface WarehouseState {
     lastWarehouseList: Optional<Warehouse[]>
@@ -38,14 +40,26 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             this.paginatedWarehouse = result
             return result
         },
-        async fetchWarehousesInventory(options: Optional<WarehouseQuery>) {
+        async fetchPaginatedWarehouseInventory(options: WarehouseQuery , page:number) {
+            const queryParams = {...options,'page':page}
             const result = await (
-                await axios.get<PaginatedAPIResponse<Warehouse>>(
-                    '/api/v1/list/warehouses',
-                    { params: options }
+                await axios.get<PaginatedAPIResponse<QuantifiedItem>>(
+                    '/api/v1/warehouse/inventory',
+                    { params: queryParams }
                 )
-            ).data
+            )
             return result
         },
+
+        async fetchPaginatedWarehousesOrder(options: WarehouseQuery , page:number) {
+            const queryParams = {...options,'page':page}
+            const result = await (
+                await axios.get<PaginatedAPIResponse<any>>(
+                    '/api/v1/warehouse/purchase-order',
+                    { params: queryParams }
+                )
+            )
+            return result
+        }
     },
 })

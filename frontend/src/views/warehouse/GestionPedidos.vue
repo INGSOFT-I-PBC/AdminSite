@@ -3,8 +3,8 @@ import EButton from '@components/custom/EButton.vue'
 import ECard from '@components/custom/ECard.vue'
 import { useWarehouseStore } from '@store/warehouse'
 import WaitOverlay from '../../components/custom/WaitOverlay.vue'
-import type { Warehouse, WarehouseQuery } from '/../store/models/warehouseModels'
 import { ref } from 'vue'
+import { type Item, type Warehouse,} from '@store/types'
 
 const showWaitOverlay = ref(true)
 
@@ -14,7 +14,18 @@ let whRows = ref(0)
 let paginatedWarehouse = ref()
 let searchInput = ref("")
 const showAllWarehouses = ref(true)
-let activeWharehouse = ref(-1)
+let activeWharehouseButton = ref(-1)
+
+type QuantifiedItem = Item & { quantity: number }
+
+type warehouseInformation = {
+        bodega?: Warehouse
+        inventory?: QuantifiedItem[]
+        orders?: []
+        tomas_fisicas?: []
+    }
+
+let activeWhInformation = ref(<warehouseInformation>{})
 
 const warehouse = useWarehouseStore()
 
@@ -34,14 +45,28 @@ function filteredList() {
     );
 }
 
-function onPageChanged(event: any, page: number) {
+function onPageChanged(event:any, page: number) {
     paginate(whPageCount.value, page - 1);
 }
 
 function wharehouseButtonPressed(event: any, whId: number) {
+
     showAllWarehouses.value = false
 
-    activeWharehouse.value = whId
+    activeWharehouseButton.value = whId
+
+    console.log(event.target)
+    console.log(whId)
+
+    // warehouse.fetchPaginatedWarehouseInventory({id:whId},0).then(it => {
+    //     activeWhInformation.value.inventory = it.data
+    // })
+
+    // warehouse.fetchPaginatedWarehousesOrder({id:whId},0).then(it=>{
+
+    //     activeWhInformation.value.orders = it.data
+
+    // })
 
 }
 
@@ -84,11 +109,11 @@ warehouse.fetchWarehouses().then(it => {
 
                     <b-list-group :per-page="whPageCount" :current-page="currentPage">
 
-                        <b-list-group-item :class="{ active: activeWharehouse === -1}" button
-                            @click="showAllWarehouses = true;activeWharehouse= -1"> Todas las bodegas
+                        <b-list-group-item :class="{ active: activeWharehouseButton === -1}" button
+                            @click="showAllWarehouses = true;activeWharehouseButton= -1"> Todas las bodegas
                         </b-list-group-item>
                         <b-list-group-item v-for="wh, index in paginatedWarehouse " button
-                            :class="{ active: wh.id === activeWharehouse}" :key="wh.id" :id="'whbtn-' + wh.id"
+                            :class="{ active: wh.id === activeWharehouseButton}" :key="wh.id" :id="'whbtn-' + wh.id"
                             @click="($event)=> { wharehouseButtonPressed($event,wh.id)}">
                             {{wh.name}}
 

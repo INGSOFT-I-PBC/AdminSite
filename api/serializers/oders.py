@@ -41,36 +41,3 @@ class FullOrderStatusSerializer(ModelSerializer):
         model = OrderStatus
         fields = ["id", "order", "status", "created_by", "created_at"]
         db_table = "order_status"
-
-
-class OrderStatusSerializer(ModelSerializer):
-
-    id = IntegerField()
-    created_at = DateTimeField()
-
-    class Meta:
-        model = OrderStatus
-        fields = ["order", "status", "created_by", "created_at"]
-
-
-class OrderDetailsSerializer(ModelSerializer):
-
-    id = IntegerField()
-    order_request = OrderSerializer()
-    quantity = IntegerField()
-
-    class Meta:
-        model = OrderRequestDetail
-        fields = ["id", "order", "item", "quantity"]
-
-
-class FullOrderDetailsSerializer(ModelSerializer):
-
-    id = IntegerField()
-    order_request = OrderSerializer()
-    quantity = IntegerField()
-    item = SimpleItemSerializer()
-
-    class Meta:
-        model = OrderRequestDetail
-        fields = ["id", "order", "item", "quantity"]
