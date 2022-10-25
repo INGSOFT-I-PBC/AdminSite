@@ -209,7 +209,8 @@
                             this.items['0'].category_id_Item
                         this.imagenM =
                         //'https://proyectoadmin.pythonanywhere.com/'
-                            'http://127.0.0.1:8000/storage/' +
+                        //http://127.0.0.1:8000
+                            'https://proyectoadmin.pythonanywhere.com/storage/' +
                             this.items['0'].imgItem
                         console.log(this.imagenM)
                         this.entrada.warehouse_id = this.items['0'].warehouse_id
