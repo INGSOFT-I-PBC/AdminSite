@@ -1,4 +1,3 @@
-
 export interface Role {
     id: number
     name: string
@@ -36,6 +35,15 @@ export interface SimpleUser {
     is_active?: boolean
 }
 
+export type SimpleUserForm = {
+    username: string
+    email: string
+    employee: number
+    group: number
+    password: string
+    password_confirm: string
+}
+
 /**
  * A user class used for forms, all values are optional, but useful
  * for sending request and type-safety
@@ -46,7 +54,8 @@ export type UserForm = {
     employee?: number
     group?: number
     password?: string
-    password_confirm: string
+    password_confirm?: string
+    is_active?: boolean
 }
 
 export interface Employee {

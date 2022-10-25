@@ -5,6 +5,9 @@ import Vue3EasyDataTable from 'vue3-easy-data-table'
 declare module '@vue/runtime-core' {
     export interface GlobalComponents {
         EasyDataTable: typeof Vue3EasyDataTable
+        FontAwesomeIcon: DefineComponent<FontAwesomeIconProps>
+        FontAwesomeLayers: DefineComponent<FontAwesomeLayersProps>
+        FontAwesomeLayersText: DefineComponent<FontAwesomeLayersTextProps>
     }
 }
 

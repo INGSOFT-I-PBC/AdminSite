@@ -1,5 +1,7 @@
-<template></template>
+<template>
+    <ECard></ECard>
+</template>
 
-<script lang="ts" setup></script>
-
-<style scoped></style>
+<script lang="ts" setup>
+    import ECard from '@/components/custom/ECard.vue'
+</script>

@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import {ref} from 'vue'
+import { ref } from 'vue'
 import type { PaginatedResponse, User } from './types'
-import type { SimpleUser, UserForm } from './types/user.model'
+import type { SimpleUser, SimpleUserForm, UserForm } from './types/user.model'
 import type { MessageResponse } from '@store-types'
 
 export type UserSearchParams = {
@@ -12,7 +12,6 @@ export type UserSearchParams = {
 type identifier = number | string
 
 export const useUserStore = defineStore('user-store', () => {
-
     const user = ref<SimpleUser | null>(null)
 
     const users = ref<PaginatedResponse<SimpleUser> | null>(null)
@@ -24,7 +23,12 @@ export const useUserStore = defineStore('user-store', () => {
      * @param params the search params of the request
      */
     async function fetchUsers(params?: UserSearchParams & PaginationOptions) {
-        const response = (await axios.get<PaginatedResponse<SimpleUser>>('/api/v1/list/users', { params })).data
+        const response = (
+            await axios.get<PaginatedResponse<SimpleUser>>(
+                '/api/v1/list/users',
+                { params }
+            )
+        ).data
         users.value = response
         return response
     }
@@ -36,7 +40,9 @@ export const useUserStore = defineStore('user-store', () => {
      * @param idOrUsername The search param for the user
      */
     async function fetchUser(idOrUsername: identifier) {
-        const response = (await axios.get<SimpleUser>(`/api/v1/user/${idOrUsername}`)).data
+        const response = (
+            await axios.get<SimpleUser>(`/api/v1/user/${idOrUsername}`)
+        ).data
         user.value = response
         return response
     }
@@ -46,7 +52,7 @@ export const useUserStore = defineStore('user-store', () => {
      *
      * @param user the user to save
      */
-    function saveUser(user: SimpleUser) {
+    function saveUser(user: SimpleUserForm) {
         return axios.post<MessageResponse>('/api/v1/user', user)
     }
 
@@ -76,8 +82,19 @@ export const useUserStore = defineStore('user-store', () => {
      * @param idOrUsername The id or username of the target user
      */
     function activateUser(idOrUsername: identifier) {
-        return axios.post<MessageResponse>(`/api/v1/user/${idOrUsername}/activate`)
+        return axios.post<MessageResponse>(
+            `/api/v1/user/${idOrUsername}/activate`
+        )
     }
 
-    return {user, users, fetchUsers, fetchUser, saveUser, updateUser, removeUser, activateUser}
+    return {
+        user,
+        users,
+        fetchUsers,
+        fetchUser,
+        saveUser,
+        updateUser,
+        removeUser,
+        activateUser,
+    }
 })

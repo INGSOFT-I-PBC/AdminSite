@@ -1,3 +1,8 @@
+import type {
+    FontAwesomeIconProps,
+    FontAwesomeLayersProps,
+    FontAwesomeLayersTextProps,
+} from '@fortawesome/vue-fontawesome'
 import type { Component } from 'vue'
 
 declare module '*.vue' {
@@ -33,7 +38,10 @@ declare module '@vue/runtime-core' {
         RouterLink: typeof import('vue-router')['RouterLink']
         RouterView: typeof import('vue-router')['RouterView']
         VueFeather: typeof import('vue-feather')['default']
-        FontAwesomeIcon: typeof import('@fortawesome/vue-fontawesome')['FontAwesomeIcon']
+        // FontAwesomeIcon: typeof import('@fortawesome/vue-fontawesome')['FontAwesomeIcon']
+        FontAwesomeIcon: DefineComponent<FontAwesomeIconProps>
+        FontAwesomeLayers: DefineComponent<FontAwesomeLayersProps>
+        FontAwesomeLayersText: DefineComponent<FontAwesomeLayersTextProps>
         ECard: typeof import('@components/custom/ECard.vue')['default']
         Table: typeof import('@components/holders/Table.vue')['default']
     }
