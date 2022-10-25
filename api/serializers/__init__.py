@@ -4,6 +4,7 @@ from .items import *
 from .category import *
 from .inventory import *
 from .client import *
+from .status import *
 
 __all__ = [
     "PermissionSerializer",
@@ -18,4 +19,6 @@ __all__ = [
     "InventorySerializer",
     "FullClientSerializer",
     "ClientSerializer",
+    "StatusSerializer",
+    "ProvinceSerializer"
 ]

@@ -2,25 +2,52 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
-
+from rest_framework import viewsets, status
 from api.models import  Client
 from api.serializers import ClientSerializer, FullClientSerializer
-
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
+from rest_framework.permissions import IsAuthenticated
+from api.utils import error_response
+from django.http import JsonResponse
 
 class ClientView(APIView):
     """
-    This View holds multiple methods for the Warehouse
+    This View holds multiple methods for the client
     """
+    permission_classes = (IsAuthenticated,)
+
 
     def get(self, request: Request):
-        return Response({})
+        try:
+            id = int(request.GET.get('id'))
+            client = Client.objects.filter(pk=id).first()
+            if client is None:
+                return error_response('Not found', status=404)
+            serializer = ClientSerializer(client)
+            return JsonResponse(serializer.data)
+        except TypeError:
+            return error_response('invalid params')
 
-    def post(self, request: Request):
-        return Response({})
+    def post(self, request):
+        serializer = ClientSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def put (self,request):
+        id = int(request.GET.get('id'))
+        client=Client.objects.filter(pk=id).first()
+        serializer = ClientSerializer(client, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        pass
 
-    def delete(self, request: Request):
+    def delete(self, request):
+
         """
-        This method would deactivate a warehouse.
+        This method would deactivate a client.
         Args:
             request: The Request
 
@@ -29,12 +56,23 @@ class ClientView(APIView):
             executed.
 
         """
-        return Response({})
+        try:
+            id = int(request.GET.get('id'))
+            client = Client.objects.filter(pk=id).first()
+            if client is None:
+                return error_response('Not found', status=404)
+            client.delete()
+            return Response('OK',status=status.HTTP_200_OK)
+        except TypeError:
+            return error_response('invalid params')
+
 
 
 class ClientViewSet(ReadOnlyModelViewSet):
     queryset = Client.objects.all().order_by("name")
     serializer_class = FullClientSerializer
+
+
 
 
 class FullClientViewSet(ClientViewSet):
@@ -46,21 +84,4 @@ class FullClientViewSet(ClientViewSet):
     serializer_class = ClientSerializer'''
 
 
-class WhOrderRequestView(APIView):
-    def get(self):
-        pass
 
-    def post(self):
-        pass
-
-    def put(self):
-        pass
-
-    def delete(self):
-        pass
-
-
-class WhOrderRequestViewSet(ReadOnlyModelViewSet):
-    """
-    API Endpoint that allows only read operation on the given Orders that are registered and available
-    """
