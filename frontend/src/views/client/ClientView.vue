@@ -5,7 +5,7 @@
     import ListBox from '@components/custom/ListBox.vue'
     import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     import { onMounted } from 'vue'
 
     import type { Client } from '@store/types'
@@ -16,6 +16,7 @@
 
     import { useRouter } from 'vue-router'
     const router = useRouter()
+    const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
     const itemStore = useClientStore()
     //const toast = useToast()
@@ -65,6 +66,7 @@
         form.value.items = await itemStore.fetchAllClient()
         console.log(form.value.items)
         itemLoading.value = false
+        showWaitOverlay.value = false
     }
     function onShowModalClick() {
         loadItems()
@@ -77,7 +79,7 @@
         console.log(index)
         form.value.items.splice(index, 1)
     }
-    function deleteProduct(id:number,index: number): void {
+    function deleteProduct(id: number, index: number): void {
         itemStore.removeClient(id)
         removeItem(index)
     }
@@ -97,14 +99,6 @@
 
 <template>
     <main>
-        <!--<ModalDialog
-            id="client-modal"
-            v-model:show="productModalShow"
-            title="Detalle del cliente">
-            <h1>nombre: {{ selectedProduct?.name }}</h1>
-            <span>Cantidad: ${{ selectedProduct?.id }}</span>
-        </ModalDialog>-->
-
         <ModalDialog v-model:show="itemInfoShow" size="xl">
             <template #dialog-title>
                 <b class="tw-text-2xl"
@@ -205,34 +199,39 @@
 
             <!-- <ERow>
                 <ECol cols="12"> -->
-            <BTable :fields="formFields" :items="form.items">
-                <template #cell(#)="{ index }">{{ index + 1 }} </template>
-                <template #cell(Ciudad)="{ index }"
-                    >{{ form.items[index]['city']?.name }}
-                </template>
-                <template #cell(Acciones)="{ item, index }">
-                    <div class="t-button-group">
-                        <e-button
-                            left-icon="fa-eye"
-                            type="secondary"
-                            @click="showItem(item)"
-                            >Ver detalles</e-button
-                        >
-                        <e-button left-icon="fa-edit" type="success" @click="goEdit(item['id'])"
-                            >Editar</e-button
-                        >
-                        <e-button
-                            left-icon="fa-trash-can"
-                            type="cancel"
-                            @click="deleteProduct(item['id'],index)">
-                            <span
-                                class="tw-invisible md:tw-visible tw-font-bold"
-                                >Eliminar</span
-                            ></e-button
-                        >
-                    </div>
-                </template>
-            </BTable>
+            <WaitOverlay :show="showWaitOverlay">
+                <BTable :fields="formFields" :items="form.items">
+                    <template #cell(#)="{ index }">{{ index + 1 }} </template>
+                    <template #cell(Ciudad)="{ index }"
+                        >{{ form.items[index]['city']?.name }}
+                    </template>
+                    <template #cell(Acciones)="{ item, index }">
+                        <div class="t-button-group">
+                            <e-button
+                                left-icon="fa-eye"
+                                type="secondary"
+                                @click="showItem(item)"
+                                >Ver detalles</e-button
+                            >
+                            <e-button
+                                left-icon="fa-edit"
+                                type="success"
+                                @click="goEdit(item['id'])"
+                                >Editar</e-button
+                            >
+                            <e-button
+                                left-icon="fa-trash-can"
+                                type="cancel"
+                                @click="deleteProduct(item['id'], index)">
+                                <span
+                                    class="tw-invisible md:tw-visible tw-font-bold"
+                                    >Eliminar</span
+                                ></e-button
+                            >
+                        </div>
+                    </template>
+                </BTable>
+            </WaitOverlay>
         </ECard>
     </main>
 </template>
