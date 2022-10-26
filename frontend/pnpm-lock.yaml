@@ -11,7 +11,7 @@ specifiers:
   '@rushstack/eslint-patch': ^1.2.0
   '@types/bootstrap': ^5.2.5
   '@types/jsdom': ^20.0.0
-  '@types/node': 18.8.0
+  '@types/node': 18.11.5
   '@vitejs/plugin-vue': ^3.1.2
   '@vitejs/plugin-vue-jsx': ^2.0.1
   '@vue/eslint-config-prettier': ^7.0.0
@@ -79,13 +79,13 @@ devDependencies:
   '@rushstack/eslint-patch': 1.2.0
   '@types/bootstrap': 5.2.5
   '@types/jsdom': 20.0.0
-  '@types/node': 18.8.0
+  '@types/node': 18.11.5
   '@vitejs/plugin-vue': 3.1.2_vite@3.1.8+vue@3.2.41
   '@vitejs/plugin-vue-jsx': 2.0.1_vite@3.1.8+vue@3.2.41
   '@vue/eslint-config-prettier': 7.0.0_znq2sm4m5bonjw4qqm6mwhbe2q
   '@vue/eslint-config-typescript': 11.0.2_qsmcthc5ijamuzfurbvbpwqwnm
   '@vue/test-utils': 2.1.0_vue@3.2.41
-  '@vue/tsconfig': 0.1.3_@types+node@18.8.0
+  '@vue/tsconfig': 0.1.3_@types+node@18.11.5
   autoprefixer: 10.4.12_postcss@8.4.18
   cypress: 10.10.0
   eslint: 8.25.0
@@ -676,7 +676,7 @@ packages:
   /@types/jsdom/20.0.0:
     resolution: {integrity: sha512-YfAchFs0yM1QPDrLm2VHe+WHGtqms3NXnXAMolrgrVP6fgBHHXy1ozAbo/dFtPNtZC/m66bPiCTWYmqp1F14gA==}
     dependencies:
-      '@types/node': 18.11.0
+      '@types/node': 18.11.5
       '@types/tough-cookie': 4.0.2
       parse5: 7.1.1
     dev: true
@@ -693,12 +693,8 @@ packages:
     resolution: {integrity: sha512-Y6S38pFr04yb13qqHf8uk1nHE3lXgQ30WZbv1mLliV9pt0NjvqdWttLcrOYLnXbOafknVYRHZGoMSpR9UwfYow==}
     dev: true
 
-  /@types/node/18.11.0:
-    resolution: {integrity: sha512-IOXCvVRToe7e0ny7HpT/X9Rb2RYtElG1a+VshjwT00HxrM2dWBApHQoqsI6WiY7Q03vdf2bCrIGzVrkF/5t10w==}
-    dev: true
-
-  /@types/node/18.8.0:
-    resolution: {integrity: sha512-u+h43R6U8xXDt2vzUaVP3VwjjLyOJk6uEciZS8OSyziUQGOwmk+l+4drxcsDboHXwyTaqS1INebghmWMRxq3LA==}
+  /@types/node/18.11.5:
+    resolution: {integrity: sha512-3JRwhbjI+cHLAkUorhf8RnqUbFXajvzX4q6fMn5JwkgtuwfYtRQYI3u4V92vI6NJuTsbBQWWh3RZjFsuevyMGQ==}
     dev: true
 
   /@types/semver/7.3.12:
@@ -721,7 +717,7 @@ packages:
     resolution: {integrity: sha512-Cn6WYCm0tXv8p6k+A8PvbDG763EDpBoTzHdA+Q/MF6H3sapGjCm9NzoaJncJS9tUKSuCoDs9XHxYYsQDgxR6kw==}
     requiresBuild: true
     dependencies:
-      '@types/node': 18.11.0
+      '@types/node': 18.11.5
     dev: true
     optional: true
 
@@ -1060,7 +1056,7 @@ packages:
       vue: 3.2.41
     dev: true
 
-  /@vue/tsconfig/0.1.3_@types+node@18.8.0:
+  /@vue/tsconfig/0.1.3_@types+node@18.11.5:
     resolution: {integrity: sha512-kQVsh8yyWPvHpb8gIc9l/HIDiiVUy1amynLNpCy8p+FoCiZXCo6fQos5/097MmnNZc9AtseDsCrfkhqCrJ8Olg==}
     peerDependencies:
       '@types/node': '*'
@@ -1068,7 +1064,7 @@ packages:
       '@types/node':
         optional: true
     dependencies:
-      '@types/node': 18.8.0
+      '@types/node': 18.11.5
     dev: true
 
   /abab/2.0.6:
@@ -4411,7 +4407,7 @@ packages:
     dependencies:
       '@types/chai': 4.3.3
       '@types/chai-subset': 1.3.3
-      '@types/node': 18.11.0
+      '@types/node': 18.11.5
       chai: 4.3.6
       debug: 4.3.4
       jsdom: 20.0.1
