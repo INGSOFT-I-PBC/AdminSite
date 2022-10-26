@@ -1,16 +1,12 @@
 <script setup lang="ts">
 import ECard from '@components/custom/ECard.vue'
 import ERow from '@components/custom/ERow.vue'
-import ECol from '@components/custom/ECol.vue'
-import ListBox from '@components/custom/ListBox.vue'
-import InputText from '@components/custom/InputText.vue'
 import EButton from '@components/custom/EButton.vue'
 import ModalDialog from '@components/custom/ModalDialog.vue'
-import Title from '@components/custom/Title.vue'
 import Table from '@components/holders/Table.vue'
 import WaitOverlay from '@components/custom/WaitOverlay.vue'
 import { computed, reactive, onMounted } from 'vue'
-
+import { useEmployeeStore } from '@store/employee'
 import { useRoute, useRouter } from 'vue-router'
 import type { Employee } from '@store-types'
 const router = useRouter()
@@ -19,6 +15,7 @@ const pageName = 'Empleados'
 const model = ref(null)
 const employeeModalShow = ref(false)
 const showWaitOverlay = ref<boolean>(true)
+const employeeRepository = useEmployeeStore()
 
 const tableSettings = reactive<TableHeaderSettings>({
     headers: [
@@ -72,19 +69,32 @@ function removeEmployee(index: number) {
 }
 
 interface Employee {
+    code: number
+    created_at: string
 
+    name: string
+    marc: string
+    model: string
+    category: string | number
+    descrip: string
+    price: string | number
+    stock: string | number
+    state: number | string
+    actions: number | string
+    id_item: number
+    id: number
 }
 /*let items: Item[]*/
 const employees: Employee[] = []
 
 async function showAllEmployees() {
-    /*ItemDataService.getAll()
-        .then(response => {
-            items = response.data
+    employeeRepository.fetchEmployees().then((response) => {
+        console.log(response.data)
+            /*items = response.data
             console.log(items)
 
             for (let i = 0; i < items.length; i++) {
-                employees.push({
+                items2.push({
                     code: items[i].codename_Item,
                     name: items[i].nombreItem,
                     marc: items[i].brandItem,
@@ -100,15 +110,15 @@ async function showAllEmployees() {
                 })
             }
 
-            tableSettings.rows = employees
+            tableSettings.rows = items2
             showWaitOverlay.value = false
 
-            console.log(tableSettings.rows)
+            console.log(tableSettings.rows)*/
+            showWaitOverlay.value = false
         })
         .catch((e: Error) => {
             console.log(e)
-        })*/
-        showWaitOverlay.value = false
+        })
 }
 
 function goAdd(): void {
@@ -178,7 +188,7 @@ onMounted(() => {
                                 @click="showEmployee(cellData as employeeModel)">
                                 Ver más detalles
                             </button>
-                            <button class="tw-bg-green-600 tw-py-1 tw-text-white tw-mx-2 tw-rounded" @click="goEdit(empleados[rowIdx].id)">
+                            <button class="tw-bg-green-600 tw-py-1 tw-text-white tw-mx-2 tw-rounded" @click="goEdit(employees[rowIdx].id)">
                                 Editar
                             </button>
                             <button class="tw-bg-red-600 tw-py-1 tw-text-white tw-mx-2 tw-rounded"

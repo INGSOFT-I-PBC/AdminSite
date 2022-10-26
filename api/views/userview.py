@@ -4,6 +4,7 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.models import Employee, User
 from api.serializers.auth import *
@@ -44,7 +45,6 @@ class EmployeeView(APIView):
             employee_user.first().save()
         employee.save()
         return response("employee deleted successfully")
-
 
 class UserView(APIView):
     """

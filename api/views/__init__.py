@@ -1,24 +1,12 @@
-from api.views.authviews import (
-    LogoutViewSet,
-    PermissionsView,
-    PermissionsViewSet,
-    UserViewSet,
-    reset_password,
-    user_data,
-)
+from api.views.authviews import *
 from api.views.categoryviews import CategoryView
+from api.views.clientview import *
+from api.views.groups import *
 from api.views.inventoryviews import InventoryView
 from api.views.itemview import *
 from api.views.itemviews import ItemView
-from api.views.warehouse import (
-    FullWarehouseViewSet,
-    OrderRequestViewSet,
-    WarehouseView,
-    WarehouseViewSet,
-    WhOrderRequestView,
-)
-
-from .employee import EmployeeView  # EmployeeViewSet,; FullEmployeeViewSet,
+from api.views.userview import *
+from api.views.warehouse import *
 
 __all__ = [
     "UserViewSet",
@@ -37,7 +25,14 @@ __all__ = [
     "ItemView",
     "PaginatedItemViewSet",
     "FullWarehouseViewSet",
-    #"FullEmployeeViewSet",
-    #"EmployeeViewSet",
     "EmployeeView",
+    "UserView",
+    "create_user",
+    "create_employee",
+    "EmployeeViewSet",
+    "self_permissions",
+    "create_permission",
+    "GroupViewSet",
+    "UnpaginatedGroupViewSet",
+    "FullClientViewSet",
 ]

@@ -7,6 +7,7 @@ import InputText from '@components/custom/InputText.vue'
 import EButton from '@components/custom/EButton.vue'
 import TextArea from '@components/custom/TextArea.vue'
 import { useField, useForm, Form as ValidationForm } from 'vee-validate'
+import { useToast } from 'vue-toastification'
 import * as yup from 'yup'
 import ModalDialog from '@components/custom/ModalDialog.vue'
 import Title from '@components/custom/Title.vue'
@@ -14,31 +15,34 @@ import Table from '@components/holders/Table.vue'
 import { computed, reactive } from 'vue'
 import { Field, ErrorMessage } from 'vee-validate'
 import { useRoute, useRouter } from 'vue-router'
-const model = ref(null)
 
+const model = ref(null)
+const toast = useToast()
 const router = useRouter()
+const isUploadingEmployee = ref(false)
 
 function onSubmit(value: any) {
     router.push({ path: '/usuarios/empleados' })
 }
 
-const employeeForm = ref({
+const employeeForm   = ref({
     cid: useField(
         'cid',
-        yup.string().required('El campo es requerido')
+        yup.string().required('Este campo es requerido')
     ),
     name: useField(
         'name',
-        yup.string().required('El campo es requerido')
+        yup.string().required('Este campo es requerido')
     ),
     lastName: useField(
         'latName',
-        yup.string().required('El campo es requerido')
+        yup.string().required('Este campo es requerido')
     ),
-    email: useField('email', yup.string().email().required()),
-    cell: useField('cell', yup.string().email().required()),
+    email: useField('email', yup.string().email().required('Este campo es requerido')),
+    cell: useField('cell', yup.string().matches(/^[0-9]+$/).required('Telefono inválido')),
 })
 
+/*
 function validateID(value: any) {
     // if the field is empty
     if (!value) {
@@ -146,21 +150,69 @@ function validateCiudad(value: any) {
 
     return true
 }
+
+
+    return true
+}*/
 function validateDireccion(value: any) {
     // if the field is empty
     if (!value) {
         return 'Este campo es requerido'
     }
-
-    return true
 }
+
+const submitNewUser = (values: unknown) => {
+        const f = employeeForm.value
+        if (
+            f.cid.errorMessage||
+            f.name.errorMessage ||
+            f.lastName.errorMessage ||
+            f.email.errorMessage ||
+            f.cell.errorMessage
+        ) {
+            toast.error('Verifique los datos antes de registrar usuario')
+            return
+        }
+        /*
+        isUploadingEmployee.value = true
+        userRepository
+            .saveUser({
+                email: f.email.value,
+                employee: f.employee.value.id as number,
+                group: f.group.value.id as number,
+                username: f.username.value,
+                password: f.password.value,
+                password_confirm: f.passwordConfirm.value,
+            })
+            .then(() => {
+                toast.success('Usuario registrado correctamente')
+                f.email.value = ''
+                f.employee.value = undefined
+                f.group.value = undefined
+                f.password.value = ''
+                f.passwordConfirm.value = ''
+                f.username.value = ''
+                targetEmployee.value = undefined
+            })
+            .catch(err => {
+                if (isMessage(err)) {
+                    toast.error(err.message)
+                } else {
+                    toast.error('Error desconocido')
+                    console.error(err)
+                }
+            })
+            .finally(() => {
+                isUploadingEmployee.value = false
+            })*/
+    }
 </script>
 
 <template>
     <main>
         <ECard>
             <ValidationForm @submit="onSubmit">
-                <ERow>
+                <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="3">
                         <InputText label="Fecha de creación" placeholder="23/08/2022" readonly />
                     </ECol>
@@ -171,24 +223,24 @@ function validateDireccion(value: any) {
                         <InputText label="Creado por" placeholder="23/08/2022" readonly />
                     </ECol>
                     <ECol cols="12" lg="6" xl="3">
-                        <ListBox top-label="Rol" placeholder="No ha seleccionado una rol" label="name" />
+                        <ListBox top-label="Rol" placeholder="No ha seleccionado un rol"/>
                     </ECol>
                 </ERow>
-                <ERow>
+                <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="3">
-                        <InputText label="Cédula" :rules="validateID" v-model.lower="employeeForm.cid.value"
-                            :info-label="employeeForm.email.errorMessage" info-status="danger" />
+                        <InputText label="Cédula" v-model="employeeForm.cid.value"
+                            :info-label="employeeForm.cid.errorMessage" info-status="danger" />
                         <ErrorMessage name="email" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
                     <ECol cols="12" lg="6" xl="3">
-                        <InputText label="Nombres" name="name" :rules="validateName"
-                            v-model.lower="employeeForm.name.value" :info-label="employeeForm.email.errorMessage"
+                        <InputText label="Nombres" name="name"
+                            v-model="employeeForm.name.value" :info-label="employeeForm.name.errorMessage"
                             info-status="danger" />
                         <ErrorMessage name="name" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
                     <ECol cols="12" lg="6" xl="3">
-                        <InputText label="Apellidos" name="name" :rules="validateName"
-                            v-model.lower="employeeForm.lastName.value" :info-label="employeeForm.email.errorMessage"
+                        <InputText label="Apellidos" name="name"
+                            v-model="employeeForm.lastName.value" :info-label="employeeForm.lastName.errorMessage"
                             info-status="danger" />
                         <ErrorMessage name="name" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
@@ -200,16 +252,16 @@ function validateDireccion(value: any) {
                         <ErrorMessage name="date" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
                 </ERow>
-                <ERow>
+                <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="3">
-                        <InputText label="Correo" name="correo" type="email" :rules="validateEmail"
+                        <InputText label="Correo" name="correo" type="email"
                             v-model.lower="employeeForm.email.value" :info-label="employeeForm.email.errorMessage"
                             info-status="danger" />
                         <ErrorMessage name="correo" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
                     <ECol cols="12" lg="6" xl="3">
-                        <InputText label="Teléfono" name="cell" :rules="validateCell"
-                            v-model.lower="employeeForm.cell.value" :info-label="employeeForm.email.errorMessage"
+                        <InputText label="Teléfono" name="cell"
+                            v-model="employeeForm.cell.value" :info-label="employeeForm.cell.errorMessage"
                             info-status="danger" />
                         <ErrorMessage name="celula" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
@@ -228,12 +280,12 @@ function validateDireccion(value: any) {
                 <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="3">
                         <ListBox top-label="Provincia" placeholder="No ha seleccionado una provincia" name="provincia"
-                            :rules="validateProvincia" />
+                             />
                         <ErrorMessage name="provincia" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
                     <ECol cols="12" lg="6" xl="3">
                         <ListBox top-label="Ciudad" placeholder="No ha seleccionado una ciudad" name="ciudad"
-                            :rules="validateCiudad" />
+                            />
                         <ErrorMessage name="provincia" style="font-size: 10px;color: red;text-align: left;" />
                     </ECol>
                     <ECol cols="12" lg="6" xl="3">
@@ -247,7 +299,7 @@ function validateDireccion(value: any) {
                     </ECol>
                 </ERow>
                 <ERow>
-                    <div class="col col-12 col-md-3">
+                    <div class="col col-12 col-md-1">
                         <EButton class="tw-w-full"> Guardar </EButton>
                     </div>
                 </ERow>

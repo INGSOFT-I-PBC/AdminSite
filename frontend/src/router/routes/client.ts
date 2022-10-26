@@ -2,7 +2,7 @@ export const client: Array<RouteConfig> = [
     {
         path: '/usuarios/clientes',
         name: 'client-management-panel',
-        component: () => import('@views/users/ClientView.vue'),
+        component: () => import('@views/ClientView.vue'),
         meta: {
             pageTitle: 'Gestión de Clientes',
             permission: 'view_dashboard',
@@ -12,7 +12,7 @@ export const client: Array<RouteConfig> = [
     {
         path: '/usuarios/cliente/agregar',
         name: 'addclient-panel',
-        component: () => import('@views/users/AddClientView.vue'),
+        component: () => import('@views/AddClientView.vue'),
         meta: {
             pageTitle: 'Gestión de Clientes',
             permission: 'view_dashboard',

@@ -98,6 +98,11 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = ["id", "name", "lastname", "cid", "role"]
 
+class FullEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ["id", "created_at","name", "lastname", "cid", "role"]
+
 
 class PermissionSerializer(serializers.ModelSerializer):
     codename = serializers.CharField(max_length=128)
