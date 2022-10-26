@@ -15,5 +15,6 @@ if (savedTokens) {
 export * from './auth'
 export * from './warehouse'
 export * from './items'
+export * from './client'
 export * from './users'
 export * from './employee'

@@ -5,6 +5,12 @@ from .groups import *
 from .inventoryviews import InventoryView
 from .itemview import *
 from .itemviews import ItemView
+from .categoryviews import CategoryView
+from .inventoryviews import InventoryView
+from .clientview import *
+from .statusview import *
+from .provinceview import *
+from .genderview import *
 from .userview import *
 from .warehouse import *
 
@@ -35,4 +41,8 @@ __all__ = [
     "GroupViewSet",
     "UnpaginatedGroupViewSet",
     "FullClientViewSet",
+    "StatusView",
+    "ProvinceViewSet",
+    "ProvinceCityView",
+    "FullGenderViewSet"
 ]

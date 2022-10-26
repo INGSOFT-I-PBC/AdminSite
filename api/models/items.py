@@ -56,14 +56,12 @@ def filepath(request, filename):
 
 class Item(TimestampModel):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    # codename = models.CharField(default=None, unique=True, max_length=16)
-
     brand = models.CharField(max_length=128)
     category = models.ForeignKey(Category, on_delete=models.RESTRICT)
     created_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="created_by"
     )
-    img = models.ImageField(upload_to="recipes/", null=True, blank=True)
+    img = models.ImageField(upload_to="storage/public/item", null=True, blank=True)
     iva = models.DecimalField(default=0, max_digits=6, decimal_places=3)
     model = models.CharField(max_length=128)
     name = models.CharField(max_length=60)

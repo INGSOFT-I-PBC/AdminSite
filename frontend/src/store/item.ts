@@ -1,5 +1,7 @@
 import axios, { type AxiosResponse } from 'axios'
 import type Item from '@/interfaz/items'
+import type Status  from '@/interfaz/items'
+
 
 /* eslint-disable */
 class ItemDataService {
@@ -82,6 +84,13 @@ class ItemDataService {
             headers: {},
         })
     }
+    async fetchStatus(name: string) {
+        const data = await (
+            await axios.get<Status>(`/api/v1/status?name=${name}`)
+        ).data
+        return data
+    }
+
 }
 
 export default new ItemDataService()
