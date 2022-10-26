@@ -14,3 +14,7 @@ export default interface Item {
     category_id: number
     created_by: number*/
 }
+export default interface Status {
+    id: number
+    name: string
+}

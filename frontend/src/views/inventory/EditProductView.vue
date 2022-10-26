@@ -2,9 +2,8 @@
     import { defineComponent } from 'vue'
     import { stringifyQuery, useRoute, useRouter } from 'vue-router'
     import type Item from '@/interfaz/items'
-    import type Item3 from '@/interfaz/Items3'
+    import type { Status } from '@store/types'
     import { useAuthStore } from '@store'
-
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
@@ -24,8 +23,13 @@
             const msm400 = ref('')
             const router = useRouter()
             const employee_id = authStore.userData?.employee as number
+            const formStatus = ref<Status>({
+                id: 0,
+                name: 'active',
+            })
 
             return {
+                formStatus,
                 route,
                 normalValue,
                 employee_id,
@@ -36,8 +40,8 @@
                 items: {} as Item,
                 hoy,
                 fecha_hora: {
-                    fecha: String,
-                    hora: String,
+                    fecha: '',
+                    hora: '',
                 },
                 imagenM: '',
 
@@ -67,14 +71,21 @@
             showProduct() {
                 this.productModalShow = true
             },
+            async loadStatus(name: string) {
+                this.formStatus = await ItemDataService.fetchStatus(name)
+                this.entrada.status_id = this.formStatus.id
+                console.log(this.entrada.status_id)
+            },
             validarCheckbox() {
                 const checkbox = document.getElementById(
                     'check'
                 ) as HTMLInputElement
-                if (checkbox.checked) {
-                    this.entrada.status_id = 1
+                if (!checkbox.checked) {
+                    //this.entrada.status_id = 1
+                    this.loadStatus('inactive')
                 } else {
-                    this.entrada.status_id = 3
+                    //this.entrada.status_id = 3
+                    this.loadStatus('active')
                 }
             },
             performUpload() {
@@ -197,7 +208,9 @@
                         this.entrada.category_id =
                             this.items['0'].category_id_Item
                         this.imagenM =
-                            'http://127.0.0.1:8000/storage/' +
+                        //'https://proyectoadmin.pythonanywhere.com/'
+                        //http://127.0.0.1:8000
+                            'https://proyectoadmin.pythonanywhere.com/storage/' +
                             this.items['0'].imgItem
                         console.log(this.imagenM)
                         this.entrada.warehouse_id = this.items['0'].warehouse_id
@@ -219,12 +232,17 @@
                         this.entrada.quantity = this.items['0'].quantity
                         this.entrada.name = this.items['0'].nombreItem
                         this.entrada.status_id = this.items['0'].status_id_Item
-                        this.fecha_hora.fecha = this.items[
+                        /*this.fecha_hora.fecha = this.items[
                             '0'
-                        ].created_at.substring(0, 10)
-                        this.fecha_hora.hora = this.items[
+                        ].created_at.substring(0, 10)*/
+
+                        this.fecha_hora.fecha = new Date(this.items[
                             '0'
-                        ].created_at.substring(11, 16)
+                        ].created_at).toLocaleDateString()
+                        this.fecha_hora.hora = new Date(this.items[
+                            '0'
+                        ].created_at).toLocaleTimeString()
+
                         console.log(this.items['0'])
                     })
                     .catch((e: Error) => {
@@ -255,6 +273,13 @@
                 this.showAllProducts(String(this.route.params.id))
             this.showAllCategory()
             this.showAllWarehouses()
+            this.loadStatus(this.formStatus.name)
+        },
+        components: {
+            ECard,
+            ModalDialog,
+            InputText,
+            EButton,
         },
     })
 </script>
@@ -265,7 +290,7 @@
             id="product-modal-error"
             v-model:show="productModalShowError"
             title="Información">
-            <h1>{{ msm400 }}</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">{{ msm400 }}</h1>
         </ModalDialog>
         <ModalDialog
             id="product-modal"
@@ -274,7 +299,7 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-            <h1>¿Esta seguro de modificar el producto?</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">¿Esta seguro de modificar el producto?</h1>
         </ModalDialog>
         <ECard>
             <div class="container" style="border-radius: 5px">
@@ -438,20 +463,12 @@
                             </h6>
                             <div class="form-check form-switch">
                                 <input
-                                    v-if="entrada.status_id === 1"
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
                                     id="check"
                                     @change="validarCheckbox()"
                                     checked />
-                                <input
-                                    v-else
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="check"
-                                    @change="validarCheckbox()" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>
@@ -492,7 +509,6 @@
                             <input
                                 type="text"
                                 class="form-control"
-                                placeholder="15:00"
                                 v-model="fecha_hora.hora"
                                 disabled="false"
                                 aria-label="First name" />
