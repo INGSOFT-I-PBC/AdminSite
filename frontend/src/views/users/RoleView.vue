@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { computed, reactive } from 'vue'
 import EButton from '@components/custom/EButton.vue'
+import ECard from '@components/custom/ECard.vue'
 import ERow from '@components/custom/ERow.vue'
 import ECol from '@components/custom/ECol.vue'
 import InputText from '@components/custom/InputText.vue'
@@ -8,16 +8,25 @@ import * as VeeValidate from 'vee-validate'
 import { Field, ErrorMessage } from 'vee-validate'
 import { Form as EForm } from 'vee-validate'
 import { useRoute, useRouter } from 'vue-router'
+import { computed, reactive, onMounted } from 'vue'
+import { useAuthStore } from '@store'
+
+
 const model = ref(null)
 const router = useRouter()
 
+/* Variables del front */
+const date = new Date()
+const authStore = useAuthStore()
+const createdBy = authStore.userData?.name
+
+/*Info de roles*/
 const array = ['Cajero', 'Vendedor', 'Bodeguero']
 
 const tiposeleccion = ref(0)
 const datos = []
 
 function onSubmit(value: any) {
-    console.log(value)
     tiposeleccion.value = 0
 }
 
@@ -54,7 +63,9 @@ function validateName(value: any) {
     return true
 }
 
-    // hello
+onMounted(() => {
+    return showRoles()
+})
 </script>
 
 <template>
@@ -123,16 +134,18 @@ function validateName(value: any) {
                                     <InputText label="Nombre del rol" placeholder="Escriba el nombre del rol" />
                                 </ECol>
                                 <ECol cols="12" lg="6" xl="6">
-                                    <InputText label="Fecha de creación" placeholder="39/30/2202" readonly />
+                                    <InputText label="Fecha de creación" :placeholder="date.toLocaleDateString()"
+                                        readonly />
                                 </ECol>
 
                             </ERow>
                             <ERow>
                                 <ECol>
-                                    <InputText label="Hora de creación" placeholder="10:20:90" readonly />
+                                    <InputText label="Hora de creación" :placeholder="date.toLocaleTimeString()"
+                                        readonly />
                                 </ECol>
                                 <ECol>
-                                    <InputText label="Creado por" placeholder="Pamela Rugel" readonly />
+                                    <InputText label="Creado por" :placeholder="createdBy" readonly />
                                 </ECol>
                             </ERow>
                             <ERow>
@@ -170,13 +183,14 @@ function validateName(value: any) {
                             Creado por:
                         </p>
                         <p style="font-size: 15px">Nombre</p>
-                        <p style="font-size: 20px; text-decoration: underline">
+                        <!--
+                            <p style="font-size: 20px; text-decoration: underline">
                             Permisos:
-                        </p>
+                            </p>
+                        -->
                     </div>
                 </div>
             </main>
         </div>
     </ECard>
-
 </template>

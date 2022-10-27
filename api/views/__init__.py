@@ -13,6 +13,7 @@ from .provinceview import *
 from .genderview import *
 from .userview import *
 from .warehouse import *
+from .roleview import *
 
 __all__ = [
     "UserViewSet",
@@ -44,5 +45,7 @@ __all__ = [
     "StatusView",
     "ProvinceViewSet",
     "ProvinceCityView",
-    "FullGenderViewSet"
+    "FullGenderViewSet",
+    "RoleView",
+    "RoleViewSet",
 ]

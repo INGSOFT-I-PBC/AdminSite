@@ -1,31 +1,29 @@
 import type {
     PaginatedAPIResponse,
-    Employee,
+    Role,
     PaginatedResponse,
 } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
-export type EmployeeSearchParams = {}
-
-type Identifier = string | number
+type id = string | number
 
 /**
  * The Employee repository
  */
-export const useEmployeeStore = defineStore('employee', () => {
+export const useRoleStore = defineStore('role', () => {
     /**
      * The employee returned by an single search
      */
-    const employee = ref<Employee>()
+    const role = ref<Role>()
     /**
      * The pagination list of employees returned by a query
      */
-    const paginatedEmployees = ref<PaginatedResponse<Employee>>()
+    const paginatedRoles = ref<PaginatedResponse<Role>>()
     /**
      * All the employees listed on the database
      */
-    const employees = ref<Employee[]>()
+    const roles = ref<Role[]>()
 
     /**
      * This function make a request to teh backend and by the given parameters of
@@ -34,16 +32,16 @@ export const useEmployeeStore = defineStore('employee', () => {
      *
      * @param params the search params that would be sent to the backend
      */
-    async function fetchEmployees(
-        params?: EmployeeSearchParams & PaginationOptions
+    async function fetchRoles(
+        params?: PaginationOptions
     ) {
         const response = (
-            await axios.get<PaginatedResponse<Employee>>(
+            await axios.get<PaginatedResponse<Role>>(
                 '/api/v1/list/employees',
                 { params }
             )
         ).data
-        paginatedEmployees.value = response
+        paginatedRoles.value = response
         return response
     }
 
@@ -53,11 +51,11 @@ export const useEmployeeStore = defineStore('employee', () => {
      *
      * @param identifier The identifier of the employee
      */
-    async function fetchEmployee(identifier: Identifier) {
+    async function fetchRole(id: id) {
         const response = (
-            await axios.get<Employee>(`/api/v1/employee/${identifier}`)
+            await axios.get<Role>(`/api/v1/employee/${id}`)
         ).data
-        employee.value = response
+        role.value = response
         return response
     }
 
@@ -65,7 +63,7 @@ export const useEmployeeStore = defineStore('employee', () => {
      * This function make a request to the backend and by the given parameter, change the status
      *
      * @param identifier The identifier of the employee
-     */
+
      async function fetchActivateEmployee(identifier: Identifier) {
         const response = (
             await axios.post<Employee>(`/api/v1/employee/${identifier}/activate`)
@@ -74,11 +72,7 @@ export const useEmployeeStore = defineStore('employee', () => {
         return response
     }
 
-    /**
-     * This function make a request to the backend and by the given parameter, change the status
-     *
-     * @param identifier The identifier of the employee
-     */
+
 
     async function fetchInactivateEmployee(identifier: Identifier) {
         const response = (
@@ -86,14 +80,12 @@ export const useEmployeeStore = defineStore('employee', () => {
         ).data
         employee.value = response
         return response
-    }
+    }*/
 
     return {
-        employee,
-        paginatedEmployees,
-        fetchEmployee,
-        fetchEmployees,
-        fetchActivateEmployee,
-        fetchInactivateEmployee,
+        role,
+        paginatedRoles,
+        fetchRole,
+        fetchRoles,
     }
 })

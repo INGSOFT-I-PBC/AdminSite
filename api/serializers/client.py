@@ -4,7 +4,8 @@ import rest_framework.serializers as serializers
 from rest_framework.validators import UniqueValidator
 
 
-from api.models import Client, Gender,Province,City,Employee,Status
+from api.models import Client, Gender,Province,City,Employee,Status,Role
+from api.serializers.role import RoleSerializer
 
 class GenderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -18,10 +19,14 @@ class ProvinceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Province
         fields = ['id', 'name']
+
 class EmployeeSerializer(serializers.ModelSerializer):
+
+    role = RoleSerializer()
+
     class Meta:
         model = Employee
-        fields = ['name','lastname','cid','role']
+        fields = ['id','created_at','name','lastname','cid','role','is_active']
 
 class FullClientSerializer(serializers.ModelSerializer):
     """

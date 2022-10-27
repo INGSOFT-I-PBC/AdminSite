@@ -28,6 +28,7 @@ router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
+router.register(r"roles", views.RoleViewSet, "roleViewSet")
 
 urlpatterns = [
     # List return paths
@@ -58,6 +59,7 @@ urlpatterns = [
     path("employee/<int:id>", views.EmployeeView.as_view()),
     path("employee/<str:cid>", views.EmployeeView.as_view()),
     path("employee/<str:cid>/activate", views.activate_employee),
+    path("employee/<str:cid>/inactivate", views.inactivate_employee),
     path("employee", views.create_employee),
     # Order management
     path("order", OrderRequestView.as_view()),
@@ -70,4 +72,6 @@ urlpatterns = [
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
     path("auth/reset-password", reset_password, name="reset-user-password"),
+    #Role management
+    path("role/<int:id>", views.RoleView.as_view()),
 ]

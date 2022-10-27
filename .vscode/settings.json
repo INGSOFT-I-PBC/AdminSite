@@ -5,7 +5,7 @@
     },
     "[vue]": {
         "outline.showFunctions": true,
-        "editor.formatOnSave": false
+        "editor.formatOnSave": true
     },
     "python.formatting.provider": "black",
     "python.formatting.blackPath": "black",

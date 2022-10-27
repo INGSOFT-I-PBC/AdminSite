@@ -165,6 +165,14 @@ def activate_employee(request: Request, *args, **kwargs):
     """
     return __activate_entity(Employee, "employee", **kwargs)
 
+@api_view(["POST"])
+def inactivate_employee(request: Request, *args, **kwargs):
+    """
+    This endpoint inactivate a given employee from the request
+    if, and only if it's active, else return an error
+    message to the consumer.
+    """
+    return __inactivate_entity(Employee, "employee", **kwargs)
 
 def __activate_entity(entity_class: Model, entity_name: str, **kwargs):
     """
@@ -180,3 +188,18 @@ def __activate_entity(entity_class: Model, entity_name: str, **kwargs):
     target.is_active = True
     target.save()
     return response(f"The {entity_name} was successfully re-activated")
+
+def __inactivate_entity(entity_class: Model, entity_name: str, **kwargs):
+    """
+    This function inactivate the given model and return a message
+    of completion that can be used as response
+    """
+    entity = entity_class.objects.filter(**kwargs)
+    if not entity.exists():
+        return error_response(f"The given {entity_name} doesn't exists")
+    target = entity.first()
+    if not target.is_active:
+        return error_response(f"The given {entity_name} is already inactive")
+    target.is_active = False
+    target.save()
+    return response(f"The {entity_name} was successfully inactivated")

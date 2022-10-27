@@ -52,19 +52,12 @@
     type Form = {
         items: Client[]
     }
-    /*type ItemForm = {
-        item: Client | null
-    }
 
-    const itemForm = ref<ItemForm>({
-        item: null,
-    })*/
     const model = ref({})
 
     const loadItems = async () => {
         itemLoading.value = true
         form.value.items = await itemStore.fetchAllClient()
-        console.log(form.value.items)
         itemLoading.value = false
         showWaitOverlay.value = false
     }
@@ -76,7 +69,6 @@
         itemInfoShow.value = true
     }
     function removeItem(index: number) {
-        console.log(index)
         form.value.items.splice(index, 1)
     }
     function deleteProduct(id: number, index: number): void {
@@ -88,7 +80,6 @@
         router.push({ path: '/usuarios/cliente/agregar' })
     }
     function goEdit(id: number): void {
-        console.log(id)
         router.push({ path: `/usuarios/cliente/editar/${String(id)}` })
     }
 
@@ -169,15 +160,19 @@
             </div>
         </ModalDialog>
 
+
         <ECard>
+
             <ERow>
-                <h1 style="font-size: 35px; color: black">Clientes</h1>
+                <h1 class="tw-text-black first-line:dark:tw-text-neutral-300" style="font-size: 35px; color: black">Clientes</h1>
             </ERow>
             <nav class="navbar">
-                <div class="container-fluid">
+                <div class="container-fluid align">
                     <EButton type="secondary" @click="go"
                         >+ Agregar cliente
                     </EButton>
+                    <!--
+
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="model"
@@ -194,6 +189,7 @@
                             Search
                         </button>
                     </form>
+                    -->
                 </div>
             </nav>
 
@@ -235,3 +231,30 @@
         </ECard>
     </main>
 </template>
+<style lang="scss">
+    .align {
+        padding: 0;
+    }
+    .table {
+            > thead {
+                @apply tw-bg-secondary tw-text-white tw-font-bold;
+            }
+            @media (prefers-color-scheme: dark) {
+                color: white !important;
+                --bs-table-striped-color: theme(colors.zinc.400);
+                --bs-table-hover-color: theme('colors.primary.light');
+                --bs-table-hover-bg: theme(colors.primary.light / 15%);
+            }
+        }
+    .t-button-group {
+        max-width: fit-content !important;
+        @apply tw-rounded tw-overflow-hidden tw-flex tw-place-content-stretch tw-place-items-stretch;
+        > button {
+            padding: 0;
+            border-radius: 0.3rem;
+            margin-left: 0.5rem;
+            min-width: auto;
+            max-width: 100%;
+        }
+    }
+</style>

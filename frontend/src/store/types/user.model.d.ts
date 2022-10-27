@@ -1,3 +1,5 @@
+import type { date } from "yup"
+
 export interface Role {
     id: number
     name: string
@@ -58,11 +60,14 @@ export type UserForm = {
     is_active?: boolean
 }
 
+
 export interface Employee {
+    created_at:string
     name: string
     lastname: string
     cid: string
     role: Maybe<Role>
+    is_active: boolean
 }
 
 export default {}

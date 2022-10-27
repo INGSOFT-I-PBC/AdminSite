@@ -431,8 +431,8 @@
         @apply tw-rounded tw-overflow-hidden tw-flex tw-place-content-stretch tw-place-items-stretch;
         > t-button,
         > button {
-            border-radius: 0;
-            margin: 0;
+            border-radius: 0.3rem;
+            margin-left: 0.5rem;
             min-width: auto;
             max-width: 100%;
         }
