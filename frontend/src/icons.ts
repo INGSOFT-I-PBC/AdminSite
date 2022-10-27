@@ -16,6 +16,7 @@ import {
     faCircleChevronRight,
     faCircleExclamation,
     faCircleUser,
+    faEdit,
     faEllipsis,
     faEllipsisH,
     faEllipsisV,
@@ -56,6 +57,7 @@ import {
 import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 
 export const awesomeIcons: Array<IconDefinition> = [
+    faEdit,
     faCircleUser,
     faCheckCircle,
     faCheck,

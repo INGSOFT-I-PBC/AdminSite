@@ -2,7 +2,7 @@ export const inventory: Array<RouteConfig> = [
     {
         path: '/inventario',
         name: 'inventory-panel',
-        component: () => import('@views/InventoryView.vue'),
+        component: () => import('@/views/inventory/InventoryView.vue'),
         meta: {
             pageTitle: 'Inventario',
             permission: 'view_dashboard',
@@ -21,7 +21,7 @@ export const inventory: Array<RouteConfig> = [
     {
         path: '/inventario/agregar',
         name: 'addinventario-panel',
-        component: () => import('@views/AddProductView.vue'),
+        component: () => import('@/views/inventory/AddProductView.vue'),
         meta: {
             pageTitle: 'Inventario',
             permission: 'view_dashboard',
@@ -31,7 +31,7 @@ export const inventory: Array<RouteConfig> = [
     {
         path: '/inventario/editar/:id',
         name: 'editinventario-panel',
-        component: () => import('@views/EditProductView.vue'),
+        component: () => import('@/views/inventory/EditProductView.vue'),
         meta: {
             pageTitle: 'Inventario',
             permission: 'view_dashboard',

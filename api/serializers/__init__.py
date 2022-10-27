@@ -1,6 +1,7 @@
 from .auth import *
 from .category import *
 from .client import *
+from .status import *
 from .inventory import *
 from .item import *
 from .items import *
@@ -22,4 +23,6 @@ __all__ = [
     "InventorySerializer",
     "FullClientSerializer",
     "ClientSerializer",
+    "StatusSerializer",
+    "ProvinceSerializer"
 ]

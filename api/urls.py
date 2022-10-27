@@ -7,8 +7,11 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from api.views import *
-from api.views.clientview import *
+from api.views.clientview import ClientView
+from api.views.itemviews import ItemView
 from api.views.orders import OrderRequestView
+from api.views.provinceview import ProvinceCityView
+from api.views.statusview import StatusView
 from api.views.warehouse import *
 
 router = routers.DefaultRouter(trailing_slash=False)
@@ -19,6 +22,8 @@ router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"clients/all", views.FullClientViewSet)
+router.register(r"provinces/all", views.FullProvinceViewSet)
+router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
@@ -66,6 +71,10 @@ urlpatterns = [
     path("employee", views.create_employee),
     # Order management
     path("order", OrderRequestView.as_view()),
+    path("clients", ClientView.as_view()),
+    path("status", StatusView.as_view()),
+    path("provinces", ProvinceCityView.as_view()),
+    # path('users'),
     # Administration endpoints
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),

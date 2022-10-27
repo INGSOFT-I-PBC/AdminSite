@@ -1,9 +1,8 @@
-from dataclasses import field
-from pyexpat import model
 from django.db import models
-from .common import TimestampModel, Status
-from .users import Employee
-from .cities import City, Province
+
+from api.models.cities import City, Province
+from api.models.common import Status, TimestampModel
+from api.models.users import Employee
 
 
 class Gender(models.Model):
@@ -59,7 +58,7 @@ class Client(TimestampModel):
     created_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
     email = models.EmailField(max_length=32)
     gender = models.ForeignKey(Gender, null=True, on_delete=models.RESTRICT)
-    number_id = models.CharField(max_length=16, unique=True)
+    number_id = models.CharField(max_length=12, unique=True)
     name = models.CharField(max_length=128)
     phone_number = models.CharField(max_length=16)
     province = models.ForeignKey(Province, null=True, on_delete=models.RESTRICT)
