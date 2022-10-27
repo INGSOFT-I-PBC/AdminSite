@@ -41,9 +41,9 @@
                 .catch(() => {
                     error.value = true
                 })
-            /* .finally(() => {
+                .finally(() => {
                     isLoading.value = false
-                })*/
+                })
         }
     }
 </script>
@@ -55,7 +55,7 @@
                 src="../../assets/img/nova.png"
                 class="tw-max-w-full tw-h-auto tw-rounded-lg"
                 alt="NovaGym" />
-            <form @onsubmit="inactive">
+            <form @submit.prevent="inactive">
                 <InputText
                     label="Usuario"
                     :disabled="isLoading"
