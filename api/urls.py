@@ -14,6 +14,7 @@ from .views.warehouse import *
 from .views.clientview import ClientView
 from .views.statusview import StatusView
 from .views.provinceview import ProvinceCityView
+from .views.invoice import InvoiceView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
@@ -45,6 +46,8 @@ urlpatterns = [
     path("inventory", InventoryView.as_view(), name="inventory-list"),
     path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
+    path("invoices", InvoiceView.as_view(), name="invoice"),
+
     # Item management
     path("item/<int:id>", views.find_item, name="item"),
     path("item/<int:id>/properties", views.get_item_properties),
