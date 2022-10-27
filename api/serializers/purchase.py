@@ -1,10 +1,14 @@
 from rest_framework import serializers
 
-from .common import StatusSerializer
-from api.models import Purchase, PurchaseStatus, PurchaseDetail
+from api.models import Purchase, PurchaseStatus
+from api.serializers.common import StatusSerializer
+from api.serializers.inovice import SimpleInvoiceSerializer
 
 
 class PurchaseSerializer(serializers.ModelSerializer):
+
+    invoice = SimpleInvoiceSerializer()
+
     class Meta:
         model = Purchase
         fields = [

@@ -1,31 +1,25 @@
-from unicodedata import name
-from api.models.common import Status
-from api.models import (
-    Warehouse,
-    OrderRequest,
-    Purchase,
-    Inventory,
-    PurchaseStatus,
-    warehouse,
-)
-from api.serializers.warehouse import (
-    WarehouseSerializer,
-    FullWarehouseSerializer,
-    WhTransactionSerializer,
-)
-from api.serializers.order import OrderSerializer
-from api.serializers.purchase import PurchaseSerializer, PurchaseStatusSerializer
-
 from django.core.paginator import Paginator
-from django.db.models import Q
+from django.db.models import F, Q, Window
+from django.db.models.functions.window import LastValue
 from django.http import JsonResponse
-
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
+
+from api.models import Inventory, OrderRequest, Purchase, PurchaseStatus, Warehouse
+from api.models.common import Status
+from api.models.warehouse import WarehouseTransaction, WhTomasFisicas
+from api.serializers.order import OrderSerializer
+from api.serializers.purchase import PurchaseSerializer
+from api.serializers.warehouse import (
+    FullWarehouseSerializer,
+    WarehouseSerializer,
+    WhInventorySerializer,
+    WhTomasFisicasSerializer,
+    WhTransactionSerializer,
+)
 from api.utils import error_response
-from api.serializers.warehouse import WhInventorySerializer
 
 
 class WarehouseView(APIView):
@@ -175,18 +169,27 @@ class WhInventoryView(APIView):
 
             page_number = request.query_params.get("page")
 
+            per_page = request.query_params.get("per_page", 15)
+
             if page_number:
 
-                paginator = Paginator(wh_inventory, 50)
+                paginator = Paginator(wh_inventory, per_page)
 
                 page_obj = paginator.get_page(page_number)
 
-                return Response(WhInventorySerializer(page_obj, many=True).data)
+                return JsonResponse(
+                    {
+                        "data": WhInventorySerializer(page_obj, many=True).data,
+                        "total": paginator.count,
+                        "page": int(page_number),
+                        "lastPage": paginator.num_pages,
+                    }
+                )
 
             return Response(WhInventorySerializer(wh_inventory, many=True).data)
 
         except Exception as e:
-            print(e)
+
             return error_response("Invalid query")
 
 
@@ -203,11 +206,20 @@ class WhOrderRequestView(APIView):
 
             if page_number:
 
-                paginator = Paginator(wh_orders, 50)
+                paginator = Paginator(
+                    wh_orders, request.query_params.get("per_page", 15)
+                )
 
                 page_obj = paginator.get_page(page_number)
 
-                return Response(OrderSerializer(page_obj, many=True).data)
+                return JsonResponse(
+                    {
+                        "data": OrderSerializer(page_obj, many=True).data,
+                        "total": paginator.count,
+                        "page": int(page_number),
+                        "lastPage": paginator.num_pages,
+                    }
+                )
 
             return Response(OrderSerializer(wh_orders, many=True).data)
 
@@ -217,17 +229,22 @@ class WhOrderRequestView(APIView):
 
 class WhPurchaseView(APIView):
     def get(self, request):
+
         try:
 
-            wh_purchases = Purchase.objects.filter(
-                warehouse__pk=request.query_params.get("id")
-            ).order_by("-id")
+            wh_purchases = (
+                Purchase.objects.filter(warehouse__pk=request.query_params.get("id"))
+                .select_related("invoice")
+                .order_by("-id")
+            )
 
             page_number = request.query_params.get("page")
 
             if page_number:
 
-                paginator = Paginator(wh_purchases, 50)
+                paginator = Paginator(
+                    wh_purchases, request.query_params.get("per_page")
+                )
 
                 page_obj = paginator.get_page(page_number)
 
@@ -242,7 +259,14 @@ class WhPurchaseView(APIView):
 
                     purchase["status"] = purchase_status.status.name
 
-                return JsonResponse(purchase_data, safe=False)
+                return JsonResponse(
+                    {
+                        "data": purchase_data,
+                        "total": paginator.count,
+                        "page": int(page_number),
+                        "lastPage": paginator.num_pages,
+                    }
+                )
 
             purchases_data = PurchaseSerializer(wh_purchases, many=True).data
 
@@ -267,7 +291,7 @@ class WhTransactionView(APIView):
         try:
 
             wh_transaction_qs = (
-                warehouse.WarehouseTransaction.objects.select_related("status")
+                WarehouseTransaction.objects.select_related("status")
                 .filter(
                     Q(warehouse_origin__pk=request.query_params.get("id"))
                     | Q(warehouse_destiny__pk=request.query_params.get("id"))
@@ -279,13 +303,22 @@ class WhTransactionView(APIView):
 
             if page_number:
 
-                paginator = Paginator(wh_transaction_qs, 50)
+                paginator = Paginator(
+                    wh_transaction_qs, request.query_params.get("per_page")
+                )
 
                 page_obj = paginator.get_page(page_number)
 
                 transactions_data = WhTransactionSerializer(page_obj, many=True).data
 
-                return JsonResponse(transactions_data, safe=False)
+                return JsonResponse(
+                    {
+                        "data": WhTransactionSerializer(page_obj, many=True).data,
+                        "total": paginator.count,
+                        "page": int(page_number),
+                        "lastPage": paginator.num_pages,
+                    }
+                )
 
             transactions_data = WhTransactionSerializer(
                 wh_transaction_qs, many=True
@@ -294,7 +327,6 @@ class WhTransactionView(APIView):
             return JsonResponse(transactions_data)
 
         except Exception as e:
-            print(e)
             return error_response("Invalid query")
 
 
@@ -305,3 +337,55 @@ class WhOrderRequestViewSet(ReadOnlyModelViewSet):
 
     queryset = OrderRequest.objects.all().order_by("id")
     serializer_class = OrderSerializer(queryset, many=True)
+
+
+class WhLatestTomaFisicaView(APIView):
+    def get(self, request):
+
+        queryset = Warehouse.objects.annotate(
+            tomas_fisicas=Window(
+                expression=LastValue("whtomasfisicas__created_at"),
+                partition_by=[
+                    F("id"),
+                ],
+                order_by=F("id"),
+            )
+        ).distinct()
+
+        return Response(queryset)
+
+
+class WhTomaFisicasView(APIView):
+    def get(self, request: Request):
+        try:
+            wh_id = int(request.query_params.get("id"))
+            toma_fisica = WhTomasFisicas.objects.filter(warehouse_id=wh_id).order_by(
+                "-id"
+            )
+            if toma_fisica is None:
+                return error_response("Not found", status=404)
+
+            page_number = request.query_params.get("page")
+
+            if page_number:
+
+                paginator = Paginator(
+                    toma_fisica, request.query_params.get("per_page", 15)
+                )
+
+                page_obj = paginator.get_page(page_number)
+
+                return JsonResponse(
+                    {
+                        "data": WhTomasFisicasSerializer(page_obj, many=True).data,
+                        "total": paginator.count,
+                        "page": int(page_number),
+                        "lastPage": paginator.num_pages,
+                    }
+                )
+
+            serializer = WhTomasFisicasSerializer(toma_fisica, many=True)
+            return JsonResponse(serializer.data, safe=False)
+        except TypeError as e:
+
+            return error_response("invalid params")

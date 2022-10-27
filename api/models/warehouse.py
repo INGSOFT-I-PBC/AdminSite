@@ -1,9 +1,9 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from .common import Status, TimestampModel
-from .items import Item
-from .users import Employee
+from api.models.common import Status, TimestampModel
+from api.models.items import Item
+from api.models.users import Employee
 
 
 class Warehouse(TimestampModel):

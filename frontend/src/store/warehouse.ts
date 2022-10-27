@@ -40,8 +40,8 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             this.paginatedWarehouse = result
             return result
         },
-        async fetchPaginatedWarehouseInventory(options: WarehouseQuery , page:number) {
-            const queryParams = {...options,'page':page}
+        async fetchPaginatedWarehouseInventory(options: WarehouseQuery , paginated_opt:PaginationOptions) {
+            const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
             const result = await (
                 await axios.get<PaginatedAPIResponse<QuantifiedItem>>(
                     '/api/v1/warehouse/inventory',
@@ -51,11 +51,22 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
-        async fetchPaginatedWarehousesOrder(options: WarehouseQuery , page:number) {
-            const queryParams = {...options,'page':page}
+        async fetchPaginatedWarehousesPurchase(options: WarehouseQuery , paginated_opt:PaginationOptions) {
+            const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
             const result = await (
                 await axios.get<PaginatedAPIResponse<any>>(
-                    '/api/v1/warehouse/purchase-order',
+                    '/api/v1/warehouse/purchase',
+                    { params: queryParams }
+                )
+            )
+            return result
+        },
+
+        async fetchPaginatedWarehousesTomasFisicas(options: WarehouseQuery , paginated_opt:PaginationOptions) {
+            const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
+            const result = await (
+                await axios.get<PaginatedAPIResponse<any>>(
+                    '/api/v1/warehouse/tomas-fisicas',
                     { params: queryParams }
                 )
             )

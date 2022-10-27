@@ -8,7 +8,6 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from api import views
 from api.views import *
 from api.views.clientview import *
-from api.views.itemviews import ItemView
 from api.views.orders import OrderRequestView
 from api.views.warehouse import *
 
@@ -39,6 +38,12 @@ urlpatterns = [
     path("warehouse/purchase", WhPurchaseView.as_view(), name="wh-purchase"),
     path("warehouse/movements", WhTransactionView.as_view(), name="wh-movements"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
+    path("warehouse/tomas-fisicas", WhTomaFisicasView.as_view(), name="wh-tomas"),
+    path(
+        "warehouse/tomas-fisicas/all",
+        WhLatestTomaFisicaView.as_view(),
+        name="all-wh-tomas",
+    ),
     path("items", ItemView.as_view(), name="item-list"),
     path("items/<int:pk>", ItemView.as_view(), name="item_process"),
     path("category", CategoryView.as_view(), name="category-list"),

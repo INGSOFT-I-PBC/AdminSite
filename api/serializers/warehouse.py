@@ -1,10 +1,14 @@
-from django.forms import DateTimeField
-from rest_framework.serializers import ModelSerializer
-from rest_framework.serializers import CharField, DecimalField, IntegerField
+from rest_framework.serializers import (
+    CharField,
+    DecimalField,
+    IntegerField,
+    ModelSerializer,
+)
 
-from api.models import Warehouse, WhTransactionDetails, WarehouseTransaction, Inventory
-from api.serializers.item import SimpleItemSerializer, ItemSerializer
-from .common import SimpleStatusSerializer, StatusSerializer
+from api.models import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
+from api.models.warehouse import WhTomasFisicas
+from api.serializers.common import SimpleStatusSerializer
+from api.serializers.item import ItemSerializer, SimpleItemSerializer
 
 
 class FullWarehouseSerializer(ModelSerializer):
@@ -176,3 +180,9 @@ class WhTransactionSerializer(ModelSerializer):
             "warehouse_origin",
             "warehouse_destiny",
         ]
+
+
+class WhTomasFisicasSerializer(ModelSerializer):
+    class Meta:
+        model = WhTomasFisicas
+        fields = "__all__"
