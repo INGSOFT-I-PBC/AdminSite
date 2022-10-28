@@ -1,5 +1,5 @@
 # Editor libraries
-autopep8==1.7.0
+autopep8==1.7.1
 flake8==5.0.4
 # To show API endpoints information
 Markdown==3.4.1
