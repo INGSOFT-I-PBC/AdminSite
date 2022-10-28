@@ -12,6 +12,7 @@ import {
 } from '@fortawesome/vue-fontawesome'
 import BootstrapVue3 from 'bootstrap-vue-3'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
+import OpenLayersMap from 'vue3-openlayers'
 
 import './types'
 
@@ -26,6 +27,7 @@ import './assets/main.css'
 import 'vue-toastification/dist/index.css'
 import './index.css'
 import 'vue3-easy-data-table/dist/style.css'
+import 'vue3-openlayers/dist/vue3-openlayers.css'
 
 const app = createApp(App)
 
@@ -45,6 +47,7 @@ app.use(createPinia())
 app.use(BootstrapVue3)
 app.use(router)
 app.use(Toast, defToastOptions)
+app.use(OpenLayersMap)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 app.component('FontAwesomeLayers', FontAwesomeLayers)
