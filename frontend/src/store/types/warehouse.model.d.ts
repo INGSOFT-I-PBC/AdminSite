@@ -17,4 +17,15 @@ export interface TomaFisica {
     warehouse: number
 }
 
+export interface WhWithTomaFisica{
+    id: number,
+    name: string,
+    status: string,
+    whtf_created_at: string,
+    whtf_done_by_name: string,
+    whtf_done_by_lastname: string,
+    whtf_novedad?: string,
+}
+
+
 export default {}

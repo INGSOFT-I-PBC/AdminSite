@@ -14,10 +14,11 @@ from api.serializers.order import OrderSerializer
 from api.serializers.purchase import PurchaseSerializer
 from api.serializers.warehouse import (
     FullWarehouseSerializer,
+    TomasFisicasSerializer,
     WarehouseSerializer,
     WhInventorySerializer,
-    WhTomasFisicasSerializer,
     WhTransactionSerializer,
+    WhWithTomaFisicaSerializer,
 )
 from api.utils import error_response
 
@@ -341,18 +342,51 @@ class WhOrderRequestViewSet(ReadOnlyModelViewSet):
 
 class WhLatestTomaFisicaView(APIView):
     def get(self, request):
-
-        queryset = Warehouse.objects.annotate(
-            tomas_fisicas=Window(
-                expression=LastValue("whtomasfisicas__created_at"),
-                partition_by=[
-                    F("id"),
-                ],
-                order_by=F("id"),
+        try:
+            queryset = (
+                Warehouse.objects.annotate(
+                    whtf_id=Window(
+                        expression=LastValue("whtomasfisicas__id"),
+                        partition_by=[
+                            F("id"),
+                        ],
+                    ),
+                    whtf_done_by_name=Window(
+                        expression=LastValue("whtomasfisicas__done_by__name"),
+                        partition_by=[
+                            F("id"),
+                        ],
+                    ),
+                    whtf_done_by_lastname=Window(
+                        expression=LastValue("whtomasfisicas__done_by__lastname"),
+                        partition_by=[
+                            F("id"),
+                        ],
+                    ),
+                    whtf_created_at=Window(
+                        expression=LastValue("whtomasfisicas__created_at"),
+                        partition_by=[
+                            F("id"),
+                        ],
+                    ),
+                    whtf_novedad=Window(
+                        expression=LastValue("whtomasfisicas__novedad"),
+                        partition_by=[
+                            F("id"),
+                        ],
+                    ),
+                )
+                .distinct()
+                .order_by("name")
             )
-        ).distinct()
 
-        return Response(queryset)
+            serializer = WhWithTomaFisicaSerializer(queryset, many=True)
+
+            return Response(serializer.data)
+
+        except Exception as e:
+            print(e)
+            return error_response("Invalid query")
 
 
 class WhTomaFisicasView(APIView):
@@ -377,14 +411,14 @@ class WhTomaFisicasView(APIView):
 
                 return JsonResponse(
                     {
-                        "data": WhTomasFisicasSerializer(page_obj, many=True).data,
+                        "data": TomasFisicasSerializer(page_obj, many=True).data,
                         "total": paginator.count,
                         "page": int(page_number),
                         "lastPage": paginator.num_pages,
                     }
                 )
 
-            serializer = WhTomasFisicasSerializer(toma_fisica, many=True)
+            serializer = TomasFisicasSerializer(toma_fisica, many=True)
             return JsonResponse(serializer.data, safe=False)
         except TypeError as e:
 

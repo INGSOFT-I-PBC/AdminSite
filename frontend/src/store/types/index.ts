@@ -8,7 +8,7 @@ export type {
 
 export { isMessage } from './typesafe'
 
-export type { MinimalWarehouse, Warehouse , TomaFisica} from './warehouse.model'
+export type { MinimalWarehouse, Warehouse , TomaFisica, WhWithTomaFisica} from './warehouse.model'
 
 export type {MinimalPurchase, Purchase} from './purchase.model'
 

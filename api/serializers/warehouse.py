@@ -1,5 +1,6 @@
 from rest_framework.serializers import (
     CharField,
+    DateTimeField,
     DecimalField,
     IntegerField,
     ModelSerializer,
@@ -182,7 +183,29 @@ class WhTransactionSerializer(ModelSerializer):
         ]
 
 
-class WhTomasFisicasSerializer(ModelSerializer):
+class TomasFisicasSerializer(ModelSerializer):
     class Meta:
         model = WhTomasFisicas
         fields = "__all__"
+
+
+class WhWithTomaFisicaSerializer(ModelSerializer):
+
+    whtf_id = IntegerField()
+    whtf_created_at = DateTimeField()
+    whtf_done_by_name = CharField()
+    whtf_done_by_lastname = CharField()
+    whtf_novedad = CharField()
+
+    class Meta:
+        model = Warehouse
+        fields = [
+            "id",
+            "name",
+            "status",
+            "whtf_id",
+            "whtf_created_at",
+            "whtf_done_by_name",
+            "whtf_done_by_lastname",
+            "whtf_novedad",
+        ]

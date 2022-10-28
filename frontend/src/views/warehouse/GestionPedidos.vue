@@ -1,18 +1,18 @@
 <script setup lang="ts">
 import EButton from '@components/custom/EButton.vue'
 import ECard from '@components/custom/ECard.vue'
-import ERow from '@components/custom/ERow.vue'
 import type { TableField } from 'bootstrap-vue-3'
 import ModalDialog from '../../components/custom/ModalDialog.vue'
 import { useWarehouseStore } from '@store/warehouse'
 import { useItemStore } from '@/store'
 import WaitOverlay from '../../components/custom/WaitOverlay.vue'
-import { ref } from 'vue'
-import { type Item, type Warehouse, type Purchase, type TomaFisica } from '@store/types'
+import { computed, ref } from 'vue'
+import { type Item, type Warehouse, type Purchase, type TomaFisica, type WhWithTomaFisica } from '@store/types'
 import type { ItemProps } from '@store/types/items.model'
 
 type SelectedItem = { item: Item | null; props: ItemProps[] }
 type QuantifiedItem = Item & { quantity: number }
+
 type warehouseInformation = {
     bodega: Warehouse
     inventory: QuantifiedItem[]
@@ -38,6 +38,15 @@ const detailSelectedItem = ref<SelectedItem>({
     props: [],
 })
 
+const allWarehousesFields: TableField[] = [
+    '#',
+    { label: 'Nombre', key: 'name' },
+    { label: 'Fecha Toma Fisica', key: 'whtf_created_at' },
+    'Realizada_Por',
+    'Novedad',
+    'Detalles',
+]
+
 const inventoryFields: TableField[] = [
     '#',
     { label: 'Codigo Producto', key: 'codename' },
@@ -50,10 +59,10 @@ const inventoryFields: TableField[] = [
 
 const purchasesFields: TableField[] = [
     '#',
-    { label: 'Fecha Creación', key: 'codename' },
+    { label: 'Fecha Creación', key: 'created_at' },
     { label: 'Codigo Orden', key: 'reference' },
     { label: 'Proveedor', key: 'proveedor' },
-    { label: 'Fecha Completada', key: 'completed_at' },
+    'Fecha Completada',
     'Entregado',
     { label: 'Pago', key: 'invoice' },
     { label: 'Fecha Pago', key: 'paid_at' },
@@ -68,13 +77,17 @@ const toamsFisFields: TableField[] = [
     'Acciones',
 ]
 
-let activeWhInformation = ref(<warehouseInformation>{})
+let allWarehousesTableInformation: [] = []
 
-let currentPage = ref(1)
+let currentAsidePage = ref(1)
 let whRows = ref(0)
 let paginatedWarehouse = ref()
-let searchInput = ref("")
 let activeWharehouseButton = ref(-1)
+
+let currentMainPage = ref(1)
+let paginatedMainTable = ref()
+
+let activeWhInformation = ref(<warehouseInformation>{})
 
 let currentInvPage = ref(1)
 let invTableTotal = ref(15)
@@ -92,35 +105,43 @@ let movementTableTotal = ref(15)
 
 let itemInfoShow = ref(false)
 
-function choosePurchaseIcon(purchase:Purchase){
-   if(!purchase){
-    return "question"
-   }
-    if(purchase.status == "pagado"){
+function choosePurchaseIcon(purchase: Purchase) {
+    if (!purchase) {
+        return "question"
+    }
+    if (purchase.status == "pagado") {
         return "x-square"
-   }
-   if(purchase.status == 'confirmado'){
+    }
+    if (purchase.status == 'confirmado') {
         return "square"
-   }
-   return "question"
+    }
+    return "question"
 }
 
-function paginate(page_size: number, page_number: number) {
-
-    let itemsToParse = warehouse.getWarehouseList ?? []
-
-    paginatedWarehouse.value = itemsToParse.slice(
+function paginateAside(page_size: number, page_number: number) {
+    paginatedWarehouse.value = (warehouse.getWarehouseList ?? []).slice(
         page_number * page_size,
         (page_number + 1) * page_size
     );
 }
 
 function onPageChanged(event: any, page: number) {
-    //Loading tru
-    //fetch => paginiatedWarehouse
-    //
-    paginate(whPageCount.value, page - 1);
+    paginateAside(whPageCount.value, page - 1);
 }
+
+
+function paginateMain(page_size: number, page_number: number) {
+    paginatedMainTable.value = allWarehousesTableInformation.slice(
+        page_number * page_size,
+        (page_number + 1) * page_size
+    );
+}
+
+function onMainPageChanged(event: any, page: number) {
+    paginateMain(whPageCount.value, page - 1);
+}
+
+
 
 function resetInvData() {
 
@@ -153,7 +174,7 @@ async function onPageChangedTomaFisicas(event: any, page: number) {
 
     let wh_id = activeWhInformation.value.bodega.id
 
-    let response = await warehouse.fetchPaginatedWarehousesTomasFisicas(
+    let response = await warehouse.fetchPaginatedWarehouseTomasFisicas(
         { id: wh_id }, { page: page, per_page: whInformationPerPage.value }
     )
 
@@ -171,7 +192,7 @@ async function onPageChangedPurchase(event: any, page: number) {
 
     let wh_id = activeWhInformation.value.bodega.id
 
-    let response = await warehouse.fetchPaginatedWarehousesPurchase(
+    let response = await warehouse.fetchPaginatedWarehousePurchase(
         { id: wh_id }, { page: page, per_page: whInformationPerPage.value }
     )
 
@@ -220,9 +241,7 @@ function wharehouseButtonPressed(event: any, whId: number, index: number) {
 
     onPageChangedPurchase(event, 1)
 
-
     onPageChangedTomaFisicas(event, 1)
-
 
     //onPageChangeMovement(event,1)
 
@@ -230,7 +249,6 @@ function wharehouseButtonPressed(event: any, whId: number, index: number) {
 
 async function showItem(item: Item) {
     detailSelectedItem.value.item = item
-    console.log(item)
     itemInfoShow.value = true
     detailSelectedItem.value.props = await itemStore.fetchItemProperties(
         item.id
@@ -238,14 +256,28 @@ async function showItem(item: Item) {
 
 }
 
+const truncate = (text: string, length: number, suffix: string) => {
+
+    if (typeof (text) == undefined || text == null) {
+        return '---'
+    }
+    if (text.length > length) {
+        return text.substring(0, length) + suffix;
+    } else {
+        return text;
+    }
+};
+
 warehouse.fetchWarehouses().then(it => {
-
     whRows.value = (warehouse.getWarehouseList ?? []).length
+    paginateAside(whPageCount.value, 0)
 
-    paginate(whPageCount.value, 0)
+})
 
+warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
+    allWarehousesTableInformation = it.data as WhWithTomaFisica[]
+    paginateMain(whPageCount.value, 0)
     showWaitOverlay.value = false
-
 })
 
 </script>
@@ -255,29 +287,26 @@ warehouse.fetchWarehouses().then(it => {
         <ECard>
 
             <div class="row d-inline-flex allign-content-center tw-bg-slate-50 dark:tw-bg-slate-700">
-                <div class="col-2 mx-1 tw-flex-col tw-rounded-lg  tw-bg-white  dark:tw-bg-slate-800 " >
+                <div class="col-2 mx-1 tw-flex-col tw-rounded-lg  tw-bg-white  dark:tw-bg-slate-800 ">
 
                     <h1 class="title mt-2">Bodegas Disponibles</h1>
 
                     <b-form class="mt-2 t-form" role="search">
 
-                        <b-form-input class="mt-2" type="search" placeholder="Buscar" aria-label="Search"
-                            @change="">
+                        <b-form-input class="mt-2" type="search" placeholder="Buscar" aria-label="Search" @change="">
 
                         </b-form-input>
                     </b-form>
 
-                    <b-pagination v-model="currentPage" :total-rows="whRows" :per-page="whPageCount"
+                    <b-pagination v-model="currentAsidePage" :total-rows="whRows" :per-page="whPageCount"
                         aria-controls="b-list-warehouses" align="center" @page-click="onPageChanged" :limit=3
-                        hide-goto-end-buttons
-                        class="paginator"
-                        ></b-pagination>
+                        hide-goto-end-buttons class="paginator"></b-pagination>
 
 
-                    <b-list-group :per-page="whPageCount" :current-page="currentPage" class="button-group" >
+                    <b-list-group :per-page="whPageCount" :current-page="currentAsidePage"
+                        class="button-group smaller-btn-group">
 
                         <b-list-group-item :class="{ active: activeWharehouseButton === -1 }" button
-
                             @click="showAllWarehouses = true; activeWharehouseButton = -1"> Todas las bodegas
                         </b-list-group-item>
                         <b-list-group-item v-for="wh, index in paginatedWarehouse " button
@@ -290,40 +319,58 @@ warehouse.fetchWarehouses().then(it => {
 
                 </div>
 
-                <div v-if="showAllWarehouses" class="col-md tw-bg-slate-50 dark:tw-bg-slate-700" >
+                <div v-if="showAllWarehouses" class="col-xl tw-bg-slate-50 dark:tw-bg-slate-700">
 
-                    <h1 class="title tw-text-3xl" >Bodegas disponible</h1>
+                    <h1 class="title tw-text-3xl tw-mt-2 mb-2">Bodegas y Últimas Tomas Físicas</h1>
 
-                    <EButton class="">Limpiar Filtros</EButton>
+                    <div class="row display-inline-flex">
+                        <b-form inline class="col-3" >
 
-                    <b-form inline>
+                            <b-form-input id="wh-search" placeholder="Busqueda de Bodega">
+                            </b-form-input>
 
-                        <b-form-input id="wh-search" class="" placeholder="Busqueda de Bodega">
-                        </b-form-input>
 
-                    </b-form>
+                        </b-form>
+                        <e-button @click="" type="primary" class=" col-1">Buscar
+                        </e-button>
 
-                    <!-- <BTable :fields="" :items="">
+                        <b-pagination v-model="currentMainPage" :total-rows="whRows" :per-page="whPageCount"
+                            aria-controls="b-list-warehouses" align="center" @page-click="onMainPageChanged" :limit=10
+                            class="paginator col-6 tw-inline-flex"></b-pagination>
+
+
+                        <e-button @click="" type="primary" class=" col-2">Limpiar filtros
+                        </e-button>
+                    </div>
+
+                    <BTable :fields="allWarehousesFields" :items="paginatedMainTable" class="text-center">
                         <template #cell(#)="{ index }">
                             {{ index + 1 }}
                         </template>
-                        <template #cell(P.Venta)="{ item }">
-                            {{ item.price * item.quantity }}
+                        <template #cell(Realizada_Por)="{ item }">
+                            {{ (item?.whtf_done_by_name ?? "--") + " " + (item?.whtf_done_by_lastname ?? "--") }}
                         </template>
-                        <template #cell(Acciones)="{ item, index }">
+                        <template #cell(FechaTomaFisica)="{ item }">
+                            {{ item.whtf_created_at }}
+                        </template>
+                        <template #cell(Novedad)="{ item }">
+                            {{ truncate(item.whtf_novedad, 15, '...') }}
+                        </template>
+                        <template #cell(Detalles)="{ item }">
 
-                            <e-button left-icon="fa-eye" @click="" type="secondary">Ver detalles
+                            <e-button left-icon="fa-eye" @click="" type="primary">Ver detalles
                             </e-button>
 
                         </template>
-                    </BTable> -->
+
+                    </BTable>
 
                 </div>
 
                 <!-- Specific warehouse card  -->
 
-                <div v-else class="col-md" >
-                    <div class="row tw-bg-slate-50 dark:tw-bg-slate-700 mt-2" >
+                <div v-else class="col-xl">
+                    <div class="row tw-bg-slate-50 dark:tw-bg-slate-700 mt-2">
                         <h1 class="tw-text-3xl tw-font-bold">{{ activeWhInformation.bodega?.name }}</h1>
                     </div>
 
@@ -368,7 +415,7 @@ warehouse.fetchWarehouses().then(it => {
                             </ModalDialog>
 
                             <BTable id="whinv-table" :fields="inventoryFields" :items="activeWhInformation.inventory"
-                                    class="table">
+                                class="table">
                                 <template #cell(#)="{ index }">
                                     {{ index + 1 }}
                                 </template>
@@ -385,7 +432,8 @@ warehouse.fetchWarehouses().then(it => {
 
                             <b-pagination v-model="currentInvPage" :total-rows="invTableTotal"
                                 :per-page="whInformationPerPage" aria-controls="whinv-table" align="center"
-                                @page-click="onPageChangedInventory" :limit=10 hide-goto-end-buttons></b-pagination>
+                                @page-click="onPageChangedInventory" :limit=10 hide-goto-end-buttons
+                                class="paginator"></b-pagination>
 
 
                         </b-tab>
@@ -394,15 +442,13 @@ warehouse.fetchWarehouses().then(it => {
 
                         <b-tab title="Historial de Compras">
 
-                            <BTable :fields="purchasesFields" :items="activeWhInformation.purchases?? []">
+                            <BTable :fields="purchasesFields" :items="activeWhInformation.purchases ?? []">
                                 <template #cell(#)="{ index }">
                                     {{ index + 1 }}
                                 </template>
                                 <template #cell(Entregado)="{ purchase }">
 
-                                    <b-icon
-                                        :icon = "choosePurchaseIcon(purchase)"
-                                    > </b-icon>
+                                    <b-icon :icon="choosePurchaseIcon(purchase)"> </b-icon>
 
                                 </template>
                                 <template #cell(Acciones)="{ item, index }">
@@ -449,24 +495,31 @@ warehouse.fetchWarehouses().then(it => {
     </WaitOverlay>
 </template>
 <style lang="scss">
+h1.title {
+    @apply tw-text-2xl tw-text-black dark:tw-text-neutral-100;
+}
 
-    h1.title{
-        @apply tw-text-2xl tw-text-black dark:tw-text-neutral-100;
+.smaller-btn-group {
+    --bs-list-group-border-width: 1px;
+    --bs-list-group-border-radius: 0.25rem;
+    --bs-list-group-item-padding-x: 0.80rem;
+    --bs-list-group-item-padding-y: 0.3rem;
+}
+
+.table {
+    >thead {
+        @apply tw-bg-secondary tw-text-white tw-font-bold tw-text-sm;
     }
 
-    .table {
-        > thead {
-            @apply tw-bg-secondary tw-text-white tw-font-bold;
-        }
-        @media (prefers-color-scheme: dark) {
-            color: white !important;
-            --bs-table-striped-color: theme(colors.zinc.400);
-            --bs-table-hover-color: theme('colors.primary.light');
-            --bs-table-hover-bg: theme(colors.primary.light / 15%);
-        }
+    >tbody {
+        @apply tw-text-xs
     }
 
-
-
-
+    @media (prefers-color-scheme: dark) {
+        color: white !important;
+        --bs-table-striped-color: theme(colors.zinc.400);
+        --bs-table-hover-color: theme('colors.primary.light');
+        --bs-table-hover-bg: theme(colors.primary.light / 15%);
+    }
+}
 </style>

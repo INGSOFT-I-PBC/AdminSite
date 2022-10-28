@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
-import type { PaginatedAPIResponse, Item } from '@store-types'
+import type { Warehouse, WarehouseQuery} from './models/warehouseModels'
+import type { PaginatedAPIResponse, Item, } from '@store-types'
+import type { WhWithTomaFisica } from '@store/types/warehouse.model'
 
 type QuantifiedItem = Item & { quantity: number }
 
@@ -51,7 +52,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
-        async fetchPaginatedWarehousesPurchase(options: WarehouseQuery , paginated_opt:PaginationOptions) {
+        async fetchPaginatedWarehousePurchase(options: WarehouseQuery , paginated_opt:PaginationOptions) {
             const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
             const result = await (
                 await axios.get<PaginatedAPIResponse<any>>(
@@ -62,11 +63,21 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
-        async fetchPaginatedWarehousesTomasFisicas(options: WarehouseQuery , paginated_opt:PaginationOptions) {
+        async fetchPaginatedWarehouseTomasFisicas(options: WarehouseQuery , paginated_opt:PaginationOptions) {
             const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
             const result = await (
                 await axios.get<PaginatedAPIResponse<any>>(
                     '/api/v1/warehouse/tomas-fisicas',
+                    { params: queryParams }
+                )
+            )
+            return result
+        },
+        async fetchWarehousesLatestTomasFisicas(options: Optional<PaginationOptions> = null) {
+            const queryParams = {...options}
+            const result = await (
+                await axios.get<WhWithTomaFisica[]>(
+                    '/api/v1/warehouse/tomas-fisicas/all',
                     { params: queryParams }
                 )
             )
