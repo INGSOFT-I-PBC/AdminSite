@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import EButton from '@components/custom/EButton.vue'
 import ECard from '@components/custom/ECard.vue'
+import ERow from '@components/custom/ERow.vue'
 import type { TableField } from 'bootstrap-vue-3'
 import ModalDialog from '../../components/custom/ModalDialog.vue'
 import { useWarehouseStore } from '@store/warehouse'
@@ -8,17 +9,16 @@ import { useItemStore } from '@/store'
 import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 import { ref } from 'vue'
 import { type Item, type Warehouse, type Purchase, type TomaFisica } from '@store/types'
-import { table } from 'console'
 import type { ItemProps } from '@store/types/items.model'
 
 type SelectedItem = { item: Item | null; props: ItemProps[] }
 type QuantifiedItem = Item & { quantity: number }
 type warehouseInformation = {
-    bodega?: Warehouse
-    inventory?: QuantifiedItem[]
-    purchases?: Purchase[]
-    tomasFisicas?: TomaFisica[]
-    movements?: []
+    bodega: Warehouse
+    inventory: QuantifiedItem[]
+    purchases: Purchase[]
+    tomasFisicas: TomaFisica[]
+    movements: []
 }
 
 const showWaitOverlay = ref(true)
@@ -56,7 +56,7 @@ const purchasesFields: TableField[] = [
     { label: 'Fecha Completada', key: 'completed_at' },
     'Entregado',
     { label: 'Pago', key: 'invoice' },
-    { label: 'Fecha Pago', key: 'paid_at'},
+    { label: 'Fecha Pago', key: 'paid_at' },
     'Acciones',
 ]
 
@@ -68,17 +68,7 @@ const toamsFisFields: TableField[] = [
     'Acciones',
 ]
 
-let activeWhInformation = ref(<warehouseInformation>{
-    id: 0,
-    name: '',
-    status: {
-        description: '',
-        name: '',
-        id: ''
-    }
-}
-)
-
+let activeWhInformation = ref(<warehouseInformation>{})
 
 let currentPage = ref(1)
 let whRows = ref(0)
@@ -102,6 +92,18 @@ let movementTableTotal = ref(15)
 
 let itemInfoShow = ref(false)
 
+function choosePurchaseIcon(purchase:Purchase){
+   if(!purchase){
+    return "question"
+   }
+    if(purchase.status == "pagado"){
+        return "x-square"
+   }
+   if(purchase.status == 'confirmado'){
+        return "square"
+   }
+   return "question"
+}
 
 function paginate(page_size: number, page_number: number) {
 
@@ -122,8 +124,8 @@ function onPageChanged(event: any, page: number) {
 
 function resetInvData() {
 
-    invTableTotal.value, tomasFisTableTotal.value, purchaseTableTotal.value, movementTableTotal.value  = 1
-    currentInvPage.value, currentTomasFisicasPage.value, currentPurchasePage.value , currentMovPage.value = 1
+    invTableTotal.value, tomasFisTableTotal.value, purchaseTableTotal.value, movementTableTotal.value = 1
+    currentInvPage.value, currentTomasFisicasPage.value, currentPurchasePage.value, currentMovPage.value = 1
 
 }
 
@@ -145,7 +147,7 @@ async function onPageChangedInventory(event: any, page: number) {
 
 }
 
-async function onPageChangedTomaFisicas(event:any , page:number){
+async function onPageChangedTomaFisicas(event: any, page: number) {
 
     showWaitOverlay.value = true
 
@@ -163,7 +165,7 @@ async function onPageChangedTomaFisicas(event:any , page:number){
 
 }
 
-async function onPageChangedPurchase(event:any,page:number){
+async function onPageChangedPurchase(event: any, page: number) {
 
     showWaitOverlay.value = true
 
@@ -206,7 +208,7 @@ function wharehouseButtonPressed(event: any, whId: number, index: number) {
 
     activeWharehouseButton.value = whId
 
-    activeWhInformation.value.bodega = (warehouse.getWarehouseList[index] ?? { name: 'Error' })
+    activeWhInformation.value.bodega = (warehouse.getWarehouseList ?? [])[index]
 
     showWaitOverlay.value = true
 
@@ -216,9 +218,11 @@ function wharehouseButtonPressed(event: any, whId: number, index: number) {
         showWaitOverlay.value = false
     })
 
+    onPageChangedPurchase(event, 1)
+
+
     onPageChangedTomaFisicas(event, 1)
 
-    onPageChangedPurchase(event, 1)
 
     //onPageChangeMovement(event,1)
 
@@ -250,14 +254,14 @@ warehouse.fetchWarehouses().then(it => {
     <WaitOverlay :show="showWaitOverlay">
         <ECard>
 
-            <div class="row d-inline-flex allign-content-center">
-                <div class="col-2 mx-1" style="background-color: white">
+            <div class="row d-inline-flex allign-content-center tw-bg-slate-50 dark:tw-bg-slate-700">
+                <div class="col-2 mx-1 tw-flex-col tw-rounded-lg  tw-bg-white  dark:tw-bg-slate-800 " >
 
-                    <h2 class="mt-2">Bodegas Disponibles</h2>
+                    <h1 class="title mt-2">Bodegas Disponibles</h1>
 
-                    <b-form class="mt-2" role="search">
+                    <b-form class="mt-2 t-form" role="search">
 
-                        <b-form-input class="form-control me-2" type="search" placeholder="Buscar" aria-label="Search"
+                        <b-form-input class="mt-2" type="search" placeholder="Buscar" aria-label="Search"
                             @change="">
 
                         </b-form-input>
@@ -265,17 +269,20 @@ warehouse.fetchWarehouses().then(it => {
 
                     <b-pagination v-model="currentPage" :total-rows="whRows" :per-page="whPageCount"
                         aria-controls="b-list-warehouses" align="center" @page-click="onPageChanged" :limit=3
-                        hide-goto-end-buttons></b-pagination>
+                        hide-goto-end-buttons
+                        class="paginator"
+                        ></b-pagination>
 
 
-                    <b-list-group :per-page="whPageCount" :current-page="currentPage">
+                    <b-list-group :per-page="whPageCount" :current-page="currentPage" class="button-group" >
 
                         <b-list-group-item :class="{ active: activeWharehouseButton === -1 }" button
+
                             @click="showAllWarehouses = true; activeWharehouseButton = -1"> Todas las bodegas
                         </b-list-group-item>
                         <b-list-group-item v-for="wh, index in paginatedWarehouse " button
                             :class="{ active: wh.id === activeWharehouseButton }" :key="wh.id" :id="'whbtn-' + wh.id"
-                            @click="($event: any) => { wharehouseButtonPressed($event, wh.id, index) }">
+                            @click="wharehouseButtonPressed($event, wh.id, index)">
                             {{ wh.name }}
 
                         </b-list-group-item>
@@ -283,9 +290,9 @@ warehouse.fetchWarehouses().then(it => {
 
                 </div>
 
-                <div v-if="showAllWarehouses" class="col-md" style="background-color: white; border-radius: 5px">
+                <div v-if="showAllWarehouses" class="col-md tw-bg-slate-50 dark:tw-bg-slate-700" >
 
-                    <h1 class="my-1" style="font-size: 35px; color: black">Bodegas disponible</h1>
+                    <h1 class="title tw-text-3xl" >Bodegas disponible</h1>
 
                     <EButton class="">Limpiar Filtros</EButton>
 
@@ -296,7 +303,7 @@ warehouse.fetchWarehouses().then(it => {
 
                     </b-form>
 
-                    <BTable :fields="inventoryFields" :items="activeWhInformation.inventory">
+                    <!-- <BTable :fields="" :items="">
                         <template #cell(#)="{ index }">
                             {{ index + 1 }}
                         </template>
@@ -305,19 +312,19 @@ warehouse.fetchWarehouses().then(it => {
                         </template>
                         <template #cell(Acciones)="{ item, index }">
 
-                            <e-button left-icon="fa-eye" @click="showItem(item)" type="secondary">Ver detalles
+                            <e-button left-icon="fa-eye" @click="" type="secondary">Ver detalles
                             </e-button>
 
                         </template>
-                    </BTable>
+                    </BTable> -->
 
                 </div>
 
                 <!-- Specific warehouse card  -->
 
-                <div v-else class="col-md" style="background-color: white; border-radius: 5px">
-                    <div class="row" style="background-color: white; padding: 10px">
-                        <h1 style="font-size: 35px; color: black">{{ activeWhInformation.bodega?.name }}</h1>
+                <div v-else class="col-md" >
+                    <div class="row tw-bg-slate-50 dark:tw-bg-slate-700 mt-2" >
+                        <h1 class="tw-text-3xl tw-font-bold">{{ activeWhInformation.bodega?.name }}</h1>
                     </div>
 
                     <b-tabs active-tab-class="" content-class="mt-3" pills>
@@ -360,7 +367,8 @@ warehouse.fetchWarehouses().then(it => {
                                 </div>
                             </ModalDialog>
 
-                            <BTable id = "whinv-table" :fields="inventoryFields" :items="activeWhInformation.inventory">
+                            <BTable id="whinv-table" :fields="inventoryFields" :items="activeWhInformation.inventory"
+                                    class="table">
                                 <template #cell(#)="{ index }">
                                     {{ index + 1 }}
                                 </template>
@@ -384,8 +392,26 @@ warehouse.fetchWarehouses().then(it => {
 
                         <!--  Historial de pedidos TAB    -->
 
-                        <b-tab title="Historial de Pedidos">
+                        <b-tab title="Historial de Compras">
 
+                            <BTable :fields="purchasesFields" :items="activeWhInformation.purchases?? []">
+                                <template #cell(#)="{ index }">
+                                    {{ index + 1 }}
+                                </template>
+                                <template #cell(Entregado)="{ purchase }">
+
+                                    <b-icon
+                                        :icon = "choosePurchaseIcon(purchase)"
+                                    > </b-icon>
+
+                                </template>
+                                <template #cell(Acciones)="{ item, index }">
+
+                                    <e-button left-icon="fa-eye" @click="" type="secondary">Ver detalles
+                                    </e-button>
+
+                                </template>
+                            </BTable>
 
                         </b-tab>
 
@@ -422,3 +448,25 @@ warehouse.fetchWarehouses().then(it => {
         </ECard>
     </WaitOverlay>
 </template>
+<style lang="scss">
+
+    h1.title{
+        @apply tw-text-2xl tw-text-black dark:tw-text-neutral-100;
+    }
+
+    .table {
+        > thead {
+            @apply tw-bg-secondary tw-text-white tw-font-bold;
+        }
+        @media (prefers-color-scheme: dark) {
+            color: white !important;
+            --bs-table-striped-color: theme(colors.zinc.400);
+            --bs-table-hover-color: theme('colors.primary.light');
+            --bs-table-hover-bg: theme(colors.primary.light / 15%);
+        }
+    }
+
+
+
+
+</style>

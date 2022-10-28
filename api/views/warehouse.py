@@ -243,7 +243,7 @@ class WhPurchaseView(APIView):
             if page_number:
 
                 paginator = Paginator(
-                    wh_purchases, request.query_params.get("per_page")
+                    wh_purchases, request.query_params.get("per_page", 15)
                 )
 
                 page_obj = paginator.get_page(page_number)
@@ -282,7 +282,7 @@ class WhPurchaseView(APIView):
             return JsonResponse(purchases_data, safe=False)
 
         except Exception as e:
-
+            print(e)
             return error_response("Invalid query")
 
 

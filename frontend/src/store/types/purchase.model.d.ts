@@ -12,7 +12,7 @@ export interface MinimalPurchase {
         status: string
 }
 
-export interface Purchase extends MinimalWarehouse {
+export interface Purchase extends MinimalPurchase{
     id: number
 }
 

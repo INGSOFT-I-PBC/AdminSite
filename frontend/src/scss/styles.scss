@@ -1,1 +1,57 @@
-@import '~bootstrap/scss/bootstrap'
+@import '~bootstrap/scss/bootstrap';
+
+// Style for b-list-paginator tag
+.paginator{
+    --bs-pagination-color: theme(colors.secondary.DEFAULT);
+    --bs-pagination-bg: theme(colors.primary.DEFAULT);
+    --bs-pagination-border-width: 1px;
+    --bs-pagination-border-color: theme(colors.zinc.400);
+    --bs-pagination-hover-color: theme('colors.primary.light');
+    --bs-pagination-hover-bg: theme(colors.primary.light / 15%);
+    --bs-pagination-hover-border-color: theme(colors.primary.dark);
+    --bs-pagination-focus-color: theme(colors.primary.dark);
+    --bs-pagination-focus-box-shadow: 0 0 0 0.10rem  theme(colors.primary.dark / 30%);
+    --bs-pagination-focus-bg: theme(colors.primary.dark);
+    --bs-pagination-active-color: theme(colors.secondary.DEFAULT);
+    --bs-pagination-active-bg: theme(colors.primary.dark);
+    --bs-pagination-active-border-color: theme('colors.primary.light');
+    --bs-pagination-active-border-bg-color: theme('colors.primary.light');
+    --bs-pagination-disabled-bg: theme(colors.zinc.200);
+    @media (prefers-color-scheme: dark) {
+        --bs-pagination-background-color:theme(colors.secondary.DEFAULT);
+        --bs-pagination-active-color: theme(colors.secondary.DEFAULT);
+        --bs-pagination-color: white;
+        --bs-pagination-border: theme(colors.secondary.DEFAULT);
+        --bs-pagination-disabled-color: theme(colors.zinc.400);
+        --bs-pagination-disabled-bg: theme(colors.secondary.dark);
+        --bs-pagination-disabled-border-color: theme(colors.zinc.400);
+    }
+}
+
+
+// Style for b-list-group tag
+.button-group{
+
+    --bs-list-group-color: #212529;
+    --bs-list-group-bg: #fff;
+    --bs-list-group-border-color: rgba(0, 0, 0, 0.125);
+    --bs-list-group-action-color: #495057;
+    --bs-list-group-action-hover-color: #495057;
+    --bs-list-group-action-hover-bg: #f8f9fa;
+    --bs-list-group-action-active-color: #212529;
+    --bs-list-group-action-active-bg: #e9ecef;
+    --bs-list-group-disabled-color: #6c757d;
+    --bs-list-group-disabled-bg: #fff;
+    --bs-list-group-active-color: #212529;
+    --bs-list-group-active-bg: theme(colors.primary.dark);
+    --bs-list-group-active-border-color: theme('colors.primary.light');
+
+    @media (prefers-color-scheme: dark) {
+        --bs-list-group-color: #f8f9fa;
+        --bs-list-group-action-hover-color: #f8f9fa;
+        --bs-list-group-action-hover-bg: theme(colors.primary.light / 70%);;
+    }
+
+}
+
+
