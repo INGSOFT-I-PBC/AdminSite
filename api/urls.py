@@ -27,6 +27,7 @@ router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
+router.register(r"providers", views.ProviderViewSet)
 
 
 urlpatterns = [
@@ -79,5 +80,8 @@ urlpatterns = [
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
+    # Providers endpoints
+    path("provider/<int:id>", views.ProviderView.as_view()),
+    path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
 ]
