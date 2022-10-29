@@ -23,4 +23,4 @@ cryptography==38.0.1
 
 # WSGI compliant production server
 gunicorn==20.1.0
-Pillow==9.2.0
+Pillow==9.3.0
