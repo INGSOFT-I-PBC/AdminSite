@@ -1,3 +1,5 @@
+import type { OlMap } from './types/components'
+
 declare module '@vue/runtime-core' {
     export interface GlobalComponents {
         RouterLink: typeof import('vue-router')['RouterLink']
@@ -5,6 +7,7 @@ declare module '@vue/runtime-core' {
         FontAwesomeIcon: DefineComponent<FontAwesomeIconProps>
         FontAwesomeLayers: DefineComponent<FontAwesomeLayersProps>
         FontAwesomeLayersText: DefineComponent<FontAwesomeLayersTextProps>
+        OlMap: OlMap
     }
 }
 

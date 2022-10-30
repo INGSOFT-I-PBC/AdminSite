@@ -3,7 +3,11 @@ import type {
     FontAwesomeLayersProps,
     FontAwesomeLayersTextProps,
 } from '@fortawesome/vue-fontawesome'
-import type { Component } from 'vue'
+import type { Component, DefineComponent } from 'vue'
+
+export type OlMap = DefineComponent<{
+    a: string
+}>
 
 declare module '*.vue' {
     import { type DefineComponent } from 'vue'
