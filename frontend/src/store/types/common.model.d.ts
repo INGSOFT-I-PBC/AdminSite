@@ -1,4 +1,4 @@
-import type { PaginatedAPIResponse } from "@store-types";
+import type { PaginatedAPIResponse } from '@store-types'
 
 export interface Group {
     id?: number

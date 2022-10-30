@@ -308,7 +308,9 @@
             id="product-modal-error"
             v-model:show="productModalShowError"
             title="Información">
-            <h1 style="font-size: 15px; color: black; text-align: left">{{ msm400 }}</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                {{ msm400 }}
+            </h1>
         </ModalDialog>
         <ModalDialog
             id="product-modal"
@@ -317,7 +319,9 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-            <h1 style="font-size: 15px; color: black; text-align: left">¿Esta seguro de guardar el producto?</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Esta seguro de guardar el producto?
+            </h1>
         </ModalDialog>
 
         <ECard>

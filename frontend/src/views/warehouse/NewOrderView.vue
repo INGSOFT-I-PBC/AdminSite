@@ -104,7 +104,7 @@
         return itemStore.paginatedItems?.data || []
     })
 
-    warehouse.fetchWarehouses().then(it => {
+    warehouse.fetchWarehouses().then(() => {
         showWaitOverlay.value = false
     })
 

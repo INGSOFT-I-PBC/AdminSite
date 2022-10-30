@@ -1,8 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import {
-FontAwesomeIcon,
-FontAwesomeLayers,
-FontAwesomeLayersText
+    FontAwesomeIcon,
+    FontAwesomeLayers,
+    FontAwesomeLayersText,
 } from '@fortawesome/vue-fontawesome'
 import BootstrapVue3 from 'bootstrap-vue-3'
 import { createPinia } from 'pinia'

@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-    import ECard from '@components/custom/ECard.vue'
-    import ETab from '@components/holders/ETab.vue'
     import EButton from '@components/custom/EButton.vue'
-    import { TabPanel } from '@headlessui/vue'
-    import { BCard, BPagination, type BvEvent } from 'bootstrap-vue-3'
-    import { BIconPerson } from 'bootstrap-icons-vue'
-    import { useUserStore } from '@store/users'
-    import type { SimpleUser, UserForm } from '@store/types/user.model'
+    import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
-    import { useCommonStore } from '@store/common'
-    import { computed, reactive, watch } from 'vue'
-    import type { Group } from '@store/types/common.model'
-    import WaitOverlay from '@components/custom/WaitOverlay.vue'
-    import UserCardItem from '@components/models/UserCardItem.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
+    import WaitOverlay from '@components/custom/WaitOverlay.vue'
+    import ETab from '@components/holders/ETab.vue'
+    import UserCardItem from '@components/models/UserCardItem.vue'
+    import { TabPanel } from '@headlessui/vue'
+    import { useCommonStore } from '@store/common'
+    import { isMessage, type Employee } from '@store/types'
+    import type { Group } from '@store/types/common.model'
+    import type { SimpleUser, UserForm } from '@store/types/user.model'
+    import { useUserStore } from '@store/users'
+    import { BIconPerson } from 'bootstrap-icons-vue'
+    import { BPagination, type BvEvent } from 'bootstrap-vue-3'
+    import { Form as ValidationForm, useField, useForm } from 'vee-validate'
+    import { computed, reactive, watch } from 'vue'
     import { useToast } from 'vue-toastification'
     import * as yup from 'yup'
-    import { useField, useForm, Form as ValidationForm } from 'vee-validate'
     import EmployeeSearch from '../utils/EmployeeSearch.vue'
-    import { isMessage, type Employee } from '@store/types'
     const toast = useToast()
     /**
      * Stores
@@ -128,7 +128,9 @@
         }
         showDeleteDialog.value = false
     }
-    function submitUpdate() {}
+    function submitUpdate() {
+        console.debug('Update') // TODO: avoid empty function
+    }
     watch(filterGroup, newValue => {
         pagination.value.group = newValue?.id
     })
@@ -322,7 +324,6 @@
                 <WaitOverlay :show="isUploadingUser">
                     <ValidationForm
                         @submit="submitNewUser"
-                        v-slot="{ values }"
                         :validation-schema="userForm">
                         <div class="row gy-3 align-items-end">
                             <div class="col col-auto">

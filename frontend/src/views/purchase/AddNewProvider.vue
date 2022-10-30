@@ -3,7 +3,7 @@
         <Title size="3xl">Informacion general</Title>
         <ValidationForm
             @submit="onSubmit"
-            @invalidSubmit="onFailedSubmit"
+            @invalid-submit="onFailedSubmit"
             :validation-schema="vSchema">
             <div class="row align-items-middle">
                 <div class="col col-12 col-lg-6 col-xxl-4">
@@ -13,8 +13,8 @@
                         rules="required">
                         <InputText
                             label="Nombre"
-                            :modelValue="field.value as string"
-                            @update:modelValue="handleChange"
+                            :model-value="field.value as string"
+                            @update:model-value="handleChange"
                             info-status="danger"
                             :info-label="errorMessage" />
                     </Field>
@@ -26,8 +26,8 @@
                         rules="required">
                         <InputText
                             label="Razón Social"
-                            :modelValue="field.value as string"
-                            @update:modelValue="handleChange"
+                            :model-value="field.value as string"
+                            @update:model-value="handleChange"
                             info-status="danger"
                             :info-label="errorMessage" />
                     </Field>
@@ -39,8 +39,8 @@
                         v-slot="{ field, handleChange, errorMessage }">
                         <InputText
                             label="RUC/Cédula/Pasaporte"
-                            :modelValue="field.value as string"
-                            @update:modelValue="handleChange"
+                            :model-value="field.value as string"
+                            @update:model-value="handleChange"
                             info-status="danger"
                             :info-label="errorMessage" />
                     </Field>
@@ -52,8 +52,8 @@
                         v-slot="{ field, handleChange, errorMessage }">
                         <InputText
                             label="Número de teléfono"
-                            :modelValue="field.value as string"
-                            :onUpdate:modelValue="handleChange"
+                            :model-value="field.value as string"
+                            @update:model-value="handleChange"
                             info-status="danger"
                             :info-label="errorMessage" />
                     </Field>
@@ -64,8 +64,8 @@
                         v-slot="{ field, handleChange, errorMessage }">
                         <InputText
                             label="Sitio Web"
-                            :modelValue="field.value as string"
-                            :onUpdate:modelValue="handleChange"
+                            :model-value="field.value as string"
+                            @update:model-value="handleChange"
                             info-status="danger"
                             :info-label="errorMessage" />
                     </Field>
@@ -76,8 +76,8 @@
                         v-slot="{ field, handleChange, errorMessage }">
                         <InputText
                             label="Correo electrónico"
-                            :modelValue="field.value as string"
-                            :onUpdate:modelValue="handleChange"
+                            :model-value="field.value as string"
+                            @update:model-value="handleChange"
                             info-status="danger"
                             :info-label="errorMessage" />
                     </Field>
@@ -88,8 +88,8 @@
                     >
                     <ol-map
                         ref="map"
-                        :loadTilesWhileAnimating="true"
-                        :loadTilesWhileInteracting="true"
+                        :load-tiles-while-animating="true"
+                        :load-tiles-while-interacting="true"
                         @singleclick="setLocation"
                         style="
                             height: 20rem;
@@ -132,14 +132,14 @@
                         label="Latitud"
                         readonly
                         placeholder="--.-------"
-                        :modelValue="mark.latitude" />
+                        :model-value="mark.latitude" />
                 </div>
                 <div class="col col-6 col-xxl-3 mt-2">
                     <InputText
                         label="Longitud"
                         readonly
                         placeholder="--.-------"
-                        :modelValue="mark.longitude" />
+                        :model-value="mark.longitude" />
                 </div>
             </div>
             <div class="row">
@@ -256,7 +256,7 @@
         markPosition.value = event.coordinate
         console.debug('Coordinated of mark: ', event.coordinate)
     }
-    function onFailedSubmit(validationObj: unknown) {
+    function onFailedSubmit() {
         toast.error('Verifique los datos del formulario')
     }
 

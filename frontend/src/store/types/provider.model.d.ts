@@ -3,7 +3,7 @@ export interface ProviderModel {
     document_path: string
     bussiness_name: string
     phone_no: string
-    website:Optional<string>
+    website: Optional<string>
     email: string
     latitude: number
     longitude: number
@@ -17,7 +17,7 @@ export interface ProviderForm {
     document_path?: string
     bussiness_name?: string
     phone_no?: string
-    website?:Optional<string>
+    website?: Optional<string>
     email?: string
     latitude?: number
     longitude?: number

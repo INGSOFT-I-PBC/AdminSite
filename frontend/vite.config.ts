@@ -39,10 +39,14 @@ export default ({ mode }: { mode: string }) => {
             port: 5173,
             open: false,
         },
-        plugins: [vue(), vueJsx(), Components({
-            dirs:['components'],
-            dts: 'components.d.ts'
-        })],
+        plugins: [
+            vue(),
+            vueJsx(),
+            Components({
+                dirs: ['components'],
+                dts: 'components.d.ts',
+            }),
+        ],
         resolve: {
             alias: {
                 '@components': fileURLToPath(

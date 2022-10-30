@@ -38,11 +38,11 @@
             default: false,
         },
         infoStyle: {
-            type: Object as PropType<string | string[]>,
-            default: ['tw-italic', 'tw-text-tiny'],
+            type: [String, Array],
+            default: () => ['tw-italic', 'tw-text-tiny'],
         },
         status: {
-            type: Boolean as PropType<Boolean | null>,
+            type: Boolean as PropType<boolean | null>,
             default: null,
         },
         infoStatus: {
@@ -85,7 +85,7 @@
     ])
 
     const infoClass = computed(() => {
-        let styles = Array.isArray(props.infoStyle)
+        const styles = Array.isArray(props.infoStyle)
             ? [...props.infoStyle]
             : props.infoStyle?.split(' ')
         // let styles = `${props.infoStyle || ''} `
@@ -175,7 +175,7 @@
 
         emit('update:modelValue', value)
         e.preventDefault()
-        let input = e.target as HTMLInputElement
+        const input = e.target as HTMLInputElement
         input.value = value
     }
 </script>
