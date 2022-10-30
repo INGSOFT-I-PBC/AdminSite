@@ -1,9 +1,9 @@
 import { fileURLToPath, URL } from 'node:url'
 
-import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueJsx from '@vitejs/plugin-vue-jsx'
 import path, { resolve } from 'node:path'
+import { defineConfig, loadEnv } from 'vite'
 
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: string }) => {
@@ -37,10 +37,12 @@ export default ({ mode }: { mode: string }) => {
             port: 5173,
             open: false,
         },
-        plugins: [vue(), vueJsx()],
+        plugins: [
+            vue(),
+            vueJsx(),
+        ],
         resolve: {
             alias: {
-                '@': fileURLToPath(new URL('./src', import.meta.url)),
                 '@components': fileURLToPath(
                     new URL('./src/components', import.meta.url)
                 ),
@@ -50,6 +52,16 @@ export default ({ mode }: { mode: string }) => {
                 '@store': fileURLToPath(
                     new URL('./src/store', import.meta.url)
                 ),
+                '@store-types': fileURLToPath(
+                    new URL('./src/store/types', import.meta.url)
+                ),
+                '@component-types': fileURLToPath(
+                    new URL('./src/components/types', import.meta.url)
+                ),
+                '@custom-components': fileURLToPath(
+                    new URL('./src/components/index.ts', import.meta.url)
+                ),
+                '@': fileURLToPath(new URL('./src', import.meta.url)),
                 '~bootstrap': path.resolve(__dirname, 'node_modules/bootstrap'),
             },
         },

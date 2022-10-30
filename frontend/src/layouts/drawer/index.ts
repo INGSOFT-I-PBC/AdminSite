@@ -115,7 +115,7 @@ export const menus: MenuItem[] = [
                 label: 'Proveedores',
                 children: [
                     {
-                        label: 'Proveedores',
+                        label: 'Nuevo Proveedor',
                         path: '/compras/nuevo-proveedor',
                         routeName: 'purchases-add-provider',
                     },

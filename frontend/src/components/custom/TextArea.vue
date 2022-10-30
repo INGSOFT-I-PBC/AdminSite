@@ -1,10 +1,10 @@
 <script setup lang="ts">
-    import type { Prop, PropType } from 'vue'
     import type {
         ColorTheme,
         Orientation,
         TextColorMode,
     } from '@components-types'
+    import type { PropType } from 'vue'
 
     const props = defineProps({
         modelValue: {
@@ -12,6 +12,14 @@
             default: '',
         },
         modelModifiers: {
+            type: Object as PropType<{
+                capitalize?: boolean
+                trim?: boolean
+                upper?: boolean
+                lower?: boolean
+                number?: boolean
+                alpha?: boolean
+            }>,
             default: () => ({} as Record<string, string>),
         },
         theme: {

@@ -14,6 +14,10 @@ declare module '@components-types' {
     export * from '@/components/types'
 }
 
+declare module '@custom-components' {
+    export * from '@components/index'
+}
+
 // declare module '@store-types' {
 //     export * from '@store/types'
 // }

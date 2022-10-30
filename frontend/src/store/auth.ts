@@ -1,10 +1,11 @@
-import { defineStore } from 'pinia'
-import axios from 'axios'
+/* eslint-disable  @typescript-eslint/no-non-null-assertion */
 import {
     SessionExpiredException,
     UndersiredStateError,
     UserNotLoggedInError,
 } from '@/exceptions'
+import axios from 'axios'
+import { defineStore } from 'pinia'
 
 const savedToken: JWTToken | null = JSON.parse(
     localStorage.getItem('accessToken') ?? 'null'

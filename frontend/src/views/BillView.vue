@@ -1,14 +1,12 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
+    import { reactive } from 'vue'
 
     import { useRouter } from 'vue-router'
     const router = useRouter()
@@ -109,10 +107,10 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="go"
+                    <EButton variant="secondary" @click="go"
                         >+ Crear factura
                     </EButton>
-                    <EButton type="secondary" @click="go"
+                    <EButton variant="secondary" @click="go"
                         >Notas de crédito
                     </EButton>
                     <ECol cols="9" md="6" xl="4">

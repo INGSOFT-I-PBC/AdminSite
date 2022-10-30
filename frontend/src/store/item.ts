@@ -1,7 +1,6 @@
 import axios, { type AxiosResponse } from 'axios'
 import type Item from '@/interfaz/items'
-import type Status  from '@/interfaz/items'
-
+import type Status from '@/interfaz/items'
 
 /* eslint-disable */
 class ItemDataService {

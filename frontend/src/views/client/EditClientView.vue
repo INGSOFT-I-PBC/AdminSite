@@ -132,7 +132,6 @@
                     productModalShowError.value = true
                     formClientError2.value = error.response.data
                     showWaitOverlay.value = false
-
                 }
             })
     }

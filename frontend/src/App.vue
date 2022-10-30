@@ -48,10 +48,7 @@
             {{ currentTitle ? ` :: ${currentTitle}` : '' }}
         </title>
     </Teleport>
-    <!-- <Transition
-        enter-active-class="tw-transition-all tw-duration-300"
-        enter-from-class="tw-opacity-0"
-        enter-to-class="tw-opacity-100"> -->
+
     <component :is="layout" :breadcrumb="breadcrumb" :title="currentTitle">
         <RouterView v-slot="{ Component }">
             <Transition>

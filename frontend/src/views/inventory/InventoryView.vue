@@ -1,14 +1,14 @@
 <script setup lang="ts">
-    import ItemDataService from '@/store/item'
     import type Item from '@/interfaz/items'
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
+    import ItemDataService from '@/store/item'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Table from '@components/holders/Table.vue'
-    import { reactive, onMounted } from 'vue'
+    import { onMounted, reactive } from 'vue'
     import { useRouter } from 'vue-router'
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     const router = useRouter()
@@ -233,7 +233,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="goAgregar"
+                    <EButton variant="secondary" @click="goAgregar"
                         >+ Agregar producto
                     </EButton>
 
