@@ -1,7 +1,7 @@
 <template>
     <ECard>
         <Title size="3xl">Informacion general</Title>
-        <ValidationForm
+        <VeeForm
             @submit="onSubmit"
             @invalid-submit="onFailedSubmit"
             :validation-schema="vSchema">
@@ -147,7 +147,7 @@
                     <EButton class="tw-w-full">Guardar</EButton>
                 </div>
             </div>
-        </ValidationForm>
+        </VeeForm>
     </ECard>
 </template>
 
@@ -160,12 +160,7 @@
     import type { ProviderModel } from '@store/types/provider.model'
     import type { Coordinate } from 'ol/coordinate'
     import type MapBrowserEvent from 'ol/MapBrowserEvent'
-    import {
-        defineRule,
-        Field,
-        Form as ValidationForm,
-        type SubmissionContext,
-    } from 'vee-validate'
+    import { defineRule, Field, type SubmissionContext } from 'vee-validate'
     import { computed } from 'vue'
     import { useToast } from 'vue-toastification'
     import * as yup from 'yup'

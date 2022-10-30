@@ -5,8 +5,6 @@ import vueJsx from '@vitejs/plugin-vue-jsx'
 import path, { resolve } from 'node:path'
 import { defineConfig, loadEnv } from 'vite'
 
-import Components from 'unplugin-vue-components/vite'
-
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: string }) => {
     process.env = {
@@ -42,10 +40,6 @@ export default ({ mode }: { mode: string }) => {
         plugins: [
             vue(),
             vueJsx(),
-            Components({
-                dirs: ['components'],
-                dts: 'components.d.ts',
-            }),
         ],
         resolve: {
             alias: {

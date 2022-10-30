@@ -1,15 +1,8 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
-import {
-    FontAwesomeIcon,
-    FontAwesomeLayers,
-    FontAwesomeLayersText,
-} from '@fortawesome/vue-fontawesome'
 import BootstrapVue3 from 'bootstrap-vue-3'
 import { createPinia } from 'pinia'
-import { Field, FieldArray, Form } from 'vee-validate'
 import 'vite/modulepreload-polyfill'
-import { createApp, ref } from 'vue'
-import VueFeather from 'vue-feather'
+import { computed, createApp, defineAsyncComponent, ref } from 'vue'
 import Toast, { POSITION, type PluginOptions } from 'vue-toastification'
 import Vue3EasyDataTable from 'vue3-easy-data-table'
 import OpenLayersMap from 'vue3-openlayers'
@@ -17,7 +10,6 @@ import { awesomeIcons } from './icons'
 
 import './types'
 
-import App from './App.vue'
 import router from './router'
 
 import '@/scss/styles.scss'
@@ -30,7 +22,7 @@ import 'vue3-openlayers/dist/vue3-openlayers.css'
 import './assets/main.css'
 import './index.css'
 
-const app = createApp(App)
+const app = createApp(defineAsyncComponent(() => import("./App.vue")))
 
 const defToastOptions: PluginOptions = {
     position: POSITION.TOP_RIGHT,
@@ -50,12 +42,18 @@ app.use(router)
 app.use(Toast, defToastOptions)
 app.use(OpenLayersMap)
 app.component('EasyDataTable', Vue3EasyDataTable)
-app.component('FontAwesomeIcon', FontAwesomeIcon)
-app.component('FontAwesomeLayers', FontAwesomeLayers)
-app.component('FontAwesomeLayersText', FontAwesomeLayersText)
-app.component('VeeForm', Form)
-app.component('VeeField', Field)
-app.component('VeeFieldArray', FieldArray)
-app.component(VueFeather.name, VueFeather)
+app.component('FontAwesomeIcon', defineAsyncComponent(() => import('@fortawesome/vue-fontawesome').then(m => m.FontAwesomeIcon)))
+app.component('FontAwesomeLayers', defineAsyncComponent(() => import('@fortawesome/vue-fontawesome').then(m => m.FontAwesomeLayers)))
+app.component('FontAwesomeLayersText', defineAsyncComponent(() => import('@fortawesome/vue-fontawesome').then(m => m.FontAwesomeLayersText)))
+app.component('VeeForm', defineAsyncComponent(
+    () => import('vee-validate').then(module => module.Form)
+    ))
+app.component('VeeField', defineAsyncComponent(()=>import('vee-validate')
+.then(module => module.Field)))
+app.component('VeeFieldArray', defineAsyncComponent(() =>import('vee-validate')
+.then(module=>module.FieldArray)
+))
+app.component('VueFeather', defineAsyncComponent(() => import('vue-feather')))
 globalThis.ref = ref
+globalThis.computed = computed
 app.mount('#app')
