@@ -47,6 +47,7 @@ import {
     faUserAstronaut,
     faUserGear,
     faUserGroup,
+    faLocationDot,
 } from '@fortawesome/free-solid-svg-icons'
 import {
     faFontAwesome,
@@ -112,4 +113,5 @@ export const awesomeIcons: Array<IconDefinition> = [
     faEye,
     faEyeDropper,
     faEyeSlash,
+    faLocationDot,
 ]
