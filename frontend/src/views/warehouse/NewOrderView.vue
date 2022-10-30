@@ -1,29 +1,32 @@
 <script setup lang="ts">
-    import ECard from '../../components/custom/ECard.vue'
-    import ERow from '../../components/custom/ERow.vue'
-    import ECol from '../../components/custom/ECol.vue'
-    import ListBox from '../../components/custom/ListBox.vue'
-    import InputText from '../../components/custom/InputText.vue'
-    import EButton from '../../components/custom/EButton.vue'
-    import ModalDialog from '../../components/custom/ModalDialog.vue'
-    import Title from '../../components/custom/Title.vue'
-    import { computed, watch } from 'vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
-    import { useWarehouseStore } from '@store/warehouse'
-    import TextArea from '../../components/custom/TextArea.vue'
+    import {
+        EButton,
+        ECard,
+        ECol,
+        ERow,
+        InputText,
+        ListBox,
+        ModalDialog,
+        TextArea,
+        Title,
+        WaitOverlay,
+    } from '@custom-components'
+    import { useItemStore } from '@store/items'
+    import { useOrderStore } from '@store/order'
     import {
         isMessage,
         type Item,
         type MessageResponse,
         type Warehouse,
     } from '@store/types'
-    import type { TableField } from 'bootstrap-vue-3'
-    import { useItemStore } from '@store/items'
-    import { useToast } from 'vue-toastification'
-    import type { ServerOptions } from 'vue3-easy-data-table'
     import type { ItemProps } from '@store/types/items.model'
     import type { OrderSaveData } from '@store/types/orders.model'
-    import { useOrderStore } from '@store/order'
+    import { useWarehouseStore } from '@store/warehouse'
+    import type { TableField } from 'bootstrap-vue-3'
+    import { computed, watch } from 'vue'
+    import { useToast } from 'vue-toastification'
+    import type { ServerOptions } from 'vue3-easy-data-table'
+
     /**
      * Utility object definitions
      */
@@ -364,21 +367,22 @@
                         </template>
                         <template #cell(Acciones)="{ item, index }">
                             <div class="t-button-group">
-                                <e-button
+                                <EButton
                                     left-icon="fa-eye"
                                     @click="showItem(item)"
-                                    type="secondary"
-                                    >Ver detalles</e-button
-                                >
-                                <e-button
+                                    variant="secondary">
+                                    Ver detalles
+                                </EButton>
+
+                                <EButton
                                     left-icon="fa-trash-can"
-                                    type="cancel"
+                                    variant="cancel"
                                     @click="removeItem(index)">
                                     <span
-                                        class="tw-invisible md:tw-visible tw-font-bold"
-                                        >Eliminar</span
-                                    ></e-button
-                                >
+                                        class="tw-invisible md:tw-visible tw-font-bold">
+                                        Eliminar
+                                    </span>
+                                </EButton>
                             </div>
                         </template>
                     </BTable>

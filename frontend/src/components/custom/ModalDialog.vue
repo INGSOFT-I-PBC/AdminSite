@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+    import type { ComponentSize } from '@components-types'
     import {
         Dialog,
         DialogPanel,
@@ -7,7 +8,6 @@
         TransitionRoot,
     } from '@headlessui/vue'
     import { computed, type PropType } from 'vue'
-    import type { ComponentSize } from '@components-types'
     import EButton from './EButton.vue'
 
     const props = defineProps({
@@ -145,7 +145,7 @@
                                             buttonType
                                         )
                                     "
-                                    type="cancel"
+                                    variant="cancel"
                                     @click="cancelClicked">
                                     {{ cancelText }}
                                 </EButton>

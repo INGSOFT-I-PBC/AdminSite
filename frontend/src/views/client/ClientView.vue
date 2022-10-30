@@ -1,15 +1,15 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     import { onMounted } from 'vue'
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
-    import type { Client } from '@store/types'
     import { useClientStore } from '@store/client'
+    import type { Client } from '@store/types'
     //import { useToast } from 'vue-toastification'
 
     import type { TableField } from 'bootstrap-vue-3'
@@ -175,7 +175,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="go"
+                    <EButton variant="secondary" @click="go"
                         >+ Agregar cliente
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
@@ -209,19 +209,19 @@
                         <div class="t-button-group">
                             <e-button
                                 left-icon="fa-eye"
-                                type="secondary"
+                                variant="secondary"
                                 @click="showItem(item)"
                                 >Ver detalles</e-button
                             >
                             <e-button
                                 left-icon="fa-edit"
-                                type="success"
+                                variant="success"
                                 @click="goEdit(item['id'])"
                                 >Editar</e-button
                             >
                             <e-button
                                 left-icon="fa-trash-can"
-                                type="cancel"
+                                variant="cancel"
                                 @click="deleteProduct(item['id'], index)">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"

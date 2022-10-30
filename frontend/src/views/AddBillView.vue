@@ -1,18 +1,7 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
-    import Title from '@components/custom/Title.vue'
-    import Table from '@components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
-    import * as VeeValidate from 'vee-validate'
-    import { Field, ErrorMessage } from 'vee-validate'
-    import { Form as EForm } from 'vee-validate'
-    import { useRoute, useRouter } from 'vue-router'
+    import { ErrorMessage, Field, Form as EForm } from 'vee-validate'
+    import { useRouter } from 'vue-router'
 
     const router = useRouter()
     const tipopago = ref(true)
@@ -301,7 +290,7 @@
                         </select>
                     </div>
                     <div class="col">
-                        <EButton type="secondary" style="margin-top: 20px">
+                        <EButton variant="secondary" style="margin-top: 20px">
                             +
                         </EButton>
                     </div>
@@ -472,7 +461,7 @@
                         </select>
                     </div>
                     <div class="col">
-                        <EButton type="secondary" style="margin-top: 20px"
+                        <EButton variant="secondary" style="margin-top: 20px"
                             >Añadir producto</EButton
                         >
                     </div>

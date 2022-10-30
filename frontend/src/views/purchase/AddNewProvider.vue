@@ -1,12 +1,12 @@
 <template>
     <ECard>
-        <Title>Informacion general</Title>
+        <Title size="3xl">Informacion general</Title>
         <ValidationForm
             @submit="onSubmit"
             @invalidSubmit="onFailedSubmit"
             :validation-schema="vSchema">
             <div class="row align-items-middle">
-                <div class="col col-12 col-lg-6">
+                <div class="col col-12 col-lg-6 col-xxl-4">
                     <Field
                         name="name"
                         v-slot="{ field, handleChange, errorMessage }"
@@ -19,20 +19,7 @@
                             :info-label="errorMessage" />
                     </Field>
                 </div>
-                <div class="col col-12 col-lg-6">
-                    <Field
-                        name="document_path"
-                        label="documento"
-                        v-slot="{ field, handleChange, errorMessage }">
-                        <InputText
-                            label="RUC/Cédula/Pasaporte"
-                            :modelValue="field.value as string"
-                            @update:modelValue="handleChange"
-                            info-status="danger"
-                            :info-label="errorMessage" />
-                    </Field>
-                </div>
-                <div class="col col-12 col-lg-6">
+                <div class="col col-12 col-lg-6 col-xxl-4">
                     <Field
                         name="bussiness_name"
                         v-slot="{ field, handleChange, errorMessage }"
@@ -45,7 +32,21 @@
                             :info-label="errorMessage" />
                     </Field>
                 </div>
-                <div class="col col-12 col-lg-3">
+                <div class="col col-12 col-lg-6 col-xxl-4">
+                    <Field
+                        name="document_path"
+                        label="documento"
+                        v-slot="{ field, handleChange, errorMessage }">
+                        <InputText
+                            label="RUC/Cédula/Pasaporte"
+                            :modelValue="field.value as string"
+                            @update:modelValue="handleChange"
+                            info-status="danger"
+                            :info-label="errorMessage" />
+                    </Field>
+                </div>
+
+                <div class="col col-12 col-lg-3 col-xxl-3">
                     <Field
                         name="phone_no"
                         v-slot="{ field, handleChange, errorMessage }">
@@ -57,7 +58,7 @@
                             :info-label="errorMessage" />
                     </Field>
                 </div>
-                <div class="col col-12 col-lg-9">
+                <div class="col col-12 col-lg-7 col-xxl-3">
                     <Field
                         name="website"
                         v-slot="{ field, handleChange, errorMessage }">
@@ -69,7 +70,7 @@
                             :info-label="errorMessage" />
                     </Field>
                 </div>
-                <div class="col col-lg-6">
+                <div class="col col-lg-5 col-xxl-3">
                     <Field
                         name="email"
                         v-slot="{ field, handleChange, errorMessage }">
@@ -82,9 +83,9 @@
                     </Field>
                 </div>
                 <div class="col col-12">
-                    <h3 class="tw-text-xl tw-font-bold tw-mb-3">
-                        Localización del proveedor
-                    </h3>
+                    <Title size="2xl" class="tw-mb-2"
+                        >Localización del proveedor</Title
+                    >
                     <ol-map
                         ref="map"
                         :loadTilesWhileAnimating="true"
@@ -155,19 +156,19 @@
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import Title from '@components/custom/Title.vue'
+    import { useProviderStore } from '@store/provider'
+    import type { ProviderModel } from '@store/types/provider.model'
     import type { Coordinate } from 'ol/coordinate'
     import type MapBrowserEvent from 'ol/MapBrowserEvent'
-    import { useToast } from 'vue-toastification'
     import {
-        Form as ValidationForm,
-        Field,
         defineRule,
+        Field,
+        Form as ValidationForm,
         type SubmissionContext,
     } from 'vee-validate'
-    import * as yup from 'yup'
     import { computed } from 'vue'
-    import type { ProviderModel } from '@store/types/provider.model'
-    import { useProviderStore } from '@store/provider'
+    import { useToast } from 'vue-toastification'
+    import * as yup from 'yup'
     defineRule('required', (value: unknown): boolean | string => {
         switch (typeof value) {
             case 'string':

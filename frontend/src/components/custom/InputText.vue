@@ -1,8 +1,8 @@
 <script setup lang="ts">
-    import { computed, type PropType } from 'vue'
-    import type { ColorTheme } from '@components-types'
     import { identity } from '@/components/types/checkers'
+    import type { ColorTheme } from '@components-types'
     import type { InputType } from 'bootstrap-vue-3'
+    import { computed, type PropType } from 'vue'
 
     const props = defineProps({
         modelValue: {
@@ -32,6 +32,10 @@
         infoLabel: {
             type: String,
             default: null,
+        },
+        noInfoLabel: {
+            type: Boolean,
+            default: false,
         },
         infoStyle: {
             type: Object as PropType<string | string[]>,
@@ -218,7 +222,7 @@
                 </slot>
             </button>
         </div>
-        <slot name="info-label">
+        <slot v-if="!noInfoLabel" name="info-label">
             <small :class="infoClass"> {{ infoLabel }}&ZeroWidthSpace; </small>
         </slot>
     </div>
