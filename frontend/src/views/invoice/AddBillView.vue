@@ -13,9 +13,34 @@
     import { Field, ErrorMessage } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
     import { useRoute, useRouter } from 'vue-router'
+    import { useInvoiceStore } from '@store/invoice'
+    import type {
+
+        IClient,
+
+    } from '@store/types'
+    const itemStore = useInvoiceStore()
 
     const router = useRouter()
     const tipopago = ref(true)
+    const formClient = ref<IClient>({
+        business_name: '',
+        email:'',
+        number_id:'',
+        name: ''
+    })
+    const loadClient = async () => {
+        if(formClient.value.number_id!=''){
+            formClient.value = await itemStore.fetchClientNumber(
+            formClient.value.number_id
+        )
+            console.log(formClient.value)
+        }else{
+            console.log("esta vacio")
+            formClient.value.name=''
+        }
+
+    }
 
     function changeCountry(event: any) {
         if (
@@ -190,30 +215,6 @@
                                 color: black;
                                 text-align: left;
                             ">
-                            Código de factura *
-                        </h6>
-                        <Field
-                            name="email"
-                            class="form-control"
-                            type="email"
-                            :rules="validateID" />
-                        <div class="col">
-                            <ErrorMessage
-                                name="email"
-                                style="
-                                    font-size: 10px;
-                                    color: red;
-                                    text-align: left;
-                                " />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
                             Fecha de emisión *
                         </h6>
                         <Field
@@ -281,8 +282,6 @@
                                 " />
                         </div>
                     </div>
-                </div>
-                <div class="row">
                     <div class="col">
                         <h6
                             style="
@@ -290,71 +289,16 @@
                                 color: black;
                                 text-align: left;
                             ">
-                            Cliente *
-                        </h6>
-                        <select
-                            class="form-select"
-                            aria-label="Default select example">
-                            <option value="1">cliente 1</option>
-                            <option value="2">cliente 2</option>
-                            <option value="3">cliente 3</option>
-                        </select>
-                    </div>
-                    <div class="col">
-                        <EButton type="secondary" style="margin-top: 20px">
-                            +
-                        </EButton>
-                    </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Identificación
-                        </h6>
-                        <Field name="id" class="form-control" type="email" />
-                    </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Teléfono
+                            Código de factura *
                         </h6>
                         <Field
-                            name="celular"
+                            name="email"
                             class="form-control"
-                            type="email" />
+                            type="email"
+                            :rules="validateID" />
                         <div class="col">
                             <ErrorMessage
-                                name="celular"
-                                style="
-                                    font-size: 10px;
-                                    color: red;
-                                    text-align: left;
-                                " />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Dirección
-                        </h6>
-                        <Field
-                            name="direccion"
-                            class="form-control"
-                            type="email" />
-                        <div class="col">
-                            <ErrorMessage
-                                name="direccion"
+                                name="email"
                                 style="
                                     font-size: 10px;
                                     color: red;
@@ -364,47 +308,27 @@
                     </div>
                 </div>
 
-                <div class="row g-3">
-                    <div class="col">
+
+                    <div class="row">
+                        <div class="col col-lg-2">
                         <h6
                             style="
                                 font-size: 15px;
                                 color: black;
                                 text-align: left;
                             ">
-                            Correo
+                            C.I/RUC *
                         </h6>
                         <Field
-                            name="correo"
+                            name="email"
                             class="form-control"
-                            type="email" />
-                        <div class="col">
-                            <ErrorMessage
-                                name="correo"
-                                style="
-                                    font-size: 10px;
-                                    color: red;
-                                    text-align: left;
-                                " />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Sucursal *
-                        </h6>
-                        <Field
-                            name="ciudad"
-                            class="form-control"
+                            placeholder="Ingrese número"
+                            v-model="formClient.number_id"
                             type="email"
-                            :rules="validateSucursal" />
+                            :rules="validateID" />
                         <div class="col">
                             <ErrorMessage
-                                name="ciudad"
+                                name="email"
                                 style="
                                     font-size: 10px;
                                     color: red;
@@ -412,47 +336,16 @@
                                 " />
                         </div>
                     </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Tipo de pago:
-                        </h6>
-                        <select
-                            class="form-select"
-                            aria-label="Default select example"
-                            @change="changeCountry($event)">
-                            <option value="1">En efectivo</option>
-                            <option value="2">Con tarjeta</option>
-                        </select>
+                        <div class="col-3" style="display:contents">
+
+                        <EButton type="secondary" style="margin-top: 19px" @click="loadClient()">
+                            Buscar
+                        </EButton>
                     </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Últimos dígitos de tarjeta
-                        </h6>
-                        <Field
-                            name="pago"
-                            class="form-control"
-                            type="email"
-                            :rules="validatePago" />
-                        <div class="col">
-                            <ErrorMessage
-                                name="pago"
-                                style="
-                                    font-size: 10px;
-                                    color: red;
-                                    text-align: left;
-                                " />
-                        </div>
+                    <div class="col-3" >
+                        <Field name="id" class="form-control" disabled="false" type="text" v-model="formClient.name" style="margin-top: 17px;"/>
                     </div>
+
                 </div>
                 <div class="row g-3">
                     <div class="col">

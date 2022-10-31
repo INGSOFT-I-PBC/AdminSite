@@ -3,104 +3,156 @@
     import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
     import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import Title from '@components/custom/Title.vue'
-    import Table from '@components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+    import { onMounted } from 'vue'
+
+    import type { Invoice } from '@store/types'
+    import { useInvoiceStore } from '@store/invoice'
+    //import { useToast } from 'vue-toastification'
+
+    import type { TableField } from 'bootstrap-vue-3'
 
     import { useRouter } from 'vue-router'
     const router = useRouter()
+    const showWaitOverlay = ref<boolean>(true)
+    const itemLoading = ref(false)
+    const itemStore = useInvoiceStore()
+    //const toast = useToast()
+    const itemInfoShow = ref<boolean>(false)
 
     const templateList = [
-        { label: 'Por código', value: '1' },
-        { label: 'Por cliente', value: '2' },
+        { label: 'Por fecha de creación', value: '1' },
+        { label: 'Por creador', value: '2' },
         {
-            label: 'Por fecha de emisión',
+            label: 'Por tipo de ID',
             value: '3',
         },
+        { label: 'Por Nombres y apellidos', value: '4' },
     ]
-
-    const model = ref({})
-    const productModalShow = ref(false)
-    const tableSettings = reactive<TableHeaderSettings>({
-        headers: [
-            {
-                label: 'Código de factura',
-                attribute: 'id',
-            },
-            {
-                label: 'Estado',
-                attribute: 'state',
-            },
-            {
-                label: 'Cajero ',
-                attribute: 'employee',
-            },
-            {
-                label: 'Cliente',
-                attribute: 'client',
-            },
-            {
-                label: 'Fecha de emisión',
-                attribute: 'date',
-            },
-            {
-                label: 'Total',
-                attribute: 'total',
-            },
-            {
-                label: 'Acciones',
-                attribute: 'actions',
-            },
-        ],
-        rows: [
-            {
-                id: '250222',
-                state: 'Activa',
-                employee: 'Alejandra Quimi',
-                client: 'Carlos Arévalo',
-                date: '28/09/2022',
-                total: '19.99',
-            },
-        ],
+    type SelectedItem = { item: Invoice | null }
+    const detailSelectedItem = ref<SelectedItem>({
+        item: null,
     })
 
-    interface productModel {
-        id: string
-        state: string
-        employee: string
-        client: string
-        date: string
-        total: string
+    const formFields: TableField[] = [
+        '#',
+        'Cliente',
+        'Cajero',
+        { label: 'Metodo de pago', key: 'name' },
+        { label: 'Total', key: 'total' },
+        { label: 'Subtotal', key: 'subtotal' },
+        'Acciones',
+    ]
+
+    const form = ref<Form>({
+        items: [],
+    })
+    type Form = {
+        items: Invoice[]
     }
-    let selectedProduct: Optional<productModel> = null
-    function showProduct(product: productModel) {
-        selectedProduct = product
-        console.log(selectedProduct)
-        productModalShow.value = true
+    /*type ItemForm = {
+        item: Client | null
+    }
+
+    const itemForm = ref<ItemForm>({
+        item: null,
+    })*/
+    const model = ref({})
+
+    const loadItems = async () => {
+        itemLoading.value = true
+        form.value.items = await itemStore.fetchAllInvoice()
+        console.log(form.value.items)
+        itemLoading.value = false
+        showWaitOverlay.value = false
+    }
+    function onShowModalClick() {
+        loadItems()
+    }
+    async function showItem(item: Invoice) {
+        detailSelectedItem.value.item = item
+        itemInfoShow.value = true
     }
     function removeItem(index: number) {
-        tableSettings.rows?.splice(index, 1)
+        console.log(index)
+        form.value.items.splice(index, 1)
+    }
+    function deleteProduct(id: number, index: number): void {
+        itemStore.removeInvoice(id)
+        removeItem(index)
     }
 
     function go(): void {
         router.push({ path: '/facturacion/agregar' })
     }
-
-    function go3(): void {
-        router.push({ path: '/facturacion/agregar' })
+    function goEdit(id: number): void {
+        console.log(id)
+        router.push({ path: `/facturacion/editar/${String(id)}` })
     }
+
+    onMounted(() => {
+        return onShowModalClick()
+    })
 </script>
 
 <template>
     <main>
-        <ModalDialog
-            id="client-modal"
-            v-model:show="productModalShow"
-            title="Detalle de la factura">
-            <span>Cantidad: ${{ selectedProduct?.id }}</span>
+        <ModalDialog v-model:show="itemInfoShow" size="xl">
+            <template #dialog-title>
+                <b class="tw-text-2xl">Detalle de la factura </b>
+            </template>
+            <div class="container">
+                <div
+                    class="row tw-pb-3 align-content-center justify-content-center gy-2">
+                    <template
+                        v-for="(d, k) in detailSelectedItem.item"
+                        :key="k">
+                        <div class="row" v-if="k == 'client'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >cliente:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.client?.name
+                            }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'payment_method'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >metodo de pago:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.payment_method?.name
+                            }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'subtotal'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >dirección:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+
+                        <div class="row" v-if="k == 'total'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >email:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+                        <div class="row" v-if="k == 'created_by'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >cajero:</span
+                            >
+                            <span class="col-6"> {{ detailSelectedItem?.item?.created_by?.name }} {{ detailSelectedItem?.item?.created_by?.lastname }}</span>
+                        </div>
+                        <div class="row" v-if="k == 'created_at'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >fecha de creación:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
         </ModalDialog>
 
         <ECard>
@@ -110,10 +162,7 @@
             <nav class="navbar">
                 <div class="container-fluid">
                     <EButton type="secondary" @click="go"
-                        >+ Crear factura
-                    </EButton>
-                    <EButton type="secondary" @click="go"
-                        >Notas de crédito
+                        >+ Agregar factura
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
@@ -125,7 +174,7 @@
                         <input
                             class="form-control me-2"
                             type="search"
-                            placeholder="Buscar factura"
+                            placeholder="Buscar cliente"
                             aria-label="Search" />
                         <button class="btn btn-outline-black" type="submit">
                             Search
@@ -136,33 +185,46 @@
 
             <!-- <ERow>
                 <ECol cols="12"> -->
+            <WaitOverlay :show="showWaitOverlay">
+                <BTable :fields="formFields" :items="form.items">
+                    <template #cell(#)="{ index }">{{ index + 1 }} </template>
+                    <template #cell(Cliente)="{ index }"
+                        >{{ form.items[index]['client']?.name }}
+                    </template>
+                    <template #cell(Cajero)="{ index }"
+                        >{{ form.items[index]['created_by']?.name }}
+                    </template>
+                    <template #cell(name)="{ index }"
+                        >{{ form.items[index]['payment_method']?.name }}
+                    </template>
 
-            <Table :header="tableSettings">
-                <template #body-cell="{ cellData, colIdx, rowIdx }">
-                    <div
-                        v-if="colIdx > 5"
-                        class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
-                        <button
-                            class="tw-bg-blue-500 tw-px-4 tw-py-1 tw-text-white"
-                            @click="showProduct(cellData as productModel)">
-                            Ver más detalles
-                        </button>
-                        <button
-                            class="tw-bg-green-500 tw-py-1 tw-text-white"
-                            @click="go3">
-                            Editar
-                        </button>
-                        <button
-                            class="tw-bg-red-500 tw-py-1 tw-text-white"
-                            @click="removeItem(rowIdx)">
-                            Anular
-                        </button>
-                    </div>
-                </template>
-            </Table>
-
-            <!-- </ECol>
-            </ERow> -->
+                    <template #cell(Acciones)="{ item, index }">
+                        <div class="t-button-group">
+                            <e-button
+                                left-icon="fa-eye"
+                                type="secondary"
+                                @click="showItem(item)"
+                                >Ver detalles</e-button
+                            >
+                            <e-button
+                                left-icon="fa-edit"
+                                type="success"
+                                @click="goEdit(item['id'])"
+                                >Editar</e-button
+                            >
+                            <e-button
+                                left-icon="fa-trash-can"
+                                type="cancel"
+                                @click="deleteProduct(item['id'], index)">
+                                <span
+                                    class="tw-invisible md:tw-visible tw-font-bold"
+                                    >Eliminar</span
+                                ></e-button
+                            >
+                        </div>
+                    </template>
+                </BTable>
+            </WaitOverlay>
         </ECard>
     </main>
 </template>

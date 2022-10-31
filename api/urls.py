@@ -14,7 +14,7 @@ from .views.warehouse import *
 from .views.clientview import ClientView
 from .views.statusview import StatusView
 from .views.provinceview import ProvinceCityView
-from .views.invoice import InvoiceView
+from .views.invoiceview import InvoiceView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
@@ -23,6 +23,7 @@ router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
+router.register(r"invoices/all", views.FullInvoiceViewSet)
 router.register(r"clients/all", views.FullClientViewSet)
 router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
@@ -46,7 +47,6 @@ urlpatterns = [
     path("inventory", InventoryView.as_view(), name="inventory-list"),
     path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
-    path("invoices", InvoiceView.as_view(), name="invoice"),
 
     # Item management
     path("item/<int:id>", views.find_item, name="item"),
@@ -73,4 +73,8 @@ urlpatterns = [
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
     path("auth/reset-password", reset_password, name="reset-user-password"),
+    #Invoice
+    path("invoice/client", InvoiceView.as_view({'get': 'search_client'}), name="search-invoice-client"),
+
+
 ]

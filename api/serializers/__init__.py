@@ -6,6 +6,7 @@ from .inventory import *
 from .item import *
 from .items import *
 from .warehouse import *
+from .invoices import *
 
 __all__ = [
     "PermissionSerializer",
@@ -24,5 +25,6 @@ __all__ = [
     "FullClientSerializer",
     "ClientSerializer",
     "StatusSerializer",
-    "ProvinceSerializer"
+    "ProvinceSerializer",
+    "FullInvoiceSerializer"
 ]
