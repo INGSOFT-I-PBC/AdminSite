@@ -19,6 +19,7 @@
         "pretty": true,
         "moduleResolution": "Node",
         "paths": {
+            "@directives": ["./src/directives"],
             "@store": ["./src/store"],
             "@store-types": ["./src/store/types"],
             "@types": ["./src/types"],
