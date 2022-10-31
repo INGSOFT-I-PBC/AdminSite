@@ -40,7 +40,6 @@ export interface Client {
     status: number
 }
 
-
 export interface FullClient extends Client {
     meta: Optional<MetaData>
 }

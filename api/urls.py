@@ -6,15 +6,14 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
-
-from .views import *
-from .views.itemviews import ItemView
-from .views.orders import OrderRequestView
-from .views.warehouse import *
-from .views.clientview import ClientView
-from .views.statusview import StatusView
-from .views.provinceview import ProvinceCityView
-from .views.invoiceview import InvoiceView
+from api.views import *
+from api.views.clientview import ClientView
+from api.views.itemviews import ItemView
+from api.views.orders import OrderRequestView
+from api.views.provinceview import ProvinceCityView
+from api.views.statusview import StatusView
+from api.views.warehouse import *
+from api.views.invoiceview import InvoiceView
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
@@ -30,6 +29,7 @@ router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
+router.register(r"providers", views.ProviderViewSet)
 
 urlpatterns = [
     # List return paths
@@ -72,6 +72,9 @@ urlpatterns = [
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
+    # Providers endpoints
+    path("provider/<int:id>", views.ProviderView.as_view()),
+    path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
     #Invoice
     path("invoice/client", InvoiceView.as_view({'get': 'search_client'}), name="search-invoice-client"),

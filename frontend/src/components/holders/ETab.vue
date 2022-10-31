@@ -1,11 +1,5 @@
 <script setup lang="ts">
-    import {
-        TabGroup,
-        TabList,
-        TabPanel,
-        TabPanels,
-        Tab,
-    } from '@headlessui/vue'
+    import { Tab, TabGroup, TabList, TabPanels } from '@headlessui/vue'
 
     const props = defineProps({
         verticalTabs: {
@@ -27,7 +21,7 @@
     })
     const emits = defineEmits(['change', 'update:selectedTab'])
 
-    function tabChange(tabIndex: Number) {
+    function tabChange(tabIndex: number) {
         emits('update:selectedTab', tabIndex)
     }
 </script>
@@ -36,8 +30,7 @@
     <TabGroup
         :vertical="verticalTabs"
         :default-index="props.defaultIndex"
-        @change="tabChange"
-        >
+        @change="tabChange">
         <TabList class="tw-tablist">
             <Tab
                 class="tw-tab"
@@ -47,8 +40,8 @@
                 v-slot="{ selected }">
                 <slot
                     name="tab"
-                    :tabTitle="tabTitle"
-                    :tabIndex="index"
+                    :tab-title="tabTitle"
+                    :tab-index="index"
                     :selected="selected">
                     <button
                         class="tw-tab-button"

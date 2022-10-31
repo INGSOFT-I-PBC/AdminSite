@@ -71,12 +71,7 @@ export const useClientStore = defineStore('client-store', () => {
      * @returns the response of the backend
      */
     async function editClient(id: number, data: Client) {
-        return (
-            await axios.put<Client>(
-                `/api/v1/clients?id=${id}`,
-                data
-            )
-        ).data
+        return (await axios.put<Client>(`/api/v1/clients?id=${id}`, data)).data
     }
 
     /**
@@ -86,7 +81,8 @@ export const useClientStore = defineStore('client-store', () => {
      * @returns the message of the backend.
      */
     async function removeClient(id: number) {
-        return (await axios.delete<MessageResponse>(`/api/v1/clients?id=${id}`)).data
+        return (await axios.delete<MessageResponse>(`/api/v1/clients?id=${id}`))
+            .data
     }
 
     /**
@@ -96,9 +92,7 @@ export const useClientStore = defineStore('client-store', () => {
      * @returns the Item result of the search
      */
     async function fetchClientById(id: number) {
-        return (
-            await axios.get<Client>(`/api/v1/clients?id=${id}`)
-        ).data
+        return (await axios.get<Client>(`/api/v1/clients?id=${id}`)).data
     }
 
     async function fetchAllProvince() {

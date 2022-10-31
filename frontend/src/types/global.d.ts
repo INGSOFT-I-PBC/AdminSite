@@ -26,6 +26,7 @@ declare global {
     type ListboxItem = _ListboxItem | MapObj
 
     var ref: typeof import('vue')['ref']
+    var computed: typeof import('vue')['computed']
     /// eslint-disable no-var
     var router: typeof import('@store')
 
@@ -111,4 +112,4 @@ declare global {
     }
 }
 
-export {}
+export { }

@@ -1,9 +1,4 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Title from '@components/custom/Title.vue'
@@ -14,32 +9,27 @@
     import { Form as EForm } from 'vee-validate'
     import { useRoute, useRouter } from 'vue-router'
     import { useInvoiceStore } from '@store/invoice'
-    import type {
-
-        IClient,
-
-    } from '@store/types'
+    import type { IClient } from '@store/types'
     const itemStore = useInvoiceStore()
 
     const router = useRouter()
     const tipopago = ref(true)
     const formClient = ref<IClient>({
         business_name: '',
-        email:'',
-        number_id:'',
-        name: ''
+        email: '',
+        number_id: '',
+        name: '',
     })
     const loadClient = async () => {
-        if(formClient.value.number_id!=''){
+        if (formClient.value.number_id != '') {
             formClient.value = await itemStore.fetchClientNumber(
-            formClient.value.number_id
-        )
+                formClient.value.number_id
+            )
             console.log(formClient.value)
-        }else{
-            console.log("esta vacio")
-            formClient.value.name=''
+        } else {
+            console.log('esta vacio')
+            formClient.value.name = ''
         }
-
     }
 
     function changeCountry(event: any) {
@@ -308,9 +298,8 @@
                     </div>
                 </div>
 
-
-                    <div class="row">
-                        <div class="col col-lg-2">
+                <div class="row">
+                    <div class="col col-lg-2">
                         <h6
                             style="
                                 font-size: 15px;
@@ -336,16 +325,23 @@
                                 " />
                         </div>
                     </div>
-                        <div class="col-3" style="display:contents">
-
-                        <EButton type="secondary" style="margin-top: 19px" @click="loadClient()">
+                    <div class="col-3" style="display: contents">
+                        <EButton
+                            variant="secondary"
+                            style="margin-top: 19px"
+                            @click="loadClient()">
                             Buscar
                         </EButton>
                     </div>
-                    <div class="col-3" >
-                        <Field name="id" class="form-control" disabled="false" type="text" v-model="formClient.name" style="margin-top: 17px;"/>
+                    <div class="col-3">
+                        <Field
+                            name="id"
+                            class="form-control"
+                            disabled="false"
+                            type="text"
+                            v-model="formClient.name"
+                            style="margin-top: 17px" />
                     </div>
-
                 </div>
                 <div class="row g-3">
                     <div class="col">
@@ -365,7 +361,7 @@
                         </select>
                     </div>
                     <div class="col">
-                        <EButton type="secondary" style="margin-top: 20px"
+                        <EButton variant="secondary" style="margin-top: 20px"
                             >Añadir producto</EButton
                         >
                     </div>

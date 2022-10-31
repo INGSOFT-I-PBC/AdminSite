@@ -1,14 +1,14 @@
 <script lang="ts">
-    import { defineComponent } from 'vue'
-    import { stringifyQuery, useRoute, useRouter } from 'vue-router'
     import type Item from '@/interfaz/items'
-    import type { Status } from '@store/types'
-    import { useAuthStore } from '@store'
+    import EButton from '@components/custom/EButton.vue'
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
-    import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
+    import { useAuthStore } from '@store'
     import ItemDataService from '@store/item'
+    import type { Status } from '@store/types'
+    import { defineComponent } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
 
     export default defineComponent({
         name: 'EditProductView',
@@ -208,9 +208,9 @@
                         this.entrada.category_id =
                             this.items['0'].category_id_Item
                         this.imagenM =
-                        //'https://proyectoadmin.pythonanywhere.com/'
-                        //http://127.0.0.1:8000
-                            'https://proyectoadmin.pythonanywhere.com/stogare' +
+                            //'https://proyectoadmin.pythonanywhere.com/'
+                            //http://127.0.0.1:8000
+                            'https://proyectoadmin.pythonanywhere.com/storage/' +
                             this.items['0'].imgItem
                         console.log(this.imagenM)
                         this.entrada.warehouse_id = this.items['0'].warehouse_id
@@ -236,12 +236,12 @@
                             '0'
                         ].created_at.substring(0, 10)*/
 
-                        this.fecha_hora.fecha = new Date(this.items[
-                            '0'
-                        ].created_at).toLocaleDateString()
-                        this.fecha_hora.hora = new Date(this.items[
-                            '0'
-                        ].created_at).toLocaleTimeString()
+                        this.fecha_hora.fecha = new Date(
+                            this.items['0'].created_at
+                        ).toLocaleDateString()
+                        this.fecha_hora.hora = new Date(
+                            this.items['0'].created_at
+                        ).toLocaleTimeString()
 
                         console.log(this.items['0'])
                     })
@@ -290,7 +290,9 @@
             id="product-modal-error"
             v-model:show="productModalShowError"
             title="Información">
-            <h1 style="font-size: 15px; color: black; text-align: left">{{ msm400 }}</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                {{ msm400 }}
+            </h1>
         </ModalDialog>
         <ModalDialog
             id="product-modal"
@@ -299,7 +301,9 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-            <h1 style="font-size: 15px; color: black; text-align: left">¿Esta seguro de modificar el producto?</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Esta seguro de modificar el producto?
+            </h1>
         </ModalDialog>
         <ECard>
             <div class="container" style="border-radius: 5px">
@@ -589,7 +593,7 @@
 
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
-                        <EButton type="secondary" @click="showProduct()"
+                        <EButton variant="secondary" @click="showProduct()"
                             >Guardar
                         </EButton>
                     </div>
