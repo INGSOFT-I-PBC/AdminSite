@@ -5,12 +5,13 @@ export interface ProviderModel {
     phone_no: string
     website: Optional<string>
     email: string
-    latitude: number
-    longitude: number
+    latitude: string
+    longitude: string
 }
 
 export interface Provider extends ProviderModel {
     id: number
+    status: number
 }
 export interface ProviderForm {
     name?: string
@@ -19,6 +20,6 @@ export interface ProviderForm {
     phone_no?: string
     website?: Optional<string>
     email?: string
-    latitude?: number
-    longitude?: number
+    latitude?: number | string
+    longitude?: number | string
 }

@@ -11,7 +11,7 @@ export const purchases: Array<RouteConfig> = [
     {
         name: 'purchase-manage-providers',
         path: '/compras/proveedores',
-        component: () => import('@/views/Error404.vue'),
+        component: () => import('@/views/purchase/ManageProviders.vue'),
         meta: {
             breadcrumb: [{ text: 'Compras' }, { text: 'Proveedores' }],
             pageTitle: 'Proveedores',
