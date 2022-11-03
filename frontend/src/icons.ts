@@ -1,5 +1,12 @@
 import type { IconDefinition } from '@fortawesome/fontawesome-svg-core'
 import {
+    faFontAwesome,
+    faNodeJs,
+    faPython,
+    faVuejs,
+} from '@fortawesome/free-brands-svg-icons'
+import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
+import {
     faAnglesRight,
     faArrowDown19,
     faArrowDown91,
@@ -34,6 +41,7 @@ import {
     faGear,
     faGears,
     faHouseChimney,
+    faLocationDot,
     faLock,
     faMinus,
     faMinusSquare,
@@ -43,19 +51,12 @@ import {
     faTrash,
     faTrashAlt,
     faTrashCan,
+    faUpload,
     faUser,
     faUserAstronaut,
     faUserGear,
     faUserGroup,
-    faLocationDot,
 } from '@fortawesome/free-solid-svg-icons'
-import {
-    faFontAwesome,
-    faNodeJs,
-    faPython,
-    faVuejs,
-} from '@fortawesome/free-brands-svg-icons'
-import { faCheckCircle } from '@fortawesome/free-regular-svg-icons'
 
 export const awesomeIcons: Array<IconDefinition> = [
     faEdit,
@@ -114,4 +115,5 @@ export const awesomeIcons: Array<IconDefinition> = [
     faEyeDropper,
     faEyeSlash,
     faLocationDot,
+    faUpload,
 ]
