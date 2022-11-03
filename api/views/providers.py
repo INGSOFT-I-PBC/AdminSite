@@ -23,6 +23,21 @@ class ProviderViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Provider.objects.order_by("name", "document_path")
     serializer_class = ProviderSerializer
 
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
+        if params.get("name", None):
+            queryset = queryset.filter(name__icontains=params.get("name"))
+        if params.get("bussiness_name", None):
+            queryset = queryset.filter(name__icontains=params.get("bussines_name"))
+        if params.get("email", None):
+            queryset = queryset.filter(email__icontains=params.get("email"))
+        if params.get("document_path", None):
+            queryset = queryset.filter(
+                document_path__icontains=params.get("document_path")
+            )
+        return queryset
+
     class Meta:
         model = Provider
 

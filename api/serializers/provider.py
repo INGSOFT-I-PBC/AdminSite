@@ -24,9 +24,11 @@ class PartialProviderSerializer(Serializer):
     bussiness_name = serializers.CharField(max_length=128, required=False)
     website = serializers.URLField(max_length=100, required=False)
     email = serializers.EmailField(max_length=64, required=False)
-    latitude = serializers.DecimalField(max_digits=10, decimal_places=6, required=False)
+    latitude = serializers.DecimalField(
+        max_digits=25, decimal_places=17, required=False
+    )
     longitude = serializers.DecimalField(
-        max_digits=10, decimal_places=6, required=False
+        max_digits=25, decimal_places=17, required=False
     )
 
     def update(self, instance, validated_data):
