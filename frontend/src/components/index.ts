@@ -1,5 +1,6 @@
 import DrawerMenu from './custom/DrawerMenu.vue'
 import EButton from './custom/EButton.vue'
+import EButtonGroup from './custom/EButtonGroup.vue'
 import ECard from './custom/ECard.vue'
 import ECol from './custom/ECol.vue'
 import EOverlay from './custom/EOverlay.vue'
@@ -30,4 +31,5 @@ export {
     TextArea,
     ECol,
     ERow,
+    EButtonGroup,
 }
