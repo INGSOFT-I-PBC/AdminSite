@@ -8,7 +8,7 @@
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     import { onMounted } from 'vue'
 
-    import type { Invoice } from '@store/types'
+    import type { IClient, Invoice, IPayment } from '@store/types'
     import { useInvoiceStore } from '@store/invoice'
     //import { useToast } from 'vue-toastification'
 
@@ -38,11 +38,14 @@
 
     const formFields: TableField[] = [
         '#',
+        { label: 'Secuencia', key: 'code' },
+
         'Cliente',
-        'Cajero',
         { label: 'Metodo de pago', key: 'name' },
-        { label: 'Total', key: 'total' },
         { label: 'Subtotal', key: 'subtotal' },
+        { label: 'Total IVA', key: 'iva' },
+        { label: 'Total', key: 'total' },
+
         'Acciones',
     ]
 
@@ -113,44 +116,36 @@
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >cliente:</span
                             >
-                            <span class="col-6">{{
-                                detailSelectedItem?.item?.client?.name
-                            }}</span>
+                            <span class="col-6">{{ (d as IClient).name }}</span>
                         </div>
                         <div class="row" v-else-if="k == 'payment_method'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >metodo de pago:</span
                             >
                             <span class="col-6">{{
-                                detailSelectedItem?.item?.payment_method?.name
+                                (d as IPayment).name
                             }}</span>
                         </div>
                         <div class="row" v-else-if="k == 'subtotal'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >dirección:</span
+                                >subtotal:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'iva'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >total IVA:</span
                             >
                             <span class="col-6">{{ d }}</span>
                         </div>
 
                         <div class="row" v-if="k == 'total'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >email:</span
+                                >total:</span
                             >
                             <span class="col-6">{{ d }}</span>
                         </div>
-                        <div class="row" v-if="k == 'created_by'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >cajero:</span
-                            >
-                            <span class="col-6">
-                                {{ detailSelectedItem?.item?.created_by?.name }}
 
-                                {{
-                                    detailSelectedItem?.item?.created_by
-                                        ?.lastname
-                                }}</span
-                            >
-                        </div>
                         <div class="row" v-if="k == 'created_at'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >fecha de creación:</span
@@ -196,13 +191,13 @@
                 <BTable :fields="formFields" :items="form.items">
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
                     <template #cell(Cliente)="{ index }"
-                        >{{ form.items[index]['client']?.name }}
-                    </template>
-                    <template #cell(Cajero)="{ index }"
-                        >{{ form.items[index]['created_by']?.name }}
+                        >{{ (form.items[index]['client'] as IClient).name }}
                     </template>
                     <template #cell(name)="{ index }"
-                        >{{ form.items[index]['payment_method']?.name }}
+                        >{{
+                            (form.items[index]['payment_method'] as IPayment)
+                                .name
+                        }}
                     </template>
 
                     <template #cell(Acciones)="{ item, index }">

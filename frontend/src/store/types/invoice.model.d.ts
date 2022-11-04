@@ -41,12 +41,12 @@ export interface IClient {
 export interface Invoice {
     id?: number
     code: string
-    client: Maybe<IClient> | number
+    client: Maybe<IClient> | null | number
     emission: string
     return_deadline: string
     created_at?: string
     iva: number
-    payment_method: Maybe<IPayment> | number
+    payment_method: Maybe<IPayment> | null | number
     status: number
     subtotal: number
     total: number

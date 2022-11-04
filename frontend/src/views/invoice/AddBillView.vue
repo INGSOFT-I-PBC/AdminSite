@@ -196,7 +196,7 @@
             code: codeInvoice.value,
             client: formClient.value.id,
             iva: Number(itemForm.value.totalIVA),
-            payment_method: data.payment_method?.id,
+            payment_method: data.payment_method.id,
             return_deadline: return_deadline,
             emission: emission,
             status: 2,
