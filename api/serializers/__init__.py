@@ -8,6 +8,8 @@ from api.serializers.provider import *
 from api.serializers.status import *
 from api.serializers.warehouse import *
 from api.serializers.invoices import *
+from api.serializers.sequence import *
+from api.serializers.payment import *
 
 __all__ = [
     "PermissionSerializer",
@@ -27,6 +29,11 @@ __all__ = [
     "ClientSerializer",
     "StatusSerializer",
     "ProvinceSerializer",
-    "FullInvoiceSerializer"
+    "FullInvoiceSerializer",
+    "IItemSerializer",
+    "ICategorySerializer",
+    "IInvoiceDetailsSerializer",
     "PartialProviderSerializer",
+    "SequenceSerializer",
+    "PaymentSerializer"
 ]

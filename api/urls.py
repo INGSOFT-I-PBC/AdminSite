@@ -14,6 +14,7 @@ from api.views.provinceview import ProvinceCityView
 from api.views.statusview import StatusView
 from api.views.warehouse import *
 from api.views.invoiceview import InvoiceView
+from api.views.sequence import *
 
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
@@ -28,8 +29,11 @@ router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
+router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"providers", views.ProviderViewSet)
+router.register(r"sequence/all", views.FullSequenceViewSet)
+router.register(r"payment/all", views.FullPaymentViewSet)
 
 urlpatterns = [
     # List return paths
@@ -78,6 +82,7 @@ urlpatterns = [
     path("auth/reset-password", reset_password, name="reset-user-password"),
     #Invoice
     path("invoice/client", InvoiceView.as_view({'get': 'search_client'}), name="search-invoice-client"),
-
+    path("invoice", InvoiceView.as_view({'post': 'save_invoice'}), name="save-invoice"),
+     path("sequence", SequenceView.as_view()),
 
 ]

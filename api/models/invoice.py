@@ -115,7 +115,7 @@ class Invoice(models.Model):
     """
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    code = models.CharField(max_length=128, blank=False)
+    code = models.CharField(max_length=128, blank=False,unique=True)
     client = models.ForeignKey(Client, on_delete=models.RESTRICT)
     created_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="created_by"
@@ -125,6 +125,7 @@ class Invoice(models.Model):
     iva = models.DecimalField(max_digits=6, decimal_places=3)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.RESTRICT)
     return_deadline = models.DateField(null=True,default=None)
+    emission = models.DateField(null=True,default=None)
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
     subtotal = models.DecimalField(
         validators=[MinValueValidator(0)], decimal_places=3, max_digits=15

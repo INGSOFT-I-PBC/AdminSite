@@ -1,7 +1,9 @@
 import type {
     APIResponse,
     Invoice,
+    IPayment,
     IClient,
+    IItem,
     MessageResponse,
     PaginatedAPIResponse,
 } from '@store-types'
@@ -14,6 +16,14 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     const invoice: Ref<Optional<Invoice>> = ref(null)
     const paginatedInvoice: Ref<Optional<PaginatedAPIResponse<Invoice>>> =
         ref(null)
+
+    const paginatedItems: Ref<Optional<PaginatedAPIResponse<IItem>>> = ref(null)
+
+    const currentPaginatedItemPage = computed(() => {
+        const pitem = paginatedItems.value
+        if (isMessage(pitem)) return undefined
+        return pitem?.page
+    })
     const currentPaginatedInvoicePage = computed(() => {
         const pitem = paginatedInvoice.value
         if (isMessage(pitem)) return undefined
@@ -22,6 +32,8 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
 
     const allInvoice: Ref<Optional<Invoice[]>> = ref(null)
 
+    const allPayment: Ref<Optional<IPayment[]>> = ref(null)
+
     async function fetchAllInvoice() {
         const data = await (
             await axios.get<Invoice[]>('/api/v1/list/invoices/all')
@@ -29,6 +41,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         allInvoice.value = data
         return data
     }
+
     async function fetchClientNumber(number_id: string) {
         return (
             await axios.get<IClient>(
@@ -58,7 +71,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
      */
     async function saveInvoice(item: Invoice) {
         const data = await (
-            await axios.post<MessageResponse>('/api/v1/clients', item)
+            await axios.post<MessageResponse>('/api/v1/invoice', item)
         ).data
         return data
     }
@@ -102,14 +115,37 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         status.value = data
         return data
     }*/
+    async function fetchIItemsPaginated(options: PaginationOptions) {
+        const data = await (
+            await axios.get<PaginatedAPIResponse<IItem>>(
+                '/api/v1/list/invoice/item/all',
+                {
+                    params: options,
+                }
+            )
+        ).data
+        paginatedItems.value = data
+        return data
+    }
+    async function fetchPayment() {
+        const data = await (
+            await axios.get<IPayment[]>('/api/v1/list/payment/all')
+        ).data
+        allPayment.value = data
+        return data
+    }
 
     return {
         invoice,
         paginatedInvoice,
+        paginatedItems,
         allInvoice,
+        currentPaginatedItemPage,
         currentPaginatedInvoicePage,
+        fetchPayment,
         fetchInvoiceById,
         fetchAllInvoice,
+        fetchIItemsPaginated,
         fetchInvoicePaginated,
         saveInvoice,
         editInvoice,

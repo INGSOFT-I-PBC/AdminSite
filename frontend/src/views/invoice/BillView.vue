@@ -142,7 +142,14 @@
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >cajero:</span
                             >
-                            <span class="col-6"> {{ detailSelectedItem?.item?.created_by?.name }} {{ detailSelectedItem?.item?.created_by?.lastname }}</span>
+                            <span class="col-6">
+                                {{ detailSelectedItem?.item?.created_by?.name }}
+
+                                {{
+                                    detailSelectedItem?.item?.created_by
+                                        ?.lastname
+                                }}</span
+                            >
                         </div>
                         <div class="row" v-if="k == 'created_at'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
@@ -161,7 +168,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="go"
+                    <EButton variant="secondary" @click="go"
                         >+ Agregar factura
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
@@ -202,19 +209,19 @@
                         <div class="t-button-group">
                             <e-button
                                 left-icon="fa-eye"
-                                type="secondary"
+                                variant="secondary"
                                 @click="showItem(item)"
                                 >Ver detalles</e-button
                             >
                             <e-button
                                 left-icon="fa-edit"
-                                type="success"
+                                variant="success"
                                 @click="goEdit(item['id'])"
                                 >Editar</e-button
                             >
                             <e-button
                                 left-icon="fa-trash-can"
-                                type="cancel"
+                                variant="cancel"
                                 @click="deleteProduct(item['id'], index)">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"
