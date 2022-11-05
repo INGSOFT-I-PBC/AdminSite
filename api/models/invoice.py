@@ -1,3 +1,4 @@
+from email.policy import default
 from django.db import models
 
 from api.models.items import Item
@@ -114,21 +115,22 @@ class Invoice(models.Model):
     """
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    code = models.CharField(max_length=128, blank=False)
+    code = models.CharField(max_length=128, blank=False,unique=True)
     client = models.ForeignKey(Client, on_delete=models.RESTRICT)
     created_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="created_by"
     )
     created_at = models.DateTimeField(null=False, auto_now_add=True)
-    credit_note = models.ForeignKey(CreditNote, null=True, on_delete=models.RESTRICT)
+    credit_note = models.ForeignKey(CreditNote, null=True,default=None, on_delete=models.RESTRICT)
     iva = models.DecimalField(max_digits=6, decimal_places=3)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.RESTRICT)
-    return_deadline = models.DateField()
+    return_deadline = models.DateField(null=True,default=None)
+    emission = models.DateField(null=True,default=None)
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
     subtotal = models.DecimalField(
         validators=[MinValueValidator(0)], decimal_places=3, max_digits=15
     )
-    transaction_code = models.CharField(max_length=128, null=True)
+    transaction_code = models.CharField(max_length=128, null=True,default=None)
     total = models.DecimalField(decimal_places=3, max_digits=15)
     anulated = models.BooleanField(null=False, default=False)
 
@@ -159,7 +161,7 @@ class InvoiceDetails(models.Model):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
-    invoice = models.ForeignKey(Invoice, on_delete=models.RESTRICT)
+    invoice = models.ForeignKey(Invoice, related_name='invoice_details',on_delete=models.RESTRICT)
     item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     price = models.DecimalField(
         validators=[MinValueValidator(0)], decimal_places=3, max_digits=14
