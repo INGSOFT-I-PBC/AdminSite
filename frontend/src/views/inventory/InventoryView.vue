@@ -13,7 +13,7 @@
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
-
+    //
     const templateList = [
         { label: 'Por código', value: '1' },
         { label: 'Por nombre', value: '2' },
