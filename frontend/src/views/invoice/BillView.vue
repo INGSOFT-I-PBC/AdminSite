@@ -22,8 +22,8 @@
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
     const invoiceModalDelete = ref(false)
-    const id2 = ref(null)
-    const index2 = ref(null)
+    const id2 = ref(0)
+    const index2 = ref(0)
 
     const templateList = [
         { label: 'Por fecha de creación', value: '1' },
@@ -93,8 +93,8 @@
     function acceptace(): void {
         itemStore.removeInvoice(id2)
         removeItem(index2)
-        id2.value = null
-        index2.value = null
+        id2.value = 0
+        index2.value = 0
     }
 
     function go(): void {

@@ -20,8 +20,8 @@
     const itemLoading = ref(false)
     const itemStore = useClientStore()
     const clientModalShow = ref(false)
-    const id2 = ref(null)
-    const index2 = ref(null)
+    const id2 = ref(0)
+    const index2 = ref(0)
     const clientModalDelete = ref(false)
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
@@ -92,8 +92,8 @@
     function acceptace(): void {
         itemStore.removeClient(id2)
         removeItem(index2)
-        id2.value = null
-        index2.value = null
+        id2.value = 0
+        index2.value = 0
     }
 
     function go(): void {

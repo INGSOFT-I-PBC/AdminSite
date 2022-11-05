@@ -27,7 +27,7 @@
     const model = ref({})
     const productModalShow = ref(false)
     const productModalDelete = ref(false)
-    const num = ref(null)
+    const num = ref(0)
 
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
