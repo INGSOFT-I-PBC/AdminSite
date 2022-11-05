@@ -26,8 +26,8 @@
 
     const model = ref({})
     const productModalShow = ref(false)
-    // const selectedProduct = null
-    //const idx = 10
+    const productModalDelete = ref(false)
+    const num = ref(null)
 
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
@@ -145,14 +145,15 @@
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
-    function deleteProduct(index: number): void {
-        ItemDataService.deleteInventory(items2[index].id)
+
+    function acceptace(): void {
+        ItemDataService.deleteInventory(items2[num.value].id)
             .then(response => {
                 console.log(response.data)
-                ItemDataService.deleteItem(items2[index].id_item).then(
+                ItemDataService.deleteItem(items2[num.value].id_item).then(
                     response => {
                         console.log(response.data)
-                        removeItem(index)
+                        removeItem(num.value)
                     }
                 )
             })
@@ -160,6 +161,12 @@
                 console.log(e)
             })
     }
+
+    function deleteProduct(index: number): void {
+        num.value = index
+        productModalDelete.value = true
+    }
+
     function goAgregar(): void {
         router.push({ path: '/inventario/agregar' })
     }
@@ -225,6 +232,17 @@
                     </template>
                 </div>
             </div>
+        </ModalDialog>
+        <ModalDialog
+            id="product-modal"
+            v-model:show="productModalDelete"
+            title="Eliminar Producto"
+            ok-text="Eliminar"
+            @ok="acceptace"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de eliminar el Producto?
+            </h1>
         </ModalDialog>
 
         <ECard>

@@ -19,6 +19,10 @@
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
     const itemStore = useClientStore()
+    const clientModalShow = ref(false)
+    const id2 = ref(null)
+    const index2 = ref(null)
+    const clientModalDelete = ref(false)
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
 
@@ -80,8 +84,16 @@
         form.value.items.splice(index, 1)
     }
     function deleteProduct(id: number, index: number): void {
-        itemStore.removeClient(id)
-        removeItem(index)
+        id2.value = id
+        index2.value = index
+        clientModalDelete.value = true
+    }
+
+    function acceptace(): void {
+        itemStore.removeClient(id2)
+        removeItem(index2)
+        id2.value = null
+        index2.value = null
     }
 
     function go(): void {
@@ -105,6 +117,7 @@
                     >Detalle del Cliente {{ detailSelectedItem.item?.name }}</b
                 >
             </template>
+
             <div class="container">
                 <div
                     class="row tw-pb-3 align-content-center justify-content-center gy-2">
@@ -167,6 +180,17 @@
                     </template>
                 </div>
             </div>
+        </ModalDialog>
+        <ModalDialog
+            id="client-modal"
+            v-model:show="clientModalDelete"
+            title="Eliminar Cliente"
+            ok-text="Eliminar"
+            @ok="acceptace"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de eliminar al Cliente?
+            </h1>
         </ModalDialog>
 
         <ECard>
