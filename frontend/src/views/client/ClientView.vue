@@ -20,8 +20,8 @@
     const itemLoading = ref(false)
     const itemStore = useClientStore()
     const clientModalShow = ref(false)
-    const id2 = ref(0)
-    const index2 = ref(0)
+    let id2 = 0
+    let index2 = 0
     const clientModalDelete = ref(false)
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
@@ -84,16 +84,16 @@
         form.value.items.splice(index, 1)
     }
     function deleteProduct(id: number, index: number): void {
-        id2.value = id
-        index2.value = index
+        id2 = id
+        index2 = index
         clientModalDelete.value = true
     }
 
     function acceptace(): void {
         itemStore.removeClient(id2)
         removeItem(index2)
-        id2.value = 0
-        index2.value = 0
+        id2 = 0
+        index2 = 0
     }
 
     function go(): void {

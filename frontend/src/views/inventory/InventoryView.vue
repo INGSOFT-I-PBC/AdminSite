@@ -27,7 +27,7 @@
     const model = ref({})
     const productModalShow = ref(false)
     const productModalDelete = ref(false)
-    const num = ref(0)
+    let num = 0
 
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
@@ -147,13 +147,13 @@
     }
 
     function acceptace(): void {
-        ItemDataService.deleteInventory(items2[num.value].id)
+        ItemDataService.deleteInventory(items2[num].id)
             .then(response => {
                 console.log(response.data)
-                ItemDataService.deleteItem(items2[num.value].id_item).then(
+                ItemDataService.deleteItem(items2[num].id_item).then(
                     response => {
                         console.log(response.data)
-                        removeItem(num.value)
+                        removeItem(num)
                     }
                 )
             })
@@ -163,7 +163,7 @@
     }
 
     function deleteProduct(index: number): void {
-        num.value = index
+        num = index
         productModalDelete.value = true
     }
 
