@@ -21,6 +21,9 @@
     const itemStore = useInvoiceStore()
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
+    const invoiceModalDelete = ref(false)
+    let id2 = 0
+    let index2 = 0
 
     const templateList = [
         { label: 'Por fecha de creación', value: '1' },
@@ -83,8 +86,15 @@
         form.value.items.splice(index, 1)
     }
     function deleteProduct(id: number, index: number): void {
-        itemStore.removeInvoice(id)
-        removeItem(index)
+        id2 = id
+        index2 = index
+        invoiceModalDelete.value = true
+    }
+    function acceptace(): void {
+        itemStore.removeInvoice(id2)
+        removeItem(index2)
+        id2 = 0
+        index2 = 0
     }
 
     function go(): void {
@@ -155,6 +165,18 @@
                     </template>
                 </div>
             </div>
+        </ModalDialog>
+
+        <ModalDialog
+            id="invoice-modal"
+            v-model:show="invoiceModalDelete"
+            title="Anular Factura"
+            ok-text="Anular"
+            @ok="acceptace"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de anular la Factura ?
+            </h1>
         </ModalDialog>
 
         <ECard>
