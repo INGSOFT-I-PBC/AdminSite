@@ -13,7 +13,6 @@
     import { Form as EForm } from 'vee-validate'
     import type { Sequence } from '@store/types'
     import { string } from 'yup'
-
     export default defineComponent({
         name: 'AddProductView',
         data() {
@@ -42,7 +41,6 @@
                 name: '',
                 number: 0,
             })
-
             return {
                 formSequenceEditado,
                 formSequence,
@@ -110,7 +108,16 @@
                 console.log(this.formSequenceEditado)
             },
             validarCheckbox() {
-                console.log()
+                const checkbox = document.getElementById(
+                    'check'
+                ) as HTMLInputElement
+                if (!checkbox.checked) {
+                    //this.entrada.status_id = 1
+                    this.loadStatus('inactive')
+                } else {
+                    //this.entrada.status_id = 3
+                    this.loadStatus('active')
+                }
             },
             async showAllCategory() {
                 ItemDataService.getAllCategory()
@@ -150,7 +157,6 @@
                     this.entrada.category_id.toString()
                 )
                 formDataItem.append('created_by', this.employee_id.toString())
-
                 this.validarCheckbox()
                 formDataItem.append(
                     'status_id',
@@ -163,16 +169,10 @@
             },
             performUploadInventory(id: number) {
                 const formDataInventory = new FormData()
-
                 formDataInventory.append('created_at', this.hoy.toISOString())
                 formDataInventory.append('updated_at', this.hoy.toISOString())
                 formDataInventory.append('deleted_at', this.hoy.toISOString())
-
-                formDataInventory.append(
-                    'quantity',
-
-                    this.normalValue
-                )
+                formDataInventory.append('quantity', this.normalValue)
                 console.log(this.normalValue)
                 formDataInventory.append('item_id', id.toString())
                 formDataInventory.append(
@@ -183,7 +183,6 @@
                     'warehouse_id',
                     this.entrada.warehouse_id.toString()
                 )
-
                 return formDataInventory
             },
             emitValue(e: Event) {
@@ -228,11 +227,9 @@
                     return 'Inválido'
                 }
                 const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
                 if (!regex.test(value)) {
                     return 'Inválido'
                 }
-
                 return true
             },
             validateMarca(value: any) {
@@ -244,20 +241,16 @@
                     return 'Inválido'
                 }
                 const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
                 if (!regex.test(value)) {
                     return 'Inválido'
                 }
-
                 return true
             },
-
             validateModelo(value: any) {
                 // if the field is empty
                 if (!value) {
                     return 'Este campo es requerido'
                 }
-
                 return true
             },
             validateCategoria(value: any) {
@@ -265,7 +258,6 @@
                 if (!value) {
                     return 'Este campo es requerido'
                 }
-
                 return true
             },
             validatePrecio(value: any) {
@@ -279,10 +271,8 @@
                 if (value < 0) {
                     return 'Inválido'
                 }
-
                 return true
             },
-
             validateIva(value: any) {
                 // if the field is empty
                 if (isNaN(value)) {
@@ -296,7 +286,6 @@
                 } else {
                     return 'Inválido'
                 }
-
                 return true
             },
         },

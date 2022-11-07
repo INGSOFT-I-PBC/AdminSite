@@ -47,6 +47,7 @@
         { label: 'Dirección', key: 'address' },
         { label: 'Email', key: 'email' },
         'Ciudad',
+        'Estado',
         'Acciones',
     ]
 
@@ -229,6 +230,20 @@
                     <template #cell(Ciudad)="{ index }"
                         >{{ form.items[index]['city']?.name }}
                     </template>
+                    <template #cell(Estado)>
+                        <div class="form-check form-switch">
+                            <input
+                                class="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                id="flexSwitchCheckDefault"
+                                checked />
+                            <label
+                                class="form-check-label"
+                                for="flexSwitchCheckDefault"></label>
+                        </div>
+                    </template>
+
                     <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
                             <e-button
