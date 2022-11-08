@@ -2,7 +2,8 @@
     import { identity } from '@/components/types/checkers'
     import type { ColorTheme } from '@components-types'
     import type { InputType } from 'bootstrap-vue-3'
-    import { computed, type PropType } from 'vue'
+
+    import { type PropType, computed } from 'vue'
 
     const props = defineProps({
         modelValue: {
@@ -46,7 +47,9 @@
             default: null,
         },
         infoStatus: {
-            type: String,
+            type: String as PropType<
+                'info' | 'warning' | 'success' | 'normal' | '' | 'danger'
+            >,
             default: 'normal',
         },
         disabled: {

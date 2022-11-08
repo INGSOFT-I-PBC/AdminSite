@@ -1,3 +1,4 @@
+import UserCard from './UserCard.vue'
 import DrawerMenu from './custom/DrawerMenu.vue'
 import EButton from './custom/EButton.vue'
 import EButtonGroup from './custom/EButtonGroup.vue'
@@ -9,11 +10,12 @@ import InputText from './custom/InputText.vue'
 import ListBox from './custom/ListBox.vue'
 import LoadingBar from './custom/LoadingBar.vue'
 import ModalDialog from './custom/ModalDialog.vue'
+import SimpleFormInput from './custom/SimpleFormInput.vue'
 import TextArea from './custom/TextArea.vue'
 import Title from './custom/Title.vue'
 import WaitOverlay from './custom/WaitOverlay.vue'
+import ETab from './holders/ETab.vue'
 import UserCardItem from './models/UserCardItem.vue'
-import UserCard from './UserCard.vue'
 
 export {
     ECard,
@@ -32,4 +34,6 @@ export {
     ECol,
     ERow,
     EButtonGroup,
+    ETab,
+    SimpleFormInput,
 }
