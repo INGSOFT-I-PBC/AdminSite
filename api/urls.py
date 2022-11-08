@@ -66,6 +66,7 @@ urlpatterns = [
     path("provinces", ProvinceCityView.as_view()),
     # path('users'),
     # Administration endpoints
+    path("admin/permission_group/<int:id>", views.PermissionGroupView.as_view()),
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),

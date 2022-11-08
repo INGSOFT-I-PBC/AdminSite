@@ -46,4 +46,5 @@ __all__ = [
     "ProviderViewSet",
     "ProviderView",
     "create_provider",
+    "GroupView",
 ]
