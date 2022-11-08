@@ -1,25 +1,32 @@
 <script lang="ts" setup>
-    import EButton from '@components/custom/EButton.vue'
-    import ECard from '@components/custom/ECard.vue'
-    import InputText from '@components/custom/InputText.vue'
-    import ListBox from '@components/custom/ListBox.vue'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
-    import WaitOverlay from '@components/custom/WaitOverlay.vue'
-    import ETab from '@components/holders/ETab.vue'
-    import UserCardItem from '@components/models/UserCardItem.vue'
     import { TabPanel } from '@headlessui/vue'
     import { useCommonStore } from '@store/common'
-    import { isMessage, type Employee } from '@store/types'
+    import { type Employee, isMessage } from '@store/types'
     import type { Group } from '@store/types/common.model'
-    import type { SimpleUser, UserForm } from '@store/types/user.model'
+    import type { RawUser, SimpleUser, UserForm } from '@store/types/user.model'
     import { useUserStore } from '@store/users'
     import { BIconPerson } from 'bootstrap-icons-vue'
     import { BPagination, type BvEvent } from 'bootstrap-vue-3'
-    import { Form as ValidationForm, useField, useForm } from 'vee-validate'
-    import { computed, reactive, watch } from 'vue'
-    import { useToast } from 'vue-toastification'
+    import { Form as ValidationForm, useField } from 'vee-validate'
     import * as yup from 'yup'
+
+    import { computed, watch } from 'vue'
+    import { useToast } from 'vue-toastification'
+
+    import {
+        EButton,
+        ECard,
+        ETab,
+        InputText,
+        ListBox,
+        ModalDialog,
+        UserCardItem,
+        WaitOverlay,
+    } from '@custom-components'
+
     import EmployeeSearch from '../utils/EmployeeSearch.vue'
+    import UserFormView from './UserFormView.vue'
+
     const toast = useToast()
     /**
      * Stores
@@ -86,7 +93,6 @@
             ? 'Contraseñas no coinciden'
             : f.passwordConfirm.errorMessage
     })
-    const form = reactive(useForm())
     // #region User management functions
     function makeSearch() {
         pagination.value.username = undefined
@@ -116,7 +122,7 @@
     function deleteUser() {
         if (Boolean(targetDeleteUser.value)) {
             userRepository
-                .removeUser(targetDeleteUser.value!.username)
+                .removeUser(targetDeleteUser.value?.username ?? '')
                 .then(() => {
                     pagination.value.page = 1
                     makeSearch()
@@ -216,10 +222,22 @@
         <!-- #region User data update -->
         <ModalDialog
             :show="isEditingUser"
+            size="3xl"
             :title="`Editando usuario '${targetUpdateUser?.username}'`"
-            button-type="ok-cancel"
+            button-type="cancel-only"
             @ok="submitUpdate"
             @cancel="isEditingUser = false">
+            <UserFormView
+                edit-mode
+                :user-model="targetUpdateUser as RawUser"
+                @on-success="
+                    () => {
+                        isEditingUser = false
+                        isLoadingUsers = true
+                        pagination.page = 1
+                        makeSearch()
+                    }
+                " />
         </ModalDialog>
         <!-- #endregion -->
         <ModalDialog
