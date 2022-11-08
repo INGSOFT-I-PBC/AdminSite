@@ -1,15 +1,15 @@
 <script setup lang="ts">
-    import EButton from '@components/custom/EButton.vue'
     import ECard from '@components/custom/ECard.vue'
-    import ECol from '@components/custom/ECol.vue'
     import ERow from '@components/custom/ERow.vue'
+    import ECol from '@components/custom/ECol.vue'
     import ListBox from '@components/custom/ListBox.vue'
+    import EButton from '@components/custom/EButton.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import { onMounted } from 'vue'
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+    import { onMounted } from 'vue'
 
-    import { useClientStore } from '@store/client'
-    import type { Client } from '@store/types'
+    import type { IClient, Invoice, IPayment } from '@store/types'
+    import { useInvoiceStore } from '@store/invoice'
     //import { useToast } from 'vue-toastification'
 
     import type { TableField } from 'bootstrap-vue-3'
@@ -18,13 +18,12 @@
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
-    const itemStore = useClientStore()
-    const clientModalShow = ref(false)
-    let id2 = 0
-    let index2 = 0
-    const clientModalDelete = ref(false)
+    const itemStore = useInvoiceStore()
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
+    const invoiceModalDelete = ref(false)
+    let id2 = 0
+    let index2 = 0
 
     const templateList = [
         { label: 'Por fecha de creación', value: '1' },
@@ -35,18 +34,21 @@
         },
         { label: 'Por Nombres y apellidos', value: '4' },
     ]
-    type SelectedItem = { item: Client | null }
+    type SelectedItem = { item: Invoice | null }
     const detailSelectedItem = ref<SelectedItem>({
         item: null,
     })
 
     const formFields: TableField[] = [
         '#',
-        { label: 'Identificacion', key: 'number_id' },
-        { label: 'Nombres y Apellidos', key: 'name' },
-        { label: 'Dirección', key: 'address' },
-        { label: 'Email', key: 'email' },
-        'Ciudad',
+        { label: 'Secuencia', key: 'code' },
+
+        'Cliente',
+        { label: 'Metodo de pago', key: 'name' },
+        { label: 'Subtotal', key: 'subtotal' },
+        { label: 'Total IVA', key: 'iva' },
+        { label: 'Total', key: 'total' },
+
         'Acciones',
     ]
 
@@ -54,7 +56,7 @@
         items: [],
     })
     type Form = {
-        items: Client[]
+        items: Invoice[]
     }
     /*type ItemForm = {
         item: Client | null
@@ -67,7 +69,7 @@
 
     const loadItems = async () => {
         itemLoading.value = true
-        form.value.items = await itemStore.fetchAllClient()
+        form.value.items = await itemStore.fetchAllInvoice()
         console.log(form.value.items)
         itemLoading.value = false
         showWaitOverlay.value = false
@@ -75,7 +77,7 @@
     function onShowModalClick() {
         loadItems()
     }
-    async function showItem(item: Client) {
+    async function showItem(item: Invoice) {
         detailSelectedItem.value.item = item
         itemInfoShow.value = true
     }
@@ -86,22 +88,21 @@
     function deleteProduct(id: number, index: number): void {
         id2 = id
         index2 = index
-        clientModalDelete.value = true
+        invoiceModalDelete.value = true
     }
-
     function acceptace(): void {
-        itemStore.removeClient(id2)
+        itemStore.removeInvoice(id2)
         removeItem(index2)
         id2 = 0
         index2 = 0
     }
 
     function go(): void {
-        router.push({ path: '/usuarios/cliente/agregar' })
+        router.push({ path: '/facturacion/agregar' })
     }
     function goEdit(id: number): void {
         console.log(id)
-        router.push({ path: `/usuarios/cliente/editar/${String(id)}` })
+        router.push({ path: `/facturacion/editar/${String(id)}` })
     }
 
     onMounted(() => {
@@ -113,64 +114,48 @@
     <main>
         <ModalDialog v-model:show="itemInfoShow" size="xl">
             <template #dialog-title>
-                <b class="tw-text-2xl"
-                    >Detalle del Cliente {{ detailSelectedItem.item?.name }}</b
-                >
+                <b class="tw-text-2xl">Detalle de la factura </b>
             </template>
-
             <div class="container">
                 <div
                     class="row tw-pb-3 align-content-center justify-content-center gy-2">
                     <template
                         v-for="(d, k) in detailSelectedItem.item"
                         :key="k">
-                        <div class="row" v-if="k == 'number_id'">
+                        <div class="row" v-if="k == 'client'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >cédula:</span
+                                >cliente:</span
+                            >
+                            <span class="col-6">{{ (d as IClient).name }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'payment_method'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >metodo de pago:</span
+                            >
+                            <span class="col-6">{{
+                                (d as IPayment).name
+                            }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'subtotal'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >subtotal:</span
                             >
                             <span class="col-6">{{ d }}</span>
                         </div>
-                        <div class="row" v-else-if="k == 'name'">
+                        <div class="row" v-else-if="k == 'iva'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >nombre:</span
-                            >
-                            <span class="col-6">{{ d }}</span>
-                        </div>
-                        <div class="row" v-else-if="k == 'address'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >dirección:</span
+                                >total IVA:</span
                             >
                             <span class="col-6">{{ d }}</span>
                         </div>
 
-                        <div class="row" v-if="k == 'email'">
+                        <div class="row" v-if="k == 'total'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >email:</span
+                                >total:</span
                             >
                             <span class="col-6">{{ d }}</span>
                         </div>
-                        <div class="row" v-if="k == 'phone_number'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >teléfono:</span
-                            >
-                            <span class="col-6">{{ d }}</span>
-                        </div>
-                        <div class="row" v-else-if="k == 'city'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >ciudad:</span
-                            >
-                            <span class="col-6">{{
-                                detailSelectedItem?.item?.city?.name
-                            }}</span>
-                        </div>
-                        <div class="row" v-else-if="k == 'province'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >provincia:</span
-                            >
-                            <span class="col-6">{{
-                                detailSelectedItem?.item?.province?.name
-                            }}</span>
-                        </div>
+
                         <div class="row" v-if="k == 'created_at'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >fecha de creación:</span
@@ -181,26 +166,27 @@
                 </div>
             </div>
         </ModalDialog>
+
         <ModalDialog
-            id="client-modal"
-            v-model:show="clientModalDelete"
-            title="Eliminar Cliente"
-            ok-text="Eliminar"
+            id="invoice-modal"
+            v-model:show="invoiceModalDelete"
+            title="Anular Factura"
+            ok-text="Anular"
             @ok="acceptace"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Está seguro de eliminar al Cliente?
+                ¿Está seguro de anular la Factura ?
             </h1>
         </ModalDialog>
 
         <ECard>
             <ERow>
-                <h1 style="font-size: 35px; color: black">Clientes</h1>
+                <h1 style="font-size: 35px; color: black">Facturas</h1>
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
                     <EButton variant="secondary" @click="go"
-                        >+ Agregar cliente
+                        >+ Agregar factura
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
@@ -226,9 +212,16 @@
             <WaitOverlay :show="showWaitOverlay">
                 <BTable :fields="formFields" :items="form.items">
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
-                    <template #cell(Ciudad)="{ index }"
-                        >{{ form.items[index]['city']?.name }}
+                    <template #cell(Cliente)="{ index }"
+                        >{{ (form.items[index]['client'] as IClient).name }}
                     </template>
+                    <template #cell(name)="{ index }"
+                        >{{
+                            (form.items[index]['payment_method'] as IPayment)
+                                .name
+                        }}
+                    </template>
+
                     <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
                             <e-button

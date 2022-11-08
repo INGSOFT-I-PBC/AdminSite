@@ -11,7 +11,9 @@ from api.views.provinceview import *
 from api.views.statusview import *
 from api.views.userview import *
 from api.views.warehouse import *
-
+from api.views.invoiceview import *
+from api.views.sequence import *
+from api.views.payment import *
 __all__ = [
     "UserViewSet",
     "LogoutViewSet",
@@ -43,8 +45,12 @@ __all__ = [
     "ProvinceViewSet",
     "ProvinceCityView",
     "FullGenderViewSet",
+    "FullInvoiceViewSet",
+    "FullSequenceViewSet",
+    "FullPaymentViewSet",
     "ProviderViewSet",
     "ProviderView",
     "create_provider",
     "GroupView",
+    "PaginatedIItemViewSet"
 ]

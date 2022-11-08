@@ -22,3 +22,12 @@ export type {
     Client,
     FullClient,
 } from './client.model'
+export type {
+    Invoice,
+    IItem,
+    ICategory,
+    IClient,
+    IInvoiceDetails,
+    IPayment,
+} from './invoice.model'
+export type { Sequence } from './sequence.model'
