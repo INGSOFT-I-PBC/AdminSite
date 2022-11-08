@@ -127,6 +127,11 @@ export const menus: MenuItem[] = [
                     },
                 ],
             },
+            {
+                label: 'Solicitud de pedidos',
+                path: '/compras/aprobacion-ordenes-compra',
+                routeName: 'purchase-approval-orders',
+            },
         ],
     },
     {
