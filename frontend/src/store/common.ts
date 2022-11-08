@@ -1,11 +1,12 @@
 import axios from 'axios'
 import { defineStore } from 'pinia'
+
 import type { Group, Groups, PaginatedGroups } from './types/common.model'
 
 export const useCommonStore = defineStore('common-store', () => {
     const groups = ref<Groups>([])
     const paginatedGroups = ref<PaginatedGroups | null>(null)
-    const group = ref<Group | null>(null)
+    const group = ref<Group>()
 
     async function fetchAllGroups() {
         const response = (await axios.get<Groups>('/api/v1/list/groups/all'))
@@ -22,11 +23,20 @@ export const useCommonStore = defineStore('common-store', () => {
         return response
     }
 
+    async function fetchGroup(id: number) {
+        const response = (
+            await axios.get<Group>(`/api/v1/admin/permission_group/${id}`)
+        ).data
+        group.value = response
+        return response
+    }
+
     return {
         groups,
         paginatedGroups,
         group,
         fetchAllGroups,
         fetchGroups,
+        fetchGroup,
     }
 })

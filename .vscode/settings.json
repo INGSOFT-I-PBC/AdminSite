@@ -11,11 +11,20 @@
     "[vue]": {
         "outline.showFunctions": true,
         "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+            "source.fixAll.eslint": true,
+            "source.organizeImports": false,
+            "source.sortMembers": true
+        }
     },
+    "prettier.enable": true,
+    "prettier.vueIndentScriptAndStyle": true,
+
     "editor.codeActionsOnSave": {
-      "source.fixAll": true,
-      "source.organizeImports": true,
-      "source.sortMembers": true
+        "source.fixAll": false,
+        "source.organizeImports": false,
+        "source.sortMembers": true
     },
     "python.formatting.provider": "black",
     "python.formatting.blackPath": "black",
@@ -28,7 +37,12 @@
     "volar.completion.preferredTagNameCase": "auto-pascal",
     "volar.doctor.statusBarItem": true,
     "eslint.enable": true,
-    "eslint.validate": ["javascript", "typescript", "javascriptreact", "typescriptreact"],
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "javascriptreact",
+        "typescriptreact"
+    ],
     "eslint.codeActionsOnSave.mode": "all",
     "eslint.format.enable": true,
     "python.linting.enabled": true,
