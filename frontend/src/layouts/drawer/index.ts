@@ -115,7 +115,7 @@ export const menus: MenuItem[] = [
                 label: 'Proveedores',
                 children: [
                     {
-                        label: 'Proveedores',
+                        label: 'Nuevo Proveedor',
                         path: '/compras/nuevo-proveedor',
                         routeName: 'purchases-add-provider',
                     },
@@ -123,7 +123,7 @@ export const menus: MenuItem[] = [
                         // TODO: make this view
                         label: 'Gestionar',
                         path: '/compras/proveedores',
-                        routeName: 'purchases-manage-providers',
+                        routeName: 'purchase-manage-providers',
                     },
                 ],
             },

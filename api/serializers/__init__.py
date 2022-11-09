@@ -1,11 +1,15 @@
-from .auth import *
-from .category import *
-from .client import *
-from .status import *
-from .inventory import *
-from .item import *
-from .items import *
-from .warehouse import *
+from api.serializers.auth import *
+from api.serializers.category import *
+from api.serializers.client import *
+from api.serializers.inventory import *
+from api.serializers.item import *
+from api.serializers.items import *
+from api.serializers.provider import *
+from api.serializers.status import *
+from api.serializers.warehouse import *
+from api.serializers.invoices import *
+from api.serializers.sequence import *
+from api.serializers.payment import *
 
 __all__ = [
     "PermissionSerializer",
@@ -24,5 +28,12 @@ __all__ = [
     "FullClientSerializer",
     "ClientSerializer",
     "StatusSerializer",
-    "ProvinceSerializer"
+    "ProvinceSerializer",
+    "FullInvoiceSerializer",
+    "IItemSerializer",
+    "ICategorySerializer",
+    "IInvoiceDetailsSerializer",
+    "PartialProviderSerializer",
+    "SequenceSerializer",
+    "PaymentSerializer"
 ]

@@ -1,8 +1,9 @@
 <template>
     <button
+        :type="type"
         @click="$emit('click', $event)"
         @mouseenter="buttonHover"
-        class="hover:tw-transition-all tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md"
+        class="hover:tw-transition-all tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md t-button"
         :class="style"
         @mouseup="mouseStopInteraction"
         @mouseleave="mouseStopInteraction">
@@ -13,6 +14,7 @@
                 v-if="useAwesome"
                 :icon="leftIcon" />
             <VueFeather v-else :type="leftIcon" class="tw-mr-1" />
+            &NegativeThickSpace;
         </template>
         <slot>Button</slot>
         <FontAwesomeIcon v-if="rightIcon" :icon="rightIcon" />
@@ -20,11 +22,22 @@
 </template>
 
 <script setup lang="ts">
-    import { computed } from 'vue'
+    import { computed, type PropType } from 'vue'
     const emit = defineEmits(['click', 'hover'])
     const props = defineProps({
         type: {
-            type: String,
+            type: String as PropType<'button' | 'reset' | 'submit'>,
+            default: undefined,
+        },
+        variant: {
+            type: String as PropType<
+                | 'primary'
+                | 'secondary'
+                | 'outline'
+                | 'cancel'
+                | 'success'
+                | 'blank'
+            >,
             default: 'primary',
             validator(value: string) {
                 return [
@@ -64,7 +77,7 @@
     const style = computed(() => {
         let classes = 'tw-shadow-md '
         const { disabled } = props
-        switch (props.type) {
+        switch (props.variant) {
             case 'primary':
                 classes +=
                     'tw-text-on-primary ' +

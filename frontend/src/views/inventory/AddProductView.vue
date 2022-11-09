@@ -3,6 +3,7 @@
     import type Item from '@/interfaz/items'
     import type { Status } from '@store/types'
     import ItemDataService from '@/store/item'
+    import SequenceDataService from '@/store/sequence'
     import { useAuthStore } from '@store'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import ECard from '@components/custom/ECard.vue'
@@ -10,6 +11,8 @@
     import { useRoute, useRouter } from 'vue-router'
     import { Field, ErrorMessage } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
+    import type { Sequence } from '@store/types'
+    import { string } from 'yup'
 
     export default defineComponent({
         name: 'AddProductView',
@@ -29,8 +32,20 @@
                 id: 0,
                 name: 'active',
             })
+            const formSequence = ref<Sequence>({
+                id: 0,
+                name: '',
+                number: 0,
+            })
+            const formSequenceEditado = ref<Sequence>({
+                id: 0,
+                name: '',
+                number: 0,
+            })
 
             return {
+                formSequenceEditado,
+                formSequence,
                 formStatus,
                 route,
                 router,
@@ -80,17 +95,22 @@
                 this.entrada.status_id = this.formStatus.id
                 console.log(this.entrada.status_id)
             },
+            async loadSequence(name: string) {
+                this.formSequence = await SequenceDataService.fetchSequence(
+                    name
+                )
+                this.formSequence.number += 1
+                this.entrada.codigo =
+                    'P' +
+                    ('000000000' + String(this.formSequence.number)).substr(-9)
+            },
+            async editSequence(name: string, formSequence: Sequence) {
+                this.formSequenceEditado =
+                    await SequenceDataService.editSequence(name, formSequence)
+                console.log(this.formSequenceEditado)
+            },
             validarCheckbox() {
-                const checkbox = document.getElementById(
-                    'check'
-                ) as HTMLInputElement
-                if (!checkbox.checked) {
-                    //this.entrada.status_id = 1
-                    this.loadStatus('inactive')
-                } else {
-                    //this.entrada.status_id = 3
-                    this.loadStatus('active')
-                }
+                console.log()
             },
             async showAllCategory() {
                 ItemDataService.getAllCategory()
@@ -136,7 +156,9 @@
                     'status_id',
                     this.entrada.status_id.toString()
                 )
+                this.loadSequence('ITEM')
                 formDataItem.append('codename', this.entrada.codigo)
+                this.editSequence('ITEM', this.formSequence)
                 return formDataItem
             },
             performUploadInventory(id: number) {
@@ -196,16 +218,6 @@
             onSubmit(value: any) {
                 console.log('probando')
                 this.productModalShow = true
-            },
-            validateCode(value: any) {
-                if (!value) {
-                    return 'Este campo es requerido'
-                }
-                if (isNaN(value)) {
-                    return 'Inválido'
-                }
-
-                return true
             },
             validateName(value: any) {
                 // if the field is empty
@@ -297,6 +309,7 @@
             this.showAllCategory()
             this.showAllWarehouses()
             this.loadStatus(this.formStatus.name.toString())
+            this.loadSequence('ITEM')
             //console.log("hola"+this.formStatus.value.name)
         },
     })
@@ -308,7 +321,9 @@
             id="product-modal-error"
             v-model:show="productModalShowError"
             title="Información">
-            <h1 style="font-size: 15px; color: black; text-align: left">{{ msm400 }}</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                {{ msm400 }}
+            </h1>
         </ModalDialog>
         <ModalDialog
             id="product-modal"
@@ -317,7 +332,9 @@
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-            <h1 style="font-size: 15px; color: black; text-align: left">¿Esta seguro de guardar el producto?</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Esta seguro de guardar el producto?
+            </h1>
         </ModalDialog>
 
         <ECard>
@@ -341,8 +358,8 @@
                                             name="code"
                                             type="text"
                                             class="form-control"
-                                            :rules="validateCode"
-                                            v-model="entrada.codigo" />
+                                            v-model="entrada.codigo"
+                                            disabled="false" />
                                         <div class="col">
                                             <ErrorMessage
                                                 name="code"

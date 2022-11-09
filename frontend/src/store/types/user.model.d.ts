@@ -1,5 +1,7 @@
 import type { date } from "yup"
 
+import type { Group } from './common.model'
+
 export interface Role {
     id: number
     name: string
@@ -24,6 +26,15 @@ export interface User {
     group: number
     created_at: string
 }
+
+export interface FullUser {
+    id: number
+    username: string
+    email: string
+    group: Group
+    employee: Employee
+}
+
 /**
  * A model of an User without all the `parsed` things, only with minimal information
  * aka: id's
@@ -37,6 +48,10 @@ export interface SimpleUser {
     is_active?: boolean
 }
 
+export interface RawUser extends SimpleUser {
+    id: number
+    is_active: boolean
+}
 export type SimpleUserForm = {
     username: string
     email: string
@@ -63,6 +78,7 @@ export type UserForm = {
 
 export interface Employee {
     created_at:string
+    id?: number
     name: string
     lastname: string
     cid: string

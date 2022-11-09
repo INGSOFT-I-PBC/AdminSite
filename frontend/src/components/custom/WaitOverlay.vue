@@ -22,7 +22,7 @@
     <EOverlay :rounded="rounded" :show="show">
         <template #content>
             <div
-                class="tw-flex tw-flex-row fit tw-items-center tw-relative tw-top-1/2 tw-left-1/2 tw-right-1/2 tw-content-center tw-self-center">
+                class="tw-flex tw-flex-row fit tw-items-center tw-relative tw-top-1/2 tw-left-1/2 tw-right-1/2 tw-content-center tw-self-center tw-z-10">
                 <FontAwesomeLayers fixed-width>
                     <FontAwesomeIcon
                         class="tw-fill-white"

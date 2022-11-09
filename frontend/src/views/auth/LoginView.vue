@@ -1,10 +1,10 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
     import { useAuthStore } from '@store'
+    import { ref } from 'vue'
     import { useRouter } from 'vue-router'
     import InputText from '../../components/custom/InputText.vue'
-    import { ref } from 'vue'
     import LoadingBar from '../../components/custom/LoadingBar.vue'
 
     const router = useRouter()
@@ -41,9 +41,9 @@
                 .catch(() => {
                     error.value = true
                 })
-            /* .finally(() => {
+                .finally(() => {
                     isLoading.value = false
-                })*/
+                })
         }
     }
 </script>
@@ -55,7 +55,7 @@
                 src="../../assets/img/nova.png"
                 class="tw-max-w-full tw-h-auto tw-rounded-lg"
                 alt="NovaGym" />
-            <form @onsubmit="inactive">
+            <form @submit.prevent="inactive">
                 <InputText
                     label="Usuario"
                     :disabled="isLoading"
@@ -87,9 +87,7 @@
                         <p class="tw-text-red-700">{{ errorMessage }}</p>
                     </div>
                     <div class="mt-4">
-                        <EButton type="primary" @click="access"
-                            >Acceder
-                        </EButton>
+                        <EButton @click="access">Acceder </EButton>
                     </div>
                     <div class="flex items-baseline justify-between mt-4">
                         <a class="text-sm text-blue-600 hover:underline"

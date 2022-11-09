@@ -29,12 +29,6 @@ export interface TableFieldObject<T = Record<string, unknown>> {
 
 export type TableField<T = Record<string, unknown>> = string | TableFieldObject
 
-// declare function isTableColumn(TableCo)
-
-// export function isTableColumn(target: TableColumnish): target is TableColumn {
-//     return typeof target !== 'string'
-// }
-
 export type TableColumnish = TableColumn | string
 
 export type NormalizedHeader = {

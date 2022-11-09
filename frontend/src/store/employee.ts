@@ -1,12 +1,11 @@
-import type {
-    PaginatedAPIResponse,
-    Employee,
-    PaginatedResponse,
-} from '@store-types'
+import type { Employee, PaginatedResponse } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
-export type EmployeeSearchParams = {}
+export type EmployeeSearchParams = {
+    name?: string
+    cid?: string
+}
 
 type Identifier = string | number
 

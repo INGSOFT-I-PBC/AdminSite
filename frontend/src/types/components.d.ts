@@ -1,9 +1,8 @@
-import type {
-    FontAwesomeIconProps,
-    FontAwesomeLayersProps,
-    FontAwesomeLayersTextProps,
-} from '@fortawesome/vue-fontawesome'
-import type { Component } from 'vue'
+import type { Component, DefineComponent } from 'vue'
+
+export type OlMap = DefineComponent<{
+    a: string
+}>
 
 declare module '*.vue' {
     import { type DefineComponent } from 'vue'
@@ -31,20 +30,6 @@ declare module '*.vue' {
         Record<string, unknown>,
         Component
     >
-}
-
-declare module '@vue/runtime-core' {
-    export interface GlobalComponents {
-        RouterLink: typeof import('vue-router')['RouterLink']
-        RouterView: typeof import('vue-router')['RouterView']
-        VueFeather: typeof import('vue-feather')['default']
-        // FontAwesomeIcon: typeof import('@fortawesome/vue-fontawesome')['FontAwesomeIcon']
-        FontAwesomeIcon: DefineComponent<FontAwesomeIconProps>
-        FontAwesomeLayers: DefineComponent<FontAwesomeLayersProps>
-        FontAwesomeLayersText: DefineComponent<FontAwesomeLayersTextProps>
-        ECard: typeof import('@components/custom/ECard.vue')['default']
-        Table: typeof import('@components/holders/Table.vue')['default']
-    }
 }
 
 export default {}

@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import ECard from '@components/custom/ECard.vue'
-import ERow from '@components/custom/ERow.vue'
-import ECol from '@components/custom/ECol.vue'
-import ListBox from '@components/custom/ListBox.vue'
 import EButton from '@components/custom/EButton.vue'
+import ECard from '@components/custom/ECard.vue'
+import ECol from '@components/custom/ECol.vue'
+import ERow from '@components/custom/ERow.vue'
+import ListBox from '@components/custom/ListBox.vue'
 import ModalDialog from '@components/custom/ModalDialog.vue'
-import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 import { onMounted } from 'vue'
+import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
-import type { Client } from '@store/types'
 import { useClientStore } from '@store/client'
+import type { Client } from '@store/types'
 //import { useToast } from 'vue-toastification'
 
 import type { TableField } from 'bootstrap-vue-3'
@@ -19,6 +19,10 @@ const router = useRouter()
 const showWaitOverlay = ref<boolean>(true)
 const itemLoading = ref(false)
 const itemStore = useClientStore()
+const clientModalShow = ref(false)
+let id2 = 0
+let index2 = 0
+const clientModalDelete = ref(false)
 //const toast = useToast()
 const itemInfoShow = ref<boolean>(false)
 
@@ -58,6 +62,7 @@ const model = ref({})
 const loadItems = async () => {
     itemLoading.value = true
     form.value.items = await itemStore.fetchAllClient()
+    console.log(form.value.items)
     itemLoading.value = false
     showWaitOverlay.value = false
 }
@@ -69,11 +74,20 @@ async function showItem(item: Client) {
     itemInfoShow.value = true
 }
 function removeItem(index: number) {
+    console.log(index)
     form.value.items.splice(index, 1)
 }
 function deleteProduct(id: number, index: number): void {
-    itemStore.removeClient(id)
-    removeItem(index)
+    id2 = id
+    index2 = index
+    clientModalDelete.value = true
+}
+
+function acceptace(): void {
+    itemStore.removeClient(id2)
+    removeItem(index2)
+    id2 = 0
+    index2 = 0
 }
 
 function go(): void {
@@ -94,6 +108,7 @@ onMounted(() => {
             <template #dialog-title>
                 <b class="tw-text-2xl">Detalle del Cliente {{ detailSelectedItem.item?.name }}</b>
             </template>
+
             <div class="container">
                 <div class="row tw-pb-3 align-content-center justify-content-center gy-2">
                     <template v-for="(d, k) in detailSelectedItem.item" :key="k">
@@ -138,7 +153,12 @@ onMounted(() => {
                 </div>
             </div>
         </ModalDialog>
-
+        <ModalDialog id="client-modal" v-model:show="clientModalDelete" title="Eliminar Cliente" ok-text="Eliminar"
+            @ok="acceptace" button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de eliminar al Cliente?
+            </h1>
+        </ModalDialog>
 
         <ECard>
 
@@ -147,8 +167,8 @@ onMounted(() => {
                     Clientes</h1>
             </ERow>
             <nav class="navbar">
-                <div class="container-fluid align">
-                    <EButton type="secondary" @click="go">+ Agregar cliente
+                <div class="container-fluid">
+                    <EButton variant="secondary" @click="go">+ Agregar cliente
                     </EButton>
                     <!--
 
@@ -181,10 +201,12 @@ onMounted(() => {
                     </template>
                     <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
-                            <e-button left-icon="fa-eye" type="secondary" @click="showItem(item)">Ver detalles
+                            <e-button left-icon="fa-eye" variant="secondary" @click="showItem(item)">Ver detalles
                             </e-button>
-                            <e-button left-icon="fa-edit" type="success" @click="goEdit(item['id'])">Editar</e-button>
-                            <e-button left-icon="fa-trash-can" type="cancel" @click="deleteProduct(item['id'], index)">
+                            <e-button left-icon="fa-edit" variant="success" @click="goEdit(item['id'])">Editar
+                            </e-button>
+                            <e-button left-icon="fa-trash-can" variant="cancel"
+                                @click="deleteProduct(item['id'], index)">
                                 <span class="tw-invisible md:tw-visible tw-font-bold">Eliminar</span>
                             </e-button>
                         </div>
