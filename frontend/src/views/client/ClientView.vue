@@ -221,7 +221,7 @@
                     </form>
                 </div>
             </nav>
-
+            //
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
@@ -234,8 +234,8 @@
                         <div class="form-check form-switch">
                             <input
                                 v-if="
-                                    form.items[index]['status']?.id == 1 ||
-                                    form.items[index]['status']?.id == 2
+                                    form.items[index]['status'] == 1 ||
+                                    form.items[index]['status'] == 2
                                 "
                                 class="form-check-input"
                                 type="checkbox"
