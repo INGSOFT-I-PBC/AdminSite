@@ -8,9 +8,12 @@
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Table from '@components/holders/Table.vue'
+
     import { onMounted, reactive } from 'vue'
     import { useRouter } from 'vue-router'
+
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
     //
@@ -23,12 +26,10 @@
         },
         { label: 'Por cantidad', value: '4' },
     ]
-
     const model = ref({})
     const productModalShow = ref(false)
     const productModalDelete = ref(false)
     let num = 0
-
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
             {
@@ -74,7 +75,6 @@
         ],
         rows: [],
     })
-
     interface productModel {
         date: string
         hour: string
@@ -82,7 +82,6 @@
         id: string
         name: string
     }
-
     const selectedProduct: Optional<any> = ref(null)
     function showProduct(product: product) {
         selectedProduct.value = product
@@ -107,13 +106,11 @@
     }
     let items: Item[]
     const items2: product[] = []
-
     async function showAllProducts() {
         ItemDataService.getAll()
             .then(response => {
                 items = response.data
                 console.log(items)
-
                 for (let i = 0; i < items.length; i++) {
                     items2.push({
                         code: items[i].codename_Item,
@@ -130,22 +127,18 @@
                         id: items[i].id,
                     })
                 }
-
                 tableSettings.rows = items2
                 showWaitOverlay.value = false
-
                 console.log(tableSettings.rows)
             })
             .catch((e: Error) => {
                 console.log(e)
             })
     }
-
     function go(id: number): void {
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
-
     function acceptace(): void {
         ItemDataService.deleteInventory(items2[num].id)
             .then(response => {
@@ -161,12 +154,10 @@
                 console.log(e)
             })
     }
-
     function deleteProduct(index: number): void {
         num = index
         productModalDelete.value = true
     }
-
     function goAgregar(): void {
         router.push({ path: '/inventario/agregar' })
     }
@@ -283,7 +274,10 @@
                         <div v-if="colIdx == 8">
                             <div class="form-check form-switch">
                                 <input
-                                    v-if="items2[rowIdx].state == 1"
+                                    v-if="
+                                        items2[rowIdx].state == 1 ||
+                                        items2[rowIdx].state == 2
+                                    "
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
@@ -294,8 +288,7 @@
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault"
-                                    checked />
+                                    id="flexSwitchCheckDefault" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>

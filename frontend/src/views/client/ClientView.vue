@@ -5,16 +5,16 @@
     import ERow from '@components/custom/ERow.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import { onMounted } from 'vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
-
     import { useClientStore } from '@store/client'
     import type { Client } from '@store/types'
     //import { useToast } from 'vue-toastification'
-
     import type { TableField } from 'bootstrap-vue-3'
 
+    import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
+
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
@@ -47,6 +47,7 @@
         { label: 'Dirección', key: 'address' },
         { label: 'Email', key: 'email' },
         'Ciudad',
+        'Estado',
         'Acciones',
     ]
 
@@ -228,6 +229,29 @@
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
                     <template #cell(Ciudad)="{ index }"
                         >{{ form.items[index]['city']?.name }}
+                    </template>
+                    <template #cell(Estado)="{ index }">
+                        <div class="form-check form-switch">
+                            <input
+                                v-if="
+                                    form.items[index]['status_id'] == 1 ||
+                                    form.items[index]['status_id'] == 2
+                                "
+                                class="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                id="flexSwitchCheckDefault"
+                                checked />
+                            <input
+                                v-else
+                                class="form-check-input"
+                                type="checkbox"
+                                role="switch"
+                                id="flexSwitchCheckDefault" />
+                            <label
+                                class="form-check-label"
+                                for="flexSwitchCheckDefault"></label>
+                        </div>
                     </template>
                     <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
