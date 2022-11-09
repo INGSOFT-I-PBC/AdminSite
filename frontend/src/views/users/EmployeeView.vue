@@ -28,9 +28,9 @@ const employeeModalShow = ref(false)
 const employeeRepository = useEmployeeStore()
 
 /*Pagination*/
-const employeesPerPage = ref(7)
-let currentEmployeePage = ref(1)
-let employeesTableTotal = ref(100)
+const perPage = ref(7)
+let currentPage = ref(1)
+let totalRows = ref(100)
 
 const formFields: TableField[] = [
     { label: 'Fecha de creación', key: 'date' },
@@ -62,9 +62,9 @@ async function showEmployees(event: any, page: number) {
     showWaitOverlay.value = true
     try {
         let dataEmployeeTable = await
-            (await employeeRepository.fetchEmployees({ page: page, per_page: employeesPerPage.value }))
+            (await employeeRepository.fetchEmployees({ page: page, per_page: perPage.value }))
         form.value.employees = dataEmployeeTable.data
-        employeesTableTotal.value = dataEmployeeTable.total
+        totalRows.value = dataEmployeeTable.total
     } catch (error) {
         console.log(error)
     } finally {
@@ -108,13 +108,8 @@ function goEdit(id: number): void {
     router.push({ path: `/usuarios/empleado/editar/${String(id)}` })
 }
 
-
-function rol(): void {
-    router.push({ path: '/admin/roles' })
-}
-
 onMounted(() => {
-    return showEmployees(null, currentEmployeePage.value)
+    return showEmployees(null, currentPage.value)
 })
 </script>
 
@@ -146,8 +141,6 @@ onMounted(() => {
                         </button>
                     </form>
                     -->
-
-                        <EButton @click="rol">Roles</EButton>
                     </div>
                 </nav>
                 <BTable :fields="formFields" :items="form.employees">
@@ -172,9 +165,9 @@ onMounted(() => {
                         </div>
                     </template>
                 </BTable>
-                <b-pagination v-model="currentEmployeePage" :total-rows="employeesTableTotal"
-                    :per-page="employeesPerPage" align="center" @page-click="showEmployees" :limit=5
-                    hide-goto-end-buttons></b-pagination>
+                <b-pagination v-model="currentPage" :total-rows="totalRows" :per-page="perPage"
+                    @page-click="showEmployees" :limit=5 hide-goto-end-buttons class="paginator">
+                </b-pagination>
 
                 <!-- </ECol>
             </ERow> -->
@@ -186,30 +179,5 @@ onMounted(() => {
 <style lang="scss">
 .align {
     padding: 0;
-}
-
-.table {
-    >thead {
-        @apply tw-bg-secondary tw-text-white tw-font-bold;
-    }
-
-    @media (prefers-color-scheme: dark) {
-        color: white !important;
-        --bs-table-striped-color: theme(colors.zinc.400);
-        --bs-table-hover-color: theme('colors.primary.light');
-        --bs-table-hover-bg: theme(colors.primary.light / 15%);
-    }
-}
-
-.t-button-group {
-    max-width: fit-content !important;
-    @apply tw-rounded tw-overflow-hidden tw-flex tw-place-content-stretch tw-place-items-stretch;
-
-    >button {
-        border-radius: 0.3rem;
-        margin-left: 0.5rem;
-        min-width: auto;
-        max-width: 100%;
-    }
 }
 </style>
