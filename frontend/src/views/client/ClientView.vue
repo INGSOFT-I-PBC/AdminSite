@@ -1,15 +1,15 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     import { onMounted } from 'vue'
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
-    import type { Client } from '@store/types'
     import { useClientStore } from '@store/client'
+    import type { Client } from '@store/types'
     //import { useToast } from 'vue-toastification'
 
     import type { TableField } from 'bootstrap-vue-3'
@@ -19,6 +19,10 @@
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
     const itemStore = useClientStore()
+    const clientModalShow = ref(false)
+    let id2 = 0
+    let index2 = 0
+    const clientModalDelete = ref(false)
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
 
@@ -80,8 +84,16 @@
         form.value.items.splice(index, 1)
     }
     function deleteProduct(id: number, index: number): void {
-        itemStore.removeClient(id)
-        removeItem(index)
+        id2 = id
+        index2 = index
+        clientModalDelete.value = true
+    }
+
+    function acceptace(): void {
+        itemStore.removeClient(id2)
+        removeItem(index2)
+        id2 = 0
+        index2 = 0
     }
 
     function go(): void {
@@ -105,6 +117,7 @@
                     >Detalle del Cliente {{ detailSelectedItem.item?.name }}</b
                 >
             </template>
+
             <div class="container">
                 <div
                     class="row tw-pb-3 align-content-center justify-content-center gy-2">
@@ -168,6 +181,17 @@
                 </div>
             </div>
         </ModalDialog>
+        <ModalDialog
+            id="client-modal"
+            v-model:show="clientModalDelete"
+            title="Eliminar Cliente"
+            ok-text="Eliminar"
+            @ok="acceptace"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de eliminar al Cliente?
+            </h1>
+        </ModalDialog>
 
         <ECard>
             <ERow>
@@ -175,7 +199,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="go"
+                    <EButton variant="secondary" @click="go"
                         >+ Agregar cliente
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
@@ -209,19 +233,19 @@
                         <div class="t-button-group">
                             <e-button
                                 left-icon="fa-eye"
-                                type="secondary"
+                                variant="secondary"
                                 @click="showItem(item)"
                                 >Ver detalles</e-button
                             >
                             <e-button
                                 left-icon="fa-edit"
-                                type="success"
+                                variant="success"
                                 @click="goEdit(item['id'])"
                                 >Editar</e-button
                             >
                             <e-button
                                 left-icon="fa-trash-can"
-                                type="cancel"
+                                variant="cancel"
                                 @click="deleteProduct(item['id'], index)">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"

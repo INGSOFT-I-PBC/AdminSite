@@ -1,6 +1,5 @@
 from django.core.paginator import Paginator
-from django.db.models import F, Q, Window
-from django.db.models.functions.window import LastValue
+from django.db.models import OuterRef, Q, Subquery
 from django.http import JsonResponse
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -343,49 +342,24 @@ class WhOrderRequestViewSet(ReadOnlyModelViewSet):
 class WhLatestTomaFisicaView(APIView):
     def get(self, request):
         try:
-            queryset = (
-                Warehouse.objects.annotate(
-                    whtf_id=Window(
-                        expression=LastValue("whtomasfisicas__id"),
-                        partition_by=[
-                            F("id"),
-                        ],
-                    ),
-                    whtf_done_by_name=Window(
-                        expression=LastValue("whtomasfisicas__done_by__name"),
-                        partition_by=[
-                            F("id"),
-                        ],
-                    ),
-                    whtf_done_by_lastname=Window(
-                        expression=LastValue("whtomasfisicas__done_by__lastname"),
-                        partition_by=[
-                            F("id"),
-                        ],
-                    ),
-                    whtf_created_at=Window(
-                        expression=LastValue("whtomasfisicas__created_at"),
-                        partition_by=[
-                            F("id"),
-                        ],
-                    ),
-                    whtf_novedad=Window(
-                        expression=LastValue("whtomasfisicas__novedad"),
-                        partition_by=[
-                            F("id"),
-                        ],
-                    ),
-                )
-                .distinct()
-                .order_by("name")
-            )
 
-            serializer = WhWithTomaFisicaSerializer(queryset, many=True)
+            latest_tf = WhTomasFisicas.objects.filter(
+                warehouse=OuterRef("id")
+            ).order_by("-id")[:1]
+
+            wh_with_toma_fisica = Warehouse.objects.annotate(
+                whtf_id=Subquery(latest_tf.values("id")),
+                whtf_created_at=Subquery(latest_tf.values("created_at")),
+                whtf_novedad=Subquery(latest_tf.values("novedad")),
+                whtf_done_by_name=Subquery(latest_tf.values("done_by__name")),
+                whtf_done_by_lastname=Subquery(latest_tf.values("done_by__lastname")),
+            ).order_by("name")
+
+            serializer = WhWithTomaFisicaSerializer(wh_with_toma_fisica, many=True)
 
             return Response(serializer.data)
 
         except Exception as e:
-            print(e)
             return error_response("Invalid query")
 
 

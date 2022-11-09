@@ -336,10 +336,10 @@ warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
 
                         <b-pagination v-model="currentMainPage" :total-rows="whRows" :per-page="whPageCount"
                             aria-controls="b-list-warehouses" align="center" @page-click="onMainPageChanged" :limit=10
-                            class="paginator col-6 tw-inline-flex"></b-pagination>
+                            class="paginator col-5 tw-inline-flex"></b-pagination>
 
 
-                        <e-button @click="" type="primary" class=" col-2">Limpiar filtros
+                        <e-button @click="" type="primary" class=" col-2 mx-1">Limpiar filtros
                         </e-button>
                     </div>
 

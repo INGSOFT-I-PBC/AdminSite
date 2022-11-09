@@ -1,19 +1,19 @@
 <script setup lang="ts">
-    import ItemDataService from '@/store/item'
     import type Item from '@/interfaz/items'
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
+    import ItemDataService from '@/store/item'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Table from '@components/holders/Table.vue'
-    import { reactive, onMounted } from 'vue'
+    import { onMounted, reactive } from 'vue'
     import { useRouter } from 'vue-router'
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
-
+    //
     const templateList = [
         { label: 'Por código', value: '1' },
         { label: 'Por nombre', value: '2' },
@@ -26,8 +26,8 @@
 
     const model = ref({})
     const productModalShow = ref(false)
-    // const selectedProduct = null
-    //const idx = 10
+    const productModalDelete = ref(false)
+    let num = 0
 
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
@@ -145,14 +145,15 @@
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
-    function deleteProduct(index: number): void {
-        ItemDataService.deleteInventory(items2[index].id)
+
+    function acceptace(): void {
+        ItemDataService.deleteInventory(items2[num].id)
             .then(response => {
                 console.log(response.data)
-                ItemDataService.deleteItem(items2[index].id_item).then(
+                ItemDataService.deleteItem(items2[num].id_item).then(
                     response => {
                         console.log(response.data)
-                        removeItem(index)
+                        removeItem(num)
                     }
                 )
             })
@@ -160,6 +161,12 @@
                 console.log(e)
             })
     }
+
+    function deleteProduct(index: number): void {
+        num = index
+        productModalDelete.value = true
+    }
+
     function goAgregar(): void {
         router.push({ path: '/inventario/agregar' })
     }
@@ -226,6 +233,17 @@
                 </div>
             </div>
         </ModalDialog>
+        <ModalDialog
+            id="product-modal"
+            v-model:show="productModalDelete"
+            title="Eliminar Producto"
+            ok-text="Eliminar"
+            @ok="acceptace"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de eliminar el Producto?
+            </h1>
+        </ModalDialog>
 
         <ECard>
             <ERow>
@@ -233,7 +251,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton type="secondary" @click="goAgregar"
+                    <EButton variant="secondary" @click="goAgregar"
                         >+ Agregar producto
                     </EButton>
 

@@ -5,11 +5,26 @@
         "editor.codeActionsOnSave": {
             "source.organizeImports": true,
             "source.fixAll": true
-        }
+        },
+        "editor.defaultFormatter": "ms-python.python"
     },
     "[vue]": {
         "outline.showFunctions": true,
-        "editor.formatOnSave": true
+        "editor.formatOnSave": true,
+        "editor.codeActionsOnSave": {
+            "source.fixAll": true,
+            "source.fixAll.eslint": true,
+            "source.organizeImports": false,
+            "source.sortMembers": true
+        }
+    },
+    "prettier.enable": true,
+    "prettier.vueIndentScriptAndStyle": true,
+
+    "editor.codeActionsOnSave": {
+        "source.fixAll": false,
+        "source.organizeImports": false,
+        "source.sortMembers": true
     },
     "python.formatting.provider": "black",
     "python.formatting.blackPath": "black",
@@ -17,6 +32,17 @@
     "eslint.codeAction.showDocumentation": {
         "enable": true
     },
+    "volar.completion.preferredAttrNameCase": "auto-kebab",
+    "volar.completion.normalizeComponentAutoImportName": true,
+    "volar.completion.preferredTagNameCase": "auto-pascal",
+    "volar.doctor.statusBarItem": true,
+    "eslint.enable": true,
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+        "javascriptreact",
+        "typescriptreact"
+    ],
     "eslint.codeActionsOnSave.mode": "all",
     "eslint.format.enable": true,
     "python.linting.enabled": true,

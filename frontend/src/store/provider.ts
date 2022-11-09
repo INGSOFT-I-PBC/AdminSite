@@ -1,7 +1,11 @@
-import axios from "axios";
-import { defineStore } from "pinia";
-import type { MessageResponse, PaginatedResponse } from "./types";
-import type { Provider, ProviderForm, ProviderModel } from "./types/provider.model";
+import axios from 'axios'
+import { defineStore } from 'pinia'
+import type { MessageResponse, PaginatedResponse } from './types'
+import type {
+    Provider,
+    ProviderForm,
+    ProviderModel,
+} from './types/provider.model'
 
 export type ProviderSearchParam = {
     name?: string
@@ -15,7 +19,9 @@ export const useProviderStore = defineStore('provider-store', () => {
     const providers = ref<PaginatedResponse<Provider>>()
 
     async function fetchProvider(param: identifier) {
-        const response = (await axios.get<Provider>(`/api/v1/provider/${param}`)).data
+        const response = (
+            await axios.get<Provider>(`/api/v1/provider/${param}`)
+        ).data
         provider.value = response
         return response
     }
@@ -26,11 +32,17 @@ export const useProviderStore = defineStore('provider-store', () => {
      *
      * @param params the search params
      */
-    async function fetchProviders(params?: PaginationOptions & ProviderSearchParam) {
-        const response = (await axios.get<PaginatedResponse<Provider>>('/api/v1/list/providers', {params})).data
+    async function fetchProviders(
+        params?: PaginationOptions & ProviderSearchParam
+    ) {
+        const response = (
+            await axios.get<PaginatedResponse<Provider>>(
+                '/api/v1/list/providers',
+                { params }
+            )
+        ).data
         providers.value = response
         return response
-
     }
 
     /**
@@ -40,8 +52,12 @@ export const useProviderStore = defineStore('provider-store', () => {
      * @param data The data to update on the target provider
      */
     async function updateProvider(identifier: identifier, data: ProviderForm) {
-        return (await axios.put<MessageResponse>(`/api/v1/provider/${identifier}`, data)).data
-
+        return (
+            await axios.put<MessageResponse>(
+                `/api/v1/provider/${identifier}`,
+                data
+            )
+        ).data
     }
 
     /**
@@ -50,8 +66,12 @@ export const useProviderStore = defineStore('provider-store', () => {
      *
      * @param identifier The identifier of the target user
      */
-    async function deleteProvider(identifier: identifier){
-        return (await axios.delete<MessageResponse>(`/api/v1/provider/${identifier}`)).data
+    async function deleteProvider(identifier: identifier) {
+        return (
+            await axios.delete<MessageResponse>(
+                `/api/v1/provider/${identifier}`
+            )
+        ).data
     }
 
     /**

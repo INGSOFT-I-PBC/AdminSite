@@ -1,6 +1,4 @@
 <script setup lang="ts">
-    import { ref } from 'vue'
-    import { stringifyQuery } from 'vue-router'
     defineProps({
         username: {
             type: String,
@@ -17,9 +15,6 @@
             default: '',
         },
     })
-    // const username = ref('Username')
-    // const role = ref('Role')
-    // const userImage = ref('')
 </script>
 
 <template>

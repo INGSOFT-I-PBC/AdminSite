@@ -8,9 +8,11 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from api import views
 from api.views import *
 from api.views.clientview import ClientView
+from api.views.invoiceview import InvoiceView
 from api.views.itemviews import ItemView
 from api.views.orders import OrderRequestView
 from api.views.provinceview import ProvinceCityView
+from api.views.sequence import *
 from api.views.statusview import StatusView
 from api.views.warehouse import *
 
@@ -21,13 +23,17 @@ router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
+router.register(r"invoices/all", views.FullInvoiceViewSet)
 router.register(r"clients/all", views.FullClientViewSet)
 router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
+router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"providers", views.ProviderViewSet)
+router.register(r"sequence/all", views.FullSequenceViewSet)
+router.register(r"payment/all", views.FullPaymentViewSet)
 
 
 urlpatterns = [
@@ -56,6 +62,7 @@ urlpatterns = [
     path("category/<int:id>", CategoryView.as_view(), name="category_process"),
     path("inventory", InventoryView.as_view(), name="inventory-list"),
     path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
+    path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     # Item management
     path("item/<int:id>", views.find_item, name="item"),
     path("item/<int:id>/properties", views.get_item_properties),
@@ -77,6 +84,7 @@ urlpatterns = [
     path("provinces", ProvinceCityView.as_view()),
     # path('users'),
     # Administration endpoints
+    path("admin/permission_group/<int:id>", views.PermissionGroupView.as_view()),
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
@@ -84,4 +92,12 @@ urlpatterns = [
     path("provider/<int:id>", views.ProviderView.as_view()),
     path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
+    # Invoice
+    path(
+        "invoice/client",
+        InvoiceView.as_view({"get": "search_client"}),
+        name="search-invoice-client",
+    ),
+    path("invoice", InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
+    path("sequence", SequenceView.as_view()),
 ]

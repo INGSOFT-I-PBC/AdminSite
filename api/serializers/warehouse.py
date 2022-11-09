@@ -193,9 +193,9 @@ class WhWithTomaFisicaSerializer(ModelSerializer):
 
     whtf_id = IntegerField()
     whtf_created_at = DateTimeField()
+    whtf_novedad = CharField()
     whtf_done_by_name = CharField()
     whtf_done_by_lastname = CharField()
-    whtf_novedad = CharField()
 
     class Meta:
         model = Warehouse
@@ -205,7 +205,7 @@ class WhWithTomaFisicaSerializer(ModelSerializer):
             "status",
             "whtf_id",
             "whtf_created_at",
+            "whtf_novedad",
             "whtf_done_by_name",
             "whtf_done_by_lastname",
-            "whtf_novedad",
         ]

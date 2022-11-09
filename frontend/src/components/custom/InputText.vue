@@ -1,8 +1,9 @@
 <script setup lang="ts">
-    import { computed, type PropType } from 'vue'
-    import type { ColorTheme } from '@components-types'
     import { identity } from '@/components/types/checkers'
+    import type { ColorTheme } from '@components-types'
     import type { InputType } from 'bootstrap-vue-3'
+
+    import { type PropType, computed } from 'vue'
 
     const props = defineProps({
         modelValue: {
@@ -33,16 +34,22 @@
             type: String,
             default: null,
         },
+        noInfoLabel: {
+            type: Boolean,
+            default: false,
+        },
         infoStyle: {
-            type: Object as PropType<string | string[]>,
-            default: ['tw-italic', 'tw-text-tiny'],
+            type: [String, Array],
+            default: () => ['tw-italic', 'tw-text-tiny'],
         },
         status: {
-            type: Boolean as PropType<Boolean | null>,
+            type: Boolean as PropType<boolean | null>,
             default: null,
         },
         infoStatus: {
-            type: String,
+            type: String as PropType<
+                'info' | 'warning' | 'success' | 'normal' | '' | 'danger'
+            >,
             default: 'normal',
         },
         disabled: {
@@ -81,7 +88,7 @@
     ])
 
     const infoClass = computed(() => {
-        let styles = Array.isArray(props.infoStyle)
+        const styles = Array.isArray(props.infoStyle)
             ? [...props.infoStyle]
             : props.infoStyle?.split(' ')
         // let styles = `${props.infoStyle || ''} `
@@ -171,7 +178,7 @@
 
         emit('update:modelValue', value)
         e.preventDefault()
-        let input = e.target as HTMLInputElement
+        const input = e.target as HTMLInputElement
         input.value = value
     }
 </script>
@@ -218,7 +225,7 @@
                 </slot>
             </button>
         </div>
-        <slot name="info-label">
+        <slot v-if="!noInfoLabel" name="info-label">
             <small :class="infoClass"> {{ infoLabel }}&ZeroWidthSpace; </small>
         </slot>
     </div>

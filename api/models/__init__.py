@@ -12,6 +12,7 @@ from .roles import Role
 from .users import Employee
 from .common import Status
 from .clients import Client,Gender
+from .sequence import Sequence
 
 __all__ = [
     "User",
@@ -47,5 +48,6 @@ __all__ = [
     "Inventory",
     "Status",
     "Client",
-    "Gender"
+    "Gender",
+    "Sequence"
 ]

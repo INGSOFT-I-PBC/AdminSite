@@ -1,7 +1,3 @@
-<script setup lang="ts">
-    const instance = ref()
-</script>
-
 <template>
     <Transition
         leave-active-class="tw-transition-all tw-duration-200 tw-ease-in"

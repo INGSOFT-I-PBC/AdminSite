@@ -17,8 +17,13 @@ from rest_framework_simplejwt.token_blacklist.models import (
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models import Employee, GroupPermission, Permission, Role, User
-from api.serializers import EmployeeSerializer, PermissionSerializer, UserSerializer
+from api.models import Employee, Group, GroupPermission, Permission, Role, User
+from api.serializers import (
+    EmployeeSerializer,
+    GroupSerializer,
+    PermissionSerializer,
+    UserSerializer,
+)
 from api.utils import bool_param, error_response, response
 
 
@@ -119,6 +124,13 @@ class PermissionsView(APIView):
         new_data.is_valid(raise_exception=True)
         new_data.save()
         return response("permission updated successfully")
+
+
+class PermissionGroupView(APIView):
+    def get(self, request, *args, **kwargs):
+        group = Group.objects.get(**kwargs)
+        serializer = GroupSerializer(group)
+        return JsonResponse(serializer.data)
 
 
 @api_view(["GET"])

@@ -13,12 +13,13 @@
     ],
     "compilerOptions": {
         "isolatedModules": true,
-        "types": [],
+        "types": ["types/auto-imports.d.ts", "src/components.d.ts"],
         "strict": false,
         "allowJs": true,
         "pretty": true,
         "moduleResolution": "Node",
         "paths": {
+            "@directives": ["./src/directives"],
             "@store": ["./src/store"],
             "@store-types": ["./src/store/types"],
             "@types": ["./src/types"],

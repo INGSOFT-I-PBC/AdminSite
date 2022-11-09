@@ -1,12 +1,8 @@
 <script setup lang="ts">
-    import { computed, reactive } from 'vue'
     import EButton from '@components/custom/EButton.vue'
-    import ERow from '@components/custom/ERow.vue'
     import ECol from '@components/custom/ECol.vue'
-    import * as VeeValidate from 'vee-validate'
-    import { Field, ErrorMessage } from 'vee-validate'
-    import { Form as EForm } from 'vee-validate'
-    import { useRoute, useRouter } from 'vue-router'
+    import { ErrorMessage, Field, Form as EForm } from 'vee-validate'
+    import { useRouter } from 'vue-router'
     const model = ref(null)
     const router = useRouter()
 
@@ -68,7 +64,7 @@
                 <div
                     id="__left-logo-container"
                     class="tw-p-10 tw-px-24 tw-bg-gray-100 tw-ring-slate-600 dark:tw-bg-slate-800">
-                    <EButton @click="btn_agregar()" type="secondary"
+                    <EButton @click="btn_agregar()" variant="secondary"
                         >+ Agregar rol
                     </EButton>
                 </div>
