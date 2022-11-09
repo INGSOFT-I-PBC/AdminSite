@@ -23,7 +23,7 @@
     let id2 = 0
     let index2 = 0
     const clientModalDelete = ref(false)
-    //const toast = useToast()
+    //const toast = useToast()d
     const itemInfoShow = ref<boolean>(false)
 
     const templateList = [

@@ -24,6 +24,10 @@ class EmployeeSerializer(serializers.ModelSerializer):
         model = Employee
         fields = ['name','lastname','cid','role']
 
+class StatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Status
+        fields = ['id','name']
 class FullClientSerializer(serializers.ModelSerializer):
     """
     Serializer class that show all the data of the Warehouse model
