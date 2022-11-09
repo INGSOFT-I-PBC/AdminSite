@@ -234,8 +234,8 @@
                         <div class="form-check form-switch">
                             <input
                                 v-if="
-                                    form.items[index]['status_id'] == 1 ||
-                                    form.items[index]['status_id'] == 2
+                                    form.items[index]['status']?.id == 1 ||
+                                    form.items[index]['status']?.id == 2
                                 "
                                 class="form-check-input"
                                 type="checkbox"

@@ -2,6 +2,7 @@
 from asyncore import read
 import rest_framework.serializers as serializers
 from rest_framework.validators import UniqueValidator
+from api.serializers.status import StatusSerializer
 
 
 from api.models import Client, Gender,Province,City,Employee,Status
@@ -31,6 +32,7 @@ class FullClientSerializer(serializers.ModelSerializer):
     city= CitySerializer()
     province= ProvinceSerializer()
     created_by=EmployeeSerializer()
+    status=StatusSerializer()
 
     class Meta:
         model = Client
@@ -49,7 +51,7 @@ class FullClientSerializer(serializers.ModelSerializer):
             'created_by',
             'gender',
             'province',
-            'status_id'
+            'status'
         ]
 
 
