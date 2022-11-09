@@ -25,6 +25,7 @@
     import { useAuthStore } from '@store'
 
     import type {
+        IServerOptions,
         IClient,
         IItem,
         Invoice,
@@ -43,7 +44,7 @@
     const paymentStore = usePaymentStore()
     const productModalShow = ref<boolean>(false)
     const showWaitOverlay = ref<boolean>(true)
-    const serverOpts = ref<ServerOptions>({
+    const serverOpts = ref<IServerOptions>({
         page: 1,
         rowsPerPage: 5,
         buscar: '',

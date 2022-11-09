@@ -6,6 +6,13 @@ export interface ICategory {
     id: number
     name: string
 }
+export interface IServerOptions {
+    page: number
+    rowsPerPage: number
+    buscar?: string
+    sortBy?: string | string[]
+    sortType?: SortType | SortType[]
+}
 
 export interface IItem {
     id: number
