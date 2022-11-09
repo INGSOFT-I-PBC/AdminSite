@@ -36,6 +36,7 @@
     import type { ServerOptions } from 'vue3-easy-data-table'
     import { useToast } from 'vue-toastification'
     import { string } from 'yup'
+    import { Console } from 'console'
     const authStore = useAuthStore()
     const nameEmployee = authStore.userData?.name
     const itemStore = useInvoiceStore()
@@ -45,6 +46,7 @@
     const serverOpts = ref<ServerOptions>({
         page: 1,
         rowsPerPage: 5,
+        buscar: '',
     })
     type SelectedItem = { item: IItem | null }
     const detailSelectedItem = ref<SelectedItem>({
@@ -64,34 +66,42 @@
         number_id: '',
         name: '',
     })
+    const numero = ref(0)
     const items = computed((): IItem[] => {
         if (isMessage(itemStore.paginatedItems)) return []
-        console.log('hola')
-        console.log(itemStore.paginatedItems?.data)
         return itemStore.paginatedItems?.data || []
     })
+
     const itemPageLength = computed(() => {
         const items = itemStore.paginatedItems
         if (items == null || isMessage(items)) return 0
         return items.total
     })
+
     const itemPaginationOptions = computed<PaginationOptions>(() => ({
         page: serverOpts.value.page,
         per_page: serverOpts.value.rowsPerPage,
+        buscar: serverOpts.value.buscar,
     }))
     const iformShow = computed(() => ({
         codigo: itemForm.value.item?.codename?.toString(),
         nombre: itemForm.value.item?.name ?? '',
+        quantity: itemForm.value.quantity ?? 1,
+        priceIVA:
+            Number(itemForm.value.item?.price) *
+            Number(itemForm.value.item?.iva),
+        iva: itemForm.value.item?.iva,
+        total:
+            Number(itemForm.value.item?.price) *
+            Number(itemForm.value.item?.iva) *
+            Number(itemForm.value.quantity),
     }))
     const loadClient = async () => {
         if (formClient.value.number_id != '') {
             formClient.value = await itemStore.fetchClientNumber(
                 formClient.value.number_id
             )
-            console.log(formClient.value)
         } else {
-            console.log('esta vacio')
-            console.log(formClient.value)
             formClient.value.id = 0
             formClient.value.name = ''
         }
@@ -108,7 +118,12 @@
     paymentStore.fetchPayment().then(() => {
         showWaitOverlay.value = false
     })
-    type QuantifiedItem = IItem & { quantity: number; total: number }
+    type QuantifiedItem = IItem & {
+        quantity: number
+        subtotal: number
+        totalIVA: number
+        total: number
+    }
     type Form = {
         payment_method?: IPayment
         items: QuantifiedItem[]
@@ -128,7 +143,7 @@
     }
     const itemForm = ref<ItemForm>({
         item: null,
-        quantity: '0',
+        quantity: '1',
         total: '0',
         subtotal: '0',
         totalIVA: '0',
@@ -165,8 +180,6 @@
     const codeInvoice = ref('')
     async function loadSequence(name: string) {
         formSequence.value = await SequenceDataService.fetchSequence(name)
-        // formSequence.value.number += 1
-        console.log(formSequence.value)
         codeInvoice.value = (
             '000000000' + String(formSequence.value.number + 1)
         ).substr(-9)
@@ -176,7 +189,6 @@
             name,
             formSequence
         )
-        console.log(formSequenceEditado)
     }
     function saveInvoice() {
         const { value: data } = form
@@ -211,7 +223,6 @@
         }
         showWaitOverlay.value = true
         loadSequence('INVOICE')
-        console.log(saveData.code)
         itemStore
             .saveInvoice(saveData)
             .then(() => {
@@ -219,8 +230,7 @@
                 data.items.splice(0, data.items.length)
                 formSequence.value.number += 1
                 editSequence('INVOICE', formSequence.value)
-                console.log('hola')
-                console.log(formSequence.value.number)
+
                 router.push({ path: '/facturacion' })
             })
             .catch((it: MessageResponse) => {
@@ -230,16 +240,62 @@
                 showWaitOverlay.value = false
             })
     }
-    function onShowModalClick() {
+    async function onShowModalClick() {
+        serverOpts.value.buscar = ''
         loadItems()
-        console.log('valo')
-        console.log(form.value.payment_method)
         productModalShow.value = true
     }
     function onRowClick(selectedItem: IItem) {
-        console.log('Data: ', selectedItem)
         itemForm.value.item = selectedItem
+
         productModalShow.value = false
+        addToTable()
+    }
+
+    function itemcantidad(index: number) {
+        /*const numInputs = document.getElementById(
+            'cantidad'
+        ) as HTMLInputElement*/
+        const numInputs = document.querySelectorAll('input[id=cantidad]')
+
+        numInputs.forEach(function (input) {
+            input.addEventListener('change', function (e) {
+                if (
+                    String(form.value.items[index].quantity) == '' ||
+                    form.value.items[index].quantity < 0
+                ) {
+                    form.value.items[index].quantity = 1
+                    console.log(index)
+                    //(e.target as HTMLInputElement).value = 1
+                }
+                itemForm.value.subtotal = '0'
+                itemForm.value.totalIVA = '0'
+                itemForm.value.totalInvoice = '0'
+                for (const i of form.value.items) {
+                    const suma =
+                        Number(i.quantity) *
+                        (Number(i.price) + Number(i.price) * Number(i.iva))
+                    i.total = Number(suma.toFixed(2))
+                    i.subtotal = Number(i.quantity) * Number(i.price)
+                    i.totalIVA =
+                        Number(i.quantity) * Number(i.price) * Number(i.iva)
+                    itemForm.value.subtotal = (
+                        Number(itemForm.value.subtotal) +
+                        Number(i.subtotal.toFixed(2))
+                    ).toFixed(2)
+
+                    itemForm.value.totalIVA = (
+                        Number(itemForm.value.totalIVA) +
+                        Number(i.totalIVA.toFixed(2))
+                    ).toFixed(2)
+                }
+                itemForm.value.totalInvoice = (
+                    Number(itemForm.value.totalInvoice) +
+                    Number(itemForm.value.subtotal) +
+                    Number(itemForm.value.totalIVA)
+                ).toFixed(2)
+            })
+        })
     }
     function addToTable() {
         const targetItem = itemForm.value.item
@@ -261,81 +317,65 @@
             quantity: Number(itemForm.value.quantity),
             total: Number(suma.toFixed(2)),
         } as QuantifiedItem)
-        itemForm.value.subtotal = String(
-            (
-                Number(itemForm.value.subtotal) +
-                Number(itemForm.value.quantity) *
-                    Number(itemForm.value.item?.price)
-            ).toFixed(2)
-        )
+        itemForm.value.subtotal = (
+            Number(itemForm.value.subtotal) +
+            Number(itemForm.value.quantity) * Number(itemForm.value.item?.price)
+        ).toFixed(2)
 
-        itemForm.value.totalIVA = String(
-            (
-                Number(itemForm.value.totalIVA) +
-                Number(itemForm.value.quantity) *
-                    Number(itemForm.value.item?.price) *
-                    Number(itemForm.value.item?.iva)
-            ).toFixed(2)
-        )
+        itemForm.value.totalIVA = (
+            Number(itemForm.value.totalIVA) +
+            Number(itemForm.value.quantity) *
+                Number(itemForm.value.item?.price) *
+                Number(itemForm.value.item?.iva)
+        ).toFixed(2)
+
         const subtotal =
             Number(itemForm.value.quantity) * Number(itemForm.value.item?.price)
         const totalIva =
             Number(itemForm.value.quantity) *
             (Number(itemForm.value.item?.price) *
                 Number(itemForm.value.item?.iva))
-        itemForm.value.totalInvoice = String(
-            (
-                Number(itemForm.value.totalInvoice) +
-                Number(subtotal) +
-                Number(totalIva)
-            ).toFixed(2)
-        )
+        itemForm.value.totalInvoice = (
+            Number(itemForm.value.totalInvoice) +
+            Number(subtotal) +
+            Number(totalIva)
+        ).toFixed(2)
 
         itemForm.value.item = null
-        itemForm.value.quantity = '0'
+        //itemForm.value.quantity = '1'
         itemForm.value.total = '0'
-        /*  itemForm.value.subtotal += itemForm.value.subtotal
-        itemForm.value.totalIVA += itemForm.value.totalIVA
-        itemForm.value.totalInvoice += itemForm.value.totalInvoice*/
         toast.success('Producto añadido a la tabla')
     }
     async function showItem(item: IItem) {
         detailSelectedItem.value.item = item
-        /*detailSelectedItem.value.props = await itemStore.fetchItemProperties(
-                item.id
-            )*/
+
         itemInfoShow.value = true
     }
     function removeItem(index: number) {
-        const varsubtotal =
-            Number(form.value.items[index].quantity) *
-            Number(form.value.items[index].price)
-
-        itemForm.value.subtotal = String(
-            (Number(itemForm.value.subtotal) - Number(varsubtotal)).toFixed(2)
-        )
-        const varTotalIva =
-            Number(form.value.items[index].quantity) *
-            (Number(form.value.items[index].price) *
-                Number(form.value.items[index].iva))
-        itemForm.value.totalIVA = String(
-            (Number(itemForm.value.totalIVA) - Number(varTotalIva)).toFixed(2)
-        )
-        const subtotal =
-            Number(form.value.items[index].quantity) *
-            Number(form.value.items[index].price)
-        const totalIva =
-            Number(form.value.items[index].quantity) *
-            (Number(form.value.items[index].price) *
-                Number(form.value.items[index].iva))
-        itemForm.value.totalInvoice = String(
-            (
-                Number(itemForm.value.totalInvoice) -
-                Number(subtotal) -
-                Number(totalIva)
-            ).toFixed(2)
-        )
         form.value.items.splice(index, 1)
+        itemForm.value.subtotal = '0'
+        itemForm.value.totalIVA = '0'
+        itemForm.value.totalInvoice = '0'
+        for (const i of form.value.items) {
+            const suma =
+                Number(i.quantity) *
+                (Number(i.price) + Number(i.price) * Number(i.iva))
+            i.total = Number(suma.toFixed(2))
+            i.subtotal = Number(i.quantity) * Number(i.price)
+            i.totalIVA = Number(i.quantity) * Number(i.price) * Number(i.iva)
+            itemForm.value.subtotal = (
+                Number(itemForm.value.subtotal) + Number(i.subtotal.toFixed(2))
+            ).toFixed(2)
+
+            itemForm.value.totalIVA = (
+                Number(itemForm.value.totalIVA) + Number(i.totalIVA.toFixed(2))
+            ).toFixed(2)
+        }
+        itemForm.value.totalInvoice = (
+            Number(itemForm.value.totalInvoice) +
+            Number(itemForm.value.subtotal) +
+            Number(itemForm.value.totalIVA)
+        ).toFixed(2)
     }
     function changeCountry(event: any) {
         if (
@@ -495,9 +535,11 @@
         }
         return true
     }
+
     onMounted(() => {
-        return loadSequence('INVOICE')
+        return loadSequence('INVOICE'), (serverOpts.value.buscar = '')
     })
+
     watch(serverOpts, loadItems)
 </script>
 
@@ -510,6 +552,16 @@
             title="Lista de productos">
             <!-- <div
                     class="tw-overflow-y-auto tw-max-h-72 tw-text-black dark:tw-text-white"> -->
+            <ERow>
+                <ECol cols="12" lg="6" xl="12">
+                    <InputText
+                        type="text"
+                        placeholder="Ingrese código o nombre del producto"
+                        v-model.string="serverOpts.buscar"
+                        @input="loadItems" />
+                </ECol>
+            </ERow>
+
             <EasyDataTable
                 :headers="itemHeader"
                 :items="items"
@@ -517,87 +569,12 @@
                 :rows-items="[5, 10, 15, 20]"
                 v-model:server-options="serverOpts"
                 :server-items-length="itemPageLength"
-                table-class-name="custom-data-table"
                 :loading="itemLoading"
+                table-class-name="custom-data-table"
                 @click-row="onRowClick" />
         </ModalDialog>
         <div class="container" style="border-radius: 5px">
-            <EForm @submit="onSubmit">
-                <!--      <div class="row g-3">
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Fecha de emisión *
-                        </h6>
-                        <Field
-                            name="fecha"
-                            placeholder="dd/mm/yyyy"
-                            class="form-control"
-                            type="Date"
-                            :rules="validateDate" />
-                        <div class="col">
-                            <ErrorMessage
-                                name="fecha"
-                                style="
-                                    font-size: 10px;
-                                    color: red;
-                                    text-align: left;
-                                " />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Fecha de devolución*
-                        </h6>
-                        <Field
-                            name="date"
-                            placeholder="dd/mm/yyyy"
-                            class="form-control"
-                            type="Date"
-                            :rules="validateDate2" />
-                        <div class="col">
-                            <ErrorMessage
-                                name="date"
-                                style="
-                                    font-size: 10px;
-                                    color: red;
-                                    text-align: left;
-                                " />
-                        </div>
-                    </div>
-                    <div class="col">
-                        <h6
-                            style="
-                                font-size: 15px;
-                                color: black;
-                                text-align: left;
-                            ">
-                            Cajero *
-                        </h6>
-                        <Field
-                            name="provincia"
-                            class="form-control"
-                            type="email"
-                            :rules="validateProvincia" />
-                        <div class="col">
-                            <ErrorMessage
-                                name="provincia"
-                                style="
-                                    font-size: 10px;
-                                    color: red;
-                                    text-align: left;
-                                " />
-                        </div>
-                    </div>-->
+            <EForm>
                 <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
@@ -686,113 +663,85 @@
                 <div class="tw">
                     <div class="tw"></div>
                 </div>
-                <ECard class="col-md-8" style="padding: 10px">
-                    <Title size="xl"> Producto seleccionado </Title>
-                    <ERow align-v="start">
-                        <ECol cols="2" lg="3">
-                            <InputText
-                                label="Código de producto"
-                                placeholder="Código del producto"
-                                :model-value="iformShow.codigo"
-                                readonly />
-                        </ECol>
-                        <ECol cols="2" lg="3">
-                            <InputText
-                                label="Producto seleccionado"
-                                placeholder="Seleccione un producto"
-                                :model-value="iformShow.nombre"
-                                readonly />
-                        </ECol>
-                        <ECol cols="2" lg="3">
-                            <InputText
-                                label="Cantidad del Producto"
-                                v-model.number="itemForm.quantity"
-                                :formatter="(it: string) => it.replace(/\D/g, '')" />
-                        </ECol>
-                        <ECol cols="2" lg="3" style="padding-top: 33px">
-                            <EButton
-                                class="tw-w-full lg:tw-w-auto"
-                                left-icon="plus"
-                                :disabled="
-                                    itemForm.item == null ||
-                                    Number(itemForm.quantity) <= 0
-                                "
-                                @click="addToTable">
-                                Añadir producto
-                            </EButton>
-                        </ECol>
-                        <!-- <ECol></ECol>
-                    <ECol></ECol> -->
-                    </ERow>
-                    <!-- Item quantity fields -->
-                </ECard>
-                <div class="tw-overflow-x-auto">
-                    <BTable :fields="formFields" :items="form.items">
-                        <template #cell(#)="{ index }">
-                            {{ index + 1 }}
-                        </template>
-                        <template #cell(Descripción)="{ index }"
-                            >{{ form.items[index]?.name }}-
-                            {{ form.items[index]?.model }}-
-                            {{ form.items[index]?.brand }}
-                        </template>
-                        <template #cell(Medida)="{}">Unidad </template>
-
-                        <template #cell(Acciones)="{ index }">
-                            <div class="t-button-group">
-                                <EButton
-                                    left-icon="fa-trash-can"
-                                    variant="cancel"
-                                    @click="removeItem(index)">
-                                    <span
-                                        class="tw-invisible md:tw-visible tw-font-bold">
-                                        Eliminar
-                                    </span>
-                                </EButton>
-                            </div>
-                        </template>
-                    </BTable>
-                </div>
-                <ERow>
-                    <ECol
-                        class="col-md-3 col-md-offset-3"
-                        style="position: absolute; top: 0px; right: 10px">
-                        <InputText
-                            label="Subtotal:"
-                            v-model.number="itemForm.subtotal"
-                    /></ECol>
-                    <ECol
-                        class="col-md-3 col-md-offset-3"
-                        style="position: absolute; top: 70px; right: 10px">
-                        <InputText
-                            label="Total IVA:"
-                            v-model.number="itemForm.totalIVA" />
-                    </ECol>
-                    <ECol
-                        class="col-md-3 col-md-offset-3"
-                        style="position: absolute; top: 140px; right: 10px">
-                        <InputText
-                            label="Total:"
-                            v-model.number="itemForm.totalInvoice" />
-                    </ECol>
-
-                    <ECol
-                        class="tw-content-end tw-justify-end"
-                        style="position: absolute; top: 220px; right: 10px">
-                        <EButton
-                            left-icon="fa-floppy-disk"
-                            icon-provider="awesome"
-                            @click="saveInvoice">
-                            Facturar
-                        </EButton>
-                    </ECol>
-                    <ECol
-                        class="tw-content-end tw-justify-end"
-                        style="position: absolute; top: 260px; right: 10px">
-                        <br />
-                    </ECol>
-                </ERow>
             </EForm>
+            <div class="tw-overflow-x-auto">
+                <BTable :fields="formFields" :items="form.items">
+                    <template #cell(#)="{ index }">
+                        {{ index + 1 }}
+                    </template>
+                    <template #cell(Descripción)="{ index }"
+                        >{{ form.items[index]?.name }}-
+                        {{ form.items[index]?.model }}-
+                        {{ form.items[index]?.brand }}
+                    </template>
+                    <template #cell(Medida)="{}">Unidad </template>
+                    <template #cell(quantity)="{ index }">
+                        <ECol cols="2" lg="3">
+                            <input
+                                :required="true"
+                                min="1"
+                                pattern="^[0-9]+"
+                                style="text-align: center"
+                                type="number"
+                                id="cantidad"
+                                v-model="form.items[index].quantity"
+                                @input="itemcantidad(index)" />
+                        </ECol>
+                    </template>
+                    <template #cell(Acciones)="{ index }">
+                        <div class="t-button-group">
+                            <EButton
+                                left-icon="fa-trash-can"
+                                variant="cancel"
+                                @click="removeItem(index)">
+                                <span
+                                    class="tw-invisible md:tw-visible tw-font-bold">
+                                    Eliminar
+                                </span>
+                            </EButton>
+                        </div>
+                    </template>
+                </BTable>
+            </div>
+            <ERow>
+                <ECol
+                    class="col-md-3 col-md-offset-3"
+                    style="position: absolute; top: 0px; right: 10px">
+                    <InputText
+                        label="Subtotal:"
+                        v-model.number="itemForm.subtotal"
+                /></ECol>
+                <ECol
+                    class="col-md-3 col-md-offset-3"
+                    style="position: absolute; top: 70px; right: 10px">
+                    <InputText
+                        label="Total IVA:"
+                        v-model.number="itemForm.totalIVA" />
+                </ECol>
+                <ECol
+                    class="col-md-3 col-md-offset-3"
+                    style="position: absolute; top: 140px; right: 10px">
+                    <InputText
+                        label="Total:"
+                        v-model.number="itemForm.totalInvoice" />
+                </ECol>
+
+                <ECol
+                    class="tw-content-end tw-justify-end"
+                    style="position: absolute; top: 220px; right: 10px">
+                    <EButton
+                        left-icon="fa-floppy-disk"
+                        icon-provider="awesome"
+                        @click="saveInvoice">
+                        Facturar
+                    </EButton>
+                </ECol>
+                <ECol
+                    class="tw-content-end tw-justify-end"
+                    style="position: absolute; top: 260px; right: 10px">
+                    <br />
+                </ECol>
+            </ERow>
         </div>
     </main>
 </template>
