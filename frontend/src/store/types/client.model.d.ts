@@ -38,7 +38,7 @@ export interface Client {
     province: Maybe<Province> | null
     created_by: Maybe<Employee> | null | number
     gender: Maybe<Gender> | null
-    status: Maybe<Status> | number
+    status: Maybe<Status>
 }
 //
 export interface FullClient extends Client {
