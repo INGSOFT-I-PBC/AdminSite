@@ -1,18 +1,19 @@
 <script lang="ts">
-    import { defineComponent } from 'vue'
     import type Item from '@/interfaz/items'
-    import type { Status } from '@store/types'
     import ItemDataService from '@/store/item'
     import SequenceDataService from '@/store/sequence'
-    import { useAuthStore } from '@store'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
-    import { useRoute, useRouter } from 'vue-router'
-    import { Field, ErrorMessage } from 'vee-validate'
-    import { Form as EForm } from 'vee-validate'
+    import ModalDialog from '@components/custom/ModalDialog.vue'
+    import { useAuthStore } from '@store'
+    import type { Status } from '@store/types'
     import type { Sequence } from '@store/types'
+    import { ErrorMessage, Field } from 'vee-validate'
+    import { Form as EForm } from 'vee-validate'
     import { string } from 'yup'
+
+    import { defineComponent } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
 
     export default defineComponent({
         name: 'AddProductView',
@@ -21,8 +22,7 @@
             const authStore = useAuthStore()
             const name = authStore.userData?.name
             const employee_id = authStore.userData?.employee as number
-            const tiempoTranscurrido = Date.now()
-            const hoy = new Date(tiempoTranscurrido)
+            const hoy = new Date()
             const normalValue = ref('')
             const productModalShow = ref(false)
             const productModalShowError = ref(false)
@@ -578,7 +578,7 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="23/08/2022"
+                                    :placeholder="hoy.toLocaleDateString()"
                                     disabled="false"
                                     aria-label="First name" />
                             </div>
@@ -595,9 +595,9 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    placeholder="15:00"
                                     disabled="false"
-                                    aria-label="First name" />
+                                    aria-label="First name"
+                                    :placeholder="hoy.toLocaleTimeString()" />
                             </div>
 
                             <div class="col">
