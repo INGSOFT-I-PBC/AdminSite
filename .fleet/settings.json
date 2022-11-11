@@ -1,0 +1,7 @@
+{
+  "autoSave": false,
+  "editor.guides": [],
+  "[vue]": {
+    "formatter.prettier.enabled": true,
+  },
+}

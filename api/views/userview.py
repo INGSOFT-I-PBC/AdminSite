@@ -66,7 +66,8 @@ class UserView(APIView):
         data = request.data
         if not data:
             return error_response("No data was provided")
-        data["username"] = kwargs["username"]  # avoid the overwrite of username
+        if kwargs.get("username", None):
+            data["username"] = kwargs["username"]  # avoid the overwrite of username
         data.pop("id", None)
         target_user = User.objects.get(**kwargs)
         updated_user = UpdateUserSerializer(target_user, data=data)

@@ -37,10 +37,7 @@ export default ({ mode }: { mode: string }) => {
             port: 5173,
             open: false,
         },
-        plugins: [
-            vue(),
-            vueJsx(),
-        ],
+        plugins: [vue(), vueJsx()],
         resolve: {
             alias: {
                 '@components': fileURLToPath(

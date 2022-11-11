@@ -110,16 +110,7 @@
                 console.log(this.formSequenceEditado)
             },
             validarCheckbox() {
-                const checkbox = document.getElementById(
-                    'check'
-                ) as HTMLInputElement
-                if (!checkbox.checked) {
-                    //this.entrada.status_id = 1
-                    this.loadStatus('inactive')
-                } else {
-                    //this.entrada.status_id = 3
-                    this.loadStatus('active')
-                }
+                console.log()
             },
             async showAllCategory() {
                 ItemDataService.getAllCategory()

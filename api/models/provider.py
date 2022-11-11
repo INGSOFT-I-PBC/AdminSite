@@ -18,4 +18,9 @@ class Provider(TimestampModel, TraceableModel):
 
     class Meta:
         db_table = "provider"
-        indexes = [models.Index(fields=["name"]), models.Index(fields=["email"])]
+        indexes = [
+            models.Index(fields=["name"]),
+            models.Index(fields=["email"]),
+            models.Index(fields=["bussiness_name"]),
+            models.Index(fields=["document_path"]),
+        ]

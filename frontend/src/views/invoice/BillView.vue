@@ -156,7 +156,7 @@
                 </div>
             </div>
         </ModalDialog>
-
+        
         <ECard>
             <ERow>
                 <h1 style="font-size: 35px; color: black">Facturas</h1>

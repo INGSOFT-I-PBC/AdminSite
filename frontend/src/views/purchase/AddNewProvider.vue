@@ -4,7 +4,8 @@
         <VeeForm
             @submit="onSubmit"
             @invalid-submit="onFailedSubmit"
-            :validation-schema="vSchema">
+            :validation-schema="vSchema"
+            :initial-values="initialValues">
             <div class="row align-items-middle">
                 <div class="col col-12 col-lg-6 col-xxl-4">
                     <Field
@@ -127,14 +128,14 @@
                         </ol-tile-layer>
                     </ol-map>
                 </div>
-                <div class="col col-6 col-xxl-3 mt-2">
+                <div class="col col-auto mt-2">
                     <InputText
                         label="Latitud"
                         readonly
                         placeholder="--.-------"
                         :model-value="mark.latitude" />
                 </div>
-                <div class="col col-6 col-xxl-3 mt-2">
+                <div class="col col-auto mt-2">
                     <InputText
                         label="Longitud"
                         readonly
@@ -157,13 +158,13 @@
     import InputText from '@components/custom/InputText.vue'
     import Title from '@components/custom/Title.vue'
     import { useProviderStore } from '@store/provider'
-    import type { ProviderModel } from '@store/types/provider.model'
+    import type { Provider, ProviderModel } from '@store/types/provider.model'
     import type { Coordinate } from 'ol/coordinate'
     import type MapBrowserEvent from 'ol/MapBrowserEvent'
     import { defineRule, Field, type SubmissionContext } from 'vee-validate'
-    import { computed } from 'vue'
+    import { computed, type PropType } from 'vue'
     import { useToast } from 'vue-toastification'
-    import * as yup from 'yup'
+    import { object, string } from 'yup'
     defineRule('required', (value: unknown): boolean | string => {
         switch (typeof value) {
             case 'string':
@@ -172,6 +173,20 @@
                 return true
         }
     })
+
+    const props = defineProps({
+        updateMode: {
+            type: Boolean,
+            default: false,
+        },
+        updateProviderModel: {
+            type: Object as PropType<Provider>,
+            default: undefined, // fallback
+        },
+    })
+
+    const emits = defineEmits(['onSuccess', 'onError'])
+
     /**
      * Utility
      */
@@ -194,40 +209,43 @@
     /**
      * Provider Form rules and definition
      */
-    const vSchema = yup.object({
-        name: yup
-            .string()
+    const initialValues = ref<Record<string, string>>({
+        name: '',
+        bussiness_name: '',
+        website: '',
+        email: '',
+        phone_no: '',
+        document_path: '',
+    })
+
+    const vSchema = object({
+        name: string()
             .min(5, 'EL campo debe tener mínimo 5 caracteres')
             .max(128, 'Máximo 128 caracteres permitidos')
             .matches(/^\S.*\S$/g, 'No debe contener espacios al inicio o final')
             .required('El campo es obligatorio'),
-        bussiness_name: yup
-            .string()
+        bussiness_name: string()
             .matches(/^\S.*\S$/g, 'No debe contener espacios al inicio o final')
             .max(128, 'Máximo 128 caracteres permitidos')
             .min(5, 'La razón social debe contener mínimo 5 caracteres')
             .required('El campo es obligatorio'),
-        website: yup
-            .string()
+        website: string()
             .matches(
                 /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
                 'El campo debe ser un url válido'
             )
             .max(100, 'El url es demasiado largo')
             .min(7, 'El url debe contener mínimo 7 caracteres'),
-        email: yup
-            .string()
+        email: string()
             .email('Debe ser un email válido')
             .max(64, 'Email demasiado extenso')
             .min(10, 'El email debe contener mínimo 10 caracteres'),
-        phone_no: yup
-            .string()
+        phone_no: string()
             .min(8, 'Número de teléfono muy corto')
             .max(25, 'Número de teléfono muy extenso')
             .matches(/\d/g, 'El campo solo debe contener dígitos')
             .required(),
-        document_path: yup
-            .string()
+        document_path: string()
             .min(7, 'Mínimo 7 dígitos')
             .max(128, 'El documento ingresado es muy extenso')
             .matches(/\d/g, 'El campo solo debe contener dígitos')
@@ -241,7 +259,6 @@
         longitude: markPosition.value?.length
             ? markPosition.value[1].toString()
             : undefined,
-        // longitude: markPosition.value?[1]
     }))
 
     function setLocation(event: MapBrowserEvent<MouseEvent>) {
@@ -258,6 +275,16 @@
     function onSubmit(value: unknown, { resetForm }: SubmissionContext) {
         console.debug('validation object: ', value)
         const data = Object.assign({}, value, mark.value)
+        if (props.updateMode) {
+            providerRepository
+                .updateProvider(
+                    props.updateProviderModel!.id,
+                    data as unknown as ProviderModel
+                )
+                .then(it => emits('onSuccess', it))
+                .catch(err => emits('onError', err))
+            return
+        }
         providerRepository
             .createProvider(data as unknown as ProviderModel)
             .then(() => {
@@ -275,6 +302,26 @@
                     toast.error('No se pudo guardar el proveedor')
                 }
             })
+    }
+    //eslint-disable-next-line vue/no-setup-props-destructure
+    if (props.updateMode && props.updateProviderModel) {
+        //eslint-disable-next-line vue/no-setup-props-destructure
+        const { latitude, longitude } = props.updateProviderModel
+        console.debug(
+            'Setting the coordinates for already existing provider:',
+            [latitude, longitude]
+        )
+        if (latitude != null && longitude != null) {
+            const newPosition = [Number(latitude), Number(longitude)]
+            markPosition.value = newPosition
+            center.value = newPosition
+            hasChanged.value = true
+        }
+        Object.entries(props.updateProviderModel).forEach(([prop, value]) => {
+            if (prop in initialValues.value) {
+                initialValues.value[prop] = value
+            }
+        })
     }
 </script>
 

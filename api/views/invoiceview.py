@@ -41,9 +41,7 @@ class   PaginatedItemInvoiceView(APIView):
         return paginator.get_paginated_response(
         serializer_class.data
     )
-
-
-
+    
 class InvoiceView(viewsets.GenericViewSet):
 
     @action(methods=['get'], detail=False)

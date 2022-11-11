@@ -3,7 +3,7 @@
         :type="type"
         @click="$emit('click', $event)"
         @mouseenter="buttonHover"
-        class="hover:tw-transition-all tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md"
+        class="hover:tw-transition-all tw-font-bold tw-ease-in-out tw-py-1.5 tw-px-4 focus:tw-outline-none tw-rounded-md t-button"
         :class="style"
         @mouseup="mouseStopInteraction"
         @mouseleave="mouseStopInteraction">
@@ -14,6 +14,7 @@
                 v-if="useAwesome"
                 :icon="leftIcon" />
             <VueFeather v-else :type="leftIcon" class="tw-mr-1" />
+            &NegativeThickSpace;
         </template>
         <slot>Button</slot>
         <FontAwesomeIcon v-if="rightIcon" :icon="rightIcon" />

@@ -11,7 +11,6 @@ from api.serializers.invoices import *
 from api.serializers.sequence import *
 from api.serializers.payment import *
 
-
 __all__ = [
     "PermissionSerializer",
     "UserSerializer",
