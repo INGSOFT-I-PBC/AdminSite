@@ -11,12 +11,37 @@ from api.utils import error_response
 from django.http import JsonResponse
 from rest_framework.decorators import action
 import datetime
+from django.db.models import Q
+from django.core.paginator import Paginator
+from rest_framework import pagination
+from api.utils import ApiPagination
 
 
 class PaginatedIItemViewSet(ReadOnlyModelViewSet):
-    queryset = Item.objects.all()
+    queryset = Item.objects.all().order_by("id")
     serializer_class = IItemSerializer
 
+class   PaginatedItemInvoiceView(APIView):
+    def get(self, request):
+
+        queryset = request.GET.get('buscar')
+        page_number = request.query_params.get("page")
+        items=Item.objects.all()
+
+        if queryset:
+            items=Item.objects.filter(
+                Q(codename__icontains=queryset)| Q(name__icontains=queryset)
+
+            ).distinct()
+        paginator = ApiPagination()
+        page_obj = paginator.paginate_queryset(items,request)
+
+
+        serializer_class = IItemSerializer(page_obj,many=True)
+        return paginator.get_paginated_response(
+        serializer_class.data
+    )
+    
 class InvoiceView(viewsets.GenericViewSet):
 
     @action(methods=['get'], detail=False)
@@ -25,12 +50,11 @@ class InvoiceView(viewsets.GenericViewSet):
         supplier = Client.objects.filter(
            number_id=ruc_or_business_name
         ).first()
-        print(supplier)
         if supplier:
             supplier_serializer = IClientSerializer(supplier)
             return Response(supplier_serializer.data, status=status.HTTP_200_OK)
         return Response({
-            'mensaje': 'No se ha encontrado un Cliente.'
+            'mensaje': 'No se ha encontrado el Cliente.'
         }, status=status.HTTP_400_BAD_REQUEST)
     @action(methods=['post'], detail=False)
     def save_invoice(self, request:Request):

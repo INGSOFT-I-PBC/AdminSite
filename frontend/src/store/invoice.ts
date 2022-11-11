@@ -118,7 +118,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     async function fetchIItemsPaginated(options: PaginationOptions) {
         const data = await (
             await axios.get<PaginatedAPIResponse<IItem>>(
-                '/api/v1/list/invoice/item/all',
+                `/api/v1/invoice/item/all`,
                 {
                     params: options,
                 }

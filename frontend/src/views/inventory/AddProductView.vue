@@ -141,7 +141,7 @@
                 formDataItem.append('updated_at', this.hoy.toISOString())
                 formDataItem.append('brand', this.entrada.brand)
                 formDataItem.append('img', this.image_field)
-                formDataItem.append('iva', this.entrada.iva.toString())
+                formDataItem.append('iva', (this.entrada.iva / 100).toString())
                 formDataItem.append('model', this.entrada.model)
                 formDataItem.append('name', this.entrada.name)
                 formDataItem.append('price', this.entrada.price.toString())

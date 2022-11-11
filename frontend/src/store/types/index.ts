@@ -23,6 +23,7 @@ export type {
     FullClient,
 } from './client.model'
 export type {
+    IServerOptions,
     Invoice,
     IItem,
     ICategory,
