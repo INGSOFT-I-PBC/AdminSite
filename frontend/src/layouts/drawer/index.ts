@@ -123,7 +123,7 @@ export const menus: MenuItem[] = [
                         // TODO: make this view
                         label: 'Gestionar',
                         path: '/compras/proveedores',
-                        routeName: 'purchases-manage-providers',
+                        routeName: 'purchase-manage-providers',
                     },
                 ],
             },

@@ -30,6 +30,7 @@ router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
+router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"providers", views.ProviderViewSet)
 router.register(r"sequence/all", views.FullSequenceViewSet)
@@ -73,6 +74,7 @@ urlpatterns = [
     path("provinces", ProvinceCityView.as_view()),
     # path('users'),
     # Administration endpoints
+    path("admin/permission_group/<int:id>", views.PermissionGroupView.as_view()),
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
@@ -87,6 +89,4 @@ urlpatterns = [
     path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
     path("invoice/item/all", PaginatedItemInvoiceView.as_view(),name="search-invoice-items")
-
-
 ]

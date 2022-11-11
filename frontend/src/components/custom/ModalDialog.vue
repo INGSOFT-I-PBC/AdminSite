@@ -36,7 +36,7 @@
             default: 'Cancel',
         },
         buttonType: {
-            type: String,
+            type: String as PropType<'ok-only' | 'ok-cancel' | 'cancel-only'>,
             default: 'ok-only',
             validate: (it: string) =>
                 ['ok-only', 'ok-cancel', 'cancel-only'].includes(it),

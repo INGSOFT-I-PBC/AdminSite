@@ -72,7 +72,6 @@
         if (isMessage(itemStore.paginatedItems)) return []
         return itemStore.paginatedItems?.data || []
     })
-
     const itemPageLength = computed(() => {
         const items = itemStore.paginatedItems
         if (items == null || isMessage(items)) return 0
@@ -83,6 +82,7 @@
         page: serverOpts.value.page,
         per_page: serverOpts.value.rowsPerPage,
         buscar: serverOpts.value.buscar,
+
     }))
     const iformShow = computed(() => ({
         codigo: itemForm.value.item?.codename?.toString(),
@@ -191,6 +191,7 @@
             formSequence
         )
     }
+    
     function saveInvoice() {
         const { value: data } = form
         if (
@@ -231,7 +232,6 @@
                 data.items.splice(0, data.items.length)
                 formSequence.value.number += 1
                 editSequence('INVOICE', formSequence.value)
-
                 router.push({ path: '/facturacion' })
             })
             .catch((it: MessageResponse) => {
@@ -241,6 +241,7 @@
                 showWaitOverlay.value = false
             })
     }
+
     async function onShowModalClick() {
         serverOpts.value.buscar = ''
         loadItems()
@@ -298,6 +299,7 @@
             })
         })
     }
+    
     function addToTable() {
         const targetItem = itemForm.value.item
         if (!targetItem) {
@@ -329,7 +331,7 @@
                 Number(itemForm.value.item?.price) *
                 Number(itemForm.value.item?.iva)
         ).toFixed(2)
-
+        
         const subtotal =
             Number(itemForm.value.quantity) * Number(itemForm.value.item?.price)
         const totalIva =
@@ -349,9 +351,9 @@
     }
     async function showItem(item: IItem) {
         detailSelectedItem.value.item = item
-
         itemInfoShow.value = true
     }
+    
     function removeItem(index: number) {
         form.value.items.splice(index, 1)
         itemForm.value.subtotal = '0'
@@ -563,6 +565,7 @@
                 </ECol>
             </ERow>
 
+
             <EasyDataTable
                 :headers="itemHeader"
                 :items="items"
@@ -576,6 +579,7 @@
         </ModalDialog>
         <div class="container" style="border-radius: 5px">
             <EForm>
+
                 <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
