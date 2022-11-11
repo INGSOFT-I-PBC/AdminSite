@@ -94,8 +94,11 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
      * @returns the message of the backend.
      */
     async function removeInvoice(id: number) {
-        return (await axios.delete<MessageResponse>(`/api/v1/clients?id=${id}`))
-            .data
+        return (
+            await axios.delete<MessageResponse>(
+                `/api/v1/invoice/editar?id=${id}`
+            )
+        ).data
     }
 
     /**

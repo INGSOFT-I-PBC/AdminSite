@@ -84,8 +84,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
      class Meta:
         model = Invoice
         fields = [
-            'id',
-            'code',
             'client',
             'created_at',
             'emission',
