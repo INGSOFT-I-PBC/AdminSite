@@ -1,5 +1,34 @@
 <script setup lang="ts">
+    import SequenceDataService from '@/store/sequence'
     import EButton from '@components/custom/EButton.vue'
+    import Title from '@components/custom/Title.vue'
+    import Table from '@components/holders/Table.vue'
+    import { useAuthStore } from '@store'
+    import { useInvoiceStore } from '@store/invoice'
+    import { usePaymentStore } from '@store/payment'
+    import type {
+        IClient,
+        IInvoiceDetails,
+        IItem,
+        IPayment,
+        IServerOptions,
+        Invoice,
+        MessageResponse,
+    } from '@store/types'
+    import { type Sequence, isMessage } from '@store/types'
+    import type { TableField } from 'bootstrap-vue-3'
+    import { Console } from 'console'
+    import * as VeeValidate from 'vee-validate'
+    import { ErrorMessage, Field } from 'vee-validate'
+    import { Form as EForm } from 'vee-validate'
+    import { string } from 'yup'
+
+    import { onMounted } from 'vue'
+    import { computed, watch } from 'vue'
+    import type { ServerOptions } from 'vue3-easy-data-table'
+    import { useRoute, useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
+
     import {
         ECard,
         ECol,
@@ -10,34 +39,7 @@
         TextArea,
         WaitOverlay,
     } from '@custom-components'
-    import { onMounted } from 'vue'
-    import Title from '@components/custom/Title.vue'
-    import Table from '@components/holders/Table.vue'
-    import { computed, watch } from 'vue'
-    import * as VeeValidate from 'vee-validate'
-    import { Field, ErrorMessage } from 'vee-validate'
-    import type { TableField } from 'bootstrap-vue-3'
-    import { Form as EForm } from 'vee-validate'
-    import { useRoute, useRouter } from 'vue-router'
-    import { useInvoiceStore } from '@store/invoice'
-    import { usePaymentStore } from '@store/payment'
-    import SequenceDataService from '@/store/sequence'
-    import { useAuthStore } from '@store'
 
-    import type {
-        IServerOptions,
-        IClient,
-        IItem,
-        Invoice,
-        IInvoiceDetails,
-        IPayment,
-        MessageResponse,
-    } from '@store/types'
-    import { isMessage, type Sequence } from '@store/types'
-    import type { ServerOptions } from 'vue3-easy-data-table'
-    import { useToast } from 'vue-toastification'
-    import { string } from 'yup'
-    import { Console } from 'console'
     const authStore = useAuthStore()
     const nameEmployee = authStore.userData?.name
     const itemStore = useInvoiceStore()
@@ -82,7 +84,6 @@
         page: serverOpts.value.page,
         per_page: serverOpts.value.rowsPerPage,
         buscar: serverOpts.value.buscar,
-
     }))
     const iformShow = computed(() => ({
         codigo: itemForm.value.item?.codename?.toString(),
@@ -191,7 +192,7 @@
             formSequence
         )
     }
-    
+
     function saveInvoice() {
         const { value: data } = form
         if (
@@ -299,7 +300,7 @@
             })
         })
     }
-    
+
     function addToTable() {
         const targetItem = itemForm.value.item
         if (!targetItem) {
@@ -331,7 +332,7 @@
                 Number(itemForm.value.item?.price) *
                 Number(itemForm.value.item?.iva)
         ).toFixed(2)
-        
+
         const subtotal =
             Number(itemForm.value.quantity) * Number(itemForm.value.item?.price)
         const totalIva =
@@ -353,7 +354,7 @@
         detailSelectedItem.value.item = item
         itemInfoShow.value = true
     }
-    
+
     function removeItem(index: number) {
         form.value.items.splice(index, 1)
         itemForm.value.subtotal = '0'
@@ -565,7 +566,6 @@
                 </ECol>
             </ERow>
 
-
             <EasyDataTable
                 :headers="itemHeader"
                 :items="items"
@@ -579,11 +579,10 @@
         </ModalDialog>
         <div class="container" style="border-radius: 5px">
             <EForm>
-
                 <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
-                            label="Secuencia"
+                            label="Código"
                             placeholder=""
                             :model-value="codeInvoice"
                             readonly />
