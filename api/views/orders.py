@@ -1,10 +1,21 @@
 from django.http import JsonResponse
+from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.models import OrderRequest
-from api.serializers.order import OrderDetailSerializer, OrderSerializer
-from api.utils import error_response
+from api.serializers.order import (
+    OrderDetailSerializer,
+    OrderReadSerializer,
+    OrderSerializer,
+)
+from api.utils import error_response, response
+
+
+class OrderRequestViewSet(ReadOnlyModelViewSet):
+    queryset = OrderRequest.objects.all().order_by("requested_at")
+    serializer_class = OrderReadSerializer
 
 
 class OrderRequestView(APIView):
@@ -46,3 +57,13 @@ class OrderRequestView(APIView):
             serializer = OrderSerializer(order)
             return JsonResponse(serializer.data)
         return error_response("The given data was invalid")
+
+
+@api_view(["GET"])
+def get_full_order(request, *args, **kwargs):
+    search = OrderRequest.objects.filter(**kwargs)
+    if not search.exists():
+        return error_response("The given order was not found", status=404)
+    order = search.get()
+
+    return JsonResponse(OrderReadSerializer(order).data)

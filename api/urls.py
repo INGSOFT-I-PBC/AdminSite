@@ -8,14 +8,18 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from api import views
 from api.views import *
 from api.views.clientview import ClientView
+from api.views.invoiceview import InvoiceView
 from api.views.itemviews import ItemView
 from api.views.orders import OrderRequestView
 from api.views.provinceview import ProvinceCityView
+from api.views.sequence import *
 from api.views.statusview import StatusView
 from api.views.warehouse import *
-from api.views.invoiceview import InvoiceView
-from api.views.sequence import *
 
+""" Definition of paginated data
+ This urls are read-only, for batch creation/update
+ an specialized route must be created on the  `urlpatterns` field
+"""
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
 router.register(r"permissions", views.PermissionsViewSet)
@@ -51,7 +55,6 @@ urlpatterns = [
     path("inventory", InventoryView.as_view(), name="inventory-list"),
     path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
-
     # Item management
     path("item/<int:id>", views.find_item, name="item"),
     path("item/<int:id>/properties", views.get_item_properties),
@@ -68,6 +71,7 @@ urlpatterns = [
     path("employee", views.create_employee),
     # Order management
     path("order", OrderRequestView.as_view()),
+    path("detailed/order/<int:id>", views.get_full_order),
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),
     path("provinces", ProvinceCityView.as_view()),
@@ -81,9 +85,12 @@ urlpatterns = [
     path("provider/<int:id>", views.ProviderView.as_view()),
     path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
-    #Invoice
-    path("invoice/client", InvoiceView.as_view({'get': 'search_client'}), name="search-invoice-client"),
-    path("invoice", InvoiceView.as_view({'post': 'save_invoice'}), name="save-invoice"),
-     path("sequence", SequenceView.as_view()),
-
+    # Invoice
+    path(
+        "invoice/client",
+        InvoiceView.as_view({"get": "search_client"}),
+        name="search-invoice-client",
+    ),
+    path("invoice", InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
+    path("sequence", SequenceView.as_view()),
 ]
