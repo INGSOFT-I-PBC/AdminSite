@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils.translation import gettext_lazy as _
 
 from .common import Status
 from .items import Item
@@ -7,16 +8,30 @@ from .users import Employee
 from .warehouse import Warehouse
 
 
-
 class OrderRequest(models.Model):
+    class OrderStatus(models.TextChoices):
+        PENDING_APPROVAL = "PA", _("Pendiente aprobacion")
+        CREATED = "CR", _("Creado")
+        CANCELED = "CA", _("Cancelado")
+        CHANGES_NEEDED = "CN", _("Cambios necesarios")
+        APPROVED = "AP", _("Aprobado")
+        NEGATED = "NG", _("Negada")
+
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
     requested_at = models.DateTimeField(null=False, auto_now_add=True)
     requested_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="requested_by"
     )
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
-    comment = models.CharField(max_length=512, default="", help_text="Comentario adicional al pedido")
+    warehouse = models.ForeignKey(
+        Warehouse, on_delete=models.RESTRICT, related_name="warehouse"
+    )
+    comment = models.CharField(
+        max_length=512, default="", help_text="Comentario adicional al pedido"
+    )
+    status = models.CharField(
+        max_length=6, choices=OrderStatus.choices, default=OrderStatus.PENDING_APPROVAL
+    )
 
     class Meta:
         db_table = "order_request"
@@ -25,7 +40,9 @@ class OrderRequest(models.Model):
 class OrderRequestDetail(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
-    order_request = models.ForeignKey(OrderRequest, on_delete=models.CASCADE)
+    order_request = models.ForeignKey(
+        OrderRequest, on_delete=models.CASCADE, related_name="items"
+    )
     item = models.ForeignKey(Item, on_delete=models.RESTRICT)
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
 
