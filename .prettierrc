@@ -16,7 +16,12 @@
         "^bootstrap(.*)%",
         "^@custom-components(.*)$",
         "$@(.*)types(.*)$",
+        "^@(.*)\\.(s?)css$",
+        "bootstrap(.*)\\.(s?)css$",
+        "\\.\/(.*)(s?)css$",
+        ".\\/index.css$",
         "^[./]"
+
     ],
     "importOrderSeparation": true,
     "importOrderSortSpecifiers": true

@@ -1,2 +1,3 @@
 .github/**/*.yml
 frontend/src/main.ts
+src/main.ts
