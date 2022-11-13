@@ -1,26 +1,27 @@
-import { library } from '@fortawesome/fontawesome-svg-core'
-import BootstrapVue3 from 'bootstrap-vue-3'
-import { createPinia } from 'pinia'
-import 'vite/modulepreload-polyfill'
-import { computed, createApp, defineAsyncComponent, ref } from 'vue'
-import Toast, { POSITION, type PluginOptions } from 'vue-toastification'
-import Vue3EasyDataTable from 'vue3-easy-data-table'
-import OpenLayersMap from 'vue3-openlayers'
-import { awesomeIcons } from './icons'
-
-import './types'
-
-import router from './router'
-
 import '@/scss/styles.scss'
+import { library } from '@fortawesome/fontawesome-svg-core'
+import '@vuepic/vue-datepicker/dist/main.css'
 import 'bootstrap-icons/font/bootstrap-icons.css'
+import BootstrapVue3 from 'bootstrap-vue-3'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
 import 'bootstrap/dist/css/bootstrap.css'
-import 'vue-toastification/dist/index.css'
+import { createPinia } from 'pinia'
+import 'vite/modulepreload-polyfill'
+
+import { computed, createApp, defineAsyncComponent, ref } from 'vue'
+import Vue3EasyDataTable from 'vue3-easy-data-table'
 import 'vue3-easy-data-table/dist/style.css'
+import OpenLayersMap from 'vue3-openlayers'
 import 'vue3-openlayers/dist/vue3-openlayers.css'
+import Toast, { POSITION, type PluginOptions } from 'vue-toastification'
+import 'vue-toastification/dist/index.css'
+
 import './assets/main.css'
+import { awesomeIcons } from './icons'
 import './index.css'
+import router from './router'
+import './scss/styles.scss'
+import './types'
 
 const app = createApp(defineAsyncComponent(() => import('./App.vue')))
 
