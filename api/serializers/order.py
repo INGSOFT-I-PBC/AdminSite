@@ -14,7 +14,7 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderRequestDetail
-        fields = ["order_request", "item", "quantity"]
+        fields = ("order_request", "item", "quantity")
 
 
 class _Item(serializers.ModelSerializer):
@@ -26,11 +26,13 @@ class _Item(serializers.ModelSerializer):
 
 
 class _DetailSerializer(serializers.ModelSerializer):
-    item = _Item(read_only=True)
+    item_name = serializers.CharField(source="item.name")
+    item_category = serializers.CharField(source="item.category.name")
+    item_brand = serializers.CharField(source="item.brand")
 
     class Meta:
         model = OrderRequestDetail
-        fields = ("id", "item", "quantity")
+        fields = ("quantity", "item_name", "item_category", "item_brand")
 
 
 class OrderReadSerializer(serializers.ModelSerializer):
