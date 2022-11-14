@@ -19,4 +19,14 @@ export const bill: Array<RouteConfig> = [
             breadcrumb: [{ text: 'Facturacion', href: '/facturacion' }],
         },
     },
+    {
+        path: '/facturacion/editar/:id',
+        name: 'editbill-panel',
+        component: () => import('@views/invoice/EditBillView.vue'),
+        meta: {
+            pageTitle: 'Facturas',
+            permission: 'view_dashboard',
+            breadcrumb: [{ text: 'Facturacion', href: '/facturacion' }],
+        },
+    },
 ]

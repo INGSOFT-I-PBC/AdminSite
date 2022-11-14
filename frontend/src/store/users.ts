@@ -1,9 +1,11 @@
-import { defineStore } from 'pinia'
+import type { MessageResponse } from '@store-types'
 import axios from 'axios'
+import { defineStore } from 'pinia'
+
 import { ref } from 'vue'
+
 import type { PaginatedResponse, User } from './types'
 import type { SimpleUser, SimpleUserForm, UserForm } from './types/user.model'
-import type { MessageResponse } from '@store-types'
 
 export type UserSearchParams = {
     username?: string

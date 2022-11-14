@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from api import views
 from api.views import *
 from api.views.clientview import ClientView
-from api.views.invoiceview import InvoiceView
+from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
 from api.views.itemviews import ItemView
 from api.views.orders import OrderRequestView
 from api.views.provinceview import ProvinceCityView
@@ -24,6 +24,7 @@ router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"invoices/all", views.FullInvoiceViewSet)
+router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"clients/all", views.FullClientViewSet)
 router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
@@ -99,5 +100,11 @@ urlpatterns = [
         name="search-invoice-client",
     ),
     path("invoice", InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
+    path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
+    path(
+        "invoice/item/all",
+        PaginatedItemInvoiceView.as_view(),
+        name="search-invoice-items",
+    ),
 ]

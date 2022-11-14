@@ -30,12 +30,14 @@
 </template>
 
 <script setup lang="ts">
-    import InputText from '../../../components/custom/InputText.vue'
-    import EButton from '../../../components/custom/EButton.vue'
-    import { BPagination } from 'bootstrap-vue-3'
-    import { useEmployeeStore, type EmployeeSearchParams } from '@store'
     import WaitOverlay from '@components/custom/WaitOverlay.vue'
     import EmployeeCardItem from '@components/models/EmployeeCardItem.vue'
+    import { type EmployeeSearchParams, useEmployeeStore } from '@store'
+    import { BPagination } from 'bootstrap-vue-3'
+
+    import EButton from '../../../components/custom/EButton.vue'
+    import InputText from '../../../components/custom/InputText.vue'
+
     const employeeRepository = useEmployeeStore()
     const searchOptions = ref<EmployeeSearchParams & PaginationOptions>({
         page: 1,

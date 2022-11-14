@@ -46,6 +46,7 @@ __all__ = [
     "ProvinceCityView",
     "FullGenderViewSet",
     "FullInvoiceViewSet",
+    "InvoicesView",
     "FullSequenceViewSet",
     "FullPaymentViewSet",
     "ProviderViewSet",

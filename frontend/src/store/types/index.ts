@@ -8,9 +8,14 @@ export type {
 
 export { isMessage } from './typesafe'
 
-export type { MinimalWarehouse, Warehouse , TomaFisica, WhWithTomaFisica} from './warehouse.model'
+export type {
+    MinimalWarehouse,
+    Warehouse,
+    TomaFisica,
+    WhWithTomaFisica,
+} from './warehouse.model'
 
-export type {MinimalPurchase, Purchase} from './purchase.model'
+export type { MinimalPurchase, Purchase } from './purchase.model'
 
 export type { Category, FullItem, Item, MetaData } from './items.model'
 
@@ -25,6 +30,7 @@ export type {
     FullClient,
 } from './client.model'
 export type {
+    IServerOptions,
     Invoice,
     IItem,
     ICategory,

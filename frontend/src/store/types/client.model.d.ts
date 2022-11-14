@@ -1,5 +1,6 @@
-import type { Employee } from './user.model'
 import type { MetaData } from '@store-types'
+
+import type { Employee } from './user.model'
 
 //export type MetaDataClient = Record<string, any>
 export interface Status {

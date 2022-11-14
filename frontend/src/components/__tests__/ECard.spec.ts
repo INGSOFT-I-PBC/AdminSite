@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest'
 import { mount } from '@vue/test-utils'
+import { describe, expect, it } from 'vitest'
+
 import ECard from '../custom/ECard.vue'
 
 // Dummy test to test a Card Element

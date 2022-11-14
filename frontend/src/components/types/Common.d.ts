@@ -1,4 +1,13 @@
-export type ComponentSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+export type ComponentSize =
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | '2xl'
+    | '3xl'
+    | '4xl'
+    | '5xl'
+    | 'full'
 type Elevation = 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'none' | ''
 export type BorderRadius =
     | 'sm'

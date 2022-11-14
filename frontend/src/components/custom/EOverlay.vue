@@ -1,7 +1,9 @@
 <script setup lang="ts">
     import type { BorderRadius } from '@components-types'
+
     import type { PropType } from 'vue'
     import { watch } from 'vue'
+
     const overlayContainer = ref(null)
     const overlayBg = ref()
     const props = defineProps({

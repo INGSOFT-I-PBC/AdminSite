@@ -109,6 +109,7 @@ declare global {
     export type PaginationOptions = {
         per_page?: number
         page: number
+        buscar?: string
     }
 }
 

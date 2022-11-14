@@ -35,7 +35,6 @@ class ItemView(APIView):
 
                 items = Item.objects.filter(id=pk)
 
-                print(len(list(Item.objects.filter(id=pk))))
 
                 serializer = FullItemSerializer(
                     items, context={"request": request}, many=True

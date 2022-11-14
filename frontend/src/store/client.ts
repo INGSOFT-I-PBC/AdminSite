@@ -1,17 +1,18 @@
+import { isMessage } from '@/store/types/typesafe'
 import type {
     APIResponse,
-    Client,
-    Province,
     City,
-    Status,
+    Client,
     Gender,
     MessageResponse,
     PaginatedAPIResponse,
+    Province,
+    Status,
 } from '@store-types'
-import { isMessage } from '@/store/types/typesafe'
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import { computed, type Ref } from 'vue'
+
+import { type Ref, computed } from 'vue'
 
 export const useClientStore = defineStore('client-store', () => {
     const client: Ref<Optional<Client>> = ref(null)
