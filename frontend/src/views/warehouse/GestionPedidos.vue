@@ -371,8 +371,10 @@
                             :class="{ active: activeWharehouseButton === -1 }"
                             button
                             @click.prevent="
-                                showAllWarehouses = true
-                                activeWharehouseButton = -1
+                                () => {
+                                    showAllWarehouses = true
+                                    activeWharehouseButton = -1
+                                }
                             ">
                             Todas las bodegas
                         </b-list-group-item>
