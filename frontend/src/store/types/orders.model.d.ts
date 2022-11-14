@@ -23,7 +23,16 @@ export interface IOrder {
     requested_by: Employee
     warehouse: Warehouse
     details: IOrderDetail
+    revised_by: Optional<Employee>
     comment: string
+}
+
+export interface RawOrderRequest {
+    requested_by: number
+    requested_at: string
+    warehouse: number
+    comment: string
+    status: OrderRequestStatus
 }
 
 /**
@@ -65,6 +74,8 @@ export interface OrderRequest {
      */
     id: number
     requested_by: Employee
+    approved_by: Optional<Employee>
+    approved_at: Optional<string | Date>
     items: OrderRequestDetail[]
     warehouse: string
     requested_at: string | Date

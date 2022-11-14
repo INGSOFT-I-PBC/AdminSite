@@ -1,3 +1,5 @@
+import type { AxiosError } from 'axios'
+
 export interface MessageResponse {
     error: Optional<boolean>
     message: string
@@ -18,6 +20,8 @@ export type PaginatedResponse<T> = {
 }
 
 export type PaginatedAPIResponse<T> = PaginatedResponse<T> | MessageResponse
+
+export type ErrorResponse<D = any> = AxiosError<MessageResponse, D>
 
 type RequestParams = Record<string, any>
 
