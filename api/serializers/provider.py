@@ -45,3 +45,9 @@ class PartialProviderSerializer(Serializer):
         instance.longitude = validated_data.get("longitude", instance.longitude)
         instance.save()
         return instance
+
+
+class SimpleProviderSerializer(ModelSerializer):
+    class Meta:
+        model = Provider
+        fields = ["id", "name"]

@@ -2,29 +2,31 @@
 
 // Style for b-list-paginator tag
 .paginator{
-    --bs-pagination-color: theme(colors.secondary.DEFAULT);
-    --bs-pagination-bg: theme(colors.primary.DEFAULT);
-    --bs-pagination-border-width: 1px;
-    --bs-pagination-border-color: theme(colors.zinc.400);
-    --bs-pagination-hover-color: theme('colors.primary.light');
-    --bs-pagination-hover-bg: theme(colors.primary.light / 15%);
-    --bs-pagination-hover-border-color: theme(colors.primary.dark);
-    --bs-pagination-focus-color: theme(colors.primary.dark);
-    --bs-pagination-focus-box-shadow: 0 0 0 0.10rem  theme(colors.primary.dark / 30%);
-    --bs-pagination-focus-bg: theme(colors.primary.dark);
-    --bs-pagination-active-color: theme(colors.secondary.DEFAULT);
-    --bs-pagination-active-bg: theme(colors.primary.dark);
-    --bs-pagination-active-border-color: theme('colors.primary.light');
-    --bs-pagination-active-border-bg-color: theme('colors.primary.light');
-    --bs-pagination-disabled-bg: theme(colors.zinc.200);
+    --bs-pagination-color: theme(colors.secondary.DEFAULT) !important;
+    --bs-pagination-bg: theme(colors.primary.DEFAULT)!important;
+    --bs-pagination-border-width: 1px!important;
+    --bs-pagination-border-color: theme(colors.zinc.400)!important;
+    --bs-pagination-hover-color: theme('colors.primary.light')!important;
+    --bs-pagination-hover-bg: theme(colors.primary.light / 15%)!important;
+    --bs-pagination-hover-border-color: theme(colors.primary.dark)!important;
+    --bs-pagination-focus-color: theme(colors.primary.dark)!important;
+    --bs-pagination-focus-box-shadow: 0 0 0 0.10rem  theme(colors.primary.dark / 30%)!important;
+    --bs-pagination-focus-bg: theme(colors.primary.dark)!important;
+    --bs-pagination-active-color: theme(colors.secondary.DEFAULT)!important;
+    --bs-pagination-active-bg: theme(colors.primary.dark)!important;
+    --bs-pagination-active-border-color: theme('colors.primary.light')!important;
+    --bs-pagination-active-border-bg-color: theme('colors.primary.light')!important;
+    --bs-pagination-disabled-bg: theme(colors.zinc.200)!important;
     @media (prefers-color-scheme: dark) {
-        --bs-pagination-background-color:theme(colors.secondary.DEFAULT);
-        --bs-pagination-active-color: theme(colors.secondary.DEFAULT);
-        --bs-pagination-color: white;
-        --bs-pagination-border: theme(colors.secondary.DEFAULT);
-        --bs-pagination-disabled-color: theme(colors.zinc.400);
-        --bs-pagination-disabled-bg: theme(colors.secondary.dark);
-        --bs-pagination-disabled-border-color: theme(colors.zinc.400);
+        --bs-pagination-background-color:theme(colors.secondary.DEFAULT)!important;
+        --bs-pagination-active-color: theme(colors.secondary.DEFAULT)!important;
+        --bs-pagination-color: white!important;
+        --bs-pagination-border: theme(colors.secondary.DEFAULT)!important;
+        --bs-pagination-disabled-bg: theme(backgroundColor.slate.700)!important;
+        --bs-pagination-disabled-border-color: theme(
+            backgroundColor.slate.900
+        )!important;
+        --bs-pagination-disabled-color: theme(colors.zinc.400)!important;
     }
 }
 
@@ -32,25 +34,39 @@
 // Style for b-list-group tag
 .button-group{
 
-    --bs-list-group-color: #212529;
-    --bs-list-group-bg: #fff;
-    --bs-list-group-border-color: rgba(0, 0, 0, 0.125);
-    --bs-list-group-action-color: #495057;
-    --bs-list-group-action-hover-color: #495057;
-    --bs-list-group-action-hover-bg: #f8f9fa;
-    --bs-list-group-action-active-color: #212529;
-    --bs-list-group-action-active-bg: #e9ecef;
-    --bs-list-group-disabled-color: #6c757d;
-    --bs-list-group-disabled-bg: #fff;
-    --bs-list-group-active-color: #212529;
-    --bs-list-group-active-bg: theme(colors.primary.dark);
-    --bs-list-group-active-border-color: theme('colors.primary.light');
+    --bs-list-group-color: #212529!important;
+    --bs-list-group-bg: #fff!important;
+    --bs-list-group-border-color: rgba(0, 0, 0, 0.125)!important;
+    --bs-list-group-action-color: #495057!important;
+    --bs-list-group-action-hover-color: #495057!important;
+    --bs-list-group-action-hover-bg: #f8f9fa!important;
+    --bs-list-group-action-active-color: #212529!important;
+    --bs-list-group-action-active-bg: #e9ecef!important;
+    --bs-list-group-disabled-color: #6c757d!important;
+    --bs-list-group-disabled-bg: #fff!important;
+    --bs-list-group-active-color: #212529!important;
+    --bs-list-group-active-bg: theme(colors.primary.dark)!important;
+    --bs-list-group-active-border-color: theme('colors.primary.light')!important;
 
     @media (prefers-color-scheme: dark) {
-        --bs-list-group-color: #f8f9fa;
-        --bs-list-group-action-hover-color: #f8f9fa;
-        --bs-list-group-action-hover-bg: theme(colors.primary.light / 70%);;
+        --bs-list-group-color: #f8f9fa!important;
+        --bs-list-group-action-hover-color: #f8f9fa!important;
+        --bs-list-group-action-hover-bg: theme(colors.primary.light / 70%)!important;
     }
+
+// .tab-nav{
+
+//     --bs-nav-link-padding-x: 1rem !important;
+//     --bs-nav-link-padding-y: 0.5rem !important;
+//     --bs-nav-link-font-weight: !important;
+//     --bs-nav-link-color: theme('colors.primary.light') !important;
+//     --bs-nav-link-hover-color: theme(colors.primary.light / 70%) !important;
+//     --bs-nav-link-disabled-color: white !important;
+//     --bs-nav-pills-link-active-color: #212529!important;
+//     --bs-nav-pills-link-active-bg: theme('colors.primary.light')!important;
+//     color: var(--bs-nav-pills-link-active-color);
+//     background-color: var(----bs-nav-pills-link-active-bg);
+//     }
 
 }
 

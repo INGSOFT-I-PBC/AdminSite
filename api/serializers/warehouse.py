@@ -8,8 +8,16 @@ from rest_framework.serializers import (
 
 from api.models import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
 from api.models.warehouse import WhTomasFisicas
+from api.serializers.auth import EmployeeSerializer
 from api.serializers.common import SimpleStatusSerializer
 from api.serializers.item import ItemSerializer, SimpleItemSerializer
+from api.serializers.users import EmployeeSerializer as SimpleEmployeeSerializer
+
+
+class SimpleWarehouseSerializer(ModelSerializer):
+    class Meta:
+        model = Warehouse
+        fields = ["id", "name"]
 
 
 class FullWarehouseSerializer(ModelSerializer):
@@ -149,7 +157,10 @@ class WhTransactionSerializer(ModelSerializer):
 
     id = IntegerField()
     notes = CharField(max_length=300)
+    created_by = SimpleEmployeeSerializer()
     status = SimpleStatusSerializer()
+    warehouse_origin = SimpleWarehouseSerializer()
+    warehouse_destiny = SimpleWarehouseSerializer()
 
     def to_representation(self, obj):
         """Move fields from status to Transaction representation."""
@@ -184,6 +195,9 @@ class WhTransactionSerializer(ModelSerializer):
 
 
 class TomasFisicasSerializer(ModelSerializer):
+
+    done_by = EmployeeSerializer()
+
     class Meta:
         model = WhTomasFisicas
         fields = "__all__"

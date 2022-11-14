@@ -235,6 +235,7 @@ class WhPurchaseView(APIView):
             wh_purchases = (
                 Purchase.objects.filter(warehouse__pk=request.query_params.get("id"))
                 .select_related("invoice")
+                .select_related("provider")
                 .order_by("-id")
             )
 
@@ -258,6 +259,12 @@ class WhPurchaseView(APIView):
                     )
 
                     purchase["status"] = purchase_status.status.name
+
+                    first_purchase_status = PurchaseStatus.objects.filter(
+                        purchase__id=purchase.get("id")
+                    ).earliest("id")
+
+                    purchase["created_at"] = first_purchase_status.created_at
 
                 return JsonResponse(
                     {
@@ -304,7 +311,7 @@ class WhTransactionView(APIView):
             if page_number:
 
                 paginator = Paginator(
-                    wh_transaction_qs, request.query_params.get("per_page")
+                    wh_transaction_qs, request.query_params.get("per_page", 15)
                 )
 
                 page_obj = paginator.get_page(page_number)
@@ -324,9 +331,10 @@ class WhTransactionView(APIView):
                 wh_transaction_qs, many=True
             ).data
 
-            return JsonResponse(transactions_data)
+            return JsonResponse(transactions_data, safe=False)
 
         except Exception as e:
+            print(e)
             return error_response("Invalid query")
 
 

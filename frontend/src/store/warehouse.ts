@@ -1,8 +1,13 @@
+import type { Item, PaginatedAPIResponse, Purchase } from '@store-types'
+import type {
+    Movement,
+    TomaFisica,
+    WhWithTomaFisica,
+} from '@store/types/warehouse.model'
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import type { Warehouse, WarehouseQuery} from './models/warehouseModels'
-import type { PaginatedAPIResponse, Item, } from '@store-types'
-import type { WhWithTomaFisica } from '@store/types/warehouse.model'
+
+import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
 
 type QuantifiedItem = Item & { quantity: number }
 
@@ -41,47 +46,73 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             this.paginatedWarehouse = result
             return result
         },
-        async fetchPaginatedWarehouseInventory(options: WarehouseQuery , paginated_opt:PaginationOptions) {
-            const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
-            const result = await (
-                await axios.get<PaginatedAPIResponse<QuantifiedItem>>(
-                    '/api/v1/warehouse/inventory',
-                    { params: queryParams }
-                )
-            )
+        async fetchPaginatedWarehouseInventory(
+            options: WarehouseQuery,
+            paginated_opt: PaginationOptions
+        ) {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            const result = await await axios.get<
+                PaginatedAPIResponse<QuantifiedItem>
+            >('/api/v1/warehouse/inventory', { params: queryParams })
             return result
         },
 
-        async fetchPaginatedWarehousePurchase(options: WarehouseQuery , paginated_opt:PaginationOptions) {
-            const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
-            const result = await (
-                await axios.get<PaginatedAPIResponse<any>>(
-                    '/api/v1/warehouse/purchase',
-                    { params: queryParams }
-                )
-            )
+        async fetchPaginatedWarehousePurchase(
+            options: WarehouseQuery,
+            paginated_opt: PaginationOptions
+        ) {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            const result = await await axios.get<
+                PaginatedAPIResponse<Purchase>
+            >('/api/v1/warehouse/purchase', { params: queryParams })
             return result
         },
 
-        async fetchPaginatedWarehouseTomasFisicas(options: WarehouseQuery , paginated_opt:PaginationOptions) {
-            const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
-            const result = await (
-                await axios.get<PaginatedAPIResponse<any>>(
-                    '/api/v1/warehouse/tomas-fisicas',
-                    { params: queryParams }
-                )
+        async fetchPaginatedWarehouseTomasFisicas(
+            options: WarehouseQuery,
+            paginated_opt: PaginationOptions
+        ) {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            const result = await await axios.get<
+                PaginatedAPIResponse<TomaFisica>
+            >('/api/v1/warehouse/tomas-fisicas', { params: queryParams })
+            return result
+        },
+        async fetchWarehousesLatestTomasFisicas(
+            options: Optional<PaginationOptions> = null
+        ) {
+            const queryParams = { ...options }
+            const result = await await axios.get<WhWithTomaFisica[]>(
+                '/api/v1/warehouse/tomas-fisicas/all',
+                { params: queryParams }
             )
             return result
         },
-        async fetchWarehousesLatestTomasFisicas(options: Optional<PaginationOptions> = null) {
-            const queryParams = {...options}
-            const result = await (
-                await axios.get<WhWithTomaFisica[]>(
-                    '/api/v1/warehouse/tomas-fisicas/all',
-                    { params: queryParams }
-                )
-            )
+        async fetchPaginatedWarehouseMovements(
+            options: WarehouseQuery,
+            paginated_opt: PaginationOptions
+        ) {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            const result = await await axios.get<
+                PaginatedAPIResponse<Movement>
+            >('/api/v1/warehouse/movements', { params: queryParams })
             return result
-        }
+        },
     },
 })
