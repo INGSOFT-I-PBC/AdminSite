@@ -20,6 +20,14 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
     queryset = OrderRequest.objects.all().order_by("-requested_at")
     serializer_class = OrderReadSerializer
 
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
+        if params.get("comment", None):
+            queryset = queryset.filter(comment__icontains=params.get("comment"))
+
+        return queryset
+
 
 class OrderRequestView(APIView):
     def get(self, request: Request, id):
