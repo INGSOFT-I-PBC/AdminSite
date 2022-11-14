@@ -613,7 +613,7 @@
                 <ERow align-v="start">
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
-                            label="Secuencia"
+                            label="Código"
                             placeholder=""
                             :model-value="codeInvoice"
                             readonly />
