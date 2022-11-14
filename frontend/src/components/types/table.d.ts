@@ -1,4 +1,5 @@
 import type { StyleValue, TdHTMLAttributes, TrackHTMLAttributes } from 'vue'
+
 import type { ColorVariant } from './bootstrap'
 
 export interface TableColumn {

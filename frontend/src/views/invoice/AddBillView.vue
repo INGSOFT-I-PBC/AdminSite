@@ -16,6 +16,7 @@
         MessageResponse,
     } from '@store/types'
     import { type Sequence, isMessage } from '@store/types'
+    import AddClientBillView from '@views/invoice/AddClientBillView.vue'
     import type { TableField } from 'bootstrap-vue-3'
     import { Console } from 'console'
     import * as VeeValidate from 'vee-validate'
@@ -45,6 +46,9 @@
     const itemStore = useInvoiceStore()
     const paymentStore = usePaymentStore()
     const productModalShow = ref<boolean>(false)
+    const saveModalShow = ref<boolean>(false)
+    const saveClientModalShow = ref<boolean>(false)
+
     const showWaitOverlay = ref<boolean>(true)
     const serverOpts = ref<IServerOptions>({
         page: 1,
@@ -393,6 +397,7 @@
     }
 
     function onSubmit(value: any) {
+        saveModalShow.value = true
         console.log(value)
     }
 
@@ -539,6 +544,9 @@
         }
         return true
     }
+    function onsaveClient() {
+        saveClientModalShow.value = true
+    }
 
     onMounted(() => {
         return loadSequence('INVOICE'), (serverOpts.value.buscar = '')
@@ -549,6 +557,29 @@
 
 <template>
     <main>
+        <ModalDialog
+            size="4xl"
+            id="saveclient-modal"
+            v-model:show="saveClientModalShow"
+            title="Guardar Cliente">
+            <ERow>
+                <ECol>
+                    <AddClientBillView> </AddClientBillView>
+                </ECol>
+            </ERow>
+        </ModalDialog>
+
+        <ModalDialog
+            id="save-modal"
+            v-model:show="saveModalShow"
+            title="Facturar"
+            ok-text="Facturar"
+            @ok="saveInvoice"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de guardar la factura?
+            </h1>
+        </ModalDialog>
         <ModalDialog
             id="product-modal"
             v-model:show="productModalShow"
@@ -634,6 +665,14 @@
                             class="tw-w-full lg:tw-w-auto"
                             @click="loadClient">
                             Buscar
+                        </EButton>
+                    </ECol>
+                    <ECol cols="6" lg="6" xl="1">
+                        <EButton
+                            variant="secondary"
+                            class="tw-w-full lg:tw-w-auto"
+                            @click="onsaveClient">
+                            +
                         </EButton>
                     </ECol>
 
@@ -736,7 +775,7 @@
                     <EButton
                         left-icon="fa-floppy-disk"
                         icon-provider="awesome"
-                        @click="saveInvoice">
+                        @click="onSubmit">
                         Facturar
                     </EButton>
                 </ECol>

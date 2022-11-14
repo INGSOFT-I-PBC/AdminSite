@@ -1,23 +1,26 @@
 <!-- eslint-disable vue/valid-v-model -->
 <!-- eslint-disable vue/valid-v-model -->
 <script setup lang="ts">
-    import { Field, ErrorMessage } from 'vee-validate'
-    import { Form as EForm } from 'vee-validate'
-    import { useRouter, useRoute } from 'vue-router'
     import ECard from '@components/custom/ECard.vue'
-    import { useAuthStore } from '@store'
-    import { onMounted, type Ref } from 'vue'
-    import { useClientStore } from '@store/client'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+    import { useAuthStore } from '@store'
+    import { useClientStore } from '@store/client'
     import type {
-        Province,
         City,
-        Status,
         Client,
         Gender,
         MetaData,
+        Province,
+        Status,
     } from '@store/types'
+    import { ErrorMessage, Field } from 'vee-validate'
+    import { Form as EForm } from 'vee-validate'
+
+    import { type Ref, onMounted } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
+
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+
     const hoy = new Date()
     const showWaitOverlay = ref<boolean>(false)
     const itemLoading = ref(false)

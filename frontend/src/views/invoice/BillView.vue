@@ -234,12 +234,12 @@
                                 >Editar</e-button
                             >
                             <e-button
-                                left-icon="fa-trash-can"
+                                left-icon="fa-cancel"
                                 variant="cancel"
                                 @click="onSubmit(item['id'], index)">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"
-                                    >Eliminar</span
+                                    >Anular</span
                                 ></e-button
                             >
                         </div>

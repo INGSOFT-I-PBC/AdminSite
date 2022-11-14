@@ -49,6 +49,7 @@
     import type { User } from '@store-types'
     import type { SimpleUser } from '@store/types/user.model'
     import { BIconPerson } from 'bootstrap-icons-vue'
+
     defineEmits(['editClick', 'cleanClick', 'iconClick'])
 
     withDefaults(

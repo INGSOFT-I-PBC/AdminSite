@@ -2,7 +2,6 @@ import type {
     FontAwesomeIconProps,
     FontAwesomeLayersProps,
 } from '@fortawesome/vue-fontawesome'
-
 import '@vue/runtime-core'
 
 declare module '@vue/runtime-core' {

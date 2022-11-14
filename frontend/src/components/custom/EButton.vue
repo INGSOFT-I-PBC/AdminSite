@@ -22,7 +22,8 @@
 </template>
 
 <script setup lang="ts">
-    import { computed, type PropType } from 'vue'
+    import { type PropType, computed } from 'vue'
+
     const emit = defineEmits(['click', 'hover'])
     const props = defineProps({
         type: {

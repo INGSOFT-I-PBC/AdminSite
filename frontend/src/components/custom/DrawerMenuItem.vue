@@ -1,7 +1,8 @@
 <script setup lang="ts">
     import { computed, inject } from 'vue'
+    import { type RouteLocationNormalized, useRouter } from 'vue-router'
+
     import DrawerMenu from './DrawerMenu.vue'
-    import { useRouter, type RouteLocationNormalized } from 'vue-router'
 
     const props = defineProps({
         data: {

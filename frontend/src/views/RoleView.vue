@@ -1,8 +1,10 @@
 <script setup lang="ts">
     import EButton from '@components/custom/EButton.vue'
     import ECol from '@components/custom/ECol.vue'
-    import { ErrorMessage, Field, Form as EForm } from 'vee-validate'
+    import { Form as EForm, ErrorMessage, Field } from 'vee-validate'
+
     import { useRouter } from 'vue-router'
+
     const model = ref(null)
     const router = useRouter()
 

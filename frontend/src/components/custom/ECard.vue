@@ -1,6 +1,8 @@
 <script setup lang="ts">
-    import type { PropType } from 'vue'
     import type { CardStyle, Elevation } from '@components-types'
+
+    import type { PropType } from 'vue'
+
     defineProps({
         theme: {
             type: String as PropType<CardStyle>,

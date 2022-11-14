@@ -1,7 +1,8 @@
+import type { PaginatedAPIResponse } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
+
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
-import type { PaginatedAPIResponse } from '@store-types'
 
 export interface WarehouseState {
     lastWarehouseList: Optional<Warehouse[]>
