@@ -21,7 +21,19 @@ class OrderRequest(models.Model):
 
     requested_at = models.DateTimeField(null=False, auto_now_add=True)
     requested_by = models.ForeignKey(
-        Employee, on_delete=models.RESTRICT, db_column="requested_by"
+        Employee,
+        on_delete=models.RESTRICT,
+        db_column="requested_by",
+        related_name="requested_by",
+    )
+    revised_at = models.DateTimeField(null=True, default=None)
+    revised_by = models.OneToOneField(
+        Employee,
+        on_delete=models.RESTRICT,
+        db_column="approved_by",
+        related_name="approved_by",
+        default=None,
+        null=True,
     )
     warehouse = models.ForeignKey(
         Warehouse, on_delete=models.RESTRICT, related_name="warehouse"
@@ -35,6 +47,7 @@ class OrderRequest(models.Model):
 
     class Meta:
         db_table = "order_request"
+        indexes = [models.Index(fields=["status"])]
 
 
 class OrderRequestDetail(models.Model):

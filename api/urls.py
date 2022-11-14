@@ -70,7 +70,8 @@ urlpatterns = [
     path("employee/<str:cid>/activate", views.activate_employee),
     path("employee", views.create_employee),
     # Order management
-    path("order", OrderRequestView.as_view()),
+    path("order/<int:id>", OrderRequestView.as_view()),
+    path("order", create_order_request),
     path("detailed/order/<int:id>", views.get_full_order),
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),

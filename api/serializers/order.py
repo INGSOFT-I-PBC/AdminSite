@@ -37,6 +37,7 @@ class _DetailSerializer(serializers.ModelSerializer):
 
 class OrderReadSerializer(serializers.ModelSerializer):
     requested_by = EmployeeSerializer()
+    revised_by = EmployeeSerializer()
     items = _DetailSerializer(read_only=True, many=True)
     warehouse = serializers.CharField(source="warehouse.name")
 
