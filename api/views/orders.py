@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
@@ -9,6 +11,7 @@ from api.serializers.order import (
     OrderDetailSerializer,
     OrderReadSerializer,
     OrderSerializer,
+    PartialOrderSerializer,
 )
 from api.utils import error_response, response
 
@@ -28,8 +31,25 @@ class OrderRequestView(APIView):
 
         return JsonResponse(OrderSerializer(query.get()).data)
 
-    def patch(self, request: Request):
-        pass
+    def patch(self, request: Request, id):
+        query = OrderRequest.objects.filter(id=id)
+        if not query.exists():
+            return error_response("The target order request doesn't exists", status=404)
+        target = query.get()
+        if target.status in ("AP", "NG"):
+            return error_response(
+                "The order request has been revised already", code="ERR_REVISED"
+            )
+        new_data = request.data
+        new_status = new_data.get("status", None)
+        serialized = PartialOrderSerializer(target, data=new_data)
+        serialized.is_valid(raise_exception=True)
+        target = serialized.save()
+        if new_status in ("AP", "NG"):
+            target.revised_at = datetime.now()
+            target.revised_by = request.user.employee
+            target.save()
+        return response("Successfully updated order request")
 
 
 @api_view(["POST"])
@@ -58,7 +78,7 @@ def create_order_request(request):
             raise e
         item_serializer.save()
         serializer = OrderSerializer(order)
-        return JsonResponse(serializer.data)
+        return JsonResponse(serializer.data, status=201)
     return error_response("The given data was invalid")
 
 

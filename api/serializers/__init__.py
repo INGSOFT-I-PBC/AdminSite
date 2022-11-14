@@ -38,4 +38,5 @@ __all__ = [
     "SequenceSerializer",
     "PaymentSerializer",
     "OrderReadSerializer",
+    "PartialOrderSerializer",
 ]

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from api.models import Item, OrderRequest, OrderRequestDetail
+from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
 
 from .auth import EmployeeSerializer
 
@@ -9,6 +9,41 @@ class OrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderRequest
         fields = "__all__"
+
+
+class PartialOrderSerializer(serializers.Serializer):
+    requested_at = serializers.DateTimeField(allow_null=True, required=False)
+    requested_by = serializers.PrimaryKeyRelatedField(
+        queryset=Employee.objects.all(), required=False, allow_null=False
+    )
+
+    revised_by = serializers.PrimaryKeyRelatedField(
+        queryset=Employee.objects.all(), required=False, allow_null=True
+    )
+    revised_at = serializers.DateTimeField(allow_null=True, required=False)
+
+    warehouse = serializers.PrimaryKeyRelatedField(
+        queryset=Warehouse.objects.all(), required=False, allow_null=False
+    )
+
+    comment = serializers.CharField(
+        allow_null=False, allow_blank=True, max_length=512, required=False
+    )
+
+    status = serializers.ChoiceField(
+        choices=OrderRequest.OrderStatus.choices,
+        allow_null=False,
+        required=False,
+    )
+
+    def update(self, instance: OrderRequest, validated_data):
+        instance.revised_by = validated_data.get("revised_by", instance.revised_by)
+        instance.revised_at = validated_data.get("revised_at", instance.revised_at)
+        instance.warehouse = validated_data.get("warehouse", instance.warehouse)
+        instance.comment = validated_data.get("comment", instance.comment)
+        instance.status = validated_data.get("status", instance.status)
+        instance.save()
+        return instance
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
