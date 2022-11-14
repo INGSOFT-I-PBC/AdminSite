@@ -43,6 +43,7 @@
 <script setup lang="ts">
     import type { Employee } from '@store-types'
     import { BIconPerson } from 'bootstrap-icons-vue'
+
     defineEmits(['editClick', 'cleanClick', 'iconClick', 'itemClick'])
 
     withDefaults(

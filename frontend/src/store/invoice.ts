@@ -1,16 +1,17 @@
+import { isMessage } from '@/store/types/typesafe'
 import type {
     APIResponse,
-    Invoice,
-    IPayment,
     IClient,
     IItem,
+    IPayment,
+    Invoice,
     MessageResponse,
     PaginatedAPIResponse,
 } from '@store-types'
-import { isMessage } from '@/store/types/typesafe'
 import axios from 'axios'
 import { defineStore } from 'pinia'
-import { computed, type Ref } from 'vue'
+
+import { type Ref, computed } from 'vue'
 
 export const useInvoiceStore = defineStore('invoice-store', () => {
     const invoice: Ref<Optional<Invoice>> = ref(null)
@@ -84,7 +85,9 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
      * @returns the response of the backend
      */
     async function editInvoice(id: number, data: Invoice) {
-        return (await axios.put<Invoice>(`/api/v1/clients?id=${id}`, data)).data
+        return (
+            await axios.put<Invoice>(`/api/v1/invoice/editar?id=${id}`, data)
+        ).data
     }
 
     /**
@@ -108,7 +111,11 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
      * @returns the Item result of the search
      */
     async function fetchInvoiceById(id: number) {
-        return (await axios.get<Invoice>(`/api/v1/clients?id=${id}`)).data
+        const data = (
+            await axios.get<Invoice>(`/api/v1/invoice/editar?id=${id}`)
+        ).data
+        invoice.value = data
+        return data
     }
 
     /*async function fetchStatus(name: string) {

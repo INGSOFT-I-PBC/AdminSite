@@ -1,6 +1,8 @@
 <script lang="ts" setup>
     import type { BorderRadius } from '@components-types'
+
     import type { PropType } from 'vue'
+
     import EOverlay from './EOverlay.vue'
 
     defineProps({

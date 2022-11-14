@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-    import { computed, type PropType } from 'vue'
+    import { type PropType, computed } from 'vue'
 
     const props = defineProps({
         size: {

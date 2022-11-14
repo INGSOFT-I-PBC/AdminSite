@@ -1,12 +1,15 @@
 <script setup lang="ts">
-    import { inject, ref, computed } from 'vue'
-    import UserCard from '../components/UserCard.vue'
-    import Title from '../components/custom/Title.vue'
     import { menus as menuItems } from '@/layouts/drawer'
-    import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
     import DrawerMenu from '@components/custom/DrawerMenu.vue'
     import { useAuthStore } from '@store'
+
+    import { computed, inject, ref } from 'vue'
     import { useRouter } from 'vue-router'
+
+    import UserCard from '../components/UserCard.vue'
+    import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
+    import Title from '../components/custom/Title.vue'
+
     defineProps({
         title: {
             type: String,

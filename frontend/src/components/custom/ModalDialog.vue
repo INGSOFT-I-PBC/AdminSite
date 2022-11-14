@@ -7,7 +7,9 @@
         TransitionChild,
         TransitionRoot,
     } from '@headlessui/vue'
-    import { computed, type PropType } from 'vue'
+
+    import { type PropType, computed } from 'vue'
+
     import EButton from './EButton.vue'
 
     const props = defineProps({
@@ -36,7 +38,9 @@
             default: 'Cancel',
         },
         buttonType: {
-            type: String as PropType<'ok-only' | 'ok-cancel' | 'cancel-only'>,
+            type: String as PropType<
+                'ok-only' | 'ok-cancel' | 'cancel-only' | 'none'
+            >,
             default: 'ok-only',
             validate: (it: string) =>
                 ['ok-only', 'ok-cancel', 'cancel-only'].includes(it),
@@ -78,6 +82,7 @@
             'tw-max-w-xl': props.size == 'xl',
             'tw-max-w-2xl': props.size == '2xl',
             'tw-max-w-3xl': props.size == '3xl',
+            'tw-max-w-4xl': props.size == '4xl',
             'tw-max-w-[95%]': props.size == 'full',
         },
     ])

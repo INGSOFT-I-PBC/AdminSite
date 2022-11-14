@@ -1,6 +1,7 @@
-import type { Employee } from './user.model'
 import type { MetaData } from '@store-types'
 import type { date } from 'yup'
+
+import type { Employee } from './user.model'
 
 export interface ICategory {
     id: number
@@ -29,13 +30,13 @@ export interface IInvoiceDetails {
     id?: number
     price: number
     quantity: number
-    item: number
+    item: IItem | number
 }
 export interface IPayment {
     id: number
-    created_at: string
+    //created_at: string
     name: string
-    status: number
+    //status: number
 }
 export interface IClient {
     id?: number
@@ -47,12 +48,12 @@ export interface IClient {
 
 export interface Invoice {
     id?: number
-    code: string
     client: Maybe<IClient> | null | number
-    emission: string
-    return_deadline: string
+    code?: string
     created_at?: string
     iva: number
+    return_deadline: string
+    emission: string
     payment_method: Maybe<IPayment> | null | number
     status: number
     subtotal: number

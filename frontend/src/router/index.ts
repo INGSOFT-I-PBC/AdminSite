@@ -1,23 +1,25 @@
 // vim: set tw=4:sw=4
+import { useAuthStore } from '@/store/auth'
+
 import {
+    type RouteRecordRaw,
     createRouter,
     createWebHashHistory,
     useRouter,
-    type RouteRecordRaw,
 } from 'vue-router'
-import LoginView from '../views/auth/LoginView.vue'
-import Error404 from '../views/Error404.vue'
+
 import Error403 from '../views/Error403.vue'
+import Error404 from '../views/Error404.vue'
+import LoginView from '../views/auth/LoginView.vue'
 import { admin } from './routes/admin'
+import { bill } from './routes/bill'
+import { client } from './routes/client'
 import { common } from './routes/common'
+import { employee } from './routes/employee'
 import { inventory } from './routes/inventory'
 import { purchases } from './routes/purchases'
-import { warehouses } from './routes/warehouse'
-import { employee } from './routes/employee'
-import { client } from './routes/client'
 import { role } from './routes/role'
-import { useAuthStore } from '@/store/auth'
-import { bill } from './routes/bill'
+import { warehouses } from './routes/warehouse'
 
 const routes = [
     {
