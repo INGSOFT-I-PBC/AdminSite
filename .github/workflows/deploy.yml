@@ -98,7 +98,7 @@ jobs:
             - test_backend
         environment: production
         env:
-        GIT_PASSPHRASE: ${{ secrets.GIT_PASSPHRASE }}
+            GIT_PASSPHRASE: ${{ secrets.GIT_PASSPHRASE }}
 
         steps:
             - uses: actions/checkout@v3
