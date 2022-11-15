@@ -16,6 +16,10 @@ from api.views.sequence import *
 from api.views.statusview import StatusView
 from api.views.warehouse import *
 
+""" Definition of paginated data
+ This urls are read-only, for batch creation/update
+ an specialized route must be created on the  `urlpatterns` field
+"""
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
 router.register(r"permissions", views.PermissionsViewSet)
@@ -81,7 +85,9 @@ urlpatterns = [
     path("employee/<str:cid>/activate", views.activate_employee),
     path("employee", views.create_employee),
     # Order management
-    path("order", OrderRequestView.as_view()),
+    path("order/<int:id>", OrderRequestView.as_view()),
+    path("order", create_order_request),
+    path("detailed/order/<int:id>", views.get_full_order),
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),
     path("provinces", ProvinceCityView.as_view()),
