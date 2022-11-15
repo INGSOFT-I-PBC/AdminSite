@@ -161,7 +161,7 @@ jobs:
                 port: ${{secrets.PORT }}
                 envs: APP_DIR
                 script: |
-                    cd $APP_DIR
+                    cd ~/ERPt
                     rm -rf static/dist
 
             - name: Copy file via ssh password
@@ -186,6 +186,6 @@ jobs:
                 port: ${{secrets.PORT }}
                 envs: APP_DIR,RELOAD_LOC
                 script: |
-                    cd $APP_DIR
+                    cd ~/ERPt
                     ./manage.py migrate
                     touch $RELOAD_LOC
