@@ -27,7 +27,7 @@ specifiers:
   bootstrap-icons: ^1.9.1
   bootstrap-icons-vue: ^1.8.1
   bootstrap-vue-3: ^0.4.0
-  cypress: ^10.10.0
+  cypress: ^11.0.0
   eslint: ^8.25.0
   eslint-plugin-cypress: ^2.12.1
   eslint-plugin-prettier: ^4.2.1
@@ -99,7 +99,7 @@ devDependencies:
   '@vue/test-utils': 2.1.0_vue@3.2.41
   '@vue/tsconfig': 0.1.3_@types+node@18.8.0
   autoprefixer: 10.4.12_postcss@8.4.18
-  cypress: 10.10.0
+  cypress: 11.0.1
   eslint: 8.25.0
   eslint-plugin-cypress: 2.12.1_eslint@8.25.0
   eslint-plugin-prettier: 4.2.1_znq2sm4m5bonjw4qqm6mwhbe2q
@@ -1894,8 +1894,8 @@ packages:
   /csstype/2.6.21:
     resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
 
-  /cypress/10.10.0:
-    resolution: {integrity: sha512-bU8r44x1NIYAUNNXt3CwJpLOVth7HUv2hUhYCxZmgZ1IugowDvuHNpevnoZRQx1KKOEisLvIJW+Xen5Pjn41pg==}
+  /cypress/11.0.1:
+    resolution: {integrity: sha512-NuEfd0Vim492RJ3m/+bbTZ3OZrqXgfAfuLaZfIQ9D5lKocS3EDr2tyAarZdAhKwLyoh7OJ33jwMeMFIDbzYqog==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     requiresBuild: true
