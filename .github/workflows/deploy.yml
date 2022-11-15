@@ -35,8 +35,6 @@ jobs:
                 run_install: false
 
             - name: Install dependencies
-              env:
-                VITE_BACKEND_URL: ${{ secrets.BACKEND_HOST }}
               run: |
                 cd frontend/
                 pnpm install
@@ -92,57 +90,59 @@ jobs:
               run: |
                   docker-compose up -d
 
-  deploy:
-    name: Deploy to PythonAnywhere
-    runs-on: ubuntu-latest
-    needs:
-        - test_front
-        - test_backend
-    environment: production
-    env:
-      GIT_PASSPHRASE: ${{ secrets.GIT_PASSPHRASE }}
+    deploy:
+        name: Deploy to PythonAnywhere
+        runs-on: ubuntu-latest
+        needs:
+            - test_front
+            - test_backend
+        environment: production
+        env:
+        GIT_PASSPHRASE: ${{ secrets.GIT_PASSPHRASE }}
 
-    steps:
-        - uses: actions/checkout@v3
+        steps:
+            - uses: actions/checkout@v3
 
-        - name: Build frontend
-            run: |
-                cd frontend
-                pnpm build
+            - name: Build frontend
+                env:
+                    VITE_BACKEND_URL: ${{ secrets.BACKEND_HOST }}
+                run: |
+                    cd frontend
+                    pnpm build
 
-        - name: Cleanup node_modules
-            run: |
-                cd frontend
-                rm -rf node_modules/
+            - name: Cleanup node_modules
+                run: |
+                    cd frontend
+                    rm -rf node_modules/
 
-        - name: Delete previous compiled frontend
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWORD }}
-            port: ${{secrets.PORT }}
-            script: |
-              cd web
-              rm -rf static/dist
+            - name: Delete previous compiled frontend
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ${{ secrets.HOST }}
+                    username: ${{ secrets.USERNAME }}
+                    password: ${{ secrets.PASSWORD }}
+                    port: ${{secrets.PORT }}
+                    script: |
+                    cd web
+                    rm -rf static/dist
 
-        - name: Copy file via ssh password
-          uses: appleboy/scp-action@master
-          with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWORD }}
-            port: ${{ secrets.PORT }}
-            source: "."
-            target: "~/web"
+            - name: Copy file via ssh password
+                uses: appleboy/scp-action@master
+                with:
+                    host: ${{ secrets.HOST }}
+                    username: ${{ secrets.USERNAME }}
+                    password: ${{ secrets.PASSWORD }}
+                    port: ${{ secrets.PORT }}
+                    source: "."
+                    target: "~/web"
 
-        - name: Apply missing migrations
-          uses: appleboy/ssh-action@master
-          with:
-            host: ${{ secrets.HOST }}
-            username: ${{ secrets.USERNAME }}
-            password: ${{ secrets.PASSWORD }}
-            port: ${{secrets.PORT }}
-            script: |
-              cd web
-              ./manage.py migrate
+            - name: Apply missing migrations
+                uses: appleboy/ssh-action@master
+                with:
+                    host: ${{ secrets.HOST }}
+                    username: ${{ secrets.USERNAME }}
+                    password: ${{ secrets.PASSWORD }}
+                    port: ${{secrets.PORT }}
+                    script: |
+                    cd web
+                    ./manage.py migrate
