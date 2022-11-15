@@ -30,8 +30,6 @@ import router from './router'
 import './types'
 
 import { awesomeIcons } from './icons'
-import router from './router'
-import './types'
 
 const app = createApp(defineAsyncComponent(() => import('./App.vue')))
 
