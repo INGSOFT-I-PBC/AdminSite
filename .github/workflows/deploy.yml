@@ -95,7 +95,6 @@ jobs:
         runs-on: ubuntu-latest
         needs:
             - test_front
-            - test_backend
         environment: production
         env:
             GIT_PASSPHRASE: ${{ secrets.GIT_PASSPHRASE }}
