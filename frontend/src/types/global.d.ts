@@ -26,6 +26,7 @@ declare global {
     type ListboxItem = _ListboxItem | MapObj
 
     var ref: typeof import('vue')['ref']
+    var computed: typeof import('vue')['computed']
     /// eslint-disable no-var
     var router: typeof import('@store')
 
@@ -34,7 +35,7 @@ declare global {
         readonly label: string
         readonly path?: string
         readonly icon?: Optional<string>
-        readonly children?: Optional<MenuItem[]>
+        children?: Optional<MenuItem[]>
         readonly forceRender?: boolean
         readonly routeName?: string
     }
@@ -108,6 +109,7 @@ declare global {
     export type PaginationOptions = {
         per_page?: number
         page: number
+        buscar?: string
     }
 }
 

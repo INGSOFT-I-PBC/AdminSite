@@ -1,7 +1,7 @@
-import { defineStore } from 'pinia'
+import type { MessageResponse } from '@store/types'
 import type { OrderSaveData } from '@store/types/orders.model'
 import axios from 'axios'
-import type { MessageResponse } from '@store/types'
+import { defineStore } from 'pinia'
 
 export const useOrderStore = defineStore('orders', () => {
     async function saveOrder(order: OrderSaveData) {

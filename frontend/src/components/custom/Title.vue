@@ -1,10 +1,25 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-    import { computed } from 'vue'
+    import { type PropType, computed } from 'vue'
 
     const props = defineProps({
         size: {
-            type: String,
+            type: String as PropType<
+                | 'sm'
+                | 'md'
+                | 'lg'
+                | 'xl'
+                | '2xl'
+                | '3xl'
+                | '4xl'
+                | '5xl'
+                | '6xl'
+                | '7xl'
+                | '8xl'
+                | '9xl'
+                | '10xl'
+                | '11xl'
+            >,
             default: 'xl',
             validate: (option: string) =>
                 [

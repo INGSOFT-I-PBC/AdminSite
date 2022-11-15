@@ -1,12 +1,14 @@
 <script setup lang="ts">
-    import ECard from '../../components/custom/ECard.vue'
-    import EButton from '../../components/custom/EButton.vue'
-    import ERow from '../../components/custom/ERow.vue'
-    import Title from '../../components/custom/Title.vue'
-    import InputText from '../../components/custom/InputText.vue'
-    import { ref } from 'vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
+
+    import { ref } from 'vue'
+
+    import EButton from '../../components/custom/EButton.vue'
+    import ECard from '../../components/custom/ECard.vue'
     import ECol from '../../components/custom/ECol.vue'
+    import ERow from '../../components/custom/ERow.vue'
+    import InputText from '../../components/custom/InputText.vue'
+    import Title from '../../components/custom/Title.vue'
 
     const normalValue = ref('')
     const toggle = ref(true)
@@ -30,14 +32,14 @@
                     <Title>Botones</Title>
                     <ERow>
                         <EButton>Primary</EButton>
-                        <EButton type="secondary">Secondary</EButton>
-                        <EButton type="outline">Outlined</EButton>
+                        <EButton variant="secondary">Secondary</EButton>
+                        <EButton variant="outline">Outlined</EButton>
                     </ERow>
                     <ERow class="tw-mt-2">
                         <EButton disabled> disabled </EButton>
-                        <EButton type="cancel"> Cancel </EButton>
-                        <EButton type="success"> Success </EButton>
-                        <EButton type="blank"> Blank </EButton>
+                        <EButton variant="cancel"> Cancel </EButton>
+                        <EButton variant="success"> Success </EButton>
+                        <EButton variant="blank"> Blank </EButton>
                     </ERow>
                 </div>
             </ECard>

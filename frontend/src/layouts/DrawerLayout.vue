@@ -1,12 +1,15 @@
 <script setup lang="ts">
-    import { inject, ref, computed } from 'vue'
-    import UserCard from '../components/UserCard.vue'
-    import Title from '../components/custom/Title.vue'
     import { menus as menuItems } from '@/layouts/drawer'
-    import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
     import DrawerMenu from '@components/custom/DrawerMenu.vue'
     import { useAuthStore } from '@store'
+
+    import { computed, inject, ref } from 'vue'
     import { useRouter } from 'vue-router'
+
+    import UserCard from '../components/UserCard.vue'
+    import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
+    import Title from '../components/custom/Title.vue'
+
     defineProps({
         title: {
             type: String,
@@ -66,10 +69,10 @@
     function logout() {
         authStore
             .logout()
-            .then(it => {
+            .then((it: unknown) => {
                 router.push({ path: '/login' })
             })
-            .catch(it => {
+            .catch((it: unknown) => {
                 console.error(it)
             })
     }
@@ -80,7 +83,7 @@
         class="tw-flex tw-flex-rows tw-justify-items-stretch tw-min-h-screen tw-w-full tw-justify-between tw-bg-neutral-100 dark:tw-bg-neutral-900 tw-overflow-x-hidden"
         id="_root">
         <aside
-            class="tw-h-full tw-min-w-fit tw-bg-slate-600 tw-rounded-r-xl tw-overflow-hidden">
+            class="tw-h-full tw-min-w-fit tw-bg-slate-600 tw-rounded-r-xl tw-overflow-hidden tw-resize-x">
             <div
                 id="__left-drawer"
                 class="tw-h-full tw-flex tw-flex-col tw-justify-self-stretch tw-justify-items-stretch lg:tw-min-w-fit tw-resize-x">
@@ -110,7 +113,7 @@
         </aside>
         <!-- Resize bar -->
         <div
-            class="resize-handle--x tw-cursor-ew-resize tw-justify-center hover:tw-bg-primary-light tw-w-1 hover:tw-animate-pulse hover:tw-transition tw-ease-in-out tw-duration-700 tw-bg-transparent"
+            class="resize-handle--x tw-cursor-ew-resize tw-justify-center tw-resize-x hover:tw-bg-primary-light tw-w-1 hover:tw-animate-pulse hover:tw-transition tw-ease-in-out tw-duration-700 tw-bg-transparent"
             data-target="aside" />
         <!-- Right view -->
         <main class="main-section" id="right-panel">
@@ -170,17 +173,17 @@
                 </div>
             </div>
             <!-- End of Breadcrumb -->
-            <div class="row tw-grid tw-z-10">
-                <Transition
-                    enter-active-class="tw-transition-all tw-duration-350 tw-ease-in"
-                    enter-from-class="tw-opacity-10 tw-translate-x-full tw-scale-40"
-                    enter-to-class="tw-opacity-100 tw-scale-100"
-                    leave-active-class="tw-transition-all tw-duration-400 tw-ease-in"
-                    leave-from-class="tw-opacity-100 tw-scale-110"
-                    leave-to-class="tw-opacity-0 tw-translate-x-64 tw-scale-60">
-                    <slot>No element is defined here</slot>
-                </Transition>
-            </div>
+            <!--            <div class="row tw-grid tw-z-10">-->
+            <Transition
+                enter-active-class="tw-transition-all tw-duration-350 tw-ease-in"
+                enter-from-class="tw-opacity-10 tw-translate-x-full tw-scale-40"
+                enter-to-class="tw-opacity-100 tw-scale-100"
+                leave-active-class="tw-transition-all tw-duration-400 tw-ease-in"
+                leave-from-class="tw-opacity-100 tw-scale-110"
+                leave-to-class="tw-opacity-0 tw-translate-x-64 tw-scale-60">
+                <slot>No element is defined here</slot>
+            </Transition>
+            <!--            </div>-->
 
             <!-- FOOTER -->
             <footer

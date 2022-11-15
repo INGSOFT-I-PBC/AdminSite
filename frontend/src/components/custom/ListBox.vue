@@ -5,7 +5,8 @@
         ListboxOption,
         ListboxOptions,
     } from '@headlessui/vue'
-    import { computed, type PropType } from 'vue'
+
+    import { type PropType, computed } from 'vue'
     import VueFeather from 'vue-feather'
 
     type ValidListboxItem = ListboxItem & Record<string | number, unknown>
@@ -47,11 +48,12 @@
 <template>
     <Listbox v-model="selectedItem">
         <div class="tw-relative">
-            <span
+            <label
                 v-if="topLabel"
-                class="tw-pl-0.5 tw-font-bold tw-text-md lg:tw-text-base">
+                class-asdf="tw-pl-0.5 tw-font-bold tw-text-md lg:tw-text-base"
+                class="form-label">
                 {{ topLabel }}
-            </span>
+            </label>
             <ListboxButton class="t-listbox-button">
                 <span
                     v-if="modelValue && modelValue[label]"
@@ -85,7 +87,7 @@
                 <ListboxOptions class="t-listbox-options">
                     <span
                         v-if="props.options?.length === 0"
-                        class="tw-py-4 tw-px-3 tw-text-md tw-text-slate-600 dark:tw-text-zinc-300">
+                        class="tw-py-6 tw-px-3 tw-text-md tw-text-slate-600 dark:tw-text-zinc-300">
                         No item available
                     </span>
                     <!-- :class="[
@@ -129,7 +131,7 @@
 
 <style lang="scss">
     .t-listbox-options {
-        @apply tw-absolute tw-mt-2 tw-transform-gpu tw-z-10 tw-bg-white dark:tw-bg-slate-700 tw-w-full tw-overflow-auto tw-rounded-md tw-py-1.5 tw-text-base tw-max-h-60 focus:tw-outline-none sm:tw-text-sm tw-ring-1 tw-ring-black tw-ring-opacity-20 tw-shadow-xl;
+        @apply tw-absolute tw-mt-2 tw-transform-gpu tw-z-10 tw-backdrop-blur tw-bg-white/30 dark:tw-bg-slate-700/30 tw-w-full tw-overflow-auto tw-rounded-md tw-py-1.5 tw-text-base tw-max-h-60 focus:tw-outline-none sm:tw-text-sm tw-ring-1 tw-ring-black tw-ring-opacity-20 tw-shadow-xl;
     }
 
     .t-listbox-button {

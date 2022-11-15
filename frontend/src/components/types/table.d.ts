@@ -1,4 +1,5 @@
 import type { StyleValue, TdHTMLAttributes, TrackHTMLAttributes } from 'vue'
+
 import type { ColorVariant } from './bootstrap'
 
 export interface TableColumn {
@@ -28,12 +29,6 @@ export interface TableFieldObject<T = Record<string, unknown>> {
 }
 
 export type TableField<T = Record<string, unknown>> = string | TableFieldObject
-
-// declare function isTableColumn(TableCo)
-
-// export function isTableColumn(target: TableColumnish): target is TableColumn {
-//     return typeof target !== 'string'
-// }
 
 export type TableColumnish = TableColumn | string
 

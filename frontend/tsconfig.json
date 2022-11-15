@@ -13,9 +13,21 @@
     ],
     "compilerOptions": {
         "isolatedModules": true,
-        "types": ["naive-ui/volar"],
-        "strict": true,
-        "allowJs": false,
-        "pretty": true
+        "types": ["types/auto-imports.d.ts", "src/components.d.ts"],
+        "strict": false,
+        "allowJs": true,
+        "pretty": true,
+        "moduleResolution": "Node",
+        "paths": {
+            "@directives": ["./src/directives"],
+            "@store": ["./src/store"],
+            "@store-types": ["./src/store/types"],
+            "@types": ["./src/types"],
+            "@views/*": ["./src/views/*"],
+            "@store/*": ["./src/store/*"],
+            "@exceptions": ["./src/exceptions"]
+        },
+        "noImplicitAny": false,
+        "noImplicitThis": true
     }
 }

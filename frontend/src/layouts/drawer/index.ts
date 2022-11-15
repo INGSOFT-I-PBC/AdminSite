@@ -44,6 +44,16 @@ export const menus: MenuItem[] = [
                 ],
             },
             {
+                label: 'Usuarios',
+                routeName: 'admin-user-management',
+                path: '/admin/usuarios',
+            },
+            {
+                label: 'Permisos',
+                routeName: 'admin-permission-manager',
+                path: '/admin/permisos',
+            },
+            {
                 label: 'Roles',
                 path: '/admin/roles',
                 routeName: 'role-panel',
@@ -100,7 +110,24 @@ export const menus: MenuItem[] = [
     {
         label: 'Compras',
         icon: 'shopping-bag',
-        children: [],
+        children: [
+            {
+                label: 'Proveedores',
+                children: [
+                    {
+                        label: 'Nuevo Proveedor',
+                        path: '/compras/nuevo-proveedor',
+                        routeName: 'purchases-add-provider',
+                    },
+                    {
+                        // TODO: make this view
+                        label: 'Gestionar',
+                        path: '/compras/proveedores',
+                        routeName: 'purchase-manage-providers',
+                    },
+                ],
+            },
+        ],
     },
     {
         label: 'Facturación',

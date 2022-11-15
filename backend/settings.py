@@ -23,6 +23,8 @@ env = environ.Env(
     APP_HOST=(str, "http://localhost:8000"),
     DB_ENGINE=(str, "mysql"),
     ALLOW_ALL_ORIGINS=(bool, False),
+    DJANGO_QUERY_LOG=(str, "/tmp/django_query.log"),
+    DJANGO_LOG=(str, "/tmp/django.log"),
 )
 environ.Env.read_env(".env")
 
@@ -164,13 +166,13 @@ LOGGING = {
         "query_log": {
             "level": "DEBUG",
             "class": "logging.FileHandler",
-            "filename": "backend/storage/logs/django_query.log",
+            "filename": env("DJANGO_QUERY_LOG"),
             "filters": ["require_debug_true"],
         },
         "logfile": {
             "level": "INFO",
             "class": "logging.handlers.RotatingFileHandler",
-            "filename": "backend/storage/logs/django.log",
+            "filename": env("DJANGO_LOG"),
             "formatter": "standard",
             "maxBytes": 50 * (1024**2),  # Máx 50MiB log
             "backupCount": 10,
@@ -267,7 +269,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 STATIC_ROOT = "static/"
 MEDIA_URL = "/storage/"
-MEDIA_ROOT = BASE_DIR / "storage"
+MEDIA_ROOT = "backend/storage/public"
 
 APPEND_SLASH = False
 # Django  configuration Variables

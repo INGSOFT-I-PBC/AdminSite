@@ -1,11 +1,5 @@
 <script setup lang="ts">
-    import {
-        TabGroup,
-        TabList,
-        TabPanel,
-        TabPanels,
-        Tab,
-    } from '@headlessui/vue'
+    import { Tab, TabGroup, TabList, TabPanels } from '@headlessui/vue'
 
     const props = defineProps({
         verticalTabs: {
@@ -26,14 +20,17 @@
         },
     })
     const emits = defineEmits(['change', 'update:selectedTab'])
+
+    function tabChange(tabIndex: number) {
+        emits('update:selectedTab', tabIndex)
+    }
 </script>
 
 <template>
     <TabGroup
-        :selected-index="selectedTab"
         :vertical="verticalTabs"
         :default-index="props.defaultIndex"
-        @change="$emit('change')">
+        @change="tabChange">
         <TabList class="tw-tablist">
             <Tab
                 class="tw-tab"
@@ -62,7 +59,7 @@
 
 <style lang="scss">
     .tw-tablist {
-        @apply tw-flex tw-space-x-2 tw-rounded-xl tw-bg-on-primary/20 tw-p-1;
+        @apply tw-flex tw-space-x-2 tw-rounded-xl tw-bg-on-primary/5 tw-p-1;
     }
     .tw-rounded-button {
         @apply tw-rounded-md;

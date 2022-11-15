@@ -34,9 +34,7 @@ class Status(models.Model):
 
     class Meta:
         db_table = "status"
-        indexes = [
-            models.Index(fields=['name'])
-        ]
+        indexes = [models.Index(fields=["name"])]
 
 
 class TimestampModel(models.Model):
@@ -106,7 +104,7 @@ class TraceableModel(models.Model):
     deleted_by = models.ForeignKey(
         "Employee",
         db_column="deleted_by",
-        null=False,
+        null=True,
         default=None,
         on_delete=models.RESTRICT,
         related_name="remover",

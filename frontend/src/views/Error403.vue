@@ -1,7 +1,9 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
     import { useRoute, useRouter } from 'vue-router'
+
     import EButton from '../components/custom/EButton.vue'
+
     const router = useRouter()
 
     function redirectHome() {

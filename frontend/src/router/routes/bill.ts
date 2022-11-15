@@ -2,7 +2,7 @@ export const bill: Array<RouteConfig> = [
     {
         path: '/facturacion',
         name: 'bill-management-panel',
-        component: () => import('@views/BillView.vue'),
+        component: () => import('@views/invoice/BillView.vue'),
         meta: {
             pageTitle: 'Facturas',
             permission: 'view_dashboard',
@@ -12,7 +12,17 @@ export const bill: Array<RouteConfig> = [
     {
         path: '/facturacion/agregar',
         name: 'addbill-panel',
-        component: () => import('@views/AddBillView.vue'),
+        component: () => import('@views/invoice/AddBillView.vue'),
+        meta: {
+            pageTitle: 'Facturas',
+            permission: 'view_dashboard',
+            breadcrumb: [{ text: 'Facturacion', href: '/facturacion' }],
+        },
+    },
+    {
+        path: '/facturacion/editar/:id',
+        name: 'editbill-panel',
+        component: () => import('@views/invoice/EditBillView.vue'),
         meta: {
             pageTitle: 'Facturas',
             permission: 'view_dashboard',

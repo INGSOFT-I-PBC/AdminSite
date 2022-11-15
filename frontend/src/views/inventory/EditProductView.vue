@@ -1,60 +1,60 @@
 <script lang="ts">
-    import { defineComponent } from 'vue'
     import type Item from '@/interfaz/items'
-    import type Item3 from '@/interfaz/Items3'
-    import ItemDataService from '@/store/item'
-    import { useAuthStore } from '@store'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
-    import axios from 'axios'
+    import EButton from '@components/custom/EButton.vue'
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
+    import ModalDialog from '@components/custom/ModalDialog.vue'
+    import { useAuthStore } from '@store'
+    import ItemDataService from '@store/item'
+    import type { Status } from '@store/types'
+
+    import { defineComponent } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
-    import * as VeeValidate from 'vee-validate'
-    import { Field, ErrorMessage } from 'vee-validate'
-    import { Form as EForm } from 'vee-validate'
-    import { computed, reactive } from 'vue'
 
     export default defineComponent({
-        name: 'AddProductView',
+        name: 'EditProductView',
         data() {
-            const route = useRoute()
             const authStore = useAuthStore()
-            const name = authStore.userData?.name
-            const employee_id = authStore.userData?.employee as number
+            const route = useRoute()
+            const normalValue = ref('')
             const tiempoTranscurrido = Date.now()
             const hoy = new Date(tiempoTranscurrido)
-            const normalValue = ref('')
             const productModalShow = ref(false)
             const productModalShowError = ref(false)
             const msm400 = ref('')
             const router = useRouter()
-
-
+            const employee_id = authStore.userData?.employee as number
+            const formStatus = ref<Status>({
+                id: 0,
+                name: 'active',
+            })
 
             return {
+                formStatus,
                 route,
-                router,
-                hoy,
                 normalValue,
+                employee_id,
                 productModalShow,
                 productModalShowError,
                 msm400,
+                router,
                 items: {} as Item,
+                hoy,
                 fecha_hora: {
-                    fecha: String,
-                    hora: String,
+                    fecha: '',
+                    hora: '',
                 },
                 imagenM: '',
+
                 image_field: '',
                 category: [],
                 warehouses: [],
-                authStore,
-                name,
-                employee_id,
                 entrada: {
+                    created_at: '',
+                    updated_at: '',
                     brand: '',
                     category_id: 0,
-                    iva:0 ,
+                    iva: 0,
                     model: '',
                     name: '',
                     price: 0,
@@ -63,23 +63,125 @@
                     quantity: normalValue,
                     item_id: 0,
                     codigo: '',
+                    created_by: '',
+                    created_id: 0,
                 },
             }
         },
-        components: {
-            EForm, Field,ErrorMessage, ECard,ModalDialog,InputText
-         },
         methods: {
-
+            showProduct() {
+                this.productModalShow = true
+            },
+            async loadStatus(name: string) {
+                this.formStatus = await ItemDataService.fetchStatus(name)
+                this.entrada.status_id = this.formStatus.id
+                console.log(this.entrada.status_id)
+            },
             validarCheckbox() {
                 const checkbox = document.getElementById(
                     'check'
                 ) as HTMLInputElement
-                if (checkbox.checked) {
-                    this.entrada.status_id = 1
+                if (!checkbox.checked) {
+                    //this.entrada.status_id = 1
+                    this.loadStatus('inactive')
                 } else {
-                    this.entrada.status_id = 3
+                    //this.entrada.status_id = 3
+                    this.loadStatus('active')
                 }
+            },
+            performUpload() {
+                const formDataItem = new FormData()
+                console.log(typeof this.image_field)
+                formDataItem.append('created_at', this.entrada.created_at)
+                formDataItem.append('updated_at', this.entrada.updated_at)
+                formDataItem.append('brand', this.entrada.brand)
+                if (typeof this.image_field != 'string') {
+                    formDataItem.append('img', this.image_field)
+                }
+                formDataItem.append('iva', this.entrada.iva.toString())
+                formDataItem.append('model', this.entrada.model)
+                formDataItem.append('name', this.entrada.name)
+                formDataItem.append('price', this.entrada.price.toString())
+                formDataItem.append(
+                    'category_id',
+                    this.entrada.category_id.toString()
+                )
+                formDataItem.append(
+                    'created_by',
+                    this.entrada.created_id.toString()
+                )
+                console.log(this.entrada.created_id)
+
+                this.validarCheckbox()
+                formDataItem.append(
+                    'status_id',
+                    this.entrada.status_id.toString()
+                )
+                formDataItem.append('codename', this.entrada.codigo)
+                return formDataItem
+            },
+            performUploadInventory() {
+                const formDataInventory = new FormData()
+
+                formDataInventory.append('created_at', this.entrada.created_at)
+                formDataInventory.append('updated_at', this.entrada.updated_at)
+
+                formDataInventory.append(
+                    'quantity',
+
+                    this.normalValue
+                )
+                formDataInventory.append(
+                    'item_id',
+                    this.entrada.item_id.toString()
+                )
+                formDataInventory.append(
+                    'updated_by_id',
+                    this.employee_id.toString()
+                )
+                formDataInventory.append(
+                    'warehouse_id',
+                    this.entrada.warehouse_id.toString()
+                )
+
+                return formDataInventory
+            },
+            emitValue(e: Event) {
+                this.normalValue = (e.target as HTMLInputElement).value
+            },
+            async guardarDatos(formDataItem: FormData) {
+                /*ItemDataService.updateItem(this.entrada.item_id, formDataItem)
+                        .then(response=>{
+                            this.$router.push({ path: '/inventario' })
+
+                        })  .catch((error) => {
+
+                                if (error.response.status==400){
+                                    this.productModalShowError = true
+                                    this.msm400=JSON.stringify(error.response.data)
+                                }
+                                })*/
+
+                ItemDataService.updateInventory(
+                    Number(this.route.params.id),
+                    this.performUploadInventory()
+                )
+                    .then(response => {
+                        const ite = response.data
+
+                        ItemDataService.updateItem(
+                            this.entrada.item_id,
+                            formDataItem
+                        ).then(response => {
+                            this.$router.push({ path: '/inventario' })
+                        })
+                    })
+                    .catch(error => {
+                        if (error.response.status == 400) {
+                            this.productModalShowError = true
+                            this.msm400 = JSON.stringify(error.response.data)
+                        }
+                    })
             },
             async showAllCategory() {
                 ItemDataService.getAllCategory()
@@ -99,81 +201,60 @@
                         console.log(e)
                     })
             },
+            async showAllProducts(id: string) {
+                ItemDataService.get(String(id))
+                    .then(response => {
+                        this.items = response.data
+                        console.log(this.items)
+                        this.entrada.category_id =
+                            this.items['0'].category_id_Item
+                        this.imagenM =
+                            //'https://proyectoadmin.pythonanywhere.com/'
+                            //http://127.0.0.1:8000
+                            'https://proyectoadmin.pythonanywhere.com/storage/' +
+                            this.items['0'].imgItem
+                        console.log(this.imagenM)
+                        this.entrada.warehouse_id = this.items['0'].warehouse_id
+                        this.entrada.created_by =
+                            this.items['0'].created_by_Item.name +
+                            ' ' +
+                            this.items['0'].created_by_Item.lastname
+                        this.entrada.created_at = this.items['0'].created_at
+                        this.entrada.updated_at = this.hoy.toISOString()
+                        this.entrada.created_id =
+                            this.items['0'].created_by_Item.created_by
+                        console.log('hh' + this.entrada.created_id)
+                        this.entrada.item_id = this.items['0'].item_id
+                        this.entrada.codigo = this.items['0'].codename_Item
+                        this.entrada.brand = this.items['0'].brandItem
+                        this.entrada.price = this.items['0'].priceItem
+                        this.entrada.model = this.items['0'].modelItem
+                        this.entrada.iva = this.items['0'].ivaItem
+                        this.entrada.quantity = this.items['0'].quantity
+                        this.entrada.name = this.items['0'].nombreItem
+                        this.entrada.status_id = this.items['0'].status_id_Item
+                        /*this.fecha_hora.fecha = this.items[
+                            '0'
+                        ].created_at.substring(0, 10)*/
+
+                        this.fecha_hora.fecha = new Date(
+                            this.items['0'].created_at
+                        ).toLocaleDateString()
+                        this.fecha_hora.hora = new Date(
+                            this.items['0'].created_at
+                        ).toLocaleTimeString()
+
+                        console.log(this.items['0'])
+                    })
+                    .catch((e: Error) => {
+                        console.log(e)
+                    })
+            },
             obtenerImagen(e: any) {
                 this.image_field = e.target.files[0]
+                console.log(this.image_field)
+                console.log(typeof this.image_field)
                 this.cargarImagen(this.image_field)
-            },
-            performUpload() {
-                const formDataItem = new FormData()
-                formDataItem.append('id', '')
-                formDataItem.append('created_at', this.hoy.toISOString())
-                formDataItem.append('updated_at', this.hoy.toISOString())
-                formDataItem.append('brand', this.entrada.brand)
-                formDataItem.append('img', this.image_field)
-                formDataItem.append('iva', this.entrada.iva.toString())
-                formDataItem.append('model', this.entrada.model)
-                formDataItem.append('name', this.entrada.name)
-                formDataItem.append('price', this.entrada.price.toString())
-                formDataItem.append(
-                    'category_id',
-                    this.entrada.category_id.toString()
-                )
-                formDataItem.append('created_by', this.employee_id.toString())
-
-                this.validarCheckbox()
-                formDataItem.append(
-                    'status_id',
-                    this.entrada.status_id.toString()
-                )
-                formDataItem.append('codename', this.entrada.codigo)
-                return formDataItem
-            },
-            performUploadInventory(id: number) {
-                const formDataInventory = new FormData()
-
-                formDataInventory.append('created_at', this.hoy.toISOString())
-                formDataInventory.append('updated_at', this.hoy.toISOString())
-                formDataInventory.append('deleted_at', this.hoy.toISOString())
-
-                formDataInventory.append(
-                    'quantity',
-
-                    this.normalValue
-                )
-                console.log(this.normalValue)
-                formDataInventory.append('item_id', id.toString())
-                formDataInventory.append(
-                    'updated_by_id',
-                    this.employee_id.toString()
-                )
-                formDataInventory.append(
-                    'warehouse_id',
-                    this.entrada.warehouse_id.toString()
-                )
-
-                return formDataInventory
-            },
-            emitValue(e: Event) {
-                this.normalValue = (e.target as HTMLInputElement).value
-                console.log(this.normalValue)
-            },
-            async guardarDatos(formDataItem: FormData) {
-                ItemDataService.createItem(formDataItem)
-                    .then(response => {
-                        const ite = response.data
-                        this.entrada.item_id = ite.id
-                        ItemDataService.createInventory(
-                            this.performUploadInventory(ite.id)
-                        ).then(response => {
-                            this.$router.push({ path: '/inventario' })
-                        })
-                    })
-                    .catch(error => {
-                        if (error.response.status == 400) {
-                            this.productModalShowError = true
-                            this.msm400 = JSON.stringify(error.response.data)
-                        }
-                    })
             },
             cargarImagen(file: any) {
                 const reader = new FileReader()
@@ -182,127 +263,27 @@
                 }
                 reader.readAsDataURL(file)
             },
-            onSubmit(value: any) {
-                console.log("probando")
-                this.productModalShow = true
-           },
-            validateCode(value: any) {
-            if (!value) {
-                 return 'Este campo es requerido'
-            }
-            if ( isNaN(value)) {
-            return 'Inválido'
-        }
-
-            return true
-        },
-        validateName(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    },
-    validateMarca(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    },
-
-    validateModelo(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-       
-        return true
-    },
-    validateCategoria(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-
-        return true
-    },
-    validatePrecio(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if ( isNaN(value)) {
-            return 'Inválido'
-        }
-        if(value<0){
-            return 'Inválido'
-
-        }
-        
-
-        return true
-    },
-    
-
-    validateIva(value: any) {
-        // if the field is empty
-        if ( isNaN(value)) {
-            return 'Inválido'
-        }
-        if(value<0){
-            return 'Inválido'
-
-        }
-        if(value==0 || value==12){
-            return true
-        }
-        else{
-            return 'Inválido'
-
-        }
-
-        return true
-    },
-
         },
         computed: {
             imagen() {
                 return this.imagenM
             },
-
         },
         mounted() {
+            if (typeof this.route.params.id === 'string')
+                this.showAllProducts(String(this.route.params.id))
             this.showAllCategory()
             this.showAllWarehouses()
+            this.loadStatus(this.formStatus.name)
         },
-
-
-
+        components: {
+            ECard,
+            ModalDialog,
+            InputText,
+            EButton,
+        },
     })
 </script>
-
-
-
 
 <template>
     <main>
@@ -310,25 +291,25 @@
             id="product-modal-error"
             v-model:show="productModalShowError"
             title="Información">
-            <h1>{{ msm400 }}</h1>
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                {{ msm400 }}
+            </h1>
         </ModalDialog>
         <ModalDialog
             id="product-modal"
             v-model:show="productModalShow"
-            title="Agregar Producto"
+            title="Modificar Producto"
             ok-text="Guardar"
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
-
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Esta seguro de modificar el producto?
+            </h1>
         </ModalDialog>
-
         <ECard>
-            <EForm @submit="onSubmit">
             <div class="container" style="border-radius: 5px">
-
                 <!--BOTONES Usuario-->
                 <div class="container text-center" style="padding: 10px">
-
                     <div class="row">
                         <div class="col">
                             <div class="row g-3">
@@ -341,16 +322,12 @@
                                         ">
                                         Codigo *
                                     </h6>
-                                    <Field
-                                        name="code"
-
+                                    <input
                                         type="text"
                                         class="form-control"
-                                        :rules="validateCode"
-                                        v-model="entrada.codigo"/>
-                                        <div class="col">
-                                            <ErrorMessage name="code" style=" font-size: 10px; color: red; text-align: left; " />
-                                        </div>
+                                        v-model="entrada.codigo"
+                                        disabled="false"
+                                        aria-label="First name" />
                                 </div>
 
                                 <div class="col">
@@ -362,15 +339,11 @@
                                         ">
                                         Nombre *
                                     </h6>
-                                    <Field
-                                        name="name"
+                                    <input
                                         type="text"
                                         class="form-control"
-                                        :rules="validateName"
-                                        v-model="entrada.name" />
-                                        <div class="col">
-                                            <ErrorMessage name="name" style=" font-size: 10px; color: red; text-align: left; " />
-                                        </div>
+                                        v-model="entrada.name"
+                                        aria-label="First name" />
                                 </div>
 
                                 <div class="col">
@@ -382,15 +355,12 @@
                                         ">
                                         Marca *
                                     </h6>
-                                    <Field
-                                        name="marca"
+                                    <input
                                         type="text"
                                         class="form-control"
-                                        :rules="validateMarca"
-                                        v-model="entrada.brand" />
-                                        <div class="col">
-                                            <ErrorMessage name="marca" style=" font-size: 10px; color: red; text-align: left; " />
-                                        </div>
+                                        placeholder="Admin"
+                                        v-model="entrada.brand"
+                                        aria-label="First name" />
                                 </div>
 
                                 <div class="col">
@@ -400,19 +370,14 @@
                                             color: black;
                                             text-align: left;
                                         ">
-                                        Modelo*
+                                        Modelo
                                     </h6>
-                                    <Field
-                                         name="modelo"
+                                    <input
                                         type="text"
                                         class="form-control"
-                                        placeholder=""
-                                        aria-label="First name"
-                                        :rules="validateModelo"
-                                        v-model="entrada.model" />
-                                        <div class="col">
-                                            <ErrorMessage name="marca" style=" font-size: 10px; color: red; text-align: left; " />
-                                        </div>
+                                        placeholder="Admin"
+                                        v-model="entrada.model"
+                                        aria-label="First name" />
                                 </div>
                             </div>
                         </div>
@@ -443,6 +408,7 @@
                                 </option>
                             </select>
                         </div>
+
                         <div class="col">
                             <h6
                                 style="
@@ -452,23 +418,14 @@
                                 ">
                                 Precio*
                             </h6>
-                            <Field
-                                name="precio"
+                            <input
                                 type="text"
                                 class="form-control"
-
-                                :rules="validatePrecio"
-                                v-model="entrada.price" />
-                                <div class="col">
-                                    <ErrorMessage name="precio" style=" font-size: 10px; color: red; text-align: left; " />
-                                </div>
+                                placeholder=""
+                                v-model="entrada.price"
+                                aria-label="First name" />
                         </div>
-                    </div>
-                </div>
 
-                <!--BOTONES Usuario-->
-                <div class="container text-center" style="padding: 10px">
-                    <div class="row">
                         <div class="col">
                             <h6
                                 style="
@@ -478,18 +435,27 @@
                                 ">
                                 Iva*
                             </h6>
-                            <Field
-                                name="iva"
+                            <input
                                 type="text"
                                 class="form-control"
                                 placeholder=""
-                                aria-label="First name"
-                                :rules="validateIva"
-                                v-model="entrada.iva" />
-                                <div class="col">
-                                    <ErrorMessage name="iva" style=" font-size: 10px; color: red; text-align: left; " />
-                                </div>
+                                v-model="entrada.iva"
+                                aria-label="First name" />
                         </div>
+                    </div>
+                </div>
+
+                <!--BOTONES Usuario-->
+                <div class="container text-center" style="padding: 10px">
+                    <div class="row">
+                        <div class="col">
+                            <InputText
+                                label="Cantidad del Producto"
+                                v-model="entrada.quantity"
+                                type="number"
+                                @input="emitValue" />
+                        </div>
+                        <div class="col"></div>
 
                         <div class="col">
                             <h6
@@ -506,7 +472,8 @@
                                     type="checkbox"
                                     role="switch"
                                     id="check"
-                                    @change="validarCheckbox()" />
+                                    @change="validarCheckbox()"
+                                    checked />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>
@@ -530,10 +497,9 @@
                             <input
                                 type="text"
                                 class="form-control"
-                                placeholder="23/08/2022"
+                                v-model="fecha_hora.fecha"
                                 disabled="false"
                                 aria-label="First name" />
-                                
                         </div>
 
                         <div class="col">
@@ -548,7 +514,7 @@
                             <input
                                 type="text"
                                 class="form-control"
-                                placeholder="15:00"
+                                v-model="fecha_hora.hora"
                                 disabled="false"
                                 aria-label="First name" />
                         </div>
@@ -565,10 +531,9 @@
                             <input
                                 type="text"
                                 class="form-control"
-                                placeholder="Admin"
+                                v-model="entrada.created_by"
                                 disabled="false"
-                                aria-label="First name"
-                                v-model="name" />
+                                aria-label="First name" />
                         </div>
                     </div>
                 </div>
@@ -598,13 +563,6 @@
                                         </option>
                                     </select>
                                 </div>
-
-                                <div class="col">
-                                    <InputText
-                                        label="Cantidad del Producto"
-                                        type="number" 
-                                        @input="emitValue" />
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -633,23 +591,18 @@
                         </div>
                     </form>
                 </div>
-                        <button style="
-                        font-size: 15px;
-                        color: black;
-                        text-align: center;
-                        width: 50%;
-                        margin-left: 25%;
-                        margin-right: 25%;
-                        margin-top: 10px;
-                        color: white;
-                        background-color: #555555;
-                    "
+
+                <div class="container text-center" style="padding: 10px">
+                    <div class="row">
+                        <EButton variant="secondary" @click="showProduct()"
                             >Guardar
-                    </button>
+                        </EButton>
+                    </div>
+                </div>
 
                 <!--Espacio demas-->
+                <div class="container text-center" style="padding: 10px"></div>
             </div>
-           </EForm>
         </ECard>
     </main>
 </template>

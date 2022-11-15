@@ -1,25 +1,30 @@
+from datetime import datetime
 from tokenize import group
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
 # from django.shortcuts import render
-from rest_framework import viewsets, status
+from rest_framework import generics, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.token_blacklist.models import (
-    OutstandingToken,
     BlacklistedToken,
+    OutstandingToken,
 )
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from api.models import User, Permission, GroupPermission, Role
-from api.serializers import UserSerializer, PermissionSerializer
-
-
-# Create your views here.
+from api.models import Employee, Group, GroupPermission, Permission, Role, User
+from api.serializers import (
+    EmployeeSerializer,
+    GroupSerializer,
+    PermissionSerializer,
+    UserSerializer,
+)
+from api.utils import bool_param, error_response, response
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -27,8 +32,43 @@ class UserViewSet(viewsets.ModelViewSet):
     API endpoint that allows users to be viewed or edited.
     """
 
-    queryset = User.objects.all().order_by("id")
+    queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    def get_queryset(self):
+        queryset = User.objects.all()
+        params = self.request.query_params.copy()
+
+        status = params.pop(
+            "active",
+            [None],
+        )[0]
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+        if status is not None:
+            queryset = queryset.filter(is_active=bool_param(status))
+        if params.get("username", None):
+            queryset = queryset.filter(username__icontains=params.get("username"))
+        if params.get("email", None):
+            queryset = queryset.filter(email__icontains=params.get("email"))
+        if params.get("is_active", None):
+            queryset = queryset.filter(is_active=bool(params.get("is_active", False)))
+        if params.get("group", None):
+            queryset = queryset.filter(group=params.get("group"))
+        if params.get("role", None):
+            queryset = queryset.filter(employee__role=params.get("role"))
+
+        return queryset
+
+
+class EmployeeViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    API endpoint that allow the preview of employees
+    """
+
+    queryset = Employee.objects.all().order_by("name", "lastname")
+    serializer_class = EmployeeSerializer
 
 
 class PermissionsViewSet(viewsets.ModelViewSet):
@@ -71,22 +111,26 @@ class PermissionsView(APIView):
     """
 
     def get(self, request, *args, **kwargs):
-        user = request.user
-        permission_list = []
-        try:
-            group = GroupPermission.objects.filter(group=user.group)
-            for permgroup in group:
-                permission_list.append(permgroup.permission.name)
-        except ObjectDoesNotExist as ex:
-            print("Not found: ", ex)
-        return Response(
-            {
-                "user.name": user.employee.name,
-                "user.lastname": user.employee.lastname,
-                "user.username": user.username,
-                "permissions": permission_list,
-            }
-        )
+        perms = Permission.objects.filter(**kwargs)
+        if not perms.exists():
+            return error_response("No permission was found")
+        return JsonResponse(data=PermissionSerializer(perms.first()).data)
+
+    def put(self, request: Request, *args, **kwargs):
+        perms = Permission.objects.filter(**kwargs)
+        if not perms.exists():
+            return error_response("No permission was found")
+        new_data = PermissionSerializer(perms.first(), request.data)
+        new_data.is_valid(raise_exception=True)
+        new_data.save()
+        return response("permission updated successfully")
+
+
+class PermissionGroupView(APIView):
+    def get(self, request, *args, **kwargs):
+        group = Group.objects.get(**kwargs)
+        serializer = GroupSerializer(group)
+        return JsonResponse(serializer.data)
 
 
 @api_view(["GET"])
@@ -127,6 +171,7 @@ def reset_password(request: Request):
                 status=400,
             )
         user.set_password(data["password"])
+        user.updated_at = datetime.now()
         user.save()
     except:
         return JsonResponse(
@@ -135,3 +180,32 @@ def reset_password(request: Request):
         )
 
     return JsonResponse({"error": False, "message": "Ok"})
+
+
+@api_view(["GET"])
+def self_permissions():
+    user = request.user
+    permission_list = []
+
+    group = GroupPermission.objects.filter(group=user.group)
+    for permgroup in group:
+        permission_list.append(permgroup.permission.name)
+
+    return Response(
+        {
+            "user.name": user.employee.name,
+            "user.lastname": user.employee.lastname,
+            "user.username": user.username,
+            "permissions": permission_list,
+        }
+    )
+
+
+@api_view(["POST"])
+def create_permission(request: Request, *args, **kwargs):
+    new_permission = PermissionSerializer(data=request.data)
+    new_permission.is_valid(raise_exception=True)
+    if Permission.objects.filter(codename=request.data["codename"]).exists():
+        return error_response("The given permission already exists")
+    new_permission.save()
+    return response("Permission created successfully")

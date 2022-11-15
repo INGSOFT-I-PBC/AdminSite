@@ -1,27 +1,22 @@
-<script lang="ts">
-    import { defineComponent } from 'vue'
-    import ItemDataService from '@/store/item'
-    import type Item from '@/interfaz/items'
-    import type Item3 from '@/interfaz/Items3'
-</script>
-
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
+    import type Item from '@/interfaz/items'
+    import ItemDataService from '@/store/item'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
-    import { computed, reactive, onMounted } from 'vue'
+
+    import { onMounted, reactive } from 'vue'
     import { useRouter } from 'vue-router'
-    import WaitOverlay from '../components/custom/WaitOverlay.vue'
-    //useAuthStore().refreshToken()
+
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
-
+    //
     const templateList = [
         { label: 'Por código', value: '1' },
         { label: 'Por nombre', value: '2' },
@@ -34,8 +29,8 @@
 
     const model = ref({})
     const productModalShow = ref(false)
-    // const selectedProduct = null
-    //const idx = 10
+    const productModalDelete = ref(false)
+    let num = 0
 
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
@@ -91,10 +86,9 @@
         name: string
     }
 
-    let selectedProduct: Optional<productModel> = null
-    function showProduct(product: productModel) {
-        selectedProduct = product
-        console.log(selectedProduct)
+    const selectedProduct: Optional<any> = ref(null)
+    function showProduct(product: product) {
+        selectedProduct.value = product
         productModalShow.value = true
     }
     function removeItem(index: number) {
@@ -154,14 +148,15 @@
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
-    function deleteProduct(index: number): void {
-        ItemDataService.deleteInventory(items2[index].id)
+
+    function acceptace(): void {
+        ItemDataService.deleteInventory(items2[num].id)
             .then(response => {
                 console.log(response.data)
-                ItemDataService.deleteItem(items2[index].id_item).then(
+                ItemDataService.deleteItem(items2[num].id_item).then(
                     response => {
                         console.log(response.data)
-                        removeItem(index)
+                        removeItem(num)
                     }
                 )
             })
@@ -169,6 +164,12 @@
                 console.log(e)
             })
     }
+
+    function deleteProduct(index: number): void {
+        num = index
+        productModalDelete.value = true
+    }
+
     function goAgregar(): void {
         router.push({ path: '/inventario/agregar' })
     }
@@ -179,49 +180,109 @@
 
 <template>
     <main>
-        <WaitOverlay :show="showWaitOverlay">
-            <ModalDialog
-                id="product-modal"
-                v-model:show="productModalShow"
-                title="Detalle del producto">
-                <h1>nombre: {{ selectedProduct?.name }}</h1>
-            </ModalDialog>
+        <ModalDialog v-model:show="productModalShow" size="xl">
+            <template #dialog-title>
+                <b class="tw-text-2xl"
+                    >Detalle del Producto {{ selectedProduct?.name }}</b
+                >
+            </template>
+            <div class="container">
+                <div
+                    class="row tw-pb-3 align-content-center justify-content-center gy-2">
+                    <template v-for="(k, d) in selectedProduct" :key="k">
+                        <div class="row" v-if="d.toString() == 'code'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Codigo:</span
+                            >
+                            <span class="col-6">{{ k }}</span>
+                        </div>
+                        <div class="row" v-if="d.toString() == 'name'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Nombre:</span
+                            >
+                            <span class="col-6">{{ k }}</span>
+                        </div>
+                        <div class="row" v-if="d.toString() == 'marc'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Marca:</span
+                            >
+                            <span class="col-6">{{ k }}</span>
+                        </div>
+                        <div class="row" v-if="d.toString() == 'model'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Modelo:</span
+                            >
+                            <span class="col-6">{{ k }}</span>
+                        </div>
+                        <div class="row" v-if="d.toString() == 'category'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Categoria:</span
+                            >
+                            <span class="col-6">{{ k }}</span>
+                        </div>
+                        <div class="row" v-if="d.toString() == 'price'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Precio:</span
+                            >
+                            <span class="col-6">{{ k }}</span>
+                        </div>
+                        <div class="row" v-if="d.toString() == 'stock'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Stock:</span
+                            >
+                            <span class="col-6">{{ k }}</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </ModalDialog>
+        <ModalDialog
+            id="product-modal"
+            v-model:show="productModalDelete"
+            title="Eliminar Producto"
+            ok-text="Eliminar"
+            @ok="acceptace"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de eliminar el Producto?
+            </h1>
+        </ModalDialog>
 
-            <ECard>
-                <ERow>
-                    <h1 style="font-size: 35px; color: black">Inventario</h1>
-                </ERow>
-                <nav class="navbar">
-                    <div class="container-fluid">
-                        <EButton type="secondary" @click="goAgregar"
-                            >+ Agregar producto
-                        </EButton>
+        <ECard>
+            <ERow>
+                <h1 style="font-size: 35px; color: black">Inventario</h1>
+            </ERow>
+            <nav class="navbar">
+                <div class="container-fluid">
+                    <EButton variant="secondary" @click="goAgregar"
+                        >+ Agregar producto
+                    </EButton>
 
-                        <ECol cols="9" md="6" xl="4">
-                            <ListBox
-                                v-model="model"
-                                top-label="Seleccione un filtro"
-                                :options="templateList" />
-                        </ECol>
+                    <ECol cols="9" md="6" xl="4">
+                        <ListBox
+                            v-model="model"
+                            top-label="Seleccione un filtro"
+                            :options="templateList" />
+                    </ECol>
 
-                        <form class="d-flex" role="search">
-                            <input
-                                class="form-control me-2"
-                                type="search"
-                                placeholder="Buscar productos"
-                                aria-label="Search" />
-                            <button class="btn btn-outline-black" type="submit">
-                                Search
-                            </button>
-                        </form>
-                    </div>
-                </nav>
+                    <form class="d-flex" role="search">
+                        <input
+                            class="form-control me-2"
+                            type="search"
+                            placeholder="Buscar productos"
+                            aria-label="Search" />
+                        <button class="btn btn-outline-black" type="submit">
+                            Search
+                        </button>
+                    </form>
+                </div>
+            </nav>
 
-                <!-- <ERow>
+            <!-- <ERow>
                 <ECol cols="12"> -->
-
+            <WaitOverlay :show="showWaitOverlay">
                 <Table :header="tableSettings">
-                    <template #body-cell="{ cellData, colIdx, rowIdx }">
+                    <template #body-cell="{ colIdx, rowIdx }">
                         <div v-if="colIdx == 8">
                             <div class="form-check form-switch">
                                 <input
@@ -236,7 +297,8 @@
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault" />
+                                    id="flexSwitchCheckDefault"
+                                    checked />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>
@@ -248,7 +310,7 @@
                             class="tw-grid tw-grid-flow-col tw-rounded tw-overflow-hidden">
                             <button
                                 class="tw-bg-blue-600 tw-px-4 tw-py-1 tw-text-white"
-                                @click="showProduct(cellData as productModel)">
+                                @click="showProduct(items2[rowIdx])">
                                 Ver más detalles
                             </button>
                             <button
@@ -264,10 +326,10 @@
                         </div>
                     </template>
                 </Table>
+            </WaitOverlay>
 
-                <!-- </ECol>
+            <!-- </ECol>h
             </ERow> -->
-            </ECard>
-        </WaitOverlay>
+        </ECard>
     </main>
 </template>

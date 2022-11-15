@@ -1,11 +1,10 @@
-<script setup lang="ts">
+<script lang="ts" setup>
     import type { BorderRadius } from '@components-types'
+
     import type { PropType } from 'vue'
-    import {
-        FontAwesomeLayers,
-        FontAwesomeLayersText,
-    } from '@fortawesome/vue-fontawesome'
+
     import EOverlay from './EOverlay.vue'
+
     defineProps({
         show: {
             type: Boolean,
@@ -22,21 +21,27 @@
     })
 </script>
 <template>
-    <EOverlay :show="show" :rounded="rounded">
+    <EOverlay :rounded="rounded" :show="show">
         <template #content>
             <div
-                class="tw-flex tw-flex-row fit tw-items-center tw-relative tw-top-1/2 tw-left-1/2 tw-right-1/2 tw-content-center tw-self-center">
-                <FontAwesomeLayers class="fa-4x">
+                class="tw-flex tw-flex-row fit tw-items-center tw-relative tw-top-1/2 tw-left-1/2 tw-right-1/2 tw-content-center tw-self-center tw-z-10">
+                <FontAwesomeLayers fixed-width>
                     <FontAwesomeIcon
                         class="tw-fill-white"
                         icon="spinner"
-                        spin
                         inverse
-                        pull="left" />
+                        pull="left"
+                        size="5x"
+                        spin />
+                    <!--                    class="fa-4x"-->
                     <FontAwesomeLayersText
-                        transform="down-10 shrink-8"
-                        :style="{ color: 'white', marginTop: '3rem' }"
-                        :value="message" />
+                        :style="{
+                            color: 'white',
+                            marginTop: '3rem',
+                            align: 'center',
+                        }"
+                        :value="message"
+                        transform="down-10 grow-6" />
                 </FontAwesomeLayers>
             </div>
         </template>

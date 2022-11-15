@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+    import type { ComponentSize } from '@components-types'
     import {
         Dialog,
         DialogPanel,
@@ -6,8 +7,9 @@
         TransitionChild,
         TransitionRoot,
     } from '@headlessui/vue'
-    import { computed, type PropType } from 'vue'
-    import type { ComponentSize } from '@components-types'
+
+    import { type PropType, computed } from 'vue'
+
     import EButton from './EButton.vue'
 
     const props = defineProps({
@@ -36,7 +38,9 @@
             default: 'Cancel',
         },
         buttonType: {
-            type: String,
+            type: String as PropType<
+                'ok-only' | 'ok-cancel' | 'cancel-only' | 'none'
+            >,
             default: 'ok-only',
             validate: (it: string) =>
                 ['ok-only', 'ok-cancel', 'cancel-only'].includes(it),
@@ -78,6 +82,7 @@
             'tw-max-w-xl': props.size == 'xl',
             'tw-max-w-2xl': props.size == '2xl',
             'tw-max-w-3xl': props.size == '3xl',
+            'tw-max-w-4xl': props.size == '4xl',
             'tw-max-w-[95%]': props.size == 'full',
         },
     ])
@@ -145,7 +150,7 @@
                                             buttonType
                                         )
                                     "
-                                    type="cancel"
+                                    variant="cancel"
                                     @click="cancelClicked">
                                     {{ cancelText }}
                                 </EButton>

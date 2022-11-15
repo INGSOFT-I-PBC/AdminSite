@@ -7,12 +7,18 @@ const savedTokens: Optional<JWTToken> = JSON.parse(
 )
 
 if (savedTokens) {
-    axios.defaults.headers.common = {
-        ...axios.defaults.headers.common,
-        Authorization: `Bearer ${savedTokens.access}`,
-    }
+    axios.defaults.headers.common[
+        'Authorization'
+    ] = `Bearer ${savedTokens.access}`
 }
 
 export * from './auth'
-export * from './warehouse'
+export * from './client'
+export * from './common'
+export * from './employee'
 export * from './items'
+export * from './order'
+export * from './provider'
+export * from './users'
+export * from './warehouse'
+export * from './payment'

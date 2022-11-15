@@ -1,10 +1,11 @@
-import { defineStore } from 'pinia'
-import axios from 'axios'
+/* eslint-disable  @typescript-eslint/no-non-null-assertion */
 import {
     SessionExpiredException,
     UndersiredStateError,
     UserNotLoggedInError,
 } from '@/exceptions'
+import axios from 'axios'
+import { defineStore } from 'pinia'
 
 const savedToken: JWTToken | null = JSON.parse(
     localStorage.getItem('accessToken') ?? 'null'
@@ -94,10 +95,9 @@ export const useAuthStore = defineStore('auth-store', {
                             'accessToken',
                             JSON.stringify(data)
                         )
-                        axios.defaults.headers.common = {
-                            ...axios.defaults.headers.common,
-                            Authorization: `Bearer ${this.jwtData?.access}`,
-                        }
+                        axios.defaults.headers.common[
+                            'Authorization'
+                        ] = `Bearer ${this.jwtData?.access}`
                         commit(data)
                     })
                     .catch(err => {
@@ -117,10 +117,11 @@ export const useAuthStore = defineStore('auth-store', {
 
         async logout() {
             try {
-                const data = await axios.post('/api/v1/logout', {
+                await axios.post('/api/v1/logout', {
                     refresh: this.jwtData?.refresh || '',
                 })
                 this.jwtData = null
+                axios.defaults.headers.common['Authorization'] = undefined
             } catch (error) {
                 if (!this.jwtData)
                     throw new UndersiredStateError(

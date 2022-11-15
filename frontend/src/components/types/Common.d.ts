@@ -1,4 +1,13 @@
-export type ComponentSize = 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | 'full'
+export type ComponentSize =
+    | 'sm'
+    | 'md'
+    | 'lg'
+    | 'xl'
+    | '2xl'
+    | '3xl'
+    | '4xl'
+    | '5xl'
+    | 'full'
 type Elevation = 'sm' | 'md' | 'lg' | 'xl' | 'xxl' | 'none' | ''
 export type BorderRadius =
     | 'sm'
@@ -48,5 +57,30 @@ export type HorizontalAlignment =
     | 'none'
 export type Alignment = VerticalAlignment | HorizontalAlignment
 export type Booleanish = 'true' | 'false' | '' | boolean
+
+export type InputType =
+    | 'text'
+    | 'checkbox'
+    | 'button'
+    | 'color'
+    | 'date'
+    | 'datetime'
+    | 'datetime-local'
+    | 'email'
+    | 'file'
+    | 'hidden'
+    | 'image'
+    | 'month'
+    | 'number'
+    | 'password'
+    | 'radio'
+    | 'range'
+    | 'reset'
+    | 'search'
+    | 'submit'
+    | 'tel'
+    | 'time'
+    | 'url'
+    | 'week'
 
 export default Elevation

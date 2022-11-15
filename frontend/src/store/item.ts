@@ -1,5 +1,6 @@
-import axios, { type AxiosResponse } from 'axios'
 import type Item from '@/interfaz/items'
+import type Status from '@/interfaz/items'
+import axios, { type AxiosResponse } from 'axios'
 
 /* eslint-disable */
 class ItemDataService {
@@ -49,26 +50,18 @@ class ItemDataService {
     }
 
     updateItem(pk: number, data: any): Promise<any> {
-        return axios.put(
-            `/api/v1/items/${pk}`,data,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+        return axios.put(`/api/v1/items/${pk}`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
             },
-
-        )
+        })
     }
     updateInventory(pk: number, data: any): Promise<any> {
-        return axios.put(
-            `/api/v1/inventory/${pk}`,data,
-            {
-                headers: {
-                    'Content-Type': 'multipart/form-data',
-                },
+        return axios.put(`/api/v1/inventory/${pk}`, data, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
             },
-
-        )
+        })
     }
 
     deleteItem(pk: number): Promise<any> {
@@ -81,6 +74,12 @@ class ItemDataService {
         return axios.delete(`/api/v1/inventory/${pk}`, {
             headers: {},
         })
+    }
+    async fetchStatus(name: string) {
+        const data = await (
+            await axios.get<Status>(`/api/v1/status?name=${name}`)
+        ).data
+        return data
     }
 }
 
