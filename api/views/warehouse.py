@@ -1,10 +1,11 @@
 from django.core.paginator import Paginator
 from django.db.models import OuterRef, Q, Subquery
 from django.http import JsonResponse
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import Inventory, OrderRequest, Purchase, PurchaseStatus, Warehouse
 from api.models.common import Status
@@ -260,12 +261,6 @@ class WhPurchaseView(APIView):
 
                     purchase["status"] = purchase_status.status.name
 
-                    first_purchase_status = PurchaseStatus.objects.filter(
-                        purchase__id=purchase.get("id")
-                    ).earliest("id")
-
-                    purchase["created_at"] = first_purchase_status.created_at
-
                 return JsonResponse(
                     {
                         "data": purchase_data,
@@ -405,3 +400,49 @@ class WhTomaFisicasView(APIView):
         except TypeError as e:
 
             return error_response("invalid params")
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 15
+    page_size_query_param = "per_page"
+    page_query_param = "page"
+
+
+class WhTomaFisicasViewSet(ModelViewSet):
+
+    queryset = Inventory.objects.all()
+    serializer_class = WhInventorySerializer
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = Inventory.objects.all()
+        params = self.request.query_params.copy()
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("warehouse_id", None):
+            queryset = queryset.filter(
+                warehouse=params.get("warehouse_id")
+            ).prefetch_related("item")
+
+        if params.get("item_name", None):
+            queryset = queryset.filter(
+                item__name__icontains=params.get("warehouse_name")
+            )
+
+        if params.get("min_quantity", None):
+            queryset = queryset.filter(quantity__gte=params.get("min_quantity"))
+
+        if params.get("max_quantity", None):
+            queryset = queryset.filter(quantity__lte=params.get("max_quantity"))
+
+        if params.get("from_date", None):
+            queryset = queryset.filter(updated_at__gte=(params["from_date"]))
+
+        if params.get("to_date", None):
+            to_date = params.get("to_date", None) + datetime.timedelta(days=1)
+            queryset = queryset.filter(updated_at__lte=to_date)
+
+        return queryset

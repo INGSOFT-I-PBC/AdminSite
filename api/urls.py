@@ -33,8 +33,10 @@ router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"providers", views.ProviderViewSet)
+router.register("purchase", views.PurchaseViewSet),
 router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"payment/all", views.FullPaymentViewSet)
+router.register(r"inventory", views.InventoryViewSet)
 
 
 urlpatterns = [

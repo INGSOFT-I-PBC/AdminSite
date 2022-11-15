@@ -84,7 +84,7 @@
 
     const purchasesFields: TableField[] = [
         '#',
-        'Fecha Creación',
+        'FechaCreación',
         { label: 'Codigo Orden', key: 'reference' },
         'Proveedor',
         'Entregado',
@@ -203,7 +203,7 @@
                     paginated_opt
                 )
                 activeWhInformation.value.inventory = res.data.data
-                invTabController.value = res.data.total
+                invTabController.value.totalRows = res.data.total
                 break
             }
             case 'purchases': {
@@ -212,7 +212,7 @@
                     paginated_opt
                 )
                 activeWhInformation.value.purchases = res.data.data
-                purchaseTabController.value = res.data.total
+                purchaseTabController.value.totalRows = res.data.total
                 break
             }
             case 'tomas-fisicas': {
@@ -221,7 +221,7 @@
                     paginated_opt
                 )
                 activeWhInformation.value.tomasFisicas = res.data.data
-                tomasFisicasTabController.value = res.data.total
+                tomasFisicasTabController.value.totalRows = res.data.total
                 break
             }
             case 'movements': {
@@ -230,7 +230,7 @@
                     paginated_opt
                 )
                 activeWhInformation.value.movements = res.data.data
-                movementTabController.value = res.data.total
+                movementTabController.value.totalRows = res.data.total
                 break
             }
         }
@@ -630,7 +630,9 @@
                                         id="wh-purchase-search"
                                         placeholder="Busqueda de Compra">
                                     </b-form-input>
+                                    <input type="date" />
                                 </b-form>
+
                                 <e-button
                                     @click.prevent=""
                                     type="button"
@@ -660,7 +662,7 @@
                                     {{ index + 1 }}
                                 </template>
                                 <template #cell(FechaCreación)="{ item }">
-                                    {{ truncate(item.created_at, 10, '') }}
+                                    {{ truncate(item.aproved_at, 10, '') }}
                                 </template>
                                 <template #cell(Entregado)="{}">
                                     <b-form-checkbox

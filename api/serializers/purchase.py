@@ -15,6 +15,7 @@ class PurchaseSerializer(serializers.ModelSerializer):
         model = Purchase
         fields = [
             "id",
+            "aproved_at",
             "img_details",
             "invoice",
             "provider",
