@@ -7,6 +7,7 @@ from api.views.inventoryviews import *
 from api.views.invoiceview import *
 from api.views.itemview import *
 from api.views.itemviews import ItemView
+from api.views.orders import *
 from api.views.payment import *
 from api.views.providers import *
 from api.views.provinceview import *
@@ -58,4 +59,6 @@ __all__ = [
     "create_provider",
     "GroupView",
     "PaginatedIItemViewSet",
+    "get_full_order",
+    "create_order_request",
 ]
