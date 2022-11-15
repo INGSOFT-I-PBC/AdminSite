@@ -1,18 +1,19 @@
 <script lang="ts">
-    import { defineComponent } from 'vue'
     import type Item from '@/interfaz/items'
-    import type { Status } from '@store/types'
     import ItemDataService from '@/store/item'
     import SequenceDataService from '@/store/sequence'
-    import { useAuthStore } from '@store'
-    import ModalDialog from '@components/custom/ModalDialog.vue'
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
-    import { useRoute, useRouter } from 'vue-router'
-    import { Field, ErrorMessage } from 'vee-validate'
-    import { Form as EForm } from 'vee-validate'
+    import ModalDialog from '@components/custom/ModalDialog.vue'
+    import { useAuthStore } from '@store'
+    import type { Status } from '@store/types'
     import type { Sequence } from '@store/types'
+    import { ErrorMessage, Field } from 'vee-validate'
+    import { Form as EForm } from 'vee-validate'
     import { string } from 'yup'
+
+    import { defineComponent } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
 
     export default defineComponent({
         name: 'AddProductView',
@@ -141,7 +142,7 @@
                 formDataItem.append('updated_at', this.hoy.toISOString())
                 formDataItem.append('brand', this.entrada.brand)
                 formDataItem.append('img', this.image_field)
-                formDataItem.append('iva', this.entrada.iva.toString())
+                formDataItem.append('iva', (this.entrada.iva / 100).toString())
                 formDataItem.append('model', this.entrada.model)
                 formDataItem.append('name', this.entrada.name)
                 formDataItem.append('price', this.entrada.price.toString())

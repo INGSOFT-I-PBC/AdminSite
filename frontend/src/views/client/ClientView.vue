@@ -5,16 +5,16 @@
     import ERow from '@components/custom/ERow.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import { onMounted } from 'vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
-
     import { useClientStore } from '@store/client'
     import type { Client } from '@store/types'
     //import { useToast } from 'vue-toastification'
-
     import type { TableField } from 'bootstrap-vue-3'
 
+    import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
+
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)

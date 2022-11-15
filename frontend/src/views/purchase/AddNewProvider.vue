@@ -159,12 +159,14 @@
     import Title from '@components/custom/Title.vue'
     import { useProviderStore } from '@store/provider'
     import type { Provider, ProviderModel } from '@store/types/provider.model'
-    import type { Coordinate } from 'ol/coordinate'
     import type MapBrowserEvent from 'ol/MapBrowserEvent'
-    import { defineRule, Field, type SubmissionContext } from 'vee-validate'
-    import { computed, type PropType } from 'vue'
-    import { useToast } from 'vue-toastification'
+    import type { Coordinate } from 'ol/coordinate'
+    import { Field, type SubmissionContext, defineRule } from 'vee-validate'
     import { object, string } from 'yup'
+
+    import { type PropType, computed } from 'vue'
+    import { useToast } from 'vue-toastification'
+
     defineRule('required', (value: unknown): boolean | string => {
         switch (typeof value) {
             case 'string':

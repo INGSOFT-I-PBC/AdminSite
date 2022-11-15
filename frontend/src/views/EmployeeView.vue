@@ -4,9 +4,10 @@
     import ERow from '@components/custom/ERow.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Table from '@components/holders/Table.vue'
-    import { reactive } from 'vue'
 
+    import { reactive } from 'vue'
     import { useRouter } from 'vue-router'
+
     const router = useRouter()
 
     const model = ref(null)

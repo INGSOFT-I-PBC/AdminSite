@@ -3,7 +3,8 @@
         HorizontalAlignment,
         VerticalAlignment,
     } from '@components-types'
-    import { computed, type PropType } from 'vue'
+
+    import { type PropType, computed } from 'vue'
 
     const props = defineProps({
         alignV: {

@@ -15,6 +15,7 @@ import {
     faBan,
     faBars,
     faBox,
+    faCancel,
     faCheck,
     faChevronDown,
     faChevronLeft,
@@ -60,6 +61,7 @@ import {
 
 export const awesomeIcons: Array<IconDefinition> = [
     faEdit,
+    faCancel,
     faCircleUser,
     faCheckCircle,
     faCheck,

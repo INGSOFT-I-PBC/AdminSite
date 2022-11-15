@@ -2,8 +2,10 @@
     import EButton from '@components/custom/EButton.vue'
     import ECard from '@components/custom/ECard.vue'
     import { useAuthStore } from '@store'
+
     import { ref } from 'vue'
     import { useRouter } from 'vue-router'
+
     import InputText from '../../components/custom/InputText.vue'
     import LoadingBar from '../../components/custom/LoadingBar.vue'
 
