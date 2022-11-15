@@ -8,79 +8,114 @@ on:
       - main
       - deploy-workflow
   workflow_dispatch:
- 
+
 permissions:
     contents: read
-      
+
 # Definition of the jobs for deployment at pythonanywhere
 jobs:
-  build_front:
-    name: Build/Frontend
-    runs-on: ubuntu-latest
-    
-    steps:
-        - uses: actions/checkout@v3
-        
-        - name: Install NodeJS
-          uses: actions/setup-node@v3
-          with:
-            node-version: 16
-        
-        - uses: pnpm/action-setup@v2.2.4
-          name: Set-up pnpm
-          id: pnpm-install
-          with:
-            version: 7
-            run_install: false
-            
-        - name: Configure .env
-          env:
-            BACKEND_HOST: ${{ secrets.BACKEND_HOST }}
-          run: |
-            echo "VITE_BACKEND_URL='$BACKEND_HOST'" >> .env
-            cat .env
-            
-        - name: Install dependencies
-          run: |
-            cd frontend/
-            pnpm install
-        - name: Build static files
-          run: |
-            cd frontend
-            pnpm build
-            
-  build_backend:
-    name: Build/Backend
-    runs-on: ubuntu-latest
-    
-    steps:
-        - uses: actions/checkout@v3
-        - name: Test project status
-          run: ls -ahl
-    
+    test_front:
+        name: Run test on frontend
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout repo
+              uses: actions/checkout@v3
+
+            - name: Install Node.js
+              uses: actions/setup-node@v3
+              with:
+                node-version: 16
+
+            - uses: pnpm/action-setup@v2.2.4
+              name: Install pnpm
+              id: pnpm-install
+              with:
+                version: 7
+                run_install: false
+
+            - name: Install dependencies
+              env:
+                VITE_BACKEND_URL: ${{ secrets.BACKEND_HOST }}
+              run: |
+                cd frontend/
+                pnpm install
+
+            - name: Run linter
+              run: |
+                cd frontend/
+                pnpm lint
+
+            - name: Running Vitests
+              run: |
+                cd frontend/
+                pnpm test:unit
+
+    test_backend:
+        name: Run tests on backend
+        runs-on: ubuntu-latest
+        strategy:
+            max-parallel: 4
+            matrix:
+                db-engine: [mysql]
+                db-port: [3306]
+                mysql-user: [root]
+                mysql-password:
+                    [
+                        LOCALTESTING3397uFwK6Ux6NR9nazYBiZbB0Lujh8acdkdHAodEAUk9p4c/kFfMKiXFUWNUucJV,
+                    ]
+                app-db: [production]
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
+            - name: Set up Python
+              uses: actions/setup-python@v4
+              with:
+                  python-version: 3.9
+
+            - name: Create dummy file for Docker Compose
+              run: |
+                  touch .env
+            - name: Run application on Docker Compose
+              env:
+                  SECRET_KEY: ${{ secrets.CI_DJANGO_SECRET_KEY }}
+                  DEBUG: false
+                  DB_ENGINE: ${{ matrix.db-engine }}
+                  DB_NAME: ${{ matrix.app-db }}
+                  DB_USER: ${{ matrix.mysql-user }}
+                  MYSQL_ROOT_PASSWORD: ${{ matrix.mysql-password }}
+                  DB_PASSWORD: ${{ matrix.mysql-password }}
+                  JWT_PUBLIC_KEY: ${{ secrets.PUBLIC_KEY }}
+                  JWT_PRIVATE_KEY: ${{ secrets.PRIVATE_KEY }}
+              run: |
+                  docker-compose up -d
+
   deploy:
     name: Deploy to PythonAnywhere
     runs-on: ubuntu-latest
-#    needs: build_front
+    needs:
+        - test_front
+        - test_backend
     environment: production
     env:
       GIT_PASSPHRASE: ${{ secrets.GIT_PASSPHRASE }}
-    
+
     steps:
         - uses: actions/checkout@v3
 
-        - name: Check for build status
-          run: |
-            echo Showing root directory 
-            ls .
-            echo Showing frontend directory ls
-            ls frontend/
-            echo Showing static directory
-            ls static
-            echo GIT STATUS
-            git status
-          
-        - name: Stablish connection with ssh
+        - name: Build frontend
+            run: |
+                cd frontend
+                pnpm build
+
+        - name: Cleanup node_modules
+            run: |
+                cd frontend
+                rm -rf node_modules/
+
+        - name: Delete previous compiled frontend
           uses: appleboy/ssh-action@master
           with:
             host: ${{ secrets.HOST }}
@@ -88,6 +123,26 @@ jobs:
             password: ${{ secrets.PASSWORD }}
             port: ${{secrets.PORT }}
             script: |
-              cd ERPt
-              git pull 
-        
+              cd web
+              rm -rf static/dist
+
+        - name: Copy file via ssh password
+          uses: appleboy/scp-action@master
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWORD }}
+            port: ${{ secrets.PORT }}
+            source: "."
+            target: "~/web"
+
+        - name: Apply missing migrations
+          uses: appleboy/ssh-action@master
+          with:
+            host: ${{ secrets.HOST }}
+            username: ${{ secrets.USERNAME }}
+            password: ${{ secrets.PASSWORD }}
+            port: ${{secrets.PORT }}
+            script: |
+              cd web
+              ./manage.py migrate
