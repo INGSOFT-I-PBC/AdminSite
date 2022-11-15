@@ -152,13 +152,16 @@ jobs:
 
             - name: Delete previous compiled frontend
               uses: appleboy/ssh-action@master
+              env:
+                APP_DIR: ${{ secrets.APP_DIR }}
               with:
                 host: ${{ secrets.HOST }}
                 username: ${{ secrets.USERNAME }}
                 password: ${{ secrets.PASSWORD }}
                 port: ${{secrets.PORT }}
+                envs: APP_DIR
                 script: |
-                    cd web
+                    cd $APP_DIR
                     rm -rf static/dist
 
             - name: Copy file via ssh password
@@ -169,15 +172,20 @@ jobs:
                 password: ${{ secrets.PASSWORD }}
                 port: ${{ secrets.PORT }}
                 source: "."
-                target: "~/web"
+                target: ${{ secrets.APP_DIR }}
 
             - name: Apply missing migrations
               uses: appleboy/ssh-action@master
+              env:
+                RELOAD_LOC: ${{ secrets.RELOAD_LOC }}
+                APP_DIR: ${{ secrets.APP_DIR }}
               with:
                 host: ${{ secrets.HOST }}
                 username: ${{ secrets.USERNAME }}
                 password: ${{ secrets.PASSWORD }}
                 port: ${{secrets.PORT }}
+                envs: APP_DIR,RELOAD_LOC
                 script: |
-                    cd web
+                    cd $APP_DIR
                     ./manage.py migrate
+                    touch $RELOAD_LOC
