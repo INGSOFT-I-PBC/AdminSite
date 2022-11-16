@@ -1,12 +1,13 @@
+import datetime
+import os
 from dataclasses import field
 from distutils.command.upload import upload
+
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from .common import Status, TimestampModel
 from .users import Employee
-from django.core.validators import MinValueValidator
-import os
-import datetime
 
 
 class Category(TimestampModel):
@@ -57,7 +58,9 @@ def filepath(request, filename):
 class Item(TimestampModel):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     brand = models.CharField(max_length=128)
-    category = models.ForeignKey(Category, on_delete=models.RESTRICT)
+    category = models.ForeignKey(
+        Category, on_delete=models.RESTRICT, related_name="category"
+    )
     created_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="created_by"
     )
