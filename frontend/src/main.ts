@@ -15,10 +15,7 @@ import '@/scss/styles.scss'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
-import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
-import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap.css'
 
 import '../scss/datepicker-theme.scss'
@@ -41,8 +38,9 @@ const defToastOptions: PluginOptions = {
 }
 awesomeIcons.forEach(icon => library.add(icon))
 
-if (!import.meta.env.VITE_BACKEND_URL)
+if (!import.meta.env.VITE_BACKEND_URL) {
     throw new Error('No API url was provided')
+}
 
 app.use(createPinia())
 app.use(BootstrapVue3)
