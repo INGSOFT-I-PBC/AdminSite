@@ -48,8 +48,9 @@
     const productModalShow = ref<boolean>(false)
     const saveModalShow = ref<boolean>(false)
     const saveClientModalShow = ref<boolean>(false)
-
+    const savePayModalShow = ref<boolean>(false)
     const showWaitOverlay = ref<boolean>(true)
+    const moneyreturned = ref<number>(0)
     const serverOpts = ref<IServerOptions>({
         page: 1,
         rowsPerPage: 5,
@@ -196,8 +197,7 @@
             formSequence
         )
     }
-
-    function saveInvoice() {
+    function modalsInvoice() {
         const { value: data } = form
         if (
             formClient.value.id == 0 ||
@@ -210,12 +210,19 @@
                     : 'Llene los campos para continuar'
             )
             return
+        } else {
+            return (savePayModalShow.value = true)
         }
+    }
+
+    function saveInvoice() {
+        const { value: data } = form
+
         const saveData: Invoice = {
             code: codeInvoice.value,
             client: formClient.value.id,
             iva: Number(itemForm.value.totalIVA),
-            payment_method: data.payment_method.id,
+            payment_method: (data.payment_method as IPayment).id,
             return_deadline: return_deadline,
             emission: emission,
             status: 2,
@@ -385,21 +392,6 @@
             Number(itemForm.value.totalIVA)
         ).toFixed(2)
     }
-    function changeCountry(event: any) {
-        if (
-            event.target.options[event.target.options.selectedIndex].text ==
-            'En efectivo'
-        ) {
-            tipopago.value = true
-        } else {
-            tipopago.value = false
-        }
-    }
-
-    function onSubmit(value: any) {
-        saveModalShow.value = true
-        console.log(value)
-    }
 
     function validateID(value: any) {
         // if the field is empty
@@ -413,140 +405,28 @@
         return true
     }
 
-    function validateCell(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
+    function modalmethodpayment() {
+        if (
+            moneyreturned.value < 0 ||
+            moneyreturned.value < Number(itemForm.value.totalInvoice)
+        ) {
+            return toast.error('Cantidad Ingresada Incorrecta')
         }
-        if (value.length != 10 || isNaN(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateId(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (value.length != 10 || isNaN(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateName(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-    function validateDate(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        return true
-    }
-
-    function validateDate2(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        return true
-    }
-
-    function validateEmail(value: any) {
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        const correo = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
-        if (!correo.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateProvincia(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateSucursal(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-    function validateDireccion(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        return true
-    }
-
-    function validatePago(value: any) {
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-        if (tipopago.value == false && !value) {
-            return 'Este campo es necesario '
-        }
-
-        if (tipopago.value == false && isNaN(value)) {
-            return 'Inválido'
-        }
-        if (tipopago.value == false && regex.test(value)) {
-            return 'Inválido'
-        }
-
-        if (tipopago.value == true) {
-            return true
-        }
-        return true
+        return (saveModalShow.value = true)
     }
     function onsaveClient() {
         saveClientModalShow.value = true
     }
+    const returnedMoney = computed(() => {
+        if (
+            moneyreturned.value > 0 &&
+            moneyreturned.value > Number(itemForm.value.totalInvoice)
+        )
+            return moneyreturned.value - Number(itemForm.value.totalInvoice)
+        else {
+            return 0
+        }
+    })
 
     onMounted(() => {
         return loadSequence('INVOICE'), (serverOpts.value.buscar = '')
@@ -566,6 +446,47 @@
                 <ECol>
                     <AddClientBillView> </AddClientBillView>
                 </ECol>
+            </ERow>
+        </ModalDialog>
+        <ModalDialog
+            id="methodpay-modal"
+            v-model:show="savePayModalShow"
+            ok-text="Facturar"
+            @ok="modalmethodpayment"
+            title="Dinero devuelto">
+            <ERow>
+                <span
+                    class="tw-w-1/2 tw-font-bold col-6 tw-text-center tw-text-2xl"
+                    >TOTAL:</span
+                >
+                <span
+                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-xl"
+                    >{{ itemForm.totalInvoice }}</span
+                >
+            </ERow>
+            <ERow>
+                <span
+                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-2xl"
+                    >RECIBIDO:
+                </span>
+                <input
+                    :required="true"
+                    min="1"
+                    pattern="^[0-9]+"
+                    id="cantidad"
+                    v-model="moneyreturned"
+                    type="number"
+                    class="tw-w-1/2 tw-pr-0 tw-font-bold col-6 tw-text-center tw-text-2xl" />
+            </ERow>
+            <ERow>
+                <span
+                    class="tw-w-1/2 tw-font-bold col-6 tw-text-center tw-text-2xl"
+                    >DEVUELTO:
+                </span>
+                <span
+                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-2xl"
+                    >{{ returnedMoney }}</span
+                >
             </ERow>
         </ModalDialog>
 
@@ -775,7 +696,7 @@
                     <EButton
                         left-icon="fa-floppy-disk"
                         icon-provider="awesome"
-                        @click="onSubmit">
+                        @click="modalsInvoice">
                         Facturar
                     </EButton>
                 </ECol>
