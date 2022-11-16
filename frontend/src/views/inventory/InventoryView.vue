@@ -5,6 +5,7 @@
     import ECard from '@components/custom/ECard.vue'
     import ECol from '@components/custom/ECol.vue'
     import ERow from '@components/custom/ERow.vue'
+    import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Table from '@components/holders/Table.vue'
@@ -16,22 +17,80 @@
 
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
-    //
-    const templateList = [
-        { label: 'Por código', value: '1' },
-        { label: 'Por nombre', value: '2' },
-        {
-            label: 'Por categoría',
-            value: '3',
-        },
-        { label: 'Por cantidad', value: '4' },
-    ]
+    const filtro = ref<boolean>(true)
+    const items3: product[] = []
 
+    function cleanFilters() {
+        filterText.value = ''
+        items3.splice(0, items3.length)
+        tableSettings.rows = items2
+    }
+
+    function makeSearch(valor: any) {
+        if (filterText.value != '') {
+            showWaitOverlay.value = true
+            ItemDataService.getAll()
+                .then(response => {
+                    items = response.data
+                    console.log(items)
+                    for (let i = 0; i < items.length; i++) {
+                        if (
+                            (filterText.value == items[i].codename_Item &&
+                                valor == 'Código') ||
+                            (filterText.value == items[i].nombreItem &&
+                                valor == 'Nombre') ||
+                            (filterText.value == items[i].category_name_Item &&
+                                valor == 'Categoría') ||
+                            (filterText.value == items[i].quantity &&
+                                valor == 'Stock')
+                        ) {
+                            items3.push({
+                                code: items[i].codename_Item,
+                                name: items[i].nombreItem,
+                                marc: items[i].brandItem,
+                                model: items[i].modelItem,
+                                category: items[i].category_name_Item,
+                                descrip: items[i].brandItem,
+                                price: items[i].priceItem,
+                                stock: items[i].quantity,
+                                state: items[i].status_id_Item,
+                                actions: items[i].item_id,
+                                id_item: items[i].item_id,
+                                id: items[i].id,
+                            })
+                        }
+                    }
+                    tableSettings.rows = items3
+                    console.log(items3)
+                    showWaitOverlay.value = false
+                    console.log(tableSettings.rows)
+                })
+                .catch((e: Error) => {
+                    console.log(e)
+                })
+        }
+    }
+
+    const filterOption = ref<
+        {
+            label: int
+            value: 'code' | 'stock'
+
+            label: string
+            value: 'name' | 'category'
+        }[]
+    >([
+        { label: 'Código', value: 'code' },
+        { label: 'Nombre', value: 'name' },
+        { label: 'Categoría', value: 'category' },
+        { label: 'Stock', value: 'stock' },
+    ])
+    const filterName = ref(filterOption.value[0])
+    const filterText = ref<string>('')
     const model = ref({})
     const productModalShow = ref(false)
     const productModalDelete = ref(false)
     let num = 0
-
     const tableSettings = reactive<TableHeaderSettings>({
         headers: [
             {
@@ -77,7 +136,6 @@
         ],
         rows: [],
     })
-
     interface productModel {
         date: string
         hour: string
@@ -85,7 +143,6 @@
         id: string
         name: string
     }
-
     const selectedProduct: Optional<any> = ref(null)
     function showProduct(product: product) {
         selectedProduct.value = product
@@ -110,45 +167,42 @@
     }
     let items: Item[]
     const items2: product[] = []
-
     async function showAllProducts() {
         ItemDataService.getAll()
             .then(response => {
                 items = response.data
                 console.log(items)
-
-                for (let i = 0; i < items.length; i++) {
-                    items2.push({
-                        code: items[i].codename_Item,
-                        name: items[i].nombreItem,
-                        marc: items[i].brandItem,
-                        model: items[i].modelItem,
-                        category: items[i].category_name_Item,
-                        descrip: items[i].brandItem,
-                        price: items[i].priceItem,
-                        stock: items[i].quantity,
-                        state: items[i].status_id_Item,
-                        actions: items[i].item_id,
-                        id_item: items[i].item_id,
-                        id: items[i].id,
-                    })
+                if (filterText.value == '') {
+                    for (let i = 0; i < items.length; i++) {
+                        items2.push({
+                            code: items[i].codename_Item,
+                            name: items[i].nombreItem,
+                            marc: items[i].brandItem,
+                            model: items[i].modelItem,
+                            category: items[i].category_name_Item,
+                            descrip: items[i].brandItem,
+                            price: items[i].priceItem,
+                            stock: items[i].quantity,
+                            state: items[i].status_id_Item,
+                            actions: items[i].item_id,
+                            id_item: items[i].item_id,
+                            id: items[i].id,
+                        })
+                    }
                 }
 
                 tableSettings.rows = items2
                 showWaitOverlay.value = false
-
                 console.log(tableSettings.rows)
             })
             .catch((e: Error) => {
                 console.log(e)
             })
     }
-
     function go(id: number): void {
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
-
     function acceptace(): void {
         ItemDataService.deleteInventory(items2[num].id)
             .then(response => {
@@ -164,12 +218,10 @@
                 console.log(e)
             })
     }
-
     function deleteProduct(index: number): void {
         num = index
         productModalDelete.value = true
     }
-
     function goAgregar(): void {
         router.push({ path: '/inventario/agregar' })
     }
@@ -257,24 +309,23 @@
                     <EButton variant="secondary" @click="goAgregar"
                         >+ Agregar producto
                     </EButton>
-
-                    <ECol cols="9" md="6" xl="4">
+                    <ECol cols="3" md="3" xl="3">
                         <ListBox
-                            v-model="model"
-                            top-label="Seleccione un filtro"
-                            :options="templateList" />
+                            :clearable="true"
+                            v-model="filterName"
+                            top-label="Filtrar por:"
+                            :options="filterOption" />
                     </ECol>
-
-                    <form class="d-flex" role="search">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Buscar productos"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
+                    <ECol cols="3" md="3" xl="3">
+                        <InputText
+                            v-model="filterText"
+                            label="Cuadro de búsqueda"
+                            :placeholder="`Búsqueda por ${filterName.label}`" />
+                    </ECol>
+                    <EButton @click="makeSearch(`${filterName.label}`)"
+                        >Buscar</EButton
+                    >
+                    <EButton @click="cleanFilters">Limpiar</EButton>
                 </div>
             </nav>
 
@@ -286,7 +337,10 @@
                         <div v-if="colIdx == 8">
                             <div class="form-check form-switch">
                                 <input
-                                    v-if="items2[rowIdx].state == 1"
+                                    v-if="
+                                        items2[rowIdx].state == 1 ||
+                                        items2[rowIdx].state == 2
+                                    "
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
@@ -297,8 +351,7 @@
                                     class="form-check-input"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault"
-                                    checked />
+                                    id="flexSwitchCheckDefault" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>
