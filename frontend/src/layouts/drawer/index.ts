@@ -90,9 +90,9 @@ export const menus: MenuItem[] = [
                 routeName: 'movimiento-inventario-view',
             },
             {
-                label: 'Proveedores',
-                path: '/bodegas/proveedores',
-                routeName: 'proveedores-view',
+                label: 'Mantenimiento Inventario',
+                path: '/bodegas/mantenimiento/inventario',
+                routeName: 'warehouse-management-inventory',
             },
         ],
     },
