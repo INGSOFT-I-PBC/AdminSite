@@ -73,8 +73,8 @@
 
     const filterOption = ref<
         {
-            label: string
-            value: 'name' | 'category'
+            label: string | int
+            value: 'name' | 'category' | 'code' | 'stock'
         }[]
     >([
         { label: 'Código', value: 'code' },
