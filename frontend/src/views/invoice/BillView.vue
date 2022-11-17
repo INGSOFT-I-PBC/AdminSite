@@ -1,29 +1,27 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
-    import { onMounted } from 'vue'
-
-    import type { IClient, Invoice, IPayment } from '@store/types'
     import { useInvoiceStore } from '@store/invoice'
+    import type { IClient, IPayment, Invoice } from '@store/types'
     //import { useToast } from 'vue-toastification'
-
     import type { TableField } from 'bootstrap-vue-3'
 
+    import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
+
+    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+
     const router = useRouter()
+    const productModalShow = ref(false)
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
     const itemStore = useInvoiceStore()
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
-    const invoiceModalDelete = ref(false)
-    let id2 = 0
-    let index2 = 0
 
     const templateList = [
         { label: 'Por fecha de creación', value: '1' },
@@ -58,13 +56,15 @@
     type Form = {
         items: Invoice[]
     }
-    /*type ItemForm = {
-        item: Client | null
+    type DeleteInvoice = {
+        id: number
+        index: number
     }
 
-    const itemForm = ref<ItemForm>({
-        item: null,
-    })*/
+    const itemForm = ref<DeleteInvoice>({
+        id: 0,
+        index: 0,
+    })
     const model = ref({})
 
     const loadItems = async () => {
@@ -85,16 +85,9 @@
         console.log(index)
         form.value.items.splice(index, 1)
     }
-    function deleteProduct(id: number, index: number): void {
-        id2 = id
-        index2 = index
-        invoiceModalDelete.value = true
-    }
-    function acceptace(): void {
-        itemStore.removeInvoice(id2)
-        removeItem(index2)
-        id2 = 0
-        index2 = 0
+    function deleteProduct(): void {
+        itemStore.removeInvoice(itemForm.value.id)
+        removeItem(itemForm.value.index)
     }
 
     function go(): void {
@@ -104,6 +97,11 @@
         console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
     }
+    function onSubmit(id: number, index: number) {
+        itemForm.value.id = id
+        itemForm.value.index = index
+        productModalShow.value = true
+    }
 
     onMounted(() => {
         return onShowModalClick()
@@ -112,6 +110,17 @@
 
 <template>
     <main>
+        <ModalDialog
+            id="product-modal"
+            v-model:show="productModalShow"
+            title="Anular Facturar"
+            ok-text="Aceptar"
+            @ok="deleteProduct()"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de anular la factura?
+            </h1>
+        </ModalDialog>
         <ModalDialog v-model:show="itemInfoShow" size="xl">
             <template #dialog-title>
                 <b class="tw-text-2xl">Detalle de la factura </b>
@@ -165,18 +174,6 @@
                     </template>
                 </div>
             </div>
-        </ModalDialog>
-
-        <ModalDialog
-            id="invoice-modal"
-            v-model:show="invoiceModalDelete"
-            title="Anular Factura"
-            ok-text="Anular"
-            @ok="acceptace"
-            button-type="ok-cancel">
-            <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Está seguro de anular la Factura ?
-            </h1>
         </ModalDialog>
 
         <ECard>
@@ -237,12 +234,12 @@
                                 >Editar</e-button
                             >
                             <e-button
-                                left-icon="fa-trash-can"
+                                left-icon="fa-cancel"
                                 variant="cancel"
-                                @click="deleteProduct(item['id'], index)">
+                                @click="onSubmit(item['id'], index)">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"
-                                    >Eliminar</span
+                                    >Anular</span
                                 ></e-button
                             >
                         </div>

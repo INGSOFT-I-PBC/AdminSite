@@ -51,7 +51,14 @@
 
     <component :is="layout" :breadcrumb="breadcrumb" :title="currentTitle">
         <RouterView v-slot="{ Component }">
-            <Transition>
+            <!-- <Transition> -->
+            <Transition
+                enter-active-class="tw-transition-all tw-duration-350 tw-ease-in"
+                enter-from-class="tw-opacity-10 tw-translate-x-full tw-scale-40"
+                enter-to-class="tw-opacity-100 tw-scale-100"
+                leave-active-class="tw-transition-all tw-duration-400 tw-ease-in"
+                leave-from-class="tw-opacity-100 tw-scale-40"
+                leave-to-class="tw-opacity-0 tw-translate-x-64 tw-scale-60">
                 <component :is="Component" />
             </Transition>
         </RouterView>

@@ -1,6 +1,8 @@
 <script setup lang="ts">
     import { useAuthStore } from '@/store/auth'
+
     import ECard from '../components/custom/ECard.vue'
+
     const authStore = useAuthStore()
 </script>
 

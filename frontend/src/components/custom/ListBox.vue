@@ -5,7 +5,8 @@
         ListboxOption,
         ListboxOptions,
     } from '@headlessui/vue'
-    import { computed, type PropType } from 'vue'
+
+    import { type PropType, computed } from 'vue'
     import VueFeather from 'vue-feather'
 
     type ValidListboxItem = ListboxItem & Record<string | number, unknown>

@@ -1,4 +1,21 @@
 <script setup lang="ts">
+    import { useItemStore } from '@store/items'
+    import { useOrderStore } from '@store/order'
+    import {
+        type Item,
+        type MessageResponse,
+        type Warehouse,
+        isMessage,
+    } from '@store/types'
+    import type { ItemProps } from '@store/types/items.model'
+    import type { OrderSaveData } from '@store/types/orders.model'
+    import { useWarehouseStore } from '@store/warehouse'
+    import type { TableField } from 'bootstrap-vue-3'
+
+    import { computed, watch } from 'vue'
+    import type { ServerOptions } from 'vue3-easy-data-table'
+    import { useToast } from 'vue-toastification'
+
     import {
         EButton,
         ECard,
@@ -11,21 +28,6 @@
         Title,
         WaitOverlay,
     } from '@custom-components'
-    import { useItemStore } from '@store/items'
-    import { useOrderStore } from '@store/order'
-    import {
-        isMessage,
-        type Item,
-        type MessageResponse,
-        type Warehouse,
-    } from '@store/types'
-    import type { ItemProps } from '@store/types/items.model'
-    import type { OrderSaveData } from '@store/types/orders.model'
-    import { useWarehouseStore } from '@store/warehouse'
-    import type { TableField } from 'bootstrap-vue-3'
-    import { computed, watch } from 'vue'
-    import { useToast } from 'vue-toastification'
-    import type { ServerOptions } from 'vue3-easy-data-table'
 
     /**
      * Utility object definitions

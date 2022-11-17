@@ -1,4 +1,11 @@
 <script setup lang="ts">
+    import { type ProviderSearchParam, useProviderStore } from '@store/provider'
+    import type { Provider } from '@store/types/provider.model'
+    import { BBadge, BvEvent } from 'bootstrap-vue-3'
+    import * as yup from 'yup'
+
+    import { useToast } from 'vue-toastification'
+
     import {
         EButton,
         EButtonGroup,
@@ -8,12 +15,9 @@
         Title,
         WaitOverlay,
     } from '@custom-components'
-    import { useProviderStore, type ProviderSearchParam } from '@store/provider'
-    import type { Provider } from '@store/types/provider.model'
-    import { BBadge, BvEvent } from 'bootstrap-vue-3'
-    import { useToast } from 'vue-toastification'
-    import * as yup from 'yup'
+
     import AddNewProvider from './AddNewProvider.vue'
+
     /**
      * Type helper definitions for this view
      */

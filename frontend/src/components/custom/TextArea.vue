@@ -4,6 +4,7 @@
         Orientation,
         TextColorMode,
     } from '@components-types'
+
     import type { PropType } from 'vue'
 
     const props = defineProps({

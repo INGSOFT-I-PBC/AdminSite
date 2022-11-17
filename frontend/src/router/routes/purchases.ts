@@ -17,4 +17,17 @@ export const purchases: Array<RouteConfig> = [
             pageTitle: 'Proveedores',
         },
     },
+    {
+        name: 'purchase-approval-orders',
+        path: '/compras/aprobacion-ordenes-compra',
+        component: () => import('@views/purchase/OrderApprovalView.vue'),
+        meta: {
+            breadcrumb: [
+                { text: 'Compras' },
+                { text: 'ordenes de compras' },
+                { text: 'aprobación' },
+            ],
+            pageTitle: 'Aprobación de Órdenes de compra',
+        },
+    },
 ]

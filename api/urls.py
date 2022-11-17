@@ -8,7 +8,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from api import views
 from api.views import *
 from api.views.clientview import ClientView
-from api.views.invoiceview import InvoiceView
+from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
 from api.views.itemviews import ItemView
 from api.views.orders import OrderRequestView
 from api.views.provinceview import ProvinceCityView
@@ -16,6 +16,10 @@ from api.views.sequence import *
 from api.views.statusview import StatusView
 from api.views.warehouse import *
 
+""" Definition of paginated data
+ This urls are read-only, for batch creation/update
+ an specialized route must be created on the  `urlpatterns` field
+"""
 router = routers.DefaultRouter(trailing_slash=False)
 router.register(r"users", views.UserViewSet)
 router.register(r"permissions", views.PermissionsViewSet)
@@ -24,6 +28,7 @@ router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"invoices/all", views.FullInvoiceViewSet)
+router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"clients/all", views.FullClientViewSet)
 router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
@@ -68,7 +73,9 @@ urlpatterns = [
     path("employee/<str:cid>/activate", views.activate_employee),
     path("employee/<str:cid>/inactivate", views.inactivate_employee),
     # Order management
-    path("order", OrderRequestView.as_view()),
+    path("order/<int:id>", OrderRequestView.as_view()),
+    path("order", create_order_request),
+    path("detailed/order/<int:id>", views.get_full_order),
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),
     path("provinces", ProvinceCityView.as_view()),
@@ -91,5 +98,11 @@ urlpatterns = [
         name="search-invoice-client",
     ),
     path("invoice", InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
+    path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
+    path(
+        "invoice/item/all",
+        PaginatedItemInvoiceView.as_view(),
+        name="search-invoice-items",
+    ),
 ]

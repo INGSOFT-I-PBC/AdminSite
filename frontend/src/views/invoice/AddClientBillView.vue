@@ -18,10 +18,14 @@
 
     import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
+    const toast = useToast()
     const hoy = new Date()
+    const fecha = ref(hoy.toLocaleDateString())
+    const hora = ref(hoy.toLocaleTimeString())
     const showWaitOverlay = ref<boolean>(false)
     const itemLoading = ref(false)
     const productModalShowError = ref(false)
@@ -84,19 +88,14 @@
             formCity.value.cities = await itemStore.fetchAllCity(
                 Number(formClient.value.province)
             )
-
-            console.log(formCity.value.cities)
         }
     }
     const loadStatus = async (name: string) => {
         formStatus.value = await itemStore.fetchStatus(name)
         formClient.value.status = formStatus.value.id
-
-        console.log(formStatus.value)
     }
     const loadGender = async () => {
         formGender.value.genders = await itemStore.fetchAllGender()
-        console.log(formGender.value.genders)
     }
     function onShowModalGender() {
         loadGender()
@@ -123,7 +122,19 @@
         itemStore
             .saveClient(formClient.value)
             .then(() => {
-                router.push({ path: '/usuarios/clientes' })
+                toast.success('Cliente registrado correctamente')
+                formClient.value.number_id = ''
+                formClient.value.name = ''
+                formClient.value.business_name = ''
+                formClient.value.email = ''
+                formClient.value.phone_number = ''
+                formClient.value.address = ''
+                formClient.value.city = null
+                formClient.value.province = null
+                formClient.value.gender = null
+                formClient.value.status = 0
+                fecha.value = hoy.toLocaleDateString()
+                hora.value = hoy.toLocaleTimeString()
             })
             .catch(error => {
                 if (error.response.status == 400) {
@@ -155,7 +166,6 @@
 
     function onSubmit(value: any) {
         productModalShow.value = true
-        showWaitOverlay.value = true
     }
     function validateID(value: any) {
         // if the field is empty
@@ -241,22 +251,6 @@
         return true
     }
 
-    function validateCiudad(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
     function validateDireccion(value: any) {
         // if the field is empty
         if (!value) {
@@ -322,7 +316,7 @@
                 @ok="saveClient"
                 button-type="ok-cancel">
                 <h1 style="font-size: 15px; color: black; text-align: left">
-                    ¿Esta seguro de guardar al Cliente?
+                    ¿Está seguro de guardar al Cliente?
                 </h1>
             </ModalDialog>
             <div class="container" style="border-radius: 5px">
@@ -341,10 +335,9 @@
                                 <input
                                     type="text"
                                     class="form-control"
-                                    :placeholder="hoy.toLocaleDateString()"
+                                    v-model="fecha"
                                     disabled="false"
-                                    aria-label="Firs
-                            t name" />
+                                    aria-label="Firs t name" />
                             </div>
 
                             <div class="col">
@@ -361,7 +354,7 @@
                                     class="form-control"
                                     disabled="false"
                                     aria-label="First name"
-                                    :placeholder="hoy.toLocaleTimeString()" />
+                                    v-model="hora" />
                             </div>
                             <div class="col">
                                 <h6

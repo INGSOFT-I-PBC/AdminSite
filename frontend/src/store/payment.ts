@@ -1,7 +1,7 @@
 import type { IPayment } from '@store-types'
-import { isMessage } from '@/store/types/typesafe'
 import axios from 'axios'
 import { defineStore } from 'pinia'
+
 import type { Ref } from 'vue'
 
 export const usePaymentStore = defineStore('payment-store', () => {

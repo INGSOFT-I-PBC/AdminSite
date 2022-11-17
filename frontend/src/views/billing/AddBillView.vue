@@ -1,18 +1,21 @@
 <script setup lang="ts">
-    import ECard from '@components/custom/ECard.vue'
-    import ERow from '@components/custom/ERow.vue'
-    import ECol from '@components/custom/ECol.vue'
-    import ListBox from '@components/custom/ListBox.vue'
-    import InputText from '@components/custom/InputText.vue'
     import EButton from '@components/custom/EButton.vue'
+    import ECard from '@components/custom/ECard.vue'
+    import ECol from '@components/custom/ECol.vue'
+    import ERow from '@components/custom/ERow.vue'
+    import InputText from '@components/custom/InputText.vue'
+    import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
-    import { computed, reactive } from 'vue'
     import * as VeeValidate from 'vee-validate'
-    import { Field, ErrorMessage } from 'vee-validate'
+    import { ErrorMessage, Field } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
+
+    import { computed, reactive } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
+
+    const model = ref(null)
 
     const router = useRouter()
     const tipopago = ref(true)

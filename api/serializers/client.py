@@ -5,6 +5,11 @@ from rest_framework.validators import UniqueValidator
 from api.models import City, Client, Employee, Gender, Province, Status
 from api.serializers import GenderSerializer, RoleSerializer
 
+<<<<<<< HEAD
+=======
+from api.models import Client, Gender,Province,City,Employee,Status
+#from api.serializers.status import StatusSerializer
+>>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
 
 class CitySerializer(serializers.ModelSerializer):
     class Meta:
@@ -33,6 +38,7 @@ class FullClientSerializer(serializers.ModelSerializer):
     """
 
     gender = GenderSerializer()
+<<<<<<< HEAD
     city = CitySerializer()
     province = ProvinceSerializer()
     created_by = EmployeeSerializer()
@@ -55,6 +61,30 @@ class FullClientSerializer(serializers.ModelSerializer):
             "gender",
             "province",
             "status_id",
+=======
+    city= CitySerializer()
+    province= ProvinceSerializer()
+    created_by=EmployeeSerializer()
+   # status=StatusSerializer()
+    class Meta:
+        model = Client
+        fields = [
+            'id',
+            'created_at',
+            'updated_at',
+            'deleted_at',
+            'address',
+            'business_name',
+            'email',
+            'number_id',
+            'name',
+            'phone_number',
+            'city',
+            'created_by',
+            'gender',
+            'province',
+            #'status'
+>>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
         ]
 
 

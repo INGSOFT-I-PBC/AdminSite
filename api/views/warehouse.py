@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.models import Warehouse, OrderRequest
-from api.serializers import WarehouseSerializer, FullWarehouseSerializer
+from api.models import OrderRequest, Warehouse
+from api.serializers import FullWarehouseSerializer, WarehouseSerializer
 
 
 class WarehouseView(APIView):
@@ -39,11 +39,6 @@ class WarehouseViewSet(ReadOnlyModelViewSet):
 
 class FullWarehouseViewSet(WarehouseViewSet):
     pagination_class = None
-
-
-class OrderRequestViewSet(ReadOnlyModelViewSet):
-    queryset = OrderRequest.objects.all().order_by("id")
-    serializer_class = WarehouseSerializer
 
 
 class WhOrderRequestView(APIView):

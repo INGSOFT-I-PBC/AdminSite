@@ -7,6 +7,7 @@
     import { useInvoiceStore } from '@store/invoice'
     import { usePaymentStore } from '@store/payment'
     import type {
+        Client,
         IClient,
         IInvoiceDetails,
         IItem,
@@ -16,9 +17,9 @@
         MessageResponse,
     } from '@store/types'
     import { type Sequence, isMessage } from '@store/types'
-    import AddClientBillView from '@views/invoice/AddClientBillView.vue'
     import type { TableField } from 'bootstrap-vue-3'
     import { Console } from 'console'
+    import { all } from 'ol/loadingstrategy'
     import * as VeeValidate from 'vee-validate'
     import { ErrorMessage, Field } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
@@ -44,18 +45,19 @@
     const authStore = useAuthStore()
     const nameEmployee = authStore.userData?.name
     const itemStore = useInvoiceStore()
+
     const paymentStore = usePaymentStore()
     const productModalShow = ref<boolean>(false)
     const saveModalShow = ref<boolean>(false)
-    const saveClientModalShow = ref<boolean>(false)
-    const savePayModalShow = ref<boolean>(false)
     const showWaitOverlay = ref<boolean>(true)
-    const moneyreturned = ref<number>(0)
+    const route = useRoute()
+
     const serverOpts = ref<IServerOptions>({
         page: 1,
         rowsPerPage: 5,
         buscar: '',
     })
+
     type SelectedItem = { item: IItem | null }
     const detailSelectedItem = ref<SelectedItem>({
         item: null,
@@ -63,8 +65,8 @@
     const toast = useToast()
     const itemLoading = ref(false)
     const router = useRouter()
-    const emission = new Date().toISOString().slice(0, 10)
-    const return_deadline = new Date().toISOString().slice(0, 10)
+    const emission = ref('')
+    const return_deadline = ref('')
     const tipopago = ref(true)
     const itemInfoShow = ref<boolean>(false)
     const formClient = ref<IClient>({
@@ -75,10 +77,12 @@
         name: '',
     })
     const numero = ref(0)
+    let iinvoice: Optional<Invoice> = null
     const items = computed((): IItem[] => {
         if (isMessage(itemStore.paginatedItems)) return []
         return itemStore.paginatedItems?.data || []
     })
+
     const itemPageLength = computed(() => {
         const items = itemStore.paginatedItems
         if (items == null || isMessage(items)) return 0
@@ -103,16 +107,17 @@
             Number(itemForm.value.item?.iva) *
             Number(itemForm.value.quantity),
     }))
-    const loadClient = async () => {
+
+    const loadClient = async (number_id: string) => {
         if (formClient.value.number_id != '') {
-            formClient.value = await itemStore.fetchClientNumber(
-                formClient.value.number_id
-            )
+            formClient.value = await itemStore.fetchClientNumber(number_id)
+            console.log('hola' + number_id)
         } else {
             formClient.value.id = 0
             formClient.value.name = ''
         }
     }
+
     const loadItems = async () => {
         itemLoading.value = true
         await itemStore.fetchIItemsPaginated(itemPaginationOptions.value)
@@ -148,6 +153,13 @@
         totalIVA: string
         totalInvoice: string
     }
+    type IFormEdit = {
+        invoices: Invoice[]
+    }
+    const formEdit = ref<Optional<IFormEdit>>({
+        invoices: [],
+    })
+
     const itemForm = ref<ItemForm>({
         item: null,
         quantity: '1',
@@ -197,7 +209,7 @@
             formSequence
         )
     }
-    function modalsInvoice() {
+    function saveInvoice() {
         const { value: data } = form
         if (
             formClient.value.id == 0 ||
@@ -210,21 +222,13 @@
                     : 'Llene los campos para continuar'
             )
             return
-        } else {
-            return (savePayModalShow.value = true)
         }
-    }
-
-    function saveInvoice() {
-        const { value: data } = form
-
         const saveData: Invoice = {
-            code: codeInvoice.value,
             client: formClient.value.id,
             iva: Number(itemForm.value.totalIVA),
-            payment_method: (data.payment_method as IPayment).id,
-            return_deadline: return_deadline,
-            emission: emission,
+            payment_method: data.payment_method.id,
+            return_deadline: return_deadline.value,
+            emission: emission.value,
             status: 2,
             subtotal: Number(itemForm.value.subtotal),
             total: Number(itemForm.value.totalInvoice),
@@ -236,24 +240,22 @@
             })),
         }
         showWaitOverlay.value = true
-        loadSequence('INVOICE')
         itemStore
-            .saveInvoice(saveData)
+            .editInvoice(Number(route.params.id), saveData)
             .then(() => {
                 toast.success('Factura registrada correctamente')
                 data.items.splice(0, data.items.length)
                 formSequence.value.number += 1
-                editSequence('INVOICE', formSequence.value)
+
                 router.push({ path: '/facturacion' })
             })
             .catch((it: MessageResponse) => {
-                toast.error(`No se pudo guardar la factura [${it.code}]`)
+                toast.error(`No se pudo actualizar la factura [${it.code}]`)
             })
             .finally(() => {
                 showWaitOverlay.value = false
             })
     }
-
     async function onShowModalClick() {
         serverOpts.value.buscar = ''
         loadItems()
@@ -311,9 +313,9 @@
             })
         })
     }
-
     function addToTable() {
         const targetItem = itemForm.value.item
+        console.log(targetItem)
         if (!targetItem) {
             toast.error('Seleccione un producto para añadirlo a la tabla')
             return
@@ -363,9 +365,9 @@
     }
     async function showItem(item: IItem) {
         detailSelectedItem.value.item = item
+
         itemInfoShow.value = true
     }
-
     function removeItem(index: number) {
         form.value.items.splice(index, 1)
         itemForm.value.subtotal = '0'
@@ -392,6 +394,20 @@
             Number(itemForm.value.totalIVA)
         ).toFixed(2)
     }
+    function changeCountry(event: any) {
+        if (
+            event.target.options[event.target.options.selectedIndex].text ==
+            'En efectivo'
+        ) {
+            tipopago.value = true
+        } else {
+            tipopago.value = false
+        }
+    }
+
+    function onSubmit(value: any) {
+        saveModalShow.value = true
+    }
 
     function validateID(value: any) {
         // if the field is empty
@@ -405,31 +421,187 @@
         return true
     }
 
-    function modalmethodpayment() {
-        if (
-            moneyreturned.value < 0 ||
-            moneyreturned.value < Number(itemForm.value.totalInvoice)
-        ) {
-            return toast.error('Cantidad Ingresada Incorrecta')
+    function validateCell(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
         }
-        return (saveModalShow.value = true)
-    }
-    function onsaveClient() {
-        saveClientModalShow.value = true
-    }
-    const returnedMoney = computed(() => {
-        if (
-            moneyreturned.value > 0 &&
-            moneyreturned.value > Number(itemForm.value.totalInvoice)
-        )
-            return moneyreturned.value - Number(itemForm.value.totalInvoice)
-        else {
-            return 0
+        if (value.length != 10 || isNaN(value)) {
+            return 'Inválido'
         }
-    })
 
+        return true
+    }
+
+    function validateId(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if (value.length != 10 || isNaN(value)) {
+            return 'Inválido'
+        }
+
+        return true
+    }
+
+    function validateName(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if (!isNaN(value)) {
+            return 'Inválido'
+        }
+        const regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+        if (!regex.test(value)) {
+            return 'Inválido'
+        }
+
+        return true
+    }
+    function validateDate(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+
+        return true
+    }
+
+    function validateDate2(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+
+        return true
+    }
+
+    function validateEmail(value: any) {
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+
+        const correo = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
+        if (!correo.test(value)) {
+            return 'Inválido'
+        }
+
+        return true
+    }
+
+    function validateProvincia(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if (!isNaN(value)) {
+            return 'Inválido'
+        }
+        const regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+        if (!regex.test(value)) {
+            return 'Inválido'
+        }
+
+        return true
+    }
+
+    function validateSucursal(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+        if (!isNaN(value)) {
+            return 'Inválido'
+        }
+        const regex = /^[a-zA-ZÀ-ÿ ]+$/
+
+        if (!regex.test(value)) {
+            return 'Inválido'
+        }
+
+        return true
+    }
+    function validateDireccion(value: any) {
+        // if the field is empty
+        if (!value) {
+            return 'Este campo es requerido'
+        }
+
+        return true
+    }
+
+    async function loadInvoice() {
+        iinvoice = await itemStore.fetchInvoiceById(Number(route.params.id))
+        console.log(Number(route.params.id))
+        console.log('iinvoice')
+        console.log(iinvoice)
+        console.log(iinvoice.invoice_details)
+        formClient.value = await itemStore.fetchClientNumber(
+            (iinvoice.client as IClient)?.number_id
+        )
+        codeInvoice.value = String(iinvoice.code)
+        emission.value = iinvoice.emission
+        return_deadline.value = iinvoice.return_deadline
+        form.value.payment_method = iinvoice.payment_method as IPayment
+        //console.log(iinvoice.invoice_details)
+        iinvoice.invoice_details?.forEach(function (value) {
+            console.log('hola')
+            console.log(value)
+            itemForm.value.item = value.item as IItem
+            itemForm.value.quantity = String(value.quantity)
+            const suma =
+                Number(itemForm.value.quantity) *
+                (Number(itemForm.value.item?.price) +
+                    Number(itemForm.value.item?.price) *
+                        Number(itemForm.value.item?.iva))
+            form.value.items.push({
+                ...itemForm.value.item,
+                quantity: Number(itemForm.value.quantity),
+                total: Number(suma.toFixed(2)),
+            } as QuantifiedItem)
+            itemForm.value.subtotal = (
+                Number(itemForm.value.subtotal) +
+                Number(itemForm.value.quantity) *
+                    Number(itemForm.value.item?.price)
+            ).toFixed(2)
+
+            itemForm.value.totalIVA = (
+                Number(itemForm.value.totalIVA) +
+                Number(itemForm.value.quantity) *
+                    Number(itemForm.value.item?.price) *
+                    Number(itemForm.value.item?.iva)
+            ).toFixed(2)
+
+            const subtotal =
+                Number(itemForm.value.quantity) *
+                Number(itemForm.value.item?.price)
+            const totalIva =
+                Number(itemForm.value.quantity) *
+                (Number(itemForm.value.item?.price) *
+                    Number(itemForm.value.item?.iva))
+            itemForm.value.totalInvoice = (
+                Number(itemForm.value.totalInvoice) +
+                Number(subtotal) +
+                Number(totalIva)
+            ).toFixed(2)
+
+            itemForm.value.item = null
+            itemForm.value.quantity = '1'
+            itemForm.value.total = '0'
+        })
+        /*itemForm.value.item = (iinvoice?.invoice_details[1] as IInvoiceDetails)
+            .item as IItem*/
+
+        //console.log(itemForm.value.item)
+    }
+
+    loadInvoice()
     onMounted(() => {
-        return loadSequence('INVOICE'), (serverOpts.value.buscar = '')
+        return (serverOpts.value.buscar = '')
     })
 
     watch(serverOpts, loadItems)
@@ -438,67 +610,14 @@
 <template>
     <main>
         <ModalDialog
-            size="4xl"
-            id="saveclient-modal"
-            v-model:show="saveClientModalShow"
-            title="Guardar Cliente">
-            <ERow>
-                <ECol>
-                    <AddClientBillView> </AddClientBillView>
-                </ECol>
-            </ERow>
-        </ModalDialog>
-        <ModalDialog
-            id="methodpay-modal"
-            v-model:show="savePayModalShow"
-            ok-text="Facturar"
-            @ok="modalmethodpayment"
-            title="Dinero devuelto">
-            <ERow>
-                <span
-                    class="tw-w-1/2 tw-font-bold col-6 tw-text-center tw-text-2xl"
-                    >TOTAL:</span
-                >
-                <span
-                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-xl"
-                    >{{ itemForm.totalInvoice }}</span
-                >
-            </ERow>
-            <ERow>
-                <span
-                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-2xl"
-                    >RECIBIDO:
-                </span>
-                <input
-                    :required="true"
-                    min="1"
-                    pattern="^[0-9]+"
-                    id="cantidad"
-                    v-model="moneyreturned"
-                    type="number"
-                    class="tw-w-1/2 tw-pr-0 tw-font-bold col-6 tw-text-center tw-text-2xl" />
-            </ERow>
-            <ERow>
-                <span
-                    class="tw-w-1/2 tw-font-bold col-6 tw-text-center tw-text-2xl"
-                    >DEVUELTO:
-                </span>
-                <span
-                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-2xl"
-                    >{{ returnedMoney }}</span
-                >
-            </ERow>
-        </ModalDialog>
-
-        <ModalDialog
-            id="save-modal"
+            id="product-modal"
             v-model:show="saveModalShow"
-            title="Facturar"
+            title="Editar Factura"
             ok-text="Facturar"
             @ok="saveInvoice"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Está seguro de guardar la factura?
+                ¿Está seguro de editar la factura?
             </h1>
         </ModalDialog>
         <ModalDialog
@@ -542,14 +661,14 @@
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
                             label="Emisión *"
-                            :model-value="emission"
+                            v-model="emission"
                             type="date"
                             readonly />
                     </ECol>
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
                             label="Devolución *"
-                            :model-value="return_deadline"
+                            v-model="return_deadline"
                             type="date" />
                     </ECol>
                     <ECol cols="12" lg="6" xl="2"> </ECol>
@@ -584,16 +703,8 @@
                         <EButton
                             variant="secondary"
                             class="tw-w-full lg:tw-w-auto"
-                            @click="loadClient">
+                            @click="loadClient(formClient.number_id)">
                             Buscar
-                        </EButton>
-                    </ECol>
-                    <ECol cols="6" lg="6" xl="1">
-                        <EButton
-                            variant="secondary"
-                            class="tw-w-full lg:tw-w-auto"
-                            @click="onsaveClient">
-                            +
                         </EButton>
                     </ECol>
 
@@ -696,7 +807,7 @@
                     <EButton
                         left-icon="fa-floppy-disk"
                         icon-provider="awesome"
-                        @click="modalsInvoice">
+                        @click="onSubmit">
                         Facturar
                     </EButton>
                 </ECol>
