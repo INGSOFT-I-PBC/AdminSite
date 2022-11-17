@@ -95,6 +95,12 @@ class UpdatableEmployeeSerializer(serializers.Serializer):
         return instance
 
 
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = ["id", "name", "lastname", "cid", "role"]
+
+
 class ShowEmployeeSerializer(serializers.ModelSerializer):
     role = RoleSerializer()
 

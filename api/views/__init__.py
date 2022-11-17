@@ -7,17 +7,11 @@ from api.views.inventoryviews import InventoryView
 from api.views.invoiceview import *
 from api.views.itemview import *
 from api.views.itemviews import ItemView
-<<<<<<< HEAD
-from api.views.payment import *
-from api.views.providers import *
-from api.views.provinceview import *
-from api.views.roleview import *
-=======
 from api.views.orders import *
 from api.views.payment import *
 from api.views.providers import *
 from api.views.provinceview import *
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
+from api.views.roleview import *
 from api.views.sequence import *
 from api.views.statusview import *
 from api.views.userview import *
@@ -63,11 +57,8 @@ __all__ = [
     "create_provider",
     "GroupView",
     "PaginatedIItemViewSet",
-<<<<<<< HEAD
     "RoleView",
     "RoleViewSet",
-=======
     "get_full_order",
     "create_order_request",
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
 ]

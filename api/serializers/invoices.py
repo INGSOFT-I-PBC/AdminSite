@@ -55,16 +55,12 @@ class IClientSerializer(serializers.ModelSerializer):
             "number_id",
             "name",
         ]
-<<<<<<< HEAD
 
 
 class IPayMethodSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentMethod
         fields = ["id", "name"]
-
-=======
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
 
 
 class IPayMethodSerializer(serializers.ModelSerializer):
@@ -78,9 +74,6 @@ class IInvoiceDetailsSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = InvoiceDetails
-<<<<<<< HEAD
-        fields = "__all__"
-=======
         fields = ["id", "invoice", "item", "price", "quantity", "price"]
 
 
@@ -88,7 +81,6 @@ class IInvoiceDetailsEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceDetails
         fields = ["id", "invoice", "item", "price", "quantity", "price"]
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
 
 
 class FullInvoiceSerializer(serializers.ModelSerializer):
@@ -98,11 +90,7 @@ class FullInvoiceSerializer(serializers.ModelSerializer):
 
     payment_method = IPayMethodSerializer()
     client = IClientSerializer()
-<<<<<<< HEAD
-    created_by = EmployeeSerializer()
-=======
     # created_by=EmployeeSerializer()
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
     invoice_details = IInvoiceDetailsSerializer(many=True)
 
     class Meta:
@@ -120,11 +108,7 @@ class FullInvoiceSerializer(serializers.ModelSerializer):
             "subtotal",
             "total",
             "anulated",
-<<<<<<< HEAD
-            "created_by",
-=======
             #'created_by',
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
             "invoice_details",
         ]
 
@@ -133,10 +117,6 @@ class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = [
-<<<<<<< HEAD
-            "id",
-            "code",
-=======
             "client",
             "code",
             "created_at",
@@ -156,7 +136,6 @@ class InvoiceEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
         fields = [
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
             "client",
             "created_at",
             "emission",

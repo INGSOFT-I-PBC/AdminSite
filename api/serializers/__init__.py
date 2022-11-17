@@ -6,15 +6,10 @@ from api.serializers.inventory import *
 from api.serializers.invoices import *
 from api.serializers.item import *
 from api.serializers.items import *
-<<<<<<< HEAD
-from api.serializers.payment import *
-from api.serializers.provider import *
-from api.serializers.role import *
-=======
 from api.serializers.order import *
 from api.serializers.payment import *
 from api.serializers.provider import *
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
+from api.serializers.role import *
 from api.serializers.sequence import *
 from api.serializers.status import *
 from api.serializers.warehouse import *
@@ -44,9 +39,9 @@ __all__ = [
     "PartialProviderSerializer",
     "SequenceSerializer",
     "PaymentSerializer",
-<<<<<<< HEAD
-=======
     "OrderReadSerializer",
     "PartialOrderSerializer",
->>>>>>> 834b2935bcb85526036eb66b0e2eb6e153be5f27
+    "GetEmployeeSerializer",
+    "ShowEmployeeSerializer",
+    "UpdateEmployeeSerializer",
 ]
