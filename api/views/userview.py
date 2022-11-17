@@ -4,11 +4,10 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.models import Employee, User
 from api.serializers.auth import *
-from api.utils import error_response, response, teapot
+from api.utils import error_response, response
 
 
 class EmployeeView(APIView):
@@ -18,18 +17,18 @@ class EmployeeView(APIView):
     """
 
     def get(self, request: Request, *args, **kwargs):
-        if not Employee.objects.filter(**kwargs, is_active=True).exists():
+        if not Employee.objects.filter(**kwargs).exists():
             return error_response("the given employee doesn't exists")
         employee = Employee.objects.get(**kwargs)
-        return JsonResponse(data=EmployeeSerializer(employee).data)
+        return JsonResponse(data=GetEmployeeSerializer(employee).data)
 
     def put(self, request: Request, *args, **kwargs):
-        if not Employee.objects.filter(**kwargs, is_active=True).exists():
+        if not Employee.objects.filter(**kwargs).exists():
             return error_response("The given employee doesn't exists")
         if not request.data:
             return error_response("No data provided")
         employee = Employee.objects.get(**kwargs)
-        updated_model = UpdatableEmployeeSerializer(employee, data=request.data)
+        updated_model = UpdateEmployeeSerializer(employee, data=request.data)
         updated_model.is_valid(raise_exception=True)
         updated_model.save()
         return response("The employee was updated successfully")
@@ -39,12 +38,13 @@ class EmployeeView(APIView):
             return error_response("The given employee doesn't exists")
         employee = Employee.objects.get(**kwargs)
         employee.is_active = False
-        employee_user = User.objects.filter(employee=employee)
+        employee_user = Employee.objects.filter(employee=employee)
         if employee_user.exists():
             employee_user.first().is_active = False
             employee_user.first().save()
         employee.save()
         return response("employee deleted successfully")
+
 
 class UserView(APIView):
     """
@@ -141,10 +141,21 @@ def create_user(request: Request, *args, **kwargs):
 def create_employee(request: Request, *args, **kwargs):
     if not request.data:
         return error_response("No data was provided")
-    new_employee = EmployeeSerializer(data=request.data)
-    new_employee.is_valid(raise_exception=True)
-    new_employee.save()
-    return JsonResponse(data=new_employee.data)
+    if not request.data:
+        return error_response("No data was provided")
+
+    cid = request.data.get("cid", None)
+    # Now if cid is provided, check the two cases
+    if cid:
+        # If employee already exists, then reactivate (if needed or send error)
+        if Employee.objects.filter(cid=cid).exists():
+            return error_response("Empleado con número de cédula existente")
+        # else:  # Create a new employee
+        employee = UpdateEmployeeSerializer(data=request.data)
+        employee.is_valid(raise_exception=True)
+        employee = employee.save()
+        return JsonResponse(ShowEmployeeSerializer(employee).data)
+    return error_response("No cid was provided")
 
 
 @api_view(["POST"])
@@ -166,6 +177,7 @@ def activate_employee(request: Request, *args, **kwargs):
     """
     return __activate_entity(Employee, "employee", **kwargs)
 
+
 @api_view(["POST"])
 def inactivate_employee(request: Request, *args, **kwargs):
     """
@@ -174,6 +186,7 @@ def inactivate_employee(request: Request, *args, **kwargs):
     message to the consumer.
     """
     return __inactivate_entity(Employee, "employee", **kwargs)
+
 
 def __activate_entity(entity_class: Model, entity_name: str, **kwargs):
     """
@@ -189,6 +202,7 @@ def __activate_entity(entity_class: Model, entity_name: str, **kwargs):
     target.is_active = True
     target.save()
     return response(f"The {entity_name} was successfully re-activated")
+
 
 def __inactivate_entity(entity_class: Model, entity_name: str, **kwargs):
     """

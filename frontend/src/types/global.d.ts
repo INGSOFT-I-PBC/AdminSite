@@ -1,3 +1,5 @@
+import type { Employee } from '@store/types'
+
 import type { RouteRecordRaw } from 'vue-router'
 
 /* eslint no-var: 0 */
@@ -9,7 +11,7 @@ declare global {
 
     type TypeChecker<T> = (arg0: T) => arg0 is T
 
-    type Functor<I, O> = (I) => O
+    //type Functor<I, O> = (I) => O
 
     type Mapper<T> = (T) => T
 
@@ -62,7 +64,7 @@ declare global {
      * This is the type of a user that is returned from the Backend
      */
     export interface UserInfo {
-        employee: number
+        employee: number | Employee
         name: string
         username: string
         role: string

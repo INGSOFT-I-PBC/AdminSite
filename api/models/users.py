@@ -1,5 +1,7 @@
 from django.db import models
-from .common import Status, TimestampModel
+
+from api.models.common import TimestampModel
+from api.models.genders import Gender
 
 
 class Employee(TimestampModel):
@@ -24,6 +26,9 @@ class Employee(TimestampModel):
 
         is_active (BooleanField):
             A flag that represent if an employee is active on the bussiness or not.
+
+        phone_number (CharField):
+            The phone number provided by the client.
     """
 
     id = models.AutoField(primary_key=True, editable=False, auto_created=True)
@@ -34,6 +39,9 @@ class Employee(TimestampModel):
     cid = models.CharField(max_length=11, unique=True)
     role = models.ForeignKey("Role", on_delete=models.CASCADE)
     is_active = models.BooleanField(null=False, default=True)
+    phone_number = models.CharField(max_length=16)
+    created_by = models.ForeignKey("self", on_delete=models.RESTRICT)
+    gender = models.ForeignKey(Gender, null=True, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "employees"

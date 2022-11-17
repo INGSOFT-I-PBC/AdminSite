@@ -62,11 +62,11 @@ urlpatterns = [
     path("user/<str:username>/activate", views.activate_user),
     path("user", views.create_user),
     # Employee management
+    path("employee", views.create_employee),
     path("employee/<int:id>", views.EmployeeView.as_view()),
     path("employee/<str:cid>", views.EmployeeView.as_view()),
     path("employee/<str:cid>/activate", views.activate_employee),
     path("employee/<str:cid>/inactivate", views.inactivate_employee),
-    path("employee", views.create_employee),
     # Order management
     path("order", OrderRequestView.as_view()),
     path("clients", ClientView.as_view()),

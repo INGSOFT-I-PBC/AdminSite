@@ -2,6 +2,8 @@ from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
 from api.models import Employee, Group, Permission, Role, User
+from api.serializers.gender import GenderSerializer
+from api.serializers.role import RoleSerializer
 
 
 class UpdateUserSerializer(serializers.Serializer):
@@ -93,10 +95,46 @@ class UpdatableEmployeeSerializer(serializers.Serializer):
         return instance
 
 
-class EmployeeSerializer(serializers.ModelSerializer):
+class ShowEmployeeSerializer(serializers.ModelSerializer):
+    role = RoleSerializer()
+
     class Meta:
         model = Employee
-        fields = ["id","created_at", "name", "lastname", "cid", "role","is_active"]
+        fields = ["id", "created_at", "name", "lastname", "cid", "role", "is_active"]
+
+
+class GetEmployeeSerializer(serializers.ModelSerializer):
+    role = RoleSerializer()
+    created_by = ShowEmployeeSerializer()
+    gender = GenderSerializer()
+
+    class Meta:
+        model = Employee
+        fields = [
+            "name",
+            "lastname",
+            "cid",
+            "is_active",
+            "role",
+            "phone_number",
+            "created_by",
+            "gender",
+        ]
+
+
+class UpdateEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = [
+            "name",
+            "lastname",
+            "cid",
+            "is_active",
+            "role",
+            "phone_number",
+            "gender",
+        ]
+
 
 class PermissionSerializer(serializers.ModelSerializer):
     codename = serializers.CharField(max_length=128)
