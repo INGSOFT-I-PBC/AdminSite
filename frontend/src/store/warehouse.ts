@@ -47,7 +47,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
         async fetchPaginatedWarehouseInventory(
-            options: WarehouseQuery,
+            options: any,
             paginated_opt: PaginationOptions
         ) {
             const queryParams = {
@@ -62,7 +62,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
         },
 
         async fetchPaginatedWarehousePurchase(
-            options: WarehouseQuery,
+            options: any,
             paginated_opt: PaginationOptions
         ) {
             const queryParams = {
@@ -77,7 +77,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
         },
 
         async fetchPaginatedWarehouseTomasFisicas(
-            options: WarehouseQuery,
+            options: any,
             paginated_opt: PaginationOptions
         ) {
             const queryParams = {
@@ -101,7 +101,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
         async fetchPaginatedWarehouseMovements(
-            options: WarehouseQuery,
+            options: any,
             paginated_opt: PaginationOptions
         ) {
             const queryParams = {

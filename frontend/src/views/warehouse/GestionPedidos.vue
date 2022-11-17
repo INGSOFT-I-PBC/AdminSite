@@ -1,8 +1,5 @@
 <script setup lang="ts">
     import { useItemStore } from '@/store'
-    import EButton from '@components/custom/EButton.vue'
-    import ECard from '@components/custom/ECard.vue'
-    import type { WarehouseQuery } from '@store/models/warehouseModels'
     import {
         type Item,
         type Movement,
@@ -13,6 +10,7 @@
     } from '@store/types'
     import type { ItemProps } from '@store/types/items.model'
     import { useWarehouseStore } from '@store/warehouse'
+    import Datepicker from '@vuepic/vue-datepicker'
     import {
         BForm,
         BFormCheckbox,
@@ -25,9 +23,20 @@
         BTabs,
         type TableField,
     } from 'bootstrap-vue-3'
+    import { Form as ValidationForm, useField } from 'vee-validate'
+    import * as yup from 'yup'
 
-    import ModalDialog from '../../components/custom/ModalDialog.vue'
-    import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+    import {
+        EButton,
+        ECard,
+        ECol,
+        ETab,
+        InputText,
+        ListBox,
+        ModalDialog,
+        UserCardItem,
+        WaitOverlay,
+    } from '@custom-components'
 
     type SelectedItem = { item: Item | null; props: ItemProps[] }
     type QuantifiedItem = Item & { quantity: number }
@@ -111,6 +120,57 @@
         'Notas',
     ]
 
+    //let date = ref<Array<any>>([ useField('from_date',yup.date().typeError("Fecha Invalida")),  useField('to_date',yup.date().typeError("Fecha Invalida"))])
+    //new Date().toISOString()
+    const date = [
+        useField(
+            'from_date',
+            yup.date().notRequired().typeError('Fecha Invalida')
+        ),
+        useField(
+            'to_date',
+            yup.date().notRequired().typeError('Fecha Invalida')
+        ),
+    ]
+    const inventoryForm = ref({
+        from_date: date[0],
+        to_date: date[1],
+        name: useField(
+            'name',
+            yup.string().matches(/^[a-zA-Z\s]*$/, 'Nombre no valido')
+        ),
+        min_quantity: useField(
+            'min_quantity',
+            yup
+                .number()
+                .integer('Tinene que ser entero')
+                .min(0, 'Cantidad Tiene que ser mayor a 0')
+                .typeError('Ingrese un numero entero')
+        ),
+        max_quantity: useField(
+            'max_quantity',
+            yup
+                .number()
+                .integer('Tinene que ser entero')
+                .min(1, 'Tiene que ser mayor a 1')
+                .typeError('Ingrese un numero')
+        ),
+        min_price: useField(
+            'min_price',
+            yup
+                .number()
+                .min(0, 'Precio no puede ser negativo')
+                .typeError('Ingrese un numero')
+        ),
+        max_price: useField(
+            'max_pricee',
+            yup
+                .number()
+                .min(0, 'Precio no puede ser negativo')
+                .typeError('Ingrese un numero')
+        ),
+    })
+
     let allWarehousesTableInformation: WhWithTomaFisica[] = []
 
     const currentAsidePage = ref(1)
@@ -193,7 +253,7 @@
 
     async function fetchManager(
         tabOption: string,
-        query: WarehouseQuery,
+        query: any,
         paginated_opt: PaginationOptions
     ): Promise<void> {
         switch (tabOption) {
@@ -267,7 +327,7 @@
 
         await fetchManager(
             tabOption,
-            { id: activeWhInformation.value.bodega.id },
+            { warehouse_id: activeWhInformation.value.bodega.id },
             pageOpt
         )
 
@@ -339,7 +399,7 @@
             <div
                 class="row d-inline-flex allign-content-center tw-bg-slate-50 dark:tw-bg-slate-600">
                 <div
-                    class="col-2 mx-1 tw-flex-col tw-rounded-lg tw-bg-white dark:tw-bg-slate-800">
+                    class="col-sm-12 col-md-12 col-xl-2 mx-1 tw-flex-col tw-rounded-lg tw-bg-white dark:tw-bg-slate-800">
                     <h1 class="title mt-2">Bodegas Disponibles</h1>
 
                     <b-form class="mt-2 t-form" role="search">
@@ -347,8 +407,7 @@
                             class="mt-2"
                             type="search"
                             placeholder="Buscar"
-                            aria-label="Search"
-                            @change.prevent="">
+                            aria-label="Search">
                         </b-form-input>
                     </b-form>
 
@@ -358,7 +417,7 @@
                         :per-page="whPageCount"
                         aria-controls="b-list-warehouses"
                         align="center"
-                        @page-click.prevent="onAsidePageChanged"
+                        @page-click.left.self="onAsidePageChanged"
                         :limit="3"
                         hide-goto-end-buttons
                         class="paginator"></b-pagination>
@@ -370,7 +429,7 @@
                         <b-list-group-item
                             :class="{ active: activeWharehouseButton === -1 }"
                             button
-                            @click.prevent="
+                            @click.left="
                                 () => {
                                     showAllWarehouses = true
                                     activeWharehouseButton = -1
@@ -386,7 +445,7 @@
                             }"
                             :key="wh.id"
                             :id="'whbtn-' + wh.id"
-                            @click.prevent="
+                            @click.left="
                                 wharehouseButtonPressed($event, wh.id, index)
                             ">
                             {{ wh.name }}
@@ -408,11 +467,7 @@
                                 placeholder="Busqueda de Bodega">
                             </b-form-input>
                         </b-form>
-                        <e-button
-                            @click.prevent=""
-                            type="button"
-                            variant="primary"
-                            class="col-1"
+                        <e-button type="button" variant="primary" class="col-1"
                             >Buscar
                         </e-button>
 
@@ -422,12 +477,11 @@
                             :per-page="whPageCount"
                             aria-controls="b-list-warehouses"
                             align="center"
-                            @page-click.prevent="onMainPageChanged"
+                            @page-click.left.self="onMainPageChanged"
                             :limit="10"
                             class="paginator col-5 tw-inline-flex"></b-pagination>
 
                         <e-button
-                            @click.prevent=""
                             type="button"
                             variant="secondary"
                             class="col-2 mx-1">
@@ -458,7 +512,6 @@
                         <template #cell(Detalles)="{}">
                             <e-button
                                 left-icon="fa-eye"
-                                @click.prevent=""
                                 type="button"
                                 variant="secondary"
                                 >Ver detalles
@@ -488,24 +541,224 @@
 
                         <b-tab title="Inventario" active>
                             <div class="row display-inline-flex mb-1">
-                                <b-form inline class="col-3">
-                                    <b-form-input
-                                        @submit.prevent
-                                        id="wh-inv-search"
-                                        placeholder="Busqueda de Inventario"
-                                        v-model="invTabController.searchInput">
-                                    </b-form-input>
-                                </b-form>
                                 <e-button
-                                    @click.prevent=""
+                                    v-b-toggle.collapse-1
                                     type="button"
                                     variant="primary"
                                     class="col-2 mx-1"
-                                    >Buscar
+                                    >Desplegar Busqueda
                                 </e-button>
+                                <b-collapse id="collapse-1" class="mt-2">
+                                    <ECard>
+                                        <ValidationForm>
+                                            <div class="row" align-v="start">
+                                                <div
+                                                    class="col-lg-6 col-xl-4 col-sm-12">
+                                                    <Datepicker
+                                                        v-model="
+                                                            inventoryForm
+                                                                .from_date.value
+                                                        "
+                                                        textinput
+                                                        range
+                                                        dark
+                                                        teleport-center
+                                                        model-auto>
+                                                        <template
+                                                            #dp-input="{
+                                                                value,
+                                                            }">
+                                                            <InputText
+                                                                label="Fecha Min de Actualizacion"
+                                                                :model-value="
+                                                                    value
+                                                                "
+                                                                :info-label="
+                                                                    inventoryForm
+                                                                        .from_date
+                                                                        .errorMessage
+                                                                "
+                                                                :status="
+                                                                    Boolean(
+                                                                        inventoryForm
+                                                                            .from_date
+                                                                            .errorMessage
+                                                                    )
+                                                                "
+                                                                info-status="danger" />
+                                                        </template>
+                                                    </Datepicker>
+                                                </div>
+                                                <div
+                                                    class="col-lg-6 col-xl-4 col-sm-12">
+                                                    <Datepicker
+                                                        v-model="
+                                                            inventoryForm
+                                                                .to_date.value
+                                                        "
+                                                        :min-date="
+                                                            inventoryForm
+                                                                .from_date
+                                                                ?.value
+                                                        "
+                                                        textinput
+                                                        range
+                                                        dark
+                                                        teleport-center
+                                                        model-auto>
+                                                        <template
+                                                            #dp-input="{
+                                                                value,
+                                                            }">
+                                                            <InputText
+                                                                label="Fecha Max de Actualizacion"
+                                                                :model-value="
+                                                                    value
+                                                                "
+                                                                :info-label="
+                                                                    inventoryForm
+                                                                        .to_date
+                                                                        .errorMessage
+                                                                "
+                                                                :status="
+                                                                    Boolean(
+                                                                        inventoryForm
+                                                                            .to_date
+                                                                            .errorMessage
+                                                                    )
+                                                                "
+                                                                info-status="danger" />
+                                                        </template>
+                                                    </Datepicker>
+                                                </div>
+                                                <div
+                                                    class="col-lg-6 col-xl-3 col-sm-12">
+                                                    <InputText
+                                                        label="Código Producto" />
+                                                </div>
+                                                <div
+                                                    class="col-lg-6 col-xl-3 col-sm-12">
+                                                    <InputText
+                                                        label="Nombre Producto"
+                                                        v-model="
+                                                            inventoryForm.name
+                                                                .value
+                                                        "
+                                                        :info-label="
+                                                            inventoryForm.name
+                                                                .errorMessage
+                                                        "
+                                                        :status="
+                                                            Boolean(
+                                                                inventoryForm
+                                                                    .name
+                                                                    .errorMessage
+                                                            )
+                                                        "
+                                                        info-status="danger" />
+                                                </div>
+                                            </div>
+                                            <div class="row" align-v="start">
+                                                <div class="col-lg-6 col-xl-3">
+                                                    <InputText
+                                                        label="Cantidad Min"
+                                                        v-model="
+                                                            inventoryForm
+                                                                .min_quantity
+                                                                .value
+                                                        "
+                                                        :info-label="
+                                                            inventoryForm
+                                                                .min_quantity
+                                                                .errorMessage
+                                                        "
+                                                        :status="
+                                                            Boolean(
+                                                                inventoryForm
+                                                                    .min_quantity
+                                                                    .errorMessage
+                                                            )
+                                                        "
+                                                        info-status="danger" />
+                                                </div>
+                                                <div class="col-lg-6 col-xl-3">
+                                                    <InputText
+                                                        label="Cantidad Max"
+                                                        v-model="
+                                                            inventoryForm
+                                                                .max_quantity
+                                                                .value
+                                                        "
+                                                        :info-label="
+                                                            inventoryForm
+                                                                .max_quantity
+                                                                .errorMessage
+                                                        "
+                                                        :status="
+                                                            Boolean(
+                                                                inventoryForm
+                                                                    .max_quantity
+                                                                    .errorMessage
+                                                            )
+                                                        "
+                                                        info-status="danger" />
+                                                </div>
+                                                <div class="col-lg-6 col-xl-3">
+                                                    <InputText
+                                                        label="Precio Min"
+                                                        v-model="
+                                                            inventoryForm
+                                                                .min_price.value
+                                                        "
+                                                        :info-label="
+                                                            inventoryForm
+                                                                .min_price
+                                                                .errorMessage
+                                                        "
+                                                        :status="
+                                                            Boolean(
+                                                                inventoryForm
+                                                                    .min_price
+                                                                    .errorMessage
+                                                            )
+                                                        "
+                                                        info-status="danger" />
+                                                </div>
+                                                <div class="col-lg-6 col-xl-3">
+                                                    <InputText
+                                                        label="Precio Max"
+                                                        v-model="
+                                                            inventoryForm
+                                                                .max_price.value
+                                                        "
+                                                        :info-label="
+                                                            inventoryForm
+                                                                .max_price
+                                                                .errorMessage
+                                                        "
+                                                        :status="
+                                                            Boolean(
+                                                                inventoryForm
+                                                                    .max_price
+                                                                    .errorMessage
+                                                            )
+                                                        "
+                                                        info-status="danger" />
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-3 col-md-2">
+                                                    <EButton class="tw-w-full">
+                                                        Confirmar Busqueda
+                                                    </EButton>
+                                                </div>
+                                            </div>
+                                        </ValidationForm>
+                                    </ECard>
+                                </b-collapse>
 
                                 <e-button
-                                    @click.prevent="
+                                    @click.left="
                                         onReset(invTabController, 'inventory')
                                     "
                                     type="button"
@@ -592,7 +845,7 @@
                                 <template #cell(Acciones)="{ item }">
                                     <e-button
                                         left-icon="fa-eye"
-                                        @click.prevent="showItem(item)"
+                                        @click.left="showItem(item)"
                                         type="button"
                                         variant="secondary"
                                         >Ver detalles
@@ -606,7 +859,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whinv-table"
                                 align="center"
-                                @page-click.prevent="
+                                @page-click.left.self="
                                     onPageChanged('inventory', invTabController)
                                 "
                                 :limit="10"
@@ -626,7 +879,6 @@
                             <div class="row display-inline-flex mb-1">
                                 <b-form inline class="col-3">
                                     <b-form-input
-                                        @submit.prevent
                                         id="wh-purchase-search"
                                         placeholder="Busqueda de Compra">
                                     </b-form-input>
@@ -634,7 +886,6 @@
                                 </b-form>
 
                                 <e-button
-                                    @click.prevent=""
                                     type="button"
                                     variant="primary"
                                     class="col-2 mx-1"
@@ -645,7 +896,7 @@
                                     type="button"
                                     variant="secondary"
                                     class="col-2 mx-1"
-                                    @click.prevent="
+                                    @click.left="
                                         onReset(
                                             purchaseTabController,
                                             'purchases'
@@ -689,7 +940,6 @@
                                 <template #cell(Acciones)="{}">
                                     <e-button
                                         left-icon="fa-eye"
-                                        @click.prevent=""
                                         type="button"
                                         variant="secondary"
                                         >Ver detalles
@@ -703,7 +953,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.prevent="
+                                @page-click.left.self="
                                     onPageChanged(
                                         'purchases',
                                         purchaseTabController
@@ -734,7 +984,6 @@
                                     </b-form-input>
                                 </b-form>
                                 <e-button
-                                    @click.prevent=""
                                     type="button"
                                     variant="primary"
                                     class="col-2 mx-1"
@@ -745,7 +994,7 @@
                                     type="button"
                                     variant="secondary"
                                     class="col-2 mx-1"
-                                    @click.prevent="
+                                    @click.left="
                                         onReset(
                                             tomasFisicasTabController,
                                             'tomas-fisicas'
@@ -774,7 +1023,6 @@
                                 <template #cell(Acciones)="{}">
                                     <e-button
                                         left-icon="fa-eye"
-                                        @click.prevent=""
                                         type="button"
                                         variant="secondary"
                                         >Ver detalles
@@ -790,7 +1038,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.prevent="
+                                @page-click.left.self="
                                     onPageChanged(
                                         'tomas-fisicas',
                                         tomasFisicasTabController
@@ -813,12 +1061,10 @@
                                 <b-form inline class="col-3">
                                     <b-form-input
                                         id="wh-mov-search"
-                                        placeholder="Busqueda de Movimiento"
-                                        @submit.prevent>
+                                        placeholder="Busqueda de Movimiento">
                                     </b-form-input>
                                 </b-form>
                                 <e-button
-                                    @click.prevent=""
                                     type="button"
                                     variant="primary"
                                     class="col-2 mx-1"
@@ -829,7 +1075,7 @@
                                     type="button"
                                     variant="secondary"
                                     class="col-2 mx-1"
-                                    @click.prevent="
+                                    @click.left="
                                         onReset(
                                             movementTabController,
                                             'movements'
@@ -878,7 +1124,6 @@
                                 <template #cell(Acciones)="{}">
                                     <e-button
                                         left-icon="fa-eye"
-                                        @click.prevent=""
                                         type="button"
                                         variant="primary"
                                         >Ver detalles
@@ -892,7 +1137,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.prevent="
+                                @page-click.left.self="
                                     onPageChanged(
                                         'movements',
                                         movementTabController

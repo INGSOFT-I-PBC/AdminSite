@@ -1,9 +1,11 @@
 from datetime import datetime
 
+from django.db.models import OuterRef, Subquery
 from rest_framework.viewsets import ModelViewSet
 
 from api.models import Purchase
-from api.serializers.purchase import PurchaseSerializer
+from api.models.purchases import PurchaseStatus
+from api.serializers.purchase import PurchaseStatusSerializer
 
 
 class PurchaseViewSet(ModelViewSet):
@@ -11,11 +13,11 @@ class PurchaseViewSet(ModelViewSet):
     API endpoint that allows purchases to be viewed or edited.
     """
 
-    queryset = Purchase.objects.all()
-    serializer_class = PurchaseSerializer
+    queryset = Purchase.objects.all().order_by("-aproved_at")
+    serializer_class = PurchaseStatusSerializer
 
     def get_queryset(self):
-        queryset = Purchase.objects.all()
+        queryset = self.queryset
         params = self.request.query_params.copy()
 
         if params.get("order_by", None):
@@ -41,7 +43,13 @@ class PurchaseViewSet(ModelViewSet):
             )
 
         if params.get("status", None):
-            queryset = queryset.filter(status__name__icontains=params.get("status"))
+            purchase_status = PurchaseStatus.objects.filter(
+                status__name__icontains=params.get("status")
+            ).order_by("-created_at")
+
+            queryset = queryset.filter(
+                id=Subquery(purchase_status.values("purchase")[:1])
+            )
 
         if params.get("from_date", None):
             if params.get("invoice_date", None):
@@ -58,5 +66,13 @@ class PurchaseViewSet(ModelViewSet):
                 queryset = queryset.filter(invoice__created_at__lte=to_date)
             if params.get("aproved_date", None):
                 queryset = queryset.filter(aproved_at__lte=to_date)
+
+        queryset = queryset.annotate(
+            status=Subquery(
+                PurchaseStatus.objects.filter(purchase=OuterRef("id"))
+                .order_by("-created_at")
+                .values("status__name")[:1]
+            )
+        )
 
         return queryset

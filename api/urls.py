@@ -53,11 +53,27 @@ urlpatterns = [
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
     path("warehouse/order", WhOrderRequestView.as_view(), name="wh-orders"),
-    path("warehouse/inventory", WhInventoryView.as_view(), name="wh-inventory"),
-    path("warehouse/purchase", WhPurchaseView.as_view(), name="wh-purchase"),
-    path("warehouse/movements", WhTransactionView.as_view(), name="wh-movements"),
+    path(
+        "warehouse/inventory",
+        WhInventorysViewSet.as_view({"get": "list"}),
+        name="wh-inventory",
+    ),
+    path(
+        "warehouse/purchase",
+        PurchaseViewSet.as_view({"get": "list"}),
+        name="wh-purchase",
+    ),
+    path(
+        "warehouse/movements",
+        WhTransactionViewSet.as_view({"get": "list"}),
+        name="wh-movements",
+    ),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
-    path("warehouse/tomas-fisicas", WhTomaFisicasView.as_view(), name="wh-tomas"),
+    path(
+        "warehouse/tomas-fisicas",
+        WhTomasFisicasViewSet.as_view({"get": "list"}),
+        name="wh-tomas",
+    ),
     path(
         "warehouse/tomas-fisicas/all",
         WhLatestTomaFisicaView.as_view(),

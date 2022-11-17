@@ -1,19 +1,17 @@
 from datetime import datetime
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import OuterRef, Subquery
 from django.http import JsonResponse
-from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from api.models import Inventory, OrderRequest, Purchase, PurchaseStatus, Warehouse
+from api.models import Inventory, OrderRequest, Warehouse
 from api.models.common import Status
 from api.models.warehouse import WarehouseTransaction, WhTomasFisicas
 from api.serializers.order import OrderSerializer
-from api.serializers.purchase import PurchaseSerializer
 from api.serializers.warehouse import (
     FullWarehouseSerializer,
     TomasFisicasSerializer,
@@ -161,39 +159,54 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
         return Response(self.serializer_class.data)
 
 
-class WhInventoryView(APIView):
-    def get(self, request):
+class WhInventorysViewSet(ModelViewSet):
 
-        try:
+    queryset = Inventory.objects.all()
+    serializer_class = WhInventorySerializer
 
-            wh_inventory = Inventory.objects.filter(
-                warehouse__pk=request.query_params.get("id")
-            ).order_by("-id")
+    def get_queryset(self):
+        queryset = Inventory.objects.all()
+        params = self.request.query_params.copy()
 
-            page_number = request.query_params.get("page")
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
 
-            per_page = request.query_params.get("per_page", 15)
+        if params.get("id", None):
+            queryset = queryset.get(id=params.get("id", None))
+            return queryset
 
-            if page_number:
+        if params.get("warehouse_id", None):
+            queryset = queryset.filter(
+                warehouse_id=params.get("warehouse_id")
+            ).prefetch_related("item")
 
-                paginator = Paginator(wh_inventory, per_page)
+        if params.get("name", None):
+            queryset = queryset.filter(item__name__icontains=params.get("name"))
 
-                page_obj = paginator.get_page(page_number)
+        if params.get("code", None):
+            queryset = queryset.filter(item__code_icontains=params.get("code"))
 
-                return JsonResponse(
-                    {
-                        "data": WhInventorySerializer(page_obj, many=True).data,
-                        "total": paginator.count,
-                        "page": int(page_number),
-                        "lastPage": paginator.num_pages,
-                    }
-                )
+        if params.get("min_quantity", None):
+            queryset = queryset.filter(quantity__gte=params.get("min_quantity"))
 
-            return Response(WhInventorySerializer(wh_inventory, many=True).data)
+        if params.get("max_quantity", None):
+            queryset = queryset.filter(quantity__lte=params.get("max_quantity"))
 
-        except Exception as e:
+        if params.get("min_price", None):
+            queryset = queryset.filter(items__price__gte=params.get("min_price"))
 
-            return error_response("Invalid query")
+        if params.get("max_price", None):
+            queryset = queryset.filter(items__price__lte=params.get("max_price"))
+
+        if params.get("from_date", None):
+            queryset = queryset.filter(updated_at__gte=(params["from_date"]))
+
+        if params.get("to_date", None):
+            to_date = params.get("to_date", None) + datetime.timedelta(days=1)
+            queryset = queryset.filter(updated_at__lte=to_date)
+
+        return queryset
 
 
 class WhOrderRequestView(APIView):
@@ -230,109 +243,76 @@ class WhOrderRequestView(APIView):
             return error_response("Invalid query")
 
 
-class WhPurchaseView(APIView):
-    def get(self, request):
+class WhTransactionViewSet(ModelViewSet):
 
-        try:
+    queryset = WarehouseTransaction.objects.all().order_by("-created_at")
+    serializer_class = WhTransactionSerializer
 
-            wh_purchases = (
-                Purchase.objects.filter(warehouse__pk=request.query_params.get("id"))
-                .select_related("invoice")
-                .select_related("provider")
-                .order_by("-id")
-            )
+    def get_queryset(self):
+        queryset = self.queryset.select_related("created_by", "status")
+        params = self.request.query_params.copy()
 
-            page_number = request.query_params.get("page")
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
 
-            if page_number:
+        if params.get("id", None):
+            queryset = queryset.filter(id=params.get("id"))
+            return queryset
 
-                paginator = Paginator(
-                    wh_purchases, request.query_params.get("per_page", 15)
-                )
+        if params.get("warehouse_id", None):
+            movement_types = params.get("movement_type")
+            if params.get("movement_type", None):
+                movement_types = params.get("movement_type")
 
-                page_obj = paginator.get_page(page_number)
-
-                purchase_data = PurchaseSerializer(page_obj, many=True).data
-
-                for purchase in purchase_data:
-                    purchase_status = (
-                        PurchaseStatus.objects.select_related("status")
-                        .filter(purchase__id=purchase.get("id"))
-                        .latest("id")
+                if movement_types.get("entrada", None):
+                    queryset = queryset.filter(
+                        warehouse_destiny=params.get("warehouse_id")
                     )
 
-                    purchase["status"] = purchase_status.status.name
+                if movement_types.get("salida", None):
+                    queryset = queryset.filter(
+                        warehouse_origin=params.get("warehouse_id")
+                    )
 
-                return JsonResponse(
-                    {
-                        "data": purchase_data,
-                        "total": paginator.count,
-                        "page": int(page_number),
-                        "lastPage": paginator.num_pages,
-                    }
-                )
+        if params.get("warehouse_name", None):
+            movement_types = params.get("movement_type")
 
-            purchases_data = PurchaseSerializer(wh_purchases, many=True).data
+            if params.get("movement_type", None):
+                movement_types = params.get("movement_type")
 
-            for purchase in purchases_data:
-                purchase_status = (
-                    PurchaseStatus.objects.select_related("status")
-                    .filter(purchase__id=purchase.get("id"))
-                    .latest("id")
-                )
+                if movement_types.get("entrada", None):
+                    queryset = queryset.filter(
+                        warehouse_destiny__name__icontains=params.get("warehouse_name")
+                    )
 
-                purchase["status"] = purchase_status.status.name
+                if movement_types.get("salida", None):
+                    queryset = queryset.filter(
+                        warehouse_origin__name__icontains=params.get("warehouse_name")
+                    )
 
-            return JsonResponse(purchases_data, safe=False)
+        if params.get("from_date", None):
+            queryset = queryset.filter(created_at__gte=(params.get("from_date")))
 
-        except Exception as e:
-            print(e)
-            return error_response("Invalid query")
+        if params.get("to_date", None):
+            to_date = params.get("to_date", None) + datetime.timedelta(days=1)
+            queryset = queryset.filter(created_at__lte=to_date)
 
+        if params.get("notes", None):
+            queryset = queryset.filter(notes__icontains=(params.get("from_date")))
 
-class WhTransactionView(APIView):
-    def get(self, request):
-        try:
+        if params.get("created_by", None):
+            queryset = queryset.filter(created_by=(params.get("created_by")))
 
-            wh_transaction_qs = (
-                WarehouseTransaction.objects.select_related("status")
-                .filter(
-                    Q(warehouse_origin__pk=request.query_params.get("id"))
-                    | Q(warehouse_destiny__pk=request.query_params.get("id"))
-                )
-                .order_by("-id")
+        if params.get("created_by_name", None):
+            queryset = queryset.filter(
+                created_by__name__icontains=(params.get("created_by_name"))
+            )
+            queryset = queryset.filter(
+                created_by__lastname__icontains=(params.get("created_by_name"))
             )
 
-            page_number = request.query_params.get("page")
-
-            if page_number:
-
-                paginator = Paginator(
-                    wh_transaction_qs, request.query_params.get("per_page", 15)
-                )
-
-                page_obj = paginator.get_page(page_number)
-
-                transactions_data = WhTransactionSerializer(page_obj, many=True).data
-
-                return JsonResponse(
-                    {
-                        "data": WhTransactionSerializer(page_obj, many=True).data,
-                        "total": paginator.count,
-                        "page": int(page_number),
-                        "lastPage": paginator.num_pages,
-                    }
-                )
-
-            transactions_data = WhTransactionSerializer(
-                wh_transaction_qs, many=True
-            ).data
-
-            return JsonResponse(transactions_data, safe=False)
-
-        except Exception as e:
-            print(e)
-            return error_response("Invalid query")
+        return queryset
 
 
 class WhOrderRequestViewSet(ReadOnlyModelViewSet):
@@ -368,56 +348,13 @@ class WhLatestTomaFisicaView(APIView):
             return error_response("Invalid query")
 
 
-class WhTomaFisicasView(APIView):
-    def get(self, request: Request):
-        try:
-            wh_id = int(request.query_params.get("id"))
-            toma_fisica = WhTomasFisicas.objects.filter(warehouse_id=wh_id).order_by(
-                "-id"
-            )
-            if toma_fisica is None:
-                return error_response("Not found", status=404)
+class WhTomasFisicasViewSet(ModelViewSet):
 
-            page_number = request.query_params.get("page")
-
-            if page_number:
-
-                paginator = Paginator(
-                    toma_fisica, request.query_params.get("per_page", 15)
-                )
-
-                page_obj = paginator.get_page(page_number)
-
-                return JsonResponse(
-                    {
-                        "data": TomasFisicasSerializer(page_obj, many=True).data,
-                        "total": paginator.count,
-                        "page": int(page_number),
-                        "lastPage": paginator.num_pages,
-                    }
-                )
-
-            serializer = TomasFisicasSerializer(toma_fisica, many=True)
-            return JsonResponse(serializer.data, safe=False)
-        except TypeError as e:
-
-            return error_response("invalid params")
-
-
-class CustomPagination(PageNumberPagination):
-    page_size = 15
-    page_size_query_param = "per_page"
-    page_query_param = "page"
-
-
-class WhTomaFisicasViewSet(ModelViewSet):
-
-    queryset = Inventory.objects.all()
-    serializer_class = WhInventorySerializer
-    pagination_class = CustomPagination
+    queryset = WhTomasFisicas.objects.all().order_by("-created_at")
+    serializer_class = TomasFisicasSerializer
 
     def get_queryset(self):
-        queryset = Inventory.objects.all()
+        queryset = self.queryset
         params = self.request.query_params.copy()
 
         if params.get("order_by", None):
@@ -427,24 +364,24 @@ class WhTomaFisicasViewSet(ModelViewSet):
         if params.get("warehouse_id", None):
             queryset = queryset.filter(
                 warehouse=params.get("warehouse_id")
-            ).prefetch_related("item")
+            ).select_related("warehouse", "done_by")
 
-        if params.get("item_name", None):
+        if params.get("employee_name", None):
             queryset = queryset.filter(
-                item__name__icontains=params.get("warehouse_name")
+                done_by__name__icontains=params.get("employee_name")
             )
 
-        if params.get("min_quantity", None):
-            queryset = queryset.filter(quantity__gte=params.get("min_quantity"))
+        if params.get("employee_id", None):
+            queryset = queryset.filter(done_by__id=params.get("employee_id"))
 
-        if params.get("max_quantity", None):
-            queryset = queryset.filter(quantity__lte=params.get("max_quantity"))
+        if params.get("novedad", None):
+            queryset = queryset.filter(novedad__icontains=params.get("novedad"))
 
         if params.get("from_date", None):
-            queryset = queryset.filter(updated_at__gte=(params["from_date"]))
+            queryset = queryset.filter(created_at__gte=(params["from_date"]))
 
         if params.get("to_date", None):
             to_date = params.get("to_date", None) + datetime.timedelta(days=1)
-            queryset = queryset.filter(updated_at__lte=to_date)
+            queryset = queryset.filter(created_at__lte=to_date)
 
         return queryset
