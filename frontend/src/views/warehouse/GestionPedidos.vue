@@ -417,7 +417,7 @@
                         :per-page="whPageCount"
                         aria-controls="b-list-warehouses"
                         align="center"
-                        @page-click.left.self="onAsidePageChanged"
+                        @page-click.left="onAsidePageChanged"
                         :limit="3"
                         hide-goto-end-buttons
                         class="paginator"></b-pagination>
@@ -477,7 +477,7 @@
                             :per-page="whPageCount"
                             aria-controls="b-list-warehouses"
                             align="center"
-                            @page-click.left.self="onMainPageChanged"
+                            @page-click.left="onMainPageChanged"
                             :limit="10"
                             class="paginator col-5 tw-inline-flex"></b-pagination>
 
@@ -859,7 +859,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whinv-table"
                                 align="center"
-                                @page-click.left.self="
+                                @page-click.left="
                                     onPageChanged('inventory', invTabController)
                                 "
                                 :limit="10"
@@ -953,7 +953,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.left.self="
+                                @page-click.left="
                                     onPageChanged(
                                         'purchases',
                                         purchaseTabController
@@ -1038,7 +1038,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.left.self="
+                                @page-click.left="
                                     onPageChanged(
                                         'tomas-fisicas',
                                         tomasFisicasTabController
@@ -1137,7 +1137,7 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.left.self="
+                                @page-click.left="
                                     onPageChanged(
                                         'movements',
                                         movementTabController
