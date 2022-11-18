@@ -304,7 +304,7 @@
                         </select>
                     </div>
                     <div class="col">
-                        <EButton type="secondary" style="margin-top: 20px">
+                        <EButton variant="secondary" style="margin-top: 20px">
                             +
                         </EButton>
                     </div>
@@ -475,7 +475,7 @@
                         </select>
                     </div>
                     <div class="col">
-                        <EButton type="secondary" style="margin-top: 20px"
+                        <EButton variant="secondary" style="margin-top: 20px"
                             >Añadir producto</EButton
                         >
                     </div>

@@ -187,6 +187,13 @@
     onMounted(() => {
         return loadGender(), loadRole(), loadInfo()
     })
+
+    const creador = computed(() => {
+        if (form.value.created_by instanceof Object) {
+            return form.value.created_by?.name
+        }
+        return 'No asignado'
+    })
 </script>
 
 <template>
@@ -212,7 +219,7 @@
                         <ECol cols="12" lg="6" xl="3">
                             <InputText
                                 label="Creado por"
-                                :placeholder="form.created_by?.name"
+                                :placeholder="creador"
                                 readonly />
                         </ECol>
                         <ECol cols="12" lg="6" xl="3">

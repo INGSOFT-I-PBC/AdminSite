@@ -64,7 +64,7 @@
     }
 
     onMounted(() => {
-        return showRoles(null, 1)
+        return showRoles(1)
     })
 </script>
 
@@ -96,7 +96,6 @@
                         button
                         aria-controls="b-list-warehouses"
                         align="center"
-                        @page-click="onPageChanged"
                         :limit="3"
                         hide-goto-end-buttons
                         class="paginator"></b-pagination>

@@ -35,12 +35,10 @@
         { label: 'Identificación', key: 'cid' },
         { label: 'Rol', key: 'role' },
         { label: 'Nombres', key: 'name' },
-        ,
         { label: 'Apellidos', key: 'lastname' },
         { label: 'Estado', key: 'is_active' },
         'Acciones',
     ]
-
     /*
 let selectedEmployee: Optional<employeeModel> = null
 function showEmployee(employee: employeeModel) {
@@ -109,7 +107,7 @@ function showEmployee(employee: employeeModel) {
     }
 
     onMounted(() => {
-        return showEmployees(null, currentPage.value)
+        return showEmployees(currentPage.value)
     })
 </script>
 

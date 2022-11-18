@@ -1,8 +1,10 @@
 <script setup lang="ts">
     import { menus as menuItems } from '@/layouts/drawer'
     import DrawerMenu from '@components/custom/DrawerMenu.vue'
+    import { useAuthStore } from '@store'
 
     import { computed, inject, ref } from 'vue'
+    import { useRouter } from 'vue-router'
 
     import UserCard from '../components/UserCard.vue'
     import DrawerMenuItem from '../components/custom/DrawerMenuItem.vue'
@@ -22,6 +24,17 @@
             default: () => [],
         },
     })
+    const authStore = useAuthStore()
+    const router = useRouter()
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const routeMap: MapObj<any> = {} as MapObj<any>
+    useRouter()
+        .getRoutes()
+        .forEach(route => {
+            routeMap[
+                (route as unknown as RouteConfig).name?.toString() || 'unknown'
+            ] = route.meta?.permission
+        })
     // .map(it => ({
     //     name: it.name,
     //     meta: it.meta
@@ -56,10 +69,10 @@
     function logout() {
         authStore
             .logout()
-            .then(it => {
+            .then((it: unknown) => {
                 router.push({ path: '/login' })
             })
-            .catch(it => {
+            .catch((it: unknown) => {
                 console.error(it)
             })
     }
@@ -70,7 +83,7 @@
         class="tw-flex tw-flex-rows tw-justify-items-stretch tw-min-h-screen tw-w-full tw-justify-between tw-bg-neutral-100 dark:tw-bg-neutral-900 tw-overflow-x-hidden"
         id="_root">
         <aside
-            class="tw-h-full tw-min-w-fit tw-bg-slate-600 tw-rounded-r-xl tw-overflow-hidden">
+            class="tw-h-full tw-min-w-fit tw-bg-slate-600 tw-rounded-r-xl tw-overflow-hidden tw-resize-x">
             <div
                 id="__left-drawer"
                 class="tw-h-full tw-flex tw-flex-col tw-justify-self-stretch tw-justify-items-stretch lg:tw-min-w-fit tw-resize-x">
@@ -100,7 +113,7 @@
         </aside>
         <!-- Resize bar -->
         <div
-            class="resize-handle--x tw-cursor-ew-resize tw-justify-center hover:tw-bg-primary-light tw-w-1 hover:tw-animate-pulse hover:tw-transition tw-ease-in-out tw-duration-700 tw-bg-transparent"
+            class="resize-handle--x tw-cursor-ew-resize tw-justify-center tw-resize-x hover:tw-bg-primary-light tw-w-1 hover:tw-animate-pulse hover:tw-transition tw-ease-in-out tw-duration-700 tw-bg-transparent"
             data-target="aside" />
         <!-- Right view -->
         <main class="main-section" id="right-panel">
@@ -193,7 +206,6 @@
     .main-section {
         @apply tw-px-4 tw-py-2 tw-justify-items-stretch tw-overflow-x-hidden tw-w-full tw-gap-3 tw-flex-1 tw-flex tw-flex-col tw-overflow-y-auto;
     }
-
     .drawer-left-view {
     }
 </style>
