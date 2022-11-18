@@ -85,7 +85,7 @@ export interface Employee {
     is_active: boolean
     role: Maybe<Role> | undefined
     phone_number: string
-    created_by: Maybe<Employee> | null | number
+    created_by: Maybe<Employee> | null
     gender: Maybe<Gender> | undefined
 }
 
