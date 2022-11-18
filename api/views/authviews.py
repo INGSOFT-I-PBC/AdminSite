@@ -1,11 +1,9 @@
 from datetime import datetime
-from tokenize import group
 
-from django.core.exceptions import ObjectDoesNotExist
 from django.http import JsonResponse
 
 # from django.shortcuts import render
-from rest_framework import generics, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
@@ -19,9 +17,9 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from api.models import Employee, Group, GroupPermission, Permission, Role, User
 from api.serializers import (
-    EmployeeSerializer,
     GroupSerializer,
     PermissionSerializer,
+    ShowEmployeeSerializer,
     UserSerializer,
 )
 from api.utils import bool_param, error_response, response
@@ -68,7 +66,7 @@ class EmployeeViewSet(viewsets.ReadOnlyModelViewSet):
     """
 
     queryset = Employee.objects.all().order_by("name", "lastname")
-    serializer_class = EmployeeSerializer
+    serializer_class = ShowEmployeeSerializer
 
 
 class PermissionsViewSet(viewsets.ModelViewSet):

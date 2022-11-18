@@ -63,6 +63,12 @@ class IPayMethodSerializer(serializers.ModelSerializer):
         fields = ["id", "name"]
 
 
+class IPayMethodSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PaymentMethod
+        fields = ["id", "name"]
+
+
 class IInvoiceDetailsSerializer(serializers.ModelSerializer):
     item = IItemSerializer()
 

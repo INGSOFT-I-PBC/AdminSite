@@ -1,10 +1,10 @@
-from dataclasses import field
-from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
-from django.contrib.auth.hashers import make_password
 from django.conf import settings
-from .users import Employee
-from .common import TimestampModel as TModel
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
+from django.db import models
+
+from api.models.common import TimestampModel as TModel
+from api.models.users import Employee
 
 
 class AuthManager(BaseUserManager):

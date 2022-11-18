@@ -11,6 +11,7 @@ from api.views.orders import *
 from api.views.payment import *
 from api.views.providers import *
 from api.views.provinceview import *
+from api.views.roleview import *
 from api.views.sequence import *
 from api.views.statusview import *
 from api.views.userview import *
@@ -56,6 +57,8 @@ __all__ = [
     "create_provider",
     "GroupView",
     "PaginatedIItemViewSet",
+    "RoleView",
+    "RoleViewSet",
     "get_full_order",
     "create_order_request",
 ]

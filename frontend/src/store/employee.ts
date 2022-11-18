@@ -1,6 +1,9 @@
 import type { Employee, PaginatedResponse } from '@store-types'
+import type { MessageResponse } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
+
+import type { EmployeeForm } from './types/user.model'
 
 export type EmployeeSearchParams = {
     name?: string
@@ -21,11 +24,6 @@ export const useEmployeeStore = defineStore('employee', () => {
      * The pagination list of employees returned by a query
      */
     const paginatedEmployees = ref<PaginatedResponse<Employee>>()
-    /**
-     * All the employees listed on the database
-     */
-    const employees = ref<Employee[]>()
-
     /**
      * This function make a request to teh backend and by the given parameters of
      * search it would return a paginated list of results that the backend would return
@@ -60,10 +58,73 @@ export const useEmployeeStore = defineStore('employee', () => {
         return response
     }
 
+    /**
+     * This function make a request to the backend and by the given parameter, change the status
+     *
+     * @param identifier The identifier of the employee
+     */
+    async function fetchActivateEmployee(identifier: Identifier) {
+        const response = (
+            await axios.post<Employee>(
+                `/api/v1/employee/${identifier}/activate`
+            )
+        ).data
+        employee.value = response
+        return response
+    }
+
+    /**
+     * This function make a request to the backend and by the given parameter, change the status
+     *
+     * @param identifier The identifier of the employee
+     */
+
+    async function fetchInactivateEmployee(identifier: Identifier) {
+        const response = (
+            await axios.post<Employee>(
+                `/api/v1/employee/${identifier}/inactivate`
+            )
+        ).data
+        employee.value = response
+        return response
+    }
+
+    /**
+     * This function creates an new employee and saves it into the system.
+     *
+     * @param employee the user to save
+     */
+    function saveEmployee(employee: EmployeeForm) {
+        return axios.post<MessageResponse>('/api/v1/employee', employee)
+    }
+
+    /**
+     * This function update an employee and saves it into the system.
+     *
+     * @param employee th to save
+     */
+    function updateEmployee(id: number | string, data: EmployeeForm) {
+        return axios.put<MessageResponse>(`/api/v1/employee/${id}`, data)
+    }
+
+    /**
+     * This function remove an employee.
+     *
+     * @param employee to save
+     */
+    function removeEmployee(id: number | string) {
+        return axios.delete<MessageResponse>(`/api/v1/employee/${id}`)
+    }
+
     return {
         employee,
         paginatedEmployees,
         fetchEmployee,
         fetchEmployees,
+        fetchActivateEmployee,
+        fetchInactivateEmployee,
+        saveEmployee,
+        updateEmployee,
+        removeEmployee,
     }
 })

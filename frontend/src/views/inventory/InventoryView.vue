@@ -19,13 +19,11 @@
     const showWaitOverlay = ref<boolean>(true)
     const filtro = ref<boolean>(true)
     const items3: product[] = []
-
     function cleanFilters() {
         filterText.value = ''
         items3.splice(0, items3.length)
         tableSettings.rows = items2
     }
-
     function makeSearch(valor: any) {
         if (filterText.value != '') {
             showWaitOverlay.value = true
@@ -70,7 +68,6 @@
                 })
         }
     }
-
     const filterOption = ref<
         {
             label: string
@@ -187,7 +184,6 @@
                         })
                     }
                 }
-
                 tableSettings.rows = items2
                 showWaitOverlay.value = false
                 console.log(tableSettings.rows)

@@ -8,13 +8,13 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 from api import views
 from api.views import *
 from api.views.clientview import ClientView
+from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
 from api.views.itemviews import ItemView
 from api.views.orders import OrderRequestView
 from api.views.provinceview import ProvinceCityView
+from api.views.sequence import *
 from api.views.statusview import StatusView
 from api.views.warehouse import *
-from api.views.invoiceview import InvoiceView,PaginatedItemInvoiceView
-from api.views.sequence import *
 
 """ Definition of paginated data
  This urls are read-only, for batch creation/update
@@ -36,6 +36,7 @@ router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
+router.register(r"roles", views.RoleViewSet, "roleViewSet")
 router.register(r"providers", views.ProviderViewSet)
 router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"payment/all", views.FullPaymentViewSet)
@@ -66,10 +67,11 @@ urlpatterns = [
     path("user/<str:username>/activate", views.activate_user),
     path("user", views.create_user),
     # Employee management
+    path("employee", views.create_employee),
     path("employee/<int:id>", views.EmployeeView.as_view()),
     path("employee/<str:cid>", views.EmployeeView.as_view()),
     path("employee/<str:cid>/activate", views.activate_employee),
-    path("employee", views.create_employee),
+    path("employee/<str:cid>/inactivate", views.inactivate_employee),
     # Order management
     path("order/<int:id>", OrderRequestView.as_view()),
     path("order", create_order_request),
@@ -87,11 +89,20 @@ urlpatterns = [
     path("provider/<int:id>", views.ProviderView.as_view()),
     path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
-    #Invoice
-    path("invoice/client", InvoiceView.as_view({'get': 'search_client'}), name="search-invoice-client"),
-    path("invoice", InvoiceView.as_view({'post': 'save_invoice'}), name="save-invoice"),
-
+    # Role management
+    path("role/<int:id>", views.RoleView.as_view()),
+    # Invoice
+    path(
+        "invoice/client",
+        InvoiceView.as_view({"get": "search_client"}),
+        name="search-invoice-client",
+    ),
+    path("invoice", InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
     path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
-    path("invoice/item/all", PaginatedItemInvoiceView.as_view(),name="search-invoice-items")
+    path(
+        "invoice/item/all",
+        PaginatedItemInvoiceView.as_view(),
+        name="search-invoice-items",
+    ),
 ]
