@@ -3,6 +3,7 @@
     import ECard from '@components/custom/ECard.vue'
     import ECol from '@components/custom/ECol.vue'
     import ERow from '@components/custom/ERow.vue'
+    import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
@@ -34,15 +35,26 @@
     const itemInfoShow = ref<boolean>(false)
     const toast = useToast()
 
-    const templateList = [
-        { label: 'Por fecha de creación', value: '1' },
-        { label: 'Por creador', value: '2' },
+    function cleanFilters() {
+        filterText.value = ''
+    }
+    function makeSearch(valor: any) {
+        console.log(valor)
+    }
+
+    const filterOption = ref<
         {
-            label: 'Por tipo de ID',
-            value: '3',
-        },
-        { label: 'Por Nombres y apellidos', value: '4' },
-    ]
+            label: string
+            value: 'date' | 'code' | 'client'
+        }[]
+    >([
+        { label: 'Rango_fecha', value: 'date' },
+        { label: 'Secuencia', value: 'code' },
+        { label: 'Cliente', value: 'client' },
+    ])
+    const filterName = ref(filterOption.value[0])
+    const filterText = ref<string>('')
+
     type SelectedItem = { item: Invoice | null }
     const detailSelectedItem = ref<SelectedItem>({
         item: null,
@@ -86,7 +98,7 @@
         per_page: 10,
     }
 
-    function showInvoices() {
+    async function showInvoices(page: number) {
         showWaitOverlay.value = true
 
         itemStore
@@ -95,9 +107,9 @@
                 toast.error('No se pudo realizar la búsqueda ')
             })
             .finally(() => {
-                form.value.items = (
-                    itemStore.providers as PaginatedResponse<Invoice>
-                ).data
+                if (itemStore.providers?.data !== undefined) {
+                    form.value.items = itemStore.providers?.data
+                }
                 console.log(form.value.items)
                 showWaitOverlay.value = false
             })
@@ -219,22 +231,33 @@
                     <EButton variant="secondary" @click="go"
                         >+ Agregar factura
                     </EButton>
-                    <ECol cols="9" md="6" xl="4">
+                    <ECol cols="3" md="3" xl="3">
                         <ListBox
-                            v-model="model"
-                            top-label="Seleccione un filtro"
-                            :options="templateList" />
+                            :clearable="true"
+                            v-model="filterName"
+                            top-label="Filtrar por:"
+                            :options="filterOption" />
                     </ECol>
-                    <form class="d-flex" role="search">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Buscar cliente"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
+                    <ECol cols="3" md="3" xl="3">
+                        <InputText
+                            v-model="filterText"
+                            label="Cuadro de búsqueda"
+                            :placeholder="`Búsqueda por ${filterName.label}`" />
+                    </ECol>
+                    <ECol>
+                        <InputText
+                            label="De *"
+                            :model-value="fechade"
+                            type="date" />
+                        <InputText
+                            label="Hasta *"
+                            :model-value="fechahasta"
+                            type="date" />
+                    </ECol>
+                    <EButton @click="makeSearch(`${filterName.label}`)"
+                        >Buscar</EButton
+                    >
+                    <EButton @click="cleanFilters">Limpiar</EButton>
                 </div>
             </nav>
 
