@@ -77,7 +77,6 @@
             default: identity,
         },
     })
-
     const emit = defineEmits([
         'update:modelValue',
         'rightIconClick',
@@ -86,7 +85,6 @@
         'keyup',
         'change',
     ])
-
     const infoClass = computed(() => {
         const styles = Array.isArray(props.infoStyle)
             ? [...props.infoStyle]
@@ -106,7 +104,6 @@
         }
         return styles
     })
-
     const inputDivClass = computed(() => {
         if (props.disabled) {
             return 'tw-bg-gray-200 tw-text-gray-400 dark:tw-bg-slate-900 dark:tw-text-slate-500 hover:tw-cursor-not-allowed tw-ring-neutral-300'
@@ -123,7 +120,6 @@
         }
         return classes
     })
-
     const inputClass = computed(() => {
         if (props.disabled) {
             return 't-disabled'
@@ -139,7 +135,6 @@
         }
         return classes
     })
-
     function interactionStart(event: Event) {
         emit('keydown')
         const target = event.target as HTMLButtonElement
@@ -148,7 +143,6 @@
             target.blur()
         }
     }
-
     function emitValue(e: Event) {
         let value = (e.target as HTMLInputElement).value
         if (props.modelModifiers?.capitalize) {
@@ -175,7 +169,6 @@
         ) {
             value = props.formatter(value)
         }
-
         emit('update:modelValue', value)
         e.preventDefault()
         const input = e.target as HTMLInputElement

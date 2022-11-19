@@ -56,13 +56,7 @@
     type Form = {
         items: Client[]
     }
-    /*type ItemForm = {
-        item: Client | null
-    }
 
-    const itemForm = ref<ItemForm>({
-        item: null,
-    })*/
     const model = ref({})
 
     const loadItems = async () => {
@@ -100,7 +94,6 @@
         router.push({ path: '/usuarios/cliente/agregar' })
     }
     function goEdit(id: number): void {
-        console.log(id)
         router.push({ path: `/usuarios/cliente/editar/${String(id)}` })
     }
 
@@ -195,13 +188,19 @@
 
         <ECard>
             <ERow>
-                <h1 style="font-size: 35px; color: black">Clientes</h1>
+                <h1
+                    class="tw-text-black first-line:dark:tw-text-neutral-300"
+                    style="font-size: 35px; color: black">
+                    Clientes
+                </h1>
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
                     <EButton variant="secondary" @click="go"
                         >+ Agregar cliente
                     </EButton>
+                    <!--
+
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="model"
@@ -218,6 +217,7 @@
                             Search
                         </button>
                     </form>
+                    -->
                 </div>
             </nav>
 
@@ -235,14 +235,14 @@
                                 left-icon="fa-eye"
                                 variant="secondary"
                                 @click="showItem(item)"
-                                >Ver detalles</e-button
-                            >
+                                >Ver detalles
+                            </e-button>
                             <e-button
                                 left-icon="fa-edit"
                                 variant="success"
                                 @click="goEdit(item['id'])"
-                                >Editar</e-button
-                            >
+                                >Editar
+                            </e-button>
                             <e-button
                                 left-icon="fa-trash-can"
                                 variant="cancel"
@@ -250,8 +250,8 @@
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"
                                     >Eliminar</span
-                                ></e-button
-                            >
+                                >
+                            </e-button>
                         </div>
                     </template>
                 </BTable>
@@ -259,3 +259,8 @@
         </ECard>
     </main>
 </template>
+<style lang="scss">
+    .align {
+        padding: 0;
+    }
+</style>

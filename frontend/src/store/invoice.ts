@@ -1,6 +1,5 @@
 import { isMessage } from '@/store/types/typesafe'
 import type {
-    APIResponse,
     IClient,
     IInventory,
     IItem,

@@ -5,7 +5,6 @@ import {
     type RouteRecordRaw,
     createRouter,
     createWebHashHistory,
-    useRouter,
 } from 'vue-router'
 
 import Error403 from '../views/Error403.vue'
