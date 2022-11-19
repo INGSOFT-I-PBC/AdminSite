@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from api.models import OrderRequest, OrderRequestDetail, OrderStatus
+from api.serializers.item import SimpleItemSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -10,6 +11,8 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class OrderDetailSerializer(serializers.ModelSerializer):
+    item = SimpleItemSerializer()
+
     class Meta:
         model = OrderRequestDetail
         fields = ["order_request", "item", "quantity"]

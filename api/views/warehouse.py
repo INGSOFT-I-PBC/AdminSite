@@ -9,8 +9,10 @@ from rest_framework.viewsets import ReadOnlyModelViewSet
 
 from api.models import Inventory, OrderRequest, Purchase, PurchaseStatus, Warehouse
 from api.models.common import Status
+from api.models.orders import OrderRequestDetail, OrderStatus
 from api.models.warehouse import WarehouseTransaction, WhTomasFisicas
-from api.serializers.order import OrderSerializer
+from api.serializers.oders import FullOrderSerializer, FullOrderStatusSerializer
+from api.serializers.order import OrderDetailSerializer, OrderSerializer
 from api.serializers.purchase import PurchaseSerializer
 from api.serializers.warehouse import (
     FullWarehouseSerializer,
@@ -423,3 +425,34 @@ class WhTomaFisicasView(APIView):
         except TypeError as e:
 
             return error_response("invalid params")
+
+
+class WhOrderRequestView2(APIView):
+    def get(self, request):
+        try:
+            orders2 = (
+                OrderRequest.objects.filter(pk=request.query_params.get("id"))
+                .select_related("requested_by")
+                .select_related("warehouse")
+                .latest("id")
+            )
+
+            orders_details = OrderRequestDetail.objects.filter(
+                order_request=request.query_params.get("id")
+            ).select_related("item")
+            datos_detalles = OrderDetailSerializer(orders_details, many=True).data
+            orders_data2 = FullOrderSerializer(orders2).data
+
+            orders_status = (
+                OrderStatus.objects.filter(order__id=request.query_params.get("id"))
+                .select_related("status")
+                .latest("id")
+            )
+            status_data = FullOrderStatusSerializer(orders_status).data
+            orders_data2["details"] = datos_detalles
+            orders_data2["order_status"] = status_data
+            return JsonResponse(orders_data2, safe=False)
+
+        except Exception as e:
+            print(e)
+            return error_response("Invalid query")

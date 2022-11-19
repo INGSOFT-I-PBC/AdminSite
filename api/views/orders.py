@@ -1,8 +1,10 @@
 from django.http import JsonResponse
 from rest_framework.request import Request
 from rest_framework.views import APIView
+from rest_framework.viewsets import ModelViewSet
 
 from api.models import OrderRequest
+from api.models.orders import OrderRequestDetail
 from api.serializers.order import OrderDetailSerializer, OrderSerializer
 from api.utils import error_response
 
@@ -46,3 +48,22 @@ class OrderRequestView(APIView):
             serializer = OrderSerializer(order)
             return JsonResponse(serializer.data)
         return error_response("The given data was invalid")
+
+
+class OrderRequestFullView(ModelViewSet):
+    queryset = OrderRequestDetail.objects.all()
+    serializer_class = OrderDetailSerializer
+
+    def get_queryset(self):
+        # print(request.GET)
+        try:
+
+            orders_details = self.queryset.filter(
+                order_request=self.request.query_params.get("id")
+            ).select_related("item")
+
+            return orders_details
+
+        except Exception as e:
+            print(e)
+            return error_response("Invalid query")

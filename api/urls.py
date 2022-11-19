@@ -9,7 +9,7 @@ from api import views
 from api.views import *
 from api.views.clientview import ClientView
 from api.views.itemviews import ItemView
-from api.views.orders import OrderRequestView
+from api.views.orders import OrderRequestFullView, OrderRequestView
 from api.views.provinceview import ProvinceCityView
 from api.views.statusview import StatusView
 from api.views.warehouse import *
@@ -72,6 +72,11 @@ urlpatterns = [
     path("employee", views.create_employee),
     # Order management
     path("order", OrderRequestView.as_view()),
+    path(
+        "order-details",
+        OrderRequestFullView.as_view({"get": "list"}),
+        name="order-details",
+    ),
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),
     path("provinces", ProvinceCityView.as_view()),

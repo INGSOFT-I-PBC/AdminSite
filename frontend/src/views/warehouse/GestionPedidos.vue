@@ -7,9 +7,11 @@ import { useWarehouseStore } from '@store/warehouse'
 import { useItemStore } from '@/store'
 import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 import { computed, ref } from 'vue'
+//import type { Item, Warehouse, Purchase, TomaFisica, WhWithTomaFisica } from '@store/types'
 import { type Item, type Warehouse, type Purchase, type TomaFisica, type WhWithTomaFisica } from '@store/types'
 import type { ItemProps } from '@store/types/items.model'
 
+/*
 type SelectedItem = { item: Item | null; props: ItemProps[] }
 type QuantifiedItem = Item & { quantity: number }
 
@@ -150,6 +152,7 @@ function resetInvData() {
 
 }
 
+
 async function onPageChangedInventory(event: any, page: number) {
 
     showWaitOverlay.value = true
@@ -167,6 +170,9 @@ async function onPageChangedInventory(event: any, page: number) {
     showWaitOverlay.value = false
 
 }
+
+
+
 
 async function onPageChangedTomaFisicas(event: any, page: number) {
 
@@ -186,6 +192,9 @@ async function onPageChangedTomaFisicas(event: any, page: number) {
 
 }
 
+
+
+
 async function onPageChangedPurchase(event: any, page: number) {
 
     showWaitOverlay.value = true
@@ -204,23 +213,6 @@ async function onPageChangedPurchase(event: any, page: number) {
 
 }
 
-// async function onPageChangedMovements(event:any,page:number){
-
-//     showWaitOverlay.value = true
-
-//     let wh_id = activeWhInformation.value.bodega.id
-
-//     let response = await warehouse.fetchPaginatedWarehousesMovements(
-//         { id: wh_id }, { page: page, per_page: whInformationPerPage.value }
-//     )
-
-//     activeWhInformation.value.movements = response.data.data
-
-//     movementTableTotal.value = response.data.total
-
-//     showWaitOverlay.value = false
-
-// }
 
 
 function wharehouseButtonPressed(event: any, whId: number, index: number) {
@@ -243,7 +235,6 @@ function wharehouseButtonPressed(event: any, whId: number, index: number) {
 
     onPageChangedTomaFisicas(event, 1)
 
-    //onPageChangeMovement(event,1)
 
 }
 
@@ -279,9 +270,10 @@ warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
     paginateMain(whPageCount.value, 0)
     showWaitOverlay.value = false
 })
-
+*/
 </script>
 
+<!--
 <template>
     <WaitOverlay :show="showWaitOverlay">
         <ECard>
@@ -367,7 +359,6 @@ warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
 
                 </div>
 
-                <!-- Specific warehouse card  -->
 
                 <div v-else class="col-xl">
                     <div class="row tw-bg-slate-50 dark:tw-bg-slate-700 mt-2">
@@ -438,7 +429,6 @@ warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
 
                         </b-tab>
 
-                        <!--  Historial de pedidos TAB    -->
 
                         <b-tab title="Historial de Compras">
 
@@ -462,7 +452,7 @@ warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
                         </b-tab>
 
                         <b-tab title="Toma Física" disabled>
-                            <!-- TODO cuando esten las migraciones-->
+
 
                             <BTable :fields="inventoryFields" :items="activeWhInformation.inventory">
                                 <template #cell(#)="{ index }">
@@ -494,6 +484,8 @@ warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
         </ECard>
     </WaitOverlay>
 </template>
+-->
+
 <style lang="scss">
 h1.title {
     @apply tw-text-2xl tw-text-black dark:tw-text-neutral-100;

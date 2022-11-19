@@ -1,10 +1,8 @@
-from rest_framework.serializers import ModelSerializer
-from rest_framework.serializers import CharField, IntegerField, DateTimeField
+from rest_framework.serializers import DateTimeField, IntegerField, ModelSerializer
 
-from api.models import OrderRequest, OrderRequestDetail, OrderStatus
+from api.models import OrderRequest, OrderStatus
 from api.serializers import WarehouseSerializer
 from api.serializers.common import EmployeeSerializer, StatusSerializer
-from api.serializers.item import SimpleItemSerializer
 
 
 class OrderSerializer(ModelSerializer):
@@ -26,18 +24,22 @@ class FullOrderSerializer(ModelSerializer):
 
     class Meta:
         model = OrderRequest
-        fields = ["id", "request_at", "request_by", "warehouse"]
+        fields = ["id", "requested_at", "requested_by", "warehouse", "comment"]
 
 
 class FullOrderStatusSerializer(ModelSerializer):
 
-    id = IntegerField()
-    order = OrderSerializer()
     status = StatusSerializer()
-    created_by = EmployeeSerializer()
-    created_at = DateTimeField()
+
+    def to_representation(self, obj):
+        """Move fields from status to purchase representation."""
+        representation = super().to_representation(obj)
+        status_representation = representation.pop("status")
+
+        representation["status"] = status_representation["name"]
+
+        return representation
 
     class Meta:
         model = OrderStatus
-        fields = ["id", "order", "status", "created_by", "created_at"]
-        db_table = "order_status"
+        fields = ["id", "status", "created_by", "created_at"]
