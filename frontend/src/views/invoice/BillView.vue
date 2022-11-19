@@ -260,7 +260,7 @@
                     <EButton @click="cleanFilters">Limpiar</EButton>
                 </div>
             </nav>
-
+            //
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
