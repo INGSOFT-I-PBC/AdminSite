@@ -10,14 +10,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet
 
-from api.models import Client, Invoice, InvoiceDetails, Item
+from api.models import Client, Invoice, InvoiceDetails, Item,Inventory
 from api.serializers.invoices import (
     FullInvoiceSerializer,
     IClientSerializer,
     IInvoiceDetailsEditSerializer,
     IItemSerializer,
     InvoiceEditSerializer,
-    InvoiceSerializer,
+    InvoiceSerializer,InvoiceInventorySerializer,IInventorySerializer
 )
 from api.utils import ApiPagination, error_response, response
 
@@ -32,16 +32,20 @@ class PaginatedItemInvoiceView(APIView):
 
         queryset = request.GET.get("buscar")
         page_number = request.query_params.get("page")
-        items = Item.objects.all()
+        items = Inventory.objects.all()
 
-        if queryset:
+        '''if queryset:
             items = Item.objects.filter(
                 Q(codename__icontains=queryset) | Q(name__icontains=queryset)
+            ).distinct()'''
+        if queryset:
+            items =Inventory.objects.filter(
+                Q(item__codename__icontains=queryset) | Q(item__name__icontains=queryset)
             ).distinct()
         paginator = ApiPagination()
         page_obj = paginator.paginate_queryset(items, request)
 
-        serializer_class = IItemSerializer(page_obj, many=True)
+        serializer_class = IInventorySerializer(page_obj, many=True)
         return paginator.get_paginated_response(serializer_class.data)
 
 
@@ -57,6 +61,35 @@ class InvoiceView(viewsets.GenericViewSet):
             {"mensaje": "No se ha encontrado el Cliente."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+    @action(methods=["get"], detail=False)
+    def search_item(self, request: Request):
+
+        supplier = Inventory.objects.filter(item__pk=request.query_params.get("id")).first()
+
+        if supplier:
+            supplier_serializer = IInventorySerializer(supplier)
+            return Response(supplier_serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"mensaje": "No se ha encontrado el Item."},
+            status=status.HTTP_400_BAD_REQUEST,
+
+        )
+    @action(methods=["put"], detail=False)
+    def edit_quantity(self, request: Request):
+            item = int(request.GET.get("item"))
+            print(item)
+            supplier = Inventory.objects.filter(item_id=item).first()
+           # print(supplier)
+            serializer=InvoiceInventorySerializer(supplier,data=request.data)
+            if serializer.is_valid():
+
+                serializer.save()
+                print(serializer.data)
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
     @action(methods=["post"], detail=False)
     def save_invoice(self, request: Request):
@@ -164,7 +197,7 @@ class InvoicesView(APIView):
 
 
 class InvoiceViewSet(ReadOnlyModelViewSet):
-    queryset = Invoice.objects.all().order_by("id").exclude(anulated=True)
+    queryset = Invoice.objects.all().order_by("-created_at").exclude(anulated=True)
     serializer_class = FullInvoiceSerializer
 
 
