@@ -37,7 +37,7 @@ class InventoryView(APIView):
                 return datos2
 
         else:
-            items = Inventory.objects.all().order_by("id")
+            items = Inventory.objects.all().order_by("-created_at")
             serializer = FullInventorySerializer(
                 items, context={"request": request}, many=True
             )

@@ -2,12 +2,14 @@ import { isMessage } from '@/store/types/typesafe'
 import type {
     APIResponse,
     IClient,
+    IInventory,
     IItem,
     IPayment,
     Invoice,
     MessageResponse,
     PaginatedAPIResponse,
 } from '@store-types'
+import type { PaginatedResponse } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
@@ -18,7 +20,10 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     const paginatedInvoice: Ref<Optional<PaginatedAPIResponse<Invoice>>> =
         ref(null)
 
-    const paginatedItems: Ref<Optional<PaginatedAPIResponse<IItem>>> = ref(null)
+    const paginatedItems: Ref<Optional<PaginatedAPIResponse<IInventory>>> =
+        ref(null)
+    const providers = ref<PaginatedResponse<Invoice>>()
+    //const providers: Ref<Optional<PaginatedAPIResponse<Invoice>>> = ref(null)
 
     const currentPaginatedItemPage = computed(() => {
         const pitem = paginatedItems.value
@@ -49,19 +54,6 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
                 `/api/v1/invoice/client?number_id=${number_id}`
             )
         ).data
-    }
-
-    async function fetchInvoicePaginated(options: PaginationOptions) {
-        const data = await (
-            await axios.get<PaginatedAPIResponse<Invoice>>(
-                '/api/v1/list/items',
-                {
-                    params: options,
-                }
-            )
-        ).data
-        paginatedInvoice.value = data
-        return data
     }
 
     /**
@@ -127,7 +119,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     }*/
     async function fetchIItemsPaginated(options: PaginationOptions) {
         const data = await (
-            await axios.get<PaginatedAPIResponse<IItem>>(
+            await axios.get<PaginatedAPIResponse<IInventory>>(
                 `/api/v1/invoice/item/all`,
                 {
                     params: options,
@@ -137,6 +129,34 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         paginatedItems.value = data
         return data
     }
+
+    async function fetchInvoicePaginated(params?: PaginationOptions) {
+        const response = (
+            await axios.get<PaginatedResponse<Invoice>>(
+                '/api/v1/list/invoices/all',
+                { params }
+            )
+        ).data
+        paginatedInvoice.value = response
+        return response
+    }
+    /**
+     * This method will fetch a paginated list of users that are
+     * filtered by the given params.
+     *
+     * @param params the search params
+     */
+    async function fetchProviders(params?: PaginationOptions) {
+        const response = (
+            await axios.get<PaginatedResponse<Invoice>>(
+                '/api/v1/list/invoices/all',
+                { params }
+            )
+        ).data
+        providers.value = response
+        return response
+    }
+
     async function fetchPayment() {
         const data = await (
             await axios.get<IPayment[]>('/api/v1/list/payment/all')
@@ -161,6 +181,8 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         editInvoice,
         removeInvoice,
         fetchClientNumber,
+        providers,
+        fetchProviders,
         //fetchStatus,
     }
 })

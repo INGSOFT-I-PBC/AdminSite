@@ -27,7 +27,7 @@ router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
-router.register(r"invoices/all", views.FullInvoiceViewSet)
+router.register(r"invoices/all", views.InvoiceViewSet)
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"clients/all", views.FullClientViewSet)
 router.register(r"provinces/all", views.FullProvinceViewSet)
@@ -90,7 +90,7 @@ urlpatterns = [
     #Invoice
     path("invoice/client", InvoiceView.as_view({'get': 'search_client'}), name="search-invoice-client"),
     path("invoice", InvoiceView.as_view({'post': 'save_invoice'}), name="save-invoice"),
-
+    path("invoice/quantity", InvoiceView.as_view({'put': 'edit_quantity'}), name="save-invoice"),
     path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
     path("invoice/item/all", PaginatedItemInvoiceView.as_view(),name="search-invoice-items")
