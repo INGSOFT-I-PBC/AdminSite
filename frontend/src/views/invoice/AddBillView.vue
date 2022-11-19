@@ -8,6 +8,7 @@
     import { usePaymentStore } from '@store/payment'
     import type {
         IClient,
+        IInventory,
         IInvoiceDetails,
         IItem,
         IPayment,
@@ -17,8 +18,10 @@
     } from '@store/types'
     import { type Sequence, isMessage } from '@store/types'
     import AddClientBillView from '@views/invoice/AddClientBillView.vue'
+    import ClientEditBillView from '@views/invoice/ClientEditBillView.vue'
     import type { TableField } from 'bootstrap-vue-3'
     import { Console } from 'console'
+    import { click } from 'ol/events/condition'
     import * as VeeValidate from 'vee-validate'
     import { ErrorMessage, Field } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
@@ -31,6 +34,7 @@
     import { useToast } from 'vue-toastification'
 
     import {
+        EButtonGroup,
         ECard,
         ECol,
         ERow,
@@ -48,14 +52,17 @@
     const productModalShow = ref<boolean>(false)
     const saveModalShow = ref<boolean>(false)
     const saveClientModalShow = ref<boolean>(false)
-
+    const editClientModalShow = ref<boolean>(false)
+    const savePayModalShow = ref<boolean>(false)
     const showWaitOverlay = ref<boolean>(true)
+    const moneyreturned = ref<number>(0)
+
     const serverOpts = ref<IServerOptions>({
         page: 1,
         rowsPerPage: 5,
         buscar: '',
     })
-    type SelectedItem = { item: IItem | null }
+    type SelectedItem = { item: IInventory | null }
     const detailSelectedItem = ref<SelectedItem>({
         item: null,
     })
@@ -74,7 +81,7 @@
         name: '',
     })
     const numero = ref(0)
-    const items = computed((): IItem[] => {
+    const items = computed((): IInventory[] => {
         if (isMessage(itemStore.paginatedItems)) return []
         return itemStore.paginatedItems?.data || []
     })
@@ -90,16 +97,16 @@
         buscar: serverOpts.value.buscar,
     }))
     const iformShow = computed(() => ({
-        codigo: itemForm.value.item?.codename?.toString(),
-        nombre: itemForm.value.item?.name ?? '',
+        codigo: itemForm.value.item?.item?.codename?.toString(),
+        nombre: itemForm.value.item?.item?.name ?? '',
         quantity: itemForm.value.quantity ?? 1,
         priceIVA:
-            Number(itemForm.value.item?.price) *
-            Number(itemForm.value.item?.iva),
-        iva: itemForm.value.item?.iva,
+            Number(itemForm.value.item?.item?.price) *
+            Number(itemForm.value.item?.item?.iva),
+        iva: itemForm.value.item?.item?.iva,
         total:
-            Number(itemForm.value.item?.price) *
-            Number(itemForm.value.item?.iva) *
+            Number(itemForm.value.item?.item?.price) *
+            Number(itemForm.value.item?.item?.iva) *
             Number(itemForm.value.quantity),
     }))
     const loadClient = async () => {
@@ -124,7 +131,7 @@
     paymentStore.fetchPayment().then(() => {
         showWaitOverlay.value = false
     })
-    type QuantifiedItem = IItem & {
+    type QuantifiedItem = IInventory & {
         quantity: number
         subtotal: number
         totalIVA: number
@@ -140,7 +147,7 @@
     })
 
     type ItemForm = {
-        item: IItem | null
+        item: IInventory | null
         quantity: string
         total: string
         subtotal: string
@@ -156,15 +163,17 @@
         totalInvoice: '0',
     })
     const itemHeader = [
-        { text: 'Código', value: 'codename' },
-        { text: 'Nombre de producto', value: 'name' },
-        { text: 'Marca', value: 'brand' },
-        { text: 'Modelo', value: 'model' },
-        { text: 'Categoría', value: 'category.name' },
+        { text: 'Código', value: 'item.codename' },
+        { text: 'Nombre de producto', value: 'item.name' },
+        { text: 'Marca', value: 'item.brand' },
+        { text: 'Modelo', value: 'item.model' },
+        { text: 'Stock', value: 'quantity' },
+        { text: 'Categoría', value: 'item.category.name' },
     ]
     const formFields: TableField[] = [
         '#',
-        { label: 'Código', key: 'codename' },
+        'Código',
+        //{ label: 'Código', key: 'items.item.codename' },
         'Descripción',
         'Medida',
         { label: 'Cantidad', key: 'quantity' },
@@ -196,8 +205,7 @@
             formSequence
         )
     }
-
-    function saveInvoice() {
+    function modalsInvoice() {
         const { value: data } = form
         if (
             formClient.value.id == 0 ||
@@ -210,12 +218,19 @@
                     : 'Llene los campos para continuar'
             )
             return
+        } else {
+            return (savePayModalShow.value = true)
         }
+    }
+
+    function saveInvoice() {
+        const { value: data } = form
+
         const saveData: Invoice = {
             code: codeInvoice.value,
             client: formClient.value.id,
             iva: Number(itemForm.value.totalIVA),
-            payment_method: data.payment_method.id,
+            payment_method: (data.payment_method as IPayment).id,
             return_deadline: return_deadline,
             emission: emission,
             status: 2,
@@ -223,9 +238,9 @@
             total: Number(itemForm.value.totalInvoice),
             anulated: false,
             invoice_details: data.items.map(it => ({
-                price: Number(it.price),
+                price: Number(it.item?.price),
                 quantity: it.quantity,
-                item: it.id,
+                item: Number(it.item?.id),
             })),
         }
         showWaitOverlay.value = true
@@ -252,7 +267,7 @@
         loadItems()
         productModalShow.value = true
     }
-    function onRowClick(selectedItem: IItem) {
+    function onRowClick(selectedItem: IInventory) {
         itemForm.value.item = selectedItem
 
         productModalShow.value = false
@@ -281,11 +296,14 @@
                 for (const i of form.value.items) {
                     const suma =
                         Number(i.quantity) *
-                        (Number(i.price) + Number(i.price) * Number(i.iva))
+                        (Number(i.item?.price) +
+                            Number(i.item?.price) * Number(i.item?.iva))
                     i.total = Number(suma.toFixed(2))
-                    i.subtotal = Number(i.quantity) * Number(i.price)
+                    i.subtotal = Number(i.quantity) * Number(i.item?.price)
                     i.totalIVA =
-                        Number(i.quantity) * Number(i.price) * Number(i.iva)
+                        Number(i.quantity) *
+                        Number(i.item?.price) *
+                        Number(i.item?.iva)
                     itemForm.value.subtotal = (
                         Number(itemForm.value.subtotal) +
                         Number(i.subtotal.toFixed(2))
@@ -317,9 +335,9 @@
         }
         const suma =
             Number(itemForm.value.quantity) *
-            (Number(itemForm.value.item?.price) +
-                Number(itemForm.value.item?.price) *
-                    Number(itemForm.value.item?.iva))
+            (Number(itemForm.value.item?.item?.price) +
+                Number(itemForm.value.item?.item?.price) *
+                    Number(itemForm.value.item?.item?.iva))
         form.value.items.push({
             ...itemForm.value.item,
             quantity: Number(itemForm.value.quantity),
@@ -327,22 +345,24 @@
         } as QuantifiedItem)
         itemForm.value.subtotal = (
             Number(itemForm.value.subtotal) +
-            Number(itemForm.value.quantity) * Number(itemForm.value.item?.price)
+            Number(itemForm.value.quantity) *
+                Number(itemForm.value.item?.item?.price)
         ).toFixed(2)
 
         itemForm.value.totalIVA = (
             Number(itemForm.value.totalIVA) +
             Number(itemForm.value.quantity) *
-                Number(itemForm.value.item?.price) *
-                Number(itemForm.value.item?.iva)
+                Number(itemForm.value.item?.item?.price) *
+                Number(itemForm.value.item?.item?.iva)
         ).toFixed(2)
 
         const subtotal =
-            Number(itemForm.value.quantity) * Number(itemForm.value.item?.price)
+            Number(itemForm.value.quantity) *
+            Number(itemForm.value.item?.item?.price)
         const totalIva =
             Number(itemForm.value.quantity) *
-            (Number(itemForm.value.item?.price) *
-                Number(itemForm.value.item?.iva))
+            (Number(itemForm.value.item?.item?.price) *
+                Number(itemForm.value.item?.item?.iva))
         itemForm.value.totalInvoice = (
             Number(itemForm.value.totalInvoice) +
             Number(subtotal) +
@@ -354,7 +374,7 @@
         itemForm.value.total = '0'
         toast.success('Producto añadido a la tabla')
     }
-    async function showItem(item: IItem) {
+    async function showItem(item: IInventory) {
         detailSelectedItem.value.item = item
         itemInfoShow.value = true
     }
@@ -367,10 +387,12 @@
         for (const i of form.value.items) {
             const suma =
                 Number(i.quantity) *
-                (Number(i.price) + Number(i.price) * Number(i.iva))
+                (Number(i.item?.price) +
+                    Number(i.item?.price) * Number(i.item?.iva))
             i.total = Number(suma.toFixed(2))
-            i.subtotal = Number(i.quantity) * Number(i.price)
-            i.totalIVA = Number(i.quantity) * Number(i.price) * Number(i.iva)
+            i.subtotal = Number(i.quantity) * Number(i.item?.price)
+            i.totalIVA =
+                Number(i.quantity) * Number(i.item?.price) * Number(i.item?.iva)
             itemForm.value.subtotal = (
                 Number(itemForm.value.subtotal) + Number(i.subtotal.toFixed(2))
             ).toFixed(2)
@@ -385,21 +407,6 @@
             Number(itemForm.value.totalIVA)
         ).toFixed(2)
     }
-    function changeCountry(event: any) {
-        if (
-            event.target.options[event.target.options.selectedIndex].text ==
-            'En efectivo'
-        ) {
-            tipopago.value = true
-        } else {
-            tipopago.value = false
-        }
-    }
-
-    function onSubmit(value: any) {
-        saveModalShow.value = true
-        console.log(value)
-    }
 
     function validateID(value: any) {
         // if the field is empty
@@ -413,139 +420,30 @@
         return true
     }
 
-    function validateCell(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
+    function modalmethodpayment() {
+        if (
+            moneyreturned.value < 0 ||
+            moneyreturned.value < Number(itemForm.value.totalInvoice)
+        ) {
+            return toast.error('Cantidad Ingresada Incorrecta')
         }
-        if (value.length != 10 || isNaN(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateId(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (value.length != 10 || isNaN(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateName(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-    function validateDate(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        return true
-    }
-
-    function validateDate2(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        return true
-    }
-
-    function validateEmail(value: any) {
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        const correo = /^\w+([.-_+]?\w+)*@\w+([.-]?\w+)*(\.\w{2,10})+$/
-        if (!correo.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateProvincia(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-
-    function validateSucursal(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-        if (!isNaN(value)) {
-            return 'Inválido'
-        }
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-
-        if (!regex.test(value)) {
-            return 'Inválido'
-        }
-
-        return true
-    }
-    function validateDireccion(value: any) {
-        // if the field is empty
-        if (!value) {
-            return 'Este campo es requerido'
-        }
-
-        return true
-    }
-
-    function validatePago(value: any) {
-        const regex = /^[a-zA-ZÀ-ÿ ]+$/
-        if (tipopago.value == false && !value) {
-            return 'Este campo es necesario '
-        }
-
-        if (tipopago.value == false && isNaN(value)) {
-            return 'Inválido'
-        }
-        if (tipopago.value == false && regex.test(value)) {
-            return 'Inválido'
-        }
-
-        if (tipopago.value == true) {
-            return true
-        }
-        return true
+        return (saveModalShow.value = true)
     }
     function onsaveClient() {
         saveClientModalShow.value = true
+    }
+    const returnedMoney = computed(() => {
+        if (
+            moneyreturned.value > 0 &&
+            moneyreturned.value > Number(itemForm.value.totalInvoice)
+        )
+            return moneyreturned.value - Number(itemForm.value.totalInvoice)
+        else {
+            return 0
+        }
+    })
+    const onPress = (e: any) => {
+        return false
     }
 
     onMounted(() => {
@@ -566,6 +464,59 @@
                 <ECol>
                     <AddClientBillView> </AddClientBillView>
                 </ECol>
+            </ERow>
+        </ModalDialog>
+        <ModalDialog
+            size="4xl"
+            id="saveclient-modal"
+            v-model:show="editClientModalShow"
+            title="Guardar Cliente">
+            <ERow>
+                <ECol>
+                    <ClientEditBillView :id="formClient.id">
+                    </ClientEditBillView>
+                </ECol>
+            </ERow>
+        </ModalDialog>
+        <ModalDialog
+            id="methodpay-modal"
+            v-model:show="savePayModalShow"
+            ok-text="Facturar"
+            @ok="modalmethodpayment"
+            title="Dinero devuelto">
+            <ERow>
+                <span
+                    class="tw-w-1/2 tw-font-bold col-6 tw-text-center tw-text-2xl"
+                    >TOTAL:</span
+                >
+                <span
+                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-xl"
+                    >{{ itemForm.totalInvoice }}</span
+                >
+            </ERow>
+            <ERow>
+                <span
+                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-2xl"
+                    >RECIBIDO:
+                </span>
+                <input
+                    :required="true"
+                    min="1"
+                    pattern="^[0-9]+"
+                    id="cantidad"
+                    v-model="moneyreturned"
+                    type="number"
+                    class="tw-w-1/2 tw-pr-0 tw-font-bold col-6 tw-text-center tw-text-2xl" />
+            </ERow>
+            <ERow>
+                <span
+                    class="tw-w-1/2 tw-font-bold col-6 tw-text-center tw-text-2xl"
+                    >DEVUELTO:
+                </span>
+                <span
+                    class="tw-w-1/2 col-6 tw-font-bold tw-text-center tw-text-2xl"
+                    >{{ returnedMoney }}</span
+                >
             </ERow>
         </ModalDialog>
 
@@ -676,14 +627,17 @@
                         </EButton>
                     </ECol>
 
-                    <ECol cols="12" lg="6" xl="2">
+                    <ECol cols="12" lg="2" xl="3">
                         <br />
 
                         <InputText
                             placeholder=""
                             :model-value="formClient.name"
-                            readonly />
+                            readonly
+                            right-icon="eye"
+                            @right-icon-click="editClientModalShow = true" />
                     </ECol>
+
                     <ECol cols="12" lg="6" xl="1"> </ECol>
                     <ECol cols="12" lg="6" xl="3">
                         <ListBox
@@ -712,24 +666,34 @@
                     <template #cell(#)="{ index }">
                         {{ index + 1 }}
                     </template>
+                    <template #cell(Código)="{ index }"
+                        >{{ form.items[index]?.item?.codename }}
+                    </template>
                     <template #cell(Descripción)="{ index }"
-                        >{{ form.items[index]?.name }}-
-                        {{ form.items[index]?.model }}-
-                        {{ form.items[index]?.brand }}
+                        >{{ form.items[index]?.item?.name }}-
+                        {{ form.items[index]?.item?.model }}-
+                        {{ form.items[index]?.item?.brand }}
                     </template>
                     <template #cell(Medida)="{}">Unidad </template>
                     <template #cell(quantity)="{ index }">
                         <ECol cols="2" lg="3">
                             <input
-                                :required="true"
                                 min="1"
+                                :max="5"
                                 pattern="^[0-9]+"
                                 style="text-align: center"
                                 type="number"
                                 id="cantidad"
                                 v-model="form.items[index].quantity"
+                                onkeypress="return (  event.charCode <32 &&  event.charCode !=127)"
                                 @input="itemcantidad(index)" />
                         </ECol>
+                    </template>
+                    <template #cell(price)="{ index }"
+                        >{{ form.items[index]?.item?.price }}
+                    </template>
+                    <template #cell(iva)="{ index }"
+                        >{{ form.items[index]?.item?.iva }}
                     </template>
                     <template #cell(Acciones)="{ index }">
                         <div class="t-button-group">
@@ -768,21 +732,25 @@
                         label="Total:"
                         v-model.number="itemForm.totalInvoice" />
                 </ECol>
+            </ERow>
 
+            <ERow>
                 <ECol
                     class="tw-content-end tw-justify-end"
                     style="position: absolute; top: 220px; right: 10px">
                     <EButton
+                        style="
+                            margin-top: 10px;
+                            margin-bottom: 17px;
+                            padding-left: 6px;
+                            padding-right: 6px;
+                            padding-bottom: 6px;
+                        "
                         left-icon="fa-floppy-disk"
                         icon-provider="awesome"
-                        @click="onSubmit">
+                        @click="modalsInvoice">
                         Facturar
                     </EButton>
-                </ECol>
-                <ECol
-                    class="tw-content-end tw-justify-end"
-                    style="position: absolute; top: 260px; right: 10px">
-                    <br />
                 </ECol>
             </ERow>
         </div>
@@ -799,6 +767,10 @@
             --bs-table-hover-color: theme('colors.primary.light');
             --bs-table-hover-bg: theme(colors.primary.light / 15%);
         }
+    }
+    .tw-pt-5 {
+        padding-top: 0rem;
+        padding-bottom: 0rem;
     }
     .custom-data-table {
         --easy-table-header-background-color: theme(colors.secondary.DEFAULT);

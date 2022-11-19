@@ -1,4 +1,3 @@
-import { isMessage } from '@/store/types/typesafe'
 import type { IPayment } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'

@@ -25,6 +25,11 @@ export interface IItem {
     name: string
     price: string
 }
+export interface IInventory {
+    id: number
+    item: Maybe<IItem>
+    quantity: number
+}
 
 export interface IInvoiceDetails {
     id?: number
