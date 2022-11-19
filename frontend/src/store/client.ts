@@ -8,6 +8,7 @@ import type {
     Province,
     Status,
 } from '@store-types'
+import type { PaginatedResponse } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
@@ -15,6 +16,7 @@ import { type Ref, computed } from 'vue'
 
 export const useClientStore = defineStore('client-store', () => {
     const client: Ref<Optional<Client>> = ref(null)
+    const clients = ref<PaginatedResponse<Client>>()
     const paginatedClient: Ref<Optional<PaginatedAPIResponse<Client>>> =
         ref(null)
     const currentPaginatedClientPage = computed(() => {
@@ -37,17 +39,21 @@ export const useClientStore = defineStore('client-store', () => {
         return data
     }
 
-    async function fetchClientPaginated(options: PaginationOptions) {
-        const data = await (
-            await axios.get<PaginatedAPIResponse<Client>>(
-                '/api/v1/list/items',
-                {
-                    params: options,
-                }
+    /**
+     * This method will fetch a paginated list of users that are
+     * filtered by the given params.
+     *
+     * @param params the search params
+     */
+    async function fetchClientPaginated(params?: PaginationOptions) {
+        const response = (
+            await axios.get<PaginatedResponse<Client>>(
+                '/api/v1/list/clients/all',
+                { params }
             )
         ).data
-        paginatedClient.value = data
-        return data
+        clients.value = response
+        return response
     }
 
     /**
@@ -126,6 +132,7 @@ export const useClientStore = defineStore('client-store', () => {
 
     return {
         client,
+        clients,
         paginatedClient,
         allClient,
         currentPaginatedClientPage,

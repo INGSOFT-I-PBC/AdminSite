@@ -28,8 +28,10 @@
                 id: 0,
                 name: 'active',
             })
+            const checked = ref(false)
 
             return {
+                checked,
                 formStatus,
                 route,
                 normalValue,
@@ -54,7 +56,7 @@
                     updated_at: '',
                     brand: '',
                     category_id: 0,
-                    iva: 0,
+                    iva: 12,
                     model: '',
                     name: '',
                     price: 0,
@@ -98,7 +100,14 @@
                 if (typeof this.image_field != 'string') {
                     formDataItem.append('img', this.image_field)
                 }
-                formDataItem.append('iva', this.entrada.iva.toString())
+                if (this.checked) {
+                    console.log('no entiendo')
+                    console.log(this.checked)
+                    this.entrada.iva = 0
+                } else {
+                    this.entrada.iva = 12
+                }
+                formDataItem.append('iva', (this.entrada.iva / 100).toString())
                 formDataItem.append('model', this.entrada.model)
                 formDataItem.append('name', this.entrada.name)
                 formDataItem.append('price', this.entrada.price.toString())
@@ -211,7 +220,7 @@
                         this.imagenM =
                             //'https://proyectoadmin.pythonanywhere.com/'
                             //http://127.0.0.1:8000
-                            'https://proyectoadmin.pythonanywhere.com/storage/' +
+                            'http://127.0.0.1:8000/storage/' +
                             this.items['0'].imgItem
                         console.log(this.imagenM)
                         this.entrada.warehouse_id = this.items['0'].warehouse_id
@@ -230,6 +239,9 @@
                         this.entrada.price = this.items['0'].priceItem
                         this.entrada.model = this.items['0'].modelItem
                         this.entrada.iva = this.items['0'].ivaItem
+                        if (this.items['0'].ivaItem == 0) {
+                            this.checked = true
+                        }
                         this.entrada.quantity = this.items['0'].quantity
                         this.entrada.name = this.items['0'].nombreItem
                         this.entrada.status_id = this.items['0'].status_id_Item
@@ -249,6 +261,20 @@
                     .catch((e: Error) => {
                         console.log(e)
                     })
+            },
+            validatePrecio(value: any) {
+                // if the field is empty
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
+                if (isNaN(value)) {
+                    return 'Inválido'
+                }
+                if (value < 0) {
+                    return 'Inválido'
+                }
+
+                return true
             },
             obtenerImagen(e: any) {
                 this.image_field = e.target.files[0]
@@ -425,23 +451,6 @@
                                 v-model="entrada.price"
                                 aria-label="First name" />
                         </div>
-
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Iva*
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                v-model="entrada.iva"
-                                aria-label="First name" />
-                        </div>
                     </div>
                 </div>
 
@@ -449,13 +458,23 @@
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
                         <div class="col">
-                            <InputText
-                                label="Cantidad del Producto"
-                                v-model="entrada.quantity"
-                                type="number"
-                                @input="emitValue" />
+                            <InputText label="IVA" model-value="12" />
                         </div>
-                        <div class="col"></div>
+                        <div class="col" style="display: flex">
+                            <input
+                                type="checkbox"
+                                id="checkbox"
+                                v-model="checked" />
+                            <label
+                                style="
+                                    align-self: center;
+                                    font-weight: 700;
+                                    font-size: 1rem;
+                                "
+                                for="checkbox"
+                                >IVA 0</label
+                            >
+                        </div>
 
                         <div class="col">
                             <h6

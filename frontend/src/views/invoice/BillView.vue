@@ -95,9 +95,12 @@
                 toast.error('No se pudo realizar la búsqueda ')
             })
             .finally(() => {
-                form.value.items = (
-                    itemStore.providers as PaginatedResponse<Invoice>
-                ).data
+                if (itemStore.providers?.data !== undefined) {
+                    form.value.items = itemStore.providers?.data
+                }
+                //(
+                //as PaginatedResponse<Invoice>
+                //).data
                 console.log(form.value.items)
                 showWaitOverlay.value = false
             })

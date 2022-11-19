@@ -1,6 +1,7 @@
 import { isMessage } from '@/store/types/typesafe'
 import type {
     IClient,
+    IEditInventory,
     IInventory,
     IItem,
     IPayment,
@@ -79,6 +80,21 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     async function editInvoice(id: number, data: Invoice) {
         return (
             await axios.put<Invoice>(`/api/v1/invoice/editar?id=${id}`, data)
+        ).data
+    }
+    /**
+     * Edit the data of an specific Item into the backend.
+     *
+     * @param id the Id of the item to edit
+     * @param data the data to overwrite
+     * @returns the response of the backend
+     */
+    async function editquantityInventory(id: number, data: IEditInventory) {
+        return (
+            await axios.put<IEditInventory>(
+                `/api/v1/invoice/quantity?item=${id}`,
+                data
+            )
         ).data
     }
 
@@ -186,6 +202,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         currentPaginatedItemPage,
         currentPaginatedInvoicePage,
         fetchIInventoryById,
+        editquantityInventory,
         fetchPayment,
         fetchInvoiceById,
         fetchAllInvoice,
@@ -197,6 +214,5 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         fetchClientNumber,
         providers,
         fetchProviders,
-        //fetchStatus,
     }
 })
