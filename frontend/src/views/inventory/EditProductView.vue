@@ -220,7 +220,7 @@
                         this.imagenM =
                             //'https://proyectoadmin.pythonanywhere.com/'
                             //http://127.0.0.1:8000
-                            'http://127.0.0.1:8000/storage/' +
+                            'https://proyectoadmin.pythonanywhere.com/storage/' +
                             this.items['0'].imgItem
                         console.log(this.imagenM)
                         this.entrada.warehouse_id = this.items['0'].warehouse_id
