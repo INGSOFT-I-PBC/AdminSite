@@ -17,6 +17,7 @@ import { type Ref, computed } from 'vue'
 
 export const useInvoiceStore = defineStore('invoice-store', () => {
     const invoice: Ref<Optional<Invoice>> = ref(null)
+    const inventory: Ref<Optional<IInventory>> = ref(null)
     const paginatedInvoice: Ref<Optional<PaginatedAPIResponse<Invoice>>> =
         ref(null)
 
@@ -109,6 +110,18 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         invoice.value = data
         return data
     }
+    /* async function fetchIInventoryById(id: number) {
+        const data = (
+            await axios.get<IInventory>(`/api/v1/invoice/details/item?id=${id}`)
+        ).data
+        inventory.value = data
+        return data
+    }*/
+    async function fetchIInventoryById(id: number) {
+        return (
+            await axios.get<IInventory>(`/api/v1/invoice/details/item?id=${id}`)
+        ).data
+    }
 
     /*async function fetchStatus(name: string) {
         const data = await (
@@ -170,8 +183,10 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         paginatedInvoice,
         paginatedItems,
         allInvoice,
+        inventory,
         currentPaginatedItemPage,
         currentPaginatedInvoicePage,
+        fetchIInventoryById,
         fetchPayment,
         fetchInvoiceById,
         fetchAllInvoice,

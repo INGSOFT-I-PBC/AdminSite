@@ -61,6 +61,21 @@ class InvoiceView(viewsets.GenericViewSet):
             {"mensaje": "No se ha encontrado el Cliente."},
             status=status.HTTP_400_BAD_REQUEST,
         )
+
+
+    @action(methods=["get"], detail=False)
+    def search_item(self, request: Request):
+
+        supplier = Inventory.objects.filter(item__pk=request.query_params.get("id")).first()
+
+        if supplier:
+            supplier_serializer = IInventorySerializer(supplier)
+            return Response(supplier_serializer.data, status=status.HTTP_200_OK)
+        return Response(
+            {"mensaje": "No se ha encontrado el Item."},
+            status=status.HTTP_400_BAD_REQUEST,
+
+        )
     @action(methods=["put"], detail=False)
     def edit_quantity(self, request: Request):
             item = int(request.GET.get("item"))

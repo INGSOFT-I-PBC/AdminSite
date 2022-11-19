@@ -91,7 +91,9 @@ urlpatterns = [
     path("invoice/client", InvoiceView.as_view({'get': 'search_client'}), name="search-invoice-client"),
     path("invoice", InvoiceView.as_view({'post': 'save_invoice'}), name="save-invoice"),
     path("invoice/quantity", InvoiceView.as_view({'put': 'edit_quantity'}), name="save-invoice"),
+    path("invoice/details/item", InvoiceView.as_view({'get': 'search_item'}), name="search-details-invoice"),
     path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
     path("invoice/item/all", PaginatedItemInvoiceView.as_view(),name="search-invoice-items")
+
 ]

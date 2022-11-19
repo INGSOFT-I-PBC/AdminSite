@@ -172,7 +172,8 @@
     ]
     const formFields: TableField[] = [
         '#',
-        { label: 'Código', key: 'codename' },
+        'Código',
+        //{ label: 'Código', key: 'items.item.codename' },
         'Descripción',
         'Medida',
         { label: 'Cantidad', key: 'quantity' },
@@ -239,7 +240,7 @@
             invoice_details: data.items.map(it => ({
                 price: Number(it.item?.price),
                 quantity: it.quantity,
-                item: it.id,
+                item: Number(it.item?.id),
             })),
         }
         showWaitOverlay.value = true
@@ -665,6 +666,9 @@
                     <template #cell(#)="{ index }">
                         {{ index + 1 }}
                     </template>
+                    <template #cell(Código)="{ index }"
+                        >{{ form.items[index]?.item?.codename }}
+                    </template>
                     <template #cell(Descripción)="{ index }"
                         >{{ form.items[index]?.item?.name }}-
                         {{ form.items[index]?.item?.model }}-
@@ -684,6 +688,12 @@
                                 onkeypress="return (  event.charCode <32 &&  event.charCode !=127)"
                                 @input="itemcantidad(index)" />
                         </ECol>
+                    </template>
+                    <template #cell(price)="{ index }"
+                        >{{ form.items[index]?.item?.price }}
+                    </template>
+                    <template #cell(iva)="{ index }"
+                        >{{ form.items[index]?.item?.iva }}
                     </template>
                     <template #cell(Acciones)="{ index }">
                         <div class="t-button-group">
