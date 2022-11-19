@@ -48,6 +48,7 @@ import { useRouter } from 'vue-router'
         items: [],
     })
 
+    /*
     type arr_ordens = {
         nameWarehouse: number
         fechaPedido: string
@@ -56,6 +57,7 @@ import { useRouter } from 'vue-router'
         elementos: []
         ordenes: OrderSaveData[]
     }
+    */
 
 
     type warehouseInformation = {
