@@ -296,7 +296,7 @@
     </main>
 </template>
 <style lang="scss">
-    .align {
+    .align_button {
         padding: 0;
     }
 </style>

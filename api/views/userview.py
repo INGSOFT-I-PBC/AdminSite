@@ -37,18 +37,8 @@ class EmployeeView(APIView):
         if not Employee.objects.filter(**kwargs).exists():
             return error_response("The given employee doesn't exists")
         employee = Employee.objects.get(**kwargs)
-<<<<<<< HEAD
         employee.delete()
         return response("Employee deleted successfully")
-=======
-        employee.is_active = False
-        employee_user = Employee.objects.filter(employee=employee)
-        if employee_user.exists():
-            employee_user.first().is_active = False
-            employee_user.first().save()
-        employee.save()
-        return response("employee deleted successfully")
->>>>>>> 5caca4e2ff03e6d1c397b09ca8427b9edad86776
 
 
 class UserView(APIView):

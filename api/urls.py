@@ -1,19 +1,11 @@
 """ API Url Configuration
 The `urlpatterns` list the URLs to the Views
 """
-from django.urls import include, path
 from rest_framework import routers
-from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from api.views import *
-from api.views.clientview import ClientView
-from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
-from api.views.itemviews import ItemView
-from api.views.orders import OrderRequestView
-from api.views.provinceview import ProvinceCityView
 from api.views.sequence import *
-from api.views.statusview import StatusView
 from api.views.warehouse import *
 
 """ Definition of paginated data
