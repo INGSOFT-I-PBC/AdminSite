@@ -243,11 +243,9 @@
                             this.checked = true
                         }
                         this.entrada.quantity = this.items['0'].quantity
+
                         this.entrada.name = this.items['0'].nombreItem
                         this.entrada.status_id = this.items['0'].status_id_Item
-                        /*this.fecha_hora.fecha = this.items[
-                            '0'
-                        ].created_at.substring(0, 10)*/
 
                         this.fecha_hora.fecha = new Date(
                             this.items['0'].created_at
@@ -329,7 +327,7 @@
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Esta seguro de modificar el producto?
+                ¿Está seguro de modificar el producto?
             </h1>
         </ModalDialog>
         <ECard>
@@ -581,6 +579,13 @@
                                             {{ warehouse['name'] }}
                                         </option>
                                     </select>
+                                </div>
+                                <div class="col">
+                                    <InputText
+                                        label="Cantidad del Producto"
+                                        type="number"
+                                        v-model="entrada.quantity"
+                                        @input="emitValue" />
                                 </div>
                             </div>
                         </div>
