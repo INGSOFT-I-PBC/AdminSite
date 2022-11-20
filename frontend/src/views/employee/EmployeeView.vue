@@ -274,15 +274,7 @@
                         <EButton variant="secondary" @click="goAdd"
                             >+ Agregar empleado
                         </EButton>
-                        <!--
-                        <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Buscar empleado"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
-                    --></div>
+                    </div>
                 </nav>
                 <BTable :fields="formFields" :items="form.employees">
                     <template #cell(date)="{ index }">{{
