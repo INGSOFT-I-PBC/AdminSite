@@ -295,10 +295,14 @@
 
         <ECard>
             <ERow>
-                <h1 style="font-size: 35px; color: black">Inventario</h1>
+                <h1
+                    class="tw-text-black first-line:dark:tw-text-neutral-300"
+                    style="font-size: 35px">
+                    Inventario
+                </h1>
             </ERow>
             <nav class="navbar">
-                <div class="container-fluid">
+                <div class="container-fluid align_button">
                     <EButton variant="secondary" @click="goAgregar"
                         >+ Agregar producto
                     </EButton>
@@ -379,3 +383,9 @@
         </ECard>
     </main>
 </template>
+
+<style lang="scss">
+    .align_button {
+        padding: 0;
+    }
+</style>
