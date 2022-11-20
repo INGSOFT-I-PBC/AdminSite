@@ -28,6 +28,7 @@
             const productModalShow = ref(false)
             const productModalShowError = ref(false)
             const msm400 = ref('')
+            const checked = ref(false)
             const router = useRouter()
             const formStatus = ref<Status>({
                 id: 0,
@@ -45,6 +46,7 @@
             })
 
             return {
+                checked,
                 formSequenceEditado,
                 formSequence,
                 formStatus,
@@ -70,7 +72,7 @@
                 entrada: {
                     brand: '',
                     category_id: 0,
-                    iva: 0,
+                    iva: 12,
                     model: '',
                     name: '',
                     price: 0,
@@ -142,6 +144,10 @@
                 formDataItem.append('updated_at', this.hoy.toISOString())
                 formDataItem.append('brand', this.entrada.brand)
                 formDataItem.append('img', this.image_field)
+                if (this.checked) {
+                    console.log(this.checked)
+                    this.entrada.iva = 0
+                }
                 formDataItem.append('iva', (this.entrada.iva / 100).toString())
                 formDataItem.append('model', this.entrada.model)
                 formDataItem.append('name', this.entrada.name)
@@ -334,7 +340,7 @@
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Esta seguro de guardar el producto?
+                ¿Está seguro de guardar el producto?
             </h1>
         </ModalDialog>
 
@@ -512,31 +518,22 @@
                     <div class="container text-center" style="padding: 10px">
                         <div class="row">
                             <div class="col">
-                                <h6
+                                <InputText label="IVA" model-value="12" />
+                            </div>
+                            <div class="col" style="display: flex">
+                                <input
+                                    type="checkbox"
+                                    id="checkbox"
+                                    v-model="checked" />
+                                <label
                                     style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Iva*
-                                </h6>
-                                <Field
-                                    name="iva"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name"
-                                    :rules="validateIva"
-                                    v-model="entrada.iva" />
-                                <div class="col">
-                                    <ErrorMessage
-                                        name="iva"
-                                        style="
-                                            font-size: 10px;
-                                            color: red;
-                                            text-align: left;
-                                        " />
-                                </div>
+                                        align-self: center;
+                                        font-weight: 700;
+                                        font-size: 1rem;
+                                    "
+                                    for="checkbox"
+                                    >IVA 0</label
+                                >
                             </div>
 
                             <div class="col">

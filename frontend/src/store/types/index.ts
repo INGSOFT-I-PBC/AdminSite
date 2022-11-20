@@ -30,5 +30,7 @@ export type {
     IClient,
     IInvoiceDetails,
     IPayment,
+    IInventory,
+    IEditInventory,
 } from './invoice.model'
 export type { Sequence } from './sequence.model'

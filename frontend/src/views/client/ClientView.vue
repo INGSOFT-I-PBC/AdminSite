@@ -8,14 +8,17 @@
     import { useClientStore } from '@store/client'
     import type { Client } from '@store/types'
     //import { useToast } from 'vue-toastification'
-    import type { TableField } from 'bootstrap-vue-3'
+    import type { BvEvent, TableField } from 'bootstrap-vue-3'
 
     import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
+    type SearchParam = PaginationOptions
     const router = useRouter()
+    const toast = useToast()
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
     const itemStore = useClientStore()
@@ -58,13 +61,38 @@
     }
 
     const model = ref({})
+    //Paginated
+    const searchParam: SearchParam = {
+        page: 1,
+
+        per_page: 10,
+    }
 
     const loadItems = async () => {
         itemLoading.value = true
-        form.value.items = await itemStore.fetchAllClient()
+        showWaitOverlay.value = true
+        itemStore
+            .fetchClientPaginated(searchParam)
+            .then(() => {
+                if (itemStore.clients?.data !== undefined) {
+                    form.value.items = itemStore.clients?.data
+                }
+                console.log('qqqq')
+                console.log(form.value.items)
+            })
+            .catch(() => {
+                toast.error('No se pudo realizar la búsqueda ')
+            })
+            .finally(() => {
+                showWaitOverlay.value = false
+            })
         console.log(form.value.items)
         itemLoading.value = false
-        showWaitOverlay.value = false
+    }
+    function onPaginationClick(event: BvEvent, page: number) {
+        searchParam.page = page
+        console.log(page)
+        loadItems()
     }
     function onShowModalClick() {
         loadItems()
@@ -96,10 +124,7 @@
     function goEdit(id: number): void {
         router.push({ path: `/usuarios/cliente/editar/${String(id)}` })
     }
-
-    onMounted(() => {
-        return onShowModalClick()
-    })
+    loadItems()
 </script>
 
 <template>
@@ -224,10 +249,10 @@
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
-                <BTable :fields="formFields" :items="form.items">
+                <BTable :fields="formFields" :items="itemStore.clients?.data">
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
-                    <template #cell(Ciudad)="{ index }"
-                        >{{ form.items[index]['city']?.name }}
+                    <template #cell(Ciudad)="{ item }"
+                        >{{ item.city?.name }}
                     </template>
                     <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
@@ -255,12 +280,23 @@
                         </div>
                     </template>
                 </BTable>
+                <div class="row">
+                    <BPagination
+                        align="center"
+                        v-model="searchParam.page"
+                        :total-rows="itemStore.clients?.total ?? 1"
+                        :per-page="searchParam.per_page ?? 10"
+                        next-text="Siguiente"
+                        prev-text="Anterior"
+                        hide-goto-end-buttons
+                        @page-click="onPaginationClick" />
+                </div>
             </WaitOverlay>
         </ECard>
     </main>
 </template>
 <style lang="scss">
-    .align_button {
+    .align {
         padding: 0;
     }
 </style>

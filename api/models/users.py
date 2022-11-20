@@ -39,8 +39,10 @@ class Employee(TimestampModel):
     cid = models.CharField(max_length=11, unique=True)
     role = models.ForeignKey("Role", on_delete=models.CASCADE)
     is_active = models.BooleanField(null=False, default=True)
-    phone_number = models.CharField(max_length=16)
-    created_by = models.ForeignKey("self", on_delete=models.RESTRICT)
+    phone_number = models.CharField(max_length=16, null=True, default=None)
+    created_by = models.OneToOneField(
+        "self", on_delete=models.RESTRICT, default=None, null=True
+    )
     gender = models.ForeignKey(Gender, null=True, on_delete=models.RESTRICT)
 
     class Meta:

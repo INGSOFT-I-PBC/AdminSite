@@ -1,7 +1,7 @@
 import type {
     PaginatedAPIResponse,
-    Role,
     PaginatedResponse,
+    Role,
 } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
@@ -32,14 +32,11 @@ export const useRoleStore = defineStore('role', () => {
      *
      * @param params the search params that would be sent to the backend
      */
-    async function fetchRoles(
-        params?: PaginationOptions
-    ) {
+    async function fetchRoles(params?: PaginationOptions) {
         const response = (
-            await axios.get<PaginatedResponse<Role>>(
-                '/api/v1/list/roles',
-                { params }
-            )
+            await axios.get<PaginatedResponse<Role>>('/api/v1/list/roles', {
+                params,
+            })
         ).data
         paginatedRoles.value = response
         return response
@@ -52,13 +49,10 @@ export const useRoleStore = defineStore('role', () => {
      * @param id The identifier of th erole
      */
     async function fetchRole(id: id) {
-        const response = (
-            await axios.get<Role>(`/api/v1/role/${id}`)
-        ).data
+        const response = (await axios.get<Role>(`/api/v1/role/${id}`)).data
         role.value = response
         return response
     }
-
 
     return {
         role,
