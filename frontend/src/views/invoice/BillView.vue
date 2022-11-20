@@ -25,6 +25,7 @@
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
     type SearchParam = PaginationOptions
+    const filtro = ref<boolean>(false)
 
     const router = useRouter()
     const productModalShow = ref(false)
@@ -34,12 +35,41 @@
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
     const toast = useToast()
+    const busqueda: product[] = []
 
     function cleanFilters() {
         filterText.value = ''
+        busqueda.splice(0, busqueda.length)
     }
-    function makeSearch(valor: any) {
-        console.log(valor)
+    const fechade = ref<date>()
+    const fechahasta = ref<date>()
+
+    function makeSearch() {
+        filtro.value = true
+
+        showWaitOverlay.value = true
+        for (let i = 0; i < itemStore.providers?.data.length; i++) {
+            if (
+                (filterText.value == itemStore.providers?.data[i]['code'] &&
+                    filterName.value.label == 'Secuencia') ||
+                (filterText.value ==
+                    itemStore.providers?.data[i]['client']['business_name'] &&
+                    filterName.value.label == 'Cliente')
+            ) {
+                busqueda.push({
+                    code: itemStore.providers?.data[i]['code'],
+                    client: itemStore.providers?.data[i]['client'],
+                    name: itemStore.providers?.data[i]['payment_method'],
+                    subtotal: itemStore.providers?.data[i]['subtotal'],
+                    iva: itemStore.providers?.data[i]['iva'],
+                    total: itemStore.providers?.data[i]['total'],
+                })
+            }
+        }
+        console.log(busqueda)
+        form.value.items = busqueda
+
+        showWaitOverlay.value = false
     }
 
     const filterOption = ref<
@@ -118,6 +148,7 @@
         searchParam.page = page
         console.log(page)
         showInvoices()
+        makeSearch()
     }
 
     function onShowModalClick() {
@@ -246,21 +277,21 @@
                     </ECol>
                     <ECol>
                         <InputText
-                            label="De *"
-                            :model-value="fechade"
+                            v-if="filterName.label == 'Rango_fecha'"
+                            label="De "
+                            v-model="fechade"
                             type="date" />
                         <InputText
-                            label="Hasta *"
-                            :model-value="fechahasta"
+                            v-if="filterName.label == 'Rango_fecha'"
+                            label="Hasta "
+                            v-model="fechahasta"
                             type="date" />
                     </ECol>
-                    <EButton @click="makeSearch(`${filterName.label}`)"
-                        >Buscar</EButton
-                    >
+                    <EButton @click="makeSearch()">Buscar</EButton>
                     <EButton @click="cleanFilters">Limpiar</EButton>
                 </div>
             </nav>
-            //
+
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
