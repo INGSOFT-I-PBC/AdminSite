@@ -34,16 +34,11 @@ class EmployeeView(APIView):
         return response("The employee was updated successfully")
 
     def delete(self, request: Request, *args, **kwargs):
-        if not Employee.objects.filter(**kwargs, is_active=True).exists():
+        if not Employee.objects.filter(**kwargs).exists():
             return error_response("The given employee doesn't exists")
         employee = Employee.objects.get(**kwargs)
-        employee.is_active = False
-        employee_user = Employee.objects.filter(employee=employee)
-        if employee_user.exists():
-            employee_user.first().is_active = False
-            employee_user.first().save()
-        employee.save()
-        return response("employee deleted successfully")
+        employee.delete()
+        return response("Employee deleted successfully")
 
 
 class UserView(APIView):

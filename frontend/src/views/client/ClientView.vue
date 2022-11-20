@@ -220,9 +220,9 @@
                 </h1>
             </ERow>
             <nav class="navbar">
-                <div class="container-fluid">
-                    <EButton variant="secondary" @click="go"
-                        >+ Agregar cliente
+                <div class="container-fluid align_button">
+                    <EButton variant="secondary" @click="go">
+                        + Agregar cliente
                     </EButton>
                     <!--
 
@@ -296,7 +296,7 @@
     </main>
 </template>
 <style lang="scss">
-    .align {
+    .align_button {
         padding: 0;
     }
 </style>

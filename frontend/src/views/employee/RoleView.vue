@@ -36,7 +36,7 @@
         tiposeleccion.value = 0
     }
 
-    function btn_agregar(): void {
+    function goAdd(): void {
         tiposeleccion.value = 1
     }
 
@@ -80,7 +80,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid" style="padding: 0">
-                    <EButton @click="btn_agregar()" variant="secondary"
+                    <EButton @click="goAdd()" variant="secondary"
                         >+ Agregar rol
                     </EButton>
                 </div>

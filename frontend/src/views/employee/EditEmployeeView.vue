@@ -89,14 +89,14 @@
             'username',
             yup
                 .string()
-                .matches(/^[a-zA-Z]+$/, 'Nombre inválido')
+                .matches(/^[a-zA-Z\s]+$/, 'Nombre inválido')
                 .required(message)
         ),
         lastName: useField(
             'lastName',
             yup
                 .string()
-                .matches(/^[a-zA-Z]+$/, 'Apellido inválido')
+                .matches(/^[a-zA-Z\s]+$/, 'Apellido inválido')
                 .required(message)
         ),
         cid: useField(
