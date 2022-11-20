@@ -30,7 +30,9 @@ export interface IInventory {
     item: Maybe<IItem>
     quantity: number
 }
-
+export interface IEditInventory {
+    quantity: number
+}
 export interface IInvoiceDetails {
     id?: number
     price: number
