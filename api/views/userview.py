@@ -40,6 +40,7 @@ class EmployeeView(APIView):
         employee.delete()
         return response("Employee deleted successfully")
 
+
 class UserView(APIView):
     """
     This class handle the request with a single element of the
