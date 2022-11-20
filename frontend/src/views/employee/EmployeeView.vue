@@ -30,6 +30,7 @@
     const currentPage = ref(1)
     const totalRows = ref(100)
 
+
     /*Modal*/
     const itemInfoShow = ref<boolean>(false)
     const empModalDelete = ref(false)
@@ -101,6 +102,7 @@
             console.log(error)
         }
     }
+
     async function showItem(item: Employee) {
         detailSelectedItem.value.item = item
         itemInfoShow.value = true
@@ -113,7 +115,7 @@
     function goEdit(id: number): void {
         router.push({ path: `/usuarios/empleado/editar/${String(id)}` })
     }
-
+    
     let id2 = 0
     let index2 = 0
     function deleteProduct(id: number, index: number): void {
@@ -143,7 +145,6 @@
     function removeItem(index: number) {
         form.value.employees.splice(index, 1)
     }
-
     onMounted(() => {
         return showEmployees(currentPage.value)
     })
@@ -299,7 +300,6 @@
                                 @change="changeStatus(form.employees[index])" />
                         </div>
                     </template>
-
                     <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
                             <e-button

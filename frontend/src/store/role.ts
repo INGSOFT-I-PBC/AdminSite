@@ -1,7 +1,7 @@
 import type {
     PaginatedAPIResponse,
-    Role,
     PaginatedResponse,
+    Role,
 } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
@@ -58,7 +58,6 @@ export const useRoleStore = defineStore('role', () => {
         role.value = response
         return response
     }
-
 
     return {
         role,

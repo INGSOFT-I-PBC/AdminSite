@@ -16,11 +16,16 @@
     import { ErrorMessage, Field } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
 
-    import { onMounted } from 'vue'
-    import { useRouter } from 'vue-router'
+    import { type Ref, onMounted } from 'vue'
+    import { useRoute, useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
+    const props = defineProps({
+        id: Number,
+    })
+    const toast = useToast()
     const hoy = new Date()
     const showWaitOverlay = ref<boolean>(false)
     const itemLoading = ref(false)
@@ -31,6 +36,7 @@
     const nameEmployee = authStore.userData?.name
     const router = useRouter()
     const itemStore = useClientStore()
+    const route = useRoute()
     const form = ref<Form>({
         provinces: [],
     })
@@ -60,7 +66,7 @@
         number_id: '',
         name: '',
         address: '',
-        business_name: 'razon social',
+        business_name: '',
         email: '',
         phone_number: '',
         city: null,
@@ -69,11 +75,17 @@
         gender: null,
         status: 0,
     })
+    const loadClient = async () => {
+        itemLoading.value = true
+        console.log(Number(props.id))
+        formClient.value = await itemStore.fetchClientById(Number(props.id))
+        onShowModalCityClick()
+        itemLoading.value = false
+    }
 
     const loadProvince = async () => {
         itemLoading.value = true
         form.value.provinces = await itemStore.fetchAllProvince()
-        console.log(form.value.provinces)
         itemLoading.value = false
     }
     const loadCity = async () => {
@@ -84,15 +96,12 @@
             formCity.value.cities = await itemStore.fetchAllCity(
                 Number(formClient.value.province)
             )
-
-            console.log(formCity.value.cities)
         }
+        console.log(formClient.value.city)
     }
     const loadStatus = async (name: string) => {
         formStatus.value = await itemStore.fetchStatus(name)
         formClient.value.status = formStatus.value.id
-
-        console.log(formStatus.value)
     }
     const loadGender = async () => {
         formGender.value.genders = await itemStore.fetchAllGender()
@@ -119,11 +128,12 @@
     function onShowModalClick() {
         loadProvince()
     }
-    function saveClient() {
+    function editClient() {
         itemStore
-            .saveClient(formClient.value)
+            .editClient(Number(props.id), formClient.value)
             .then(() => {
-                router.push({ path: '/usuarios/clientes' })
+                toast.success('Cliente editado correctamente')
+                showWaitOverlay.value = false
             })
             .catch(error => {
                 if (error.response.status == 400) {
@@ -136,6 +146,7 @@
 
     onMounted(() => {
         return (
+            loadClient(),
             onShowModalClick(),
             loadStatus(formStatus.value.name),
             onShowModalGender()
@@ -319,10 +330,10 @@
                 v-model:show="productModalShow"
                 title="Agregar Producto"
                 ok-text="Guardar"
-                @ok="saveClient"
+                @ok="editClient()"
                 button-type="ok-cancel">
                 <h1 style="font-size: 15px; color: black; text-align: left">
-                    ¿Esta seguro de guardar al Cliente?
+                    ¿Esta seguro de modificar al Cliente?
                 </h1>
             </ModalDialog>
             <div class="container" style="border-radius: 5px">
@@ -426,8 +437,6 @@
                                         " />
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
                             <div class="col">
                                 <h6
                                     style="
@@ -435,7 +444,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Razón Social *
+                                    Nombres y apellidos *
                                 </h6>
                                 <Field
                                     name="name"
@@ -446,6 +455,33 @@
                                 <div class="col">
                                     <ErrorMessage
                                         name="name"
+                                        style="
+                                            font-size: 10px;
+                                            color: red;
+                                            text-align: left;
+                                        " />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <h6
+                                    style="
+                                        font-size: 15px;
+                                        color: black;
+                                        text-align: left;
+                                    ">
+                                    Razón Social
+                                </h6>
+                                <Field
+                                    name="business_name"
+                                    class="form-control"
+                                    type="email"
+                                    v-model="formClient.business_name"
+                                    :rules="validateRazon" />
+                                <div class="col">
+                                    <ErrorMessage
+                                        name="razon"
                                         style="
                                             font-size: 10px;
                                             color: red;
@@ -554,6 +590,7 @@
                                         --Seleccione--
                                     </option>
                                     <option
+                                        selected
                                         v-for="city in formCity.cities"
                                         :value="city.id"
                                         :key="city.id">

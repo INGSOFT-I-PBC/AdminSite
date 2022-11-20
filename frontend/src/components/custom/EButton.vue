@@ -16,7 +16,7 @@
             <VueFeather v-else :type="leftIcon" class="tw-mr-1" />
             &NegativeThickSpace;
         </template>
-        <slot>Button</slot>
+        <slot></slot>
         <FontAwesomeIcon v-if="rightIcon" :icon="rightIcon" />
     </button>
 </template>

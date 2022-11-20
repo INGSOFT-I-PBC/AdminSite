@@ -5,15 +5,25 @@
     import ERow from '@components/custom/ERow.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
+    import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
     import { useInvoiceStore } from '@store/invoice'
-    import type { IClient, IPayment, Invoice } from '@store/types'
+    import type {
+        IClient,
+        IPayment,
+        IServerOptions,
+        Invoice,
+    } from '@store/types'
+    import { isMessage } from '@store/types'
     //import { useToast } from 'vue-toastification'
-    import type { TableField } from 'bootstrap-vue-3'
+    import type { BvEvent, TableField } from 'bootstrap-vue-3'
 
     import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
+
+    type SearchParam = PaginationOptions
 
     const router = useRouter()
     const productModalShow = ref(false)
@@ -22,6 +32,7 @@
     const itemStore = useInvoiceStore()
     //const toast = useToast()
     const itemInfoShow = ref<boolean>(false)
+    const toast = useToast()
 
     const templateList = [
         { label: 'Por fecha de creación', value: '1' },
@@ -66,16 +77,42 @@
         index: 0,
     })
     const model = ref({})
+    /*Pagination*/
+    const perPage = ref(10)
 
-    const loadItems = async () => {
-        itemLoading.value = true
-        form.value.items = await itemStore.fetchAllInvoice()
-        console.log(form.value.items)
-        itemLoading.value = false
-        showWaitOverlay.value = false
+    const searchParam: SearchParam = {
+        page: 1,
+
+        per_page: 10,
     }
+
+    function showInvoices() {
+        showWaitOverlay.value = true
+
+        itemStore
+            .fetchProviders(searchParam)
+            .catch(() => {
+                toast.error('No se pudo realizar la búsqueda ')
+            })
+            .finally(() => {
+                if (itemStore.providers?.data !== undefined) {
+                    form.value.items = itemStore.providers?.data
+                }
+                //(
+                //as PaginatedResponse<Invoice>
+                //).data
+                console.log(form.value.items)
+                showWaitOverlay.value = false
+            })
+    }
+    function onPaginationClick(event: BvEvent, page: number) {
+        searchParam.page = page
+        console.log(page)
+        showInvoices()
+    }
+
     function onShowModalClick() {
-        loadItems()
+        showInvoices()
     }
     async function showItem(item: Invoice) {
         detailSelectedItem.value.item = item
@@ -102,7 +139,7 @@
         itemForm.value.index = index
         productModalShow.value = true
     }
-
+    showInvoices()
     onMounted(() => {
         return onShowModalClick()
     })
@@ -207,15 +244,24 @@
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
-                <BTable :fields="formFields" :items="form.items">
+                <BTable :fields="formFields" :items="itemStore.providers?.data">
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
                     <template #cell(Cliente)="{ index }"
-                        >{{ (form.items[index]['client'] as IClient).name }}
+                        >{{
+                            (
+                                itemStore.providers?.data[index][
+                                    'client'
+                                ] as IClient
+                            ).name
+                        }}
                     </template>
                     <template #cell(name)="{ index }"
                         >{{
-                            (form.items[index]['payment_method'] as IPayment)
-                                .name
+                            (
+                                itemStore.providers?.data[index][
+                                    'payment_method'
+                                ] as IPayment
+                            ).name
                         }}
                     </template>
 
@@ -245,6 +291,17 @@
                         </div>
                     </template>
                 </BTable>
+                <div class="row">
+                    <BPagination
+                        align="center"
+                        v-model="searchParam.page"
+                        :total-rows="itemStore.providers?.total ?? 1"
+                        :per-page="searchParam.per_page ?? 10"
+                        next-text="Siguiente"
+                        prev-text="Anterior"
+                        hide-goto-end-buttons
+                        @page-click="onPaginationClick" />
+                </div>
             </WaitOverlay>
         </ECard>
     </main>

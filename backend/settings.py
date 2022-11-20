@@ -257,7 +257,7 @@ CSRF_COOKIE_NAME = "XSRF-TOKEN"
 
 LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "America/Guayaquil"
 
 USE_I18N = True
 
