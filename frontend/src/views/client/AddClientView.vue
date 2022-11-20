@@ -322,7 +322,7 @@
                 @ok="saveClient"
                 button-type="ok-cancel">
                 <h1 style="font-size: 15px; color: black; text-align: left">
-                    ¿Esta seguro de guardar al Cliente?
+                    ¿Está seguro de guardar al Cliente?
                 </h1>
             </ModalDialog>
             <div class="container" style="border-radius: 5px">

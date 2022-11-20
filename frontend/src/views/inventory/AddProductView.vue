@@ -340,7 +340,7 @@
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Esta seguro de guardar el producto?
+                ¿Está seguro de guardar el producto?
             </h1>
         </ModalDialog>
 

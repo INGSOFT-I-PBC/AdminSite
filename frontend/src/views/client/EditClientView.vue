@@ -328,7 +328,7 @@
                 @ok="editClient()"
                 button-type="ok-cancel">
                 <h1 style="font-size: 15px; color: black; text-align: left">
-                    ¿Esta seguro de modificar al Cliente?
+                    ¿Está seguro de modificar al Cliente?
                 </h1>
             </ModalDialog>
             <div class="container" style="border-radius: 5px">
