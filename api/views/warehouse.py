@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Subquery
+from django.db.models import OuterRef, Q, Subquery
 from django.http import JsonResponse
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -265,20 +265,30 @@ class WhTransactionViewSet(ModelViewSet):
 
         if params.get("warehouse_id", None):
 
-            if params.get("entrada", None):
+            if params.get("entrada", None) and params.get("salida", None):
+                queryset = queryset.filter(
+                    Q(warehouse_destiny=params.get("warehouse_id"))
+                    | Q(warehouse_origin=params.get("warehouse_id"))
+                )
+            elif params.get("entrada", None):
                 queryset = queryset.filter(warehouse_destiny=params.get("warehouse_id"))
-
-            if params.get("salida", None):
+            elif params.get("salida", None):
                 queryset = queryset.filter(warehouse_origin=params.get("warehouse_id"))
 
         if params.get("warehouse_name", None):
 
-            if params.get("entrada", None):
+            if params.get("entrada", None) and params.get("salida", None):
+                queryset = queryset.filter(
+                    Q(warehouse_destiny__name__icontains=params.get("warehouse_name"))
+                    | Q(warehouse_origin__name__icontains=params.get("warehouse_name"))
+                )
+
+            elif params.get("entrada", None):
                 queryset = queryset.filter(
                     warehouse_destiny__name__icontains=params.get("warehouse_name")
                 )
 
-            if params.get("salida", None):
+            elif params.get("salida", None):
                 queryset = queryset.filter(
                     warehouse_origin__name__icontains=params.get("warehouse_name")
                 )
