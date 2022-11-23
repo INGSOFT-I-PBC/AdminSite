@@ -4,6 +4,8 @@
         type Item,
         type MessageResponse,
         type Movement,
+        type PaginatedAPIResponse,
+        type PaginatedResponse,
         type Purchase,
         type TomaFisica,
         type Warehouse,
@@ -25,13 +27,10 @@
         BTabs,
         type TableField,
     } from 'bootstrap-vue-3'
-    import {
-        type FieldContext,
-        Form as ValidationForm,
-        useField,
-    } from 'vee-validate'
+    import { Form as ValidationForm, useField } from 'vee-validate'
     import * as yup from 'yup'
 
+    import { computed, onMounted, ref } from 'vue'
     import { useToast } from 'vue-toastification'
 
     import {
@@ -66,7 +65,23 @@
 
     const purchaseModalShow = ref(false)
 
-    const selectedPurchase = ref<Purchase>()
+    const selectedPurchase = ref<Purchase>({
+        id: -1,
+        img_details: '',
+        aproved_at: '',
+        invoice: {
+            id: -1,
+            code: '',
+        },
+        provider: {
+            id: -1,
+            name: '',
+        },
+        order_origin: -1,
+        reference: -1,
+        warehouse: -1,
+        status: 'Cargando',
+    })
 
     const warehouse = useWarehouseStore()
 
@@ -138,7 +153,7 @@
     const paginatedWarehouse = ref()
     const activeWharehouseButton = ref(-1)
 
-    const paginatedMainTable = ref()
+    const paginatedMainTable = ref<WhWithTomaFisica[]>([])
 
     const mainPageController = ref<whCardController>({
         currentPage: 1,
@@ -394,41 +409,46 @@
     ): Promise<void> {
         switch (tabOption) {
             case 'inventory': {
-                const res = await warehouse.fetchPaginatedWarehouseInventory(
+                const res = (await warehouse.fetchPaginatedWarehouseInventory(
                     query,
                     paginated_opt
-                )
-                activeWhInformation.value.inventory = res.data.data
-                invTabController.value.totalRows = res.data.total
+                )) as PaginatedResponse<QuantifiedItem>
+
+                activeWhInformation.value.inventory = res.data
+                invTabController.value.totalRows = res.total
+
                 break
             }
             case 'purchases': {
-                const res = await warehouse.fetchPaginatedWarehousePurchase(
+                const res = (await warehouse.fetchPaginatedWarehousePurchase(
                     query,
                     paginated_opt
-                )
-                activeWhInformation.value.purchases = res.data.data
-                purchaseTabController.value.totalRows = res.data.total
+                )) as PaginatedResponse<Purchase>
+
+                activeWhInformation.value.purchases = res.data
+                purchaseTabController.value.totalRows = res.total
                 break
             }
             case 'tomas-fisicas': {
-                const res = await warehouse.fetchPaginatedWarehouseTomasFisicas(
-                    query,
-                    paginated_opt
-                )
-                activeWhInformation.value.tomasFisicas = res.data.data
-                tomasFisicasTabController.value.totalRows = res.data.total
+                const res =
+                    (await warehouse.fetchPaginatedWarehouseTomasFisicas(
+                        query,
+                        paginated_opt
+                    )) as PaginatedResponse<TomaFisica>
+                activeWhInformation.value.tomasFisicas = res.data
+                tomasFisicasTabController.value.totalRows = res.total
                 break
             }
             case 'movements': {
                 query.entrada = true
                 query.salida = true
-                const res = await warehouse.fetchPaginatedWarehouseMovements(
+                const res = (await warehouse.fetchPaginatedWarehouseMovements(
                     query,
                     paginated_opt
-                )
-                activeWhInformation.value.movements = res.data.data
-                movementTabController.value.totalRows = res.data.total
+                )) as PaginatedResponse<Movement>
+
+                activeWhInformation.value.movements = res.data
+                movementTabController.value.totalRows = res.total
                 break
             }
         }
@@ -784,9 +804,10 @@
         whRows.value = (warehouse.getWarehouseList ?? []).length
         paginateAside(whPageCount.value, 0)
     })
-
     warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
-        allWarehousesTableInformation = it.data as WhWithTomaFisica[]
+        console.log(it)
+        allWarehousesTableInformation = it as unknown as WhWithTomaFisica[]
+        console.log(allWarehousesTableInformation)
         paginateMain(whPageCount.value, 0)
         showWaitOverlay.value = false
     })
