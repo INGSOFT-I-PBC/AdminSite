@@ -1,7 +1,9 @@
 """ API Url Configuration
 The `urlpatterns` list the URLs to the Views
 """
+from django.urls import include, path
 from rest_framework import routers
+from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from api.views import *
@@ -81,11 +83,8 @@ urlpatterns = [
     path("provider/<int:id>", views.ProviderView.as_view()),
     path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
-<<<<<<< HEAD
     # Role management
     path("role/<int:id>", views.RoleView.as_view()),
-=======
->>>>>>> 5caca4e2ff03e6d1c397b09ca8427b9edad86776
     # Invoice
     path(
         "invoice/client",
@@ -93,8 +92,6 @@ urlpatterns = [
         name="search-invoice-client",
     ),
     path("invoice", InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
-<<<<<<< HEAD
-=======
     path(
         "invoice/quantity",
         InvoiceView.as_view({"put": "edit_quantity"}),
@@ -105,7 +102,6 @@ urlpatterns = [
         InvoiceView.as_view({"get": "search_item"}),
         name="search-details-invoice",
     ),
->>>>>>> 5caca4e2ff03e6d1c397b09ca8427b9edad86776
     path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
     path(
