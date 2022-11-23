@@ -13,6 +13,7 @@ export type {
     Warehouse,
     TomaFisica,
     WhWithTomaFisica,
+    Movement,
 } from './warehouse.model'
 
 export type { MinimalPurchase, Purchase } from './purchase.model'

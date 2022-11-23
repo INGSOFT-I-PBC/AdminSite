@@ -64,6 +64,11 @@ urlpatterns = [
         name="wh-purchase",
     ),
     path(
+        "warehouse/purchase/confirm",
+        confirm_purchase,
+        name="wh-confirm-purchase",
+    ),
+    path(
         "warehouse/movements",
         WhTransactionViewSet.as_view({"get": "list"}),
         name="wh-movements",

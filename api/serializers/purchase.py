@@ -1,7 +1,11 @@
+from django.forms import DateTimeField, IntegerField
 from rest_framework import serializers
 from rest_framework.fields import CharField
 
 from api.models import Purchase
+from api.models.purchases import PurchaseStatus
+from api.serializers.auth import EmployeeSerializer
+from api.serializers.common import StatusSerializer
 from api.serializers.inovice import SimpleInvoiceSerializer
 from api.serializers.provider import SimpleProviderSerializer
 
@@ -44,3 +48,16 @@ class PurchaseStatusSerializer(serializers.ModelSerializer):
             "warehouse",
             "status",
         ]
+
+
+class StatusPurchaseSerializer(serializers.ModelSerializer):
+
+    id = IntegerField()
+    created_at = DateTimeField()
+
+    def create(self, validated_data):
+        return PurchaseStatus.objects.create(**validated_data)
+
+    class Meta:
+        model = PurchaseStatus
+        fields = ["id", "purchase", "status", "created_by", "created_at"]

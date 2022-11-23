@@ -1,6 +1,6 @@
 export interface MinimalPurchase {
     img_details: string
-    created_at: string
+    aproved_at: string
     invoice: {
         id: number
         code: string

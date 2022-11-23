@@ -55,6 +55,7 @@ __all__ = [
     "FullPaymentViewSet",
     "ProviderViewSet",
     "ProviderView",
+    "confirm_purchase",
     "PurchaseViewSet",
     "create_provider",
     "GroupView",

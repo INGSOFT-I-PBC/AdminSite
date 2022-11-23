@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from django.core.paginator import Paginator
 from django.db.models import OuterRef, Subquery
@@ -161,11 +161,11 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
 
 class WhInventorysViewSet(ModelViewSet):
 
-    queryset = Inventory.objects.all()
+    queryset = Inventory.objects.all().order_by("-id")
     serializer_class = WhInventorySerializer
 
     def get_queryset(self):
-        queryset = Inventory.objects.all()
+        queryset = self.queryset
         params = self.request.query_params.copy()
 
         if params.get("order_by", None):
@@ -173,7 +173,7 @@ class WhInventorysViewSet(ModelViewSet):
             queryset = queryset.order_by(*fields)
 
         if params.get("id", None):
-            queryset = queryset.get(id=params.get("id", None))
+            queryset = queryset.filter(id=params.get("id", None))
             return queryset
 
         if params.get("warehouse_id", None):
@@ -194,16 +194,19 @@ class WhInventorysViewSet(ModelViewSet):
             queryset = queryset.filter(quantity__lte=params.get("max_quantity"))
 
         if params.get("min_price", None):
-            queryset = queryset.filter(items__price__gte=params.get("min_price"))
+            queryset = queryset.filter(item__price__gte=params.get("min_price"))
 
         if params.get("max_price", None):
-            queryset = queryset.filter(items__price__lte=params.get("max_price"))
+            queryset = queryset.filter(item__price__lte=params.get("max_price"))
 
         if params.get("from_date", None):
             queryset = queryset.filter(updated_at__gte=(params["from_date"]))
-
+        #%H:%M:%S
         if params.get("to_date", None):
-            to_date = params.get("to_date", None) + datetime.timedelta(days=1)
+            to_date = datetime.strptime(
+                (params.get("to_date")), "%Y-%m-%dT%H:%M:%S.%f%z"
+            ) + timedelta(days=1)
+
             queryset = queryset.filter(updated_at__lte=to_date)
 
         return queryset
@@ -261,41 +264,32 @@ class WhTransactionViewSet(ModelViewSet):
             return queryset
 
         if params.get("warehouse_id", None):
-            movement_types = params.get("movement_type")
-            if params.get("movement_type", None):
-                movement_types = params.get("movement_type")
 
-                if movement_types.get("entrada", None):
-                    queryset = queryset.filter(
-                        warehouse_destiny=params.get("warehouse_id")
-                    )
+            if params.get("entrada", None):
+                queryset = queryset.filter(warehouse_destiny=params.get("warehouse_id"))
 
-                if movement_types.get("salida", None):
-                    queryset = queryset.filter(
-                        warehouse_origin=params.get("warehouse_id")
-                    )
+            if params.get("salida", None):
+                queryset = queryset.filter(warehouse_origin=params.get("warehouse_id"))
 
         if params.get("warehouse_name", None):
-            movement_types = params.get("movement_type")
 
-            if params.get("movement_type", None):
-                movement_types = params.get("movement_type")
+            if params.get("entrada", None):
+                queryset = queryset.filter(
+                    warehouse_destiny__name__icontains=params.get("warehouse_name")
+                )
 
-                if movement_types.get("entrada", None):
-                    queryset = queryset.filter(
-                        warehouse_destiny__name__icontains=params.get("warehouse_name")
-                    )
-
-                if movement_types.get("salida", None):
-                    queryset = queryset.filter(
-                        warehouse_origin__name__icontains=params.get("warehouse_name")
-                    )
+            if params.get("salida", None):
+                queryset = queryset.filter(
+                    warehouse_origin__name__icontains=params.get("warehouse_name")
+                )
 
         if params.get("from_date", None):
             queryset = queryset.filter(created_at__gte=(params.get("from_date")))
 
         if params.get("to_date", None):
-            to_date = params.get("to_date", None) + datetime.timedelta(days=1)
+            to_date = datetime.strptime(
+                (params.get("to_date")), "%Y-%m-%dT%H:%M:%S.%f%z"
+            ) + timedelta(days=1)
             queryset = queryset.filter(created_at__lte=to_date)
 
         if params.get("notes", None):
@@ -381,7 +375,9 @@ class WhTomasFisicasViewSet(ModelViewSet):
             queryset = queryset.filter(created_at__gte=(params["from_date"]))
 
         if params.get("to_date", None):
-            to_date = params.get("to_date", None) + datetime.timedelta(days=1)
+            to_date = datetime.strptime(
+                (params.get("to_date")), "%Y-%m-%dT%H:%M:%S.%f%z"
+            ) + timedelta(days=1)
             queryset = queryset.filter(created_at__lte=to_date)
 
         return queryset
