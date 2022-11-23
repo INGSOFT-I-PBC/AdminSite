@@ -22,6 +22,7 @@ class PartialProviderSerializer(Serializer):
     name = serializers.CharField(max_length=128, required=False)
     document_path = serializers.CharField(max_length=128, required=False)
     bussiness_name = serializers.CharField(max_length=128, required=False)
+    address = serializers.CharField(max_length=512, required=False)
     website = serializers.URLField(max_length=100, required=False)
     email = serializers.EmailField(max_length=64, required=False)
     latitude = serializers.DecimalField(
@@ -43,5 +44,6 @@ class PartialProviderSerializer(Serializer):
         instance.email = validated_data.get("email", instance.email)
         instance.latitude = validated_data.get("latitude", instance.latitude)
         instance.longitude = validated_data.get("longitude", instance.longitude)
+        instance.address = validated_data.get("address", instance.address)
         instance.save()
         return instance
