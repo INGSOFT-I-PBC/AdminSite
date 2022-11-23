@@ -14,6 +14,7 @@ class Provider(TimestampModel, TraceableModel):
     email = models.EmailField(max_length=64)
     latitude = models.DecimalField(max_digits=25, decimal_places=17, null=True)
     longitude = models.DecimalField(max_digits=25, decimal_places=17, null=True)
+    address = models.CharField(max_length=512, default="", null=False, blank=True)
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 
     class Meta:
