@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import { inventory } from '@/router/routes/inventory'
     import { useItemStore } from '@/store'
     import {
         type Item,
@@ -26,13 +25,11 @@
         BTabs,
         type TableField,
     } from 'bootstrap-vue-3'
-    import { max } from 'date-fns'
     import {
         type FieldContext,
         Form as ValidationForm,
         useField,
     } from 'vee-validate'
-    import { resourceLimits } from 'worker_threads'
     import * as yup from 'yup'
 
     import { registerRuntimeCompiler } from 'vue'
@@ -41,8 +38,6 @@
     import {
         EButton,
         ECard,
-        ECol,
-        ETab,
         InputText,
         ListBox,
         ModalDialog,
