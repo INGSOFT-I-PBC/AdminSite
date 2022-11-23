@@ -42,7 +42,7 @@ class ClientView(APIView):
             serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        pass
+
 
     def delete(self, request):
 
@@ -69,7 +69,7 @@ class ClientView(APIView):
 
 
 class ClientViewSet(ReadOnlyModelViewSet):
-    queryset = Client.objects.all().order_by("name")
+    queryset = Client.objects.all().order_by("-created_at")
     serializer_class = FullClientSerializer
 
 

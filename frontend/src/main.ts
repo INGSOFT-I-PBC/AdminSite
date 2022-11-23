@@ -41,8 +41,9 @@ const defToastOptions: PluginOptions = {
 }
 awesomeIcons.forEach(icon => library.add(icon))
 
-if (!import.meta.env.VITE_BACKEND_URL)
+if (!import.meta.env.VITE_BACKEND_URL) {
     throw new Error('No API url was provided')
+}
 
 app.use(createPinia())
 app.use(BootstrapVue3)

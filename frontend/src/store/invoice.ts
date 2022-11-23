@@ -1,13 +1,15 @@
 import { isMessage } from '@/store/types/typesafe'
 import type {
-    APIResponse,
     IClient,
+    IEditInventory,
+    IInventory,
     IItem,
     IPayment,
     Invoice,
     MessageResponse,
     PaginatedAPIResponse,
 } from '@store-types'
+import type { PaginatedResponse } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
@@ -15,10 +17,14 @@ import { type Ref, computed } from 'vue'
 
 export const useInvoiceStore = defineStore('invoice-store', () => {
     const invoice: Ref<Optional<Invoice>> = ref(null)
+    const inventory: Ref<Optional<IInventory>> = ref(null)
     const paginatedInvoice: Ref<Optional<PaginatedAPIResponse<Invoice>>> =
         ref(null)
 
-    const paginatedItems: Ref<Optional<PaginatedAPIResponse<IItem>>> = ref(null)
+    const paginatedItems: Ref<Optional<PaginatedAPIResponse<IInventory>>> =
+        ref(null)
+    const providers = ref<PaginatedResponse<Invoice>>()
+    //const providers: Ref<Optional<PaginatedAPIResponse<Invoice>>> = ref(null)
 
     const currentPaginatedItemPage = computed(() => {
         const pitem = paginatedItems.value
@@ -51,19 +57,6 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         ).data
     }
 
-    async function fetchInvoicePaginated(options: PaginationOptions) {
-        const data = await (
-            await axios.get<PaginatedAPIResponse<Invoice>>(
-                '/api/v1/list/items',
-                {
-                    params: options,
-                }
-            )
-        ).data
-        paginatedInvoice.value = data
-        return data
-    }
-
     /**
      * Save the given client into the system.
      *
@@ -87,6 +80,21 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     async function editInvoice(id: number, data: Invoice) {
         return (
             await axios.put<Invoice>(`/api/v1/invoice/editar?id=${id}`, data)
+        ).data
+    }
+    /**
+     * Edit the data of an specific Item into the backend.
+     *
+     * @param id the Id of the item to edit
+     * @param data the data to overwrite
+     * @returns the response of the backend
+     */
+    async function editquantityInventory(id: number, data: IEditInventory) {
+        return (
+            await axios.put<IEditInventory>(
+                `/api/v1/invoice/quantity?item=${id}`,
+                data
+            )
         ).data
     }
 
@@ -117,6 +125,18 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         invoice.value = data
         return data
     }
+    /* async function fetchIInventoryById(id: number) {
+        const data = (
+            await axios.get<IInventory>(`/api/v1/invoice/details/item?id=${id}`)
+        ).data
+        inventory.value = data
+        return data
+    }*/
+    async function fetchIInventoryById(id: number) {
+        return (
+            await axios.get<IInventory>(`/api/v1/invoice/details/item?id=${id}`)
+        ).data
+    }
 
     /*async function fetchStatus(name: string) {
         const data = await (
@@ -127,7 +147,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     }*/
     async function fetchIItemsPaginated(options: PaginationOptions) {
         const data = await (
-            await axios.get<PaginatedAPIResponse<IItem>>(
+            await axios.get<PaginatedAPIResponse<IInventory>>(
                 `/api/v1/invoice/item/all`,
                 {
                     params: options,
@@ -137,6 +157,34 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         paginatedItems.value = data
         return data
     }
+
+    async function fetchInvoicePaginated(params?: PaginationOptions) {
+        const response = (
+            await axios.get<PaginatedResponse<Invoice>>(
+                '/api/v1/list/invoices/all',
+                { params }
+            )
+        ).data
+        paginatedInvoice.value = response
+        return response
+    }
+    /**
+     * This method will fetch a paginated list of users that are
+     * filtered by the given params.
+     *
+     * @param params the search params
+     */
+    async function fetchProviders(params?: PaginationOptions) {
+        const response = (
+            await axios.get<PaginatedResponse<Invoice>>(
+                '/api/v1/list/invoices/all',
+                { params }
+            )
+        ).data
+        providers.value = response
+        return response
+    }
+
     async function fetchPayment() {
         const data = await (
             await axios.get<IPayment[]>('/api/v1/list/payment/all')
@@ -150,8 +198,11 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         paginatedInvoice,
         paginatedItems,
         allInvoice,
+        inventory,
         currentPaginatedItemPage,
         currentPaginatedInvoicePage,
+        fetchIInventoryById,
+        editquantityInventory,
         fetchPayment,
         fetchInvoiceById,
         fetchAllInvoice,
@@ -161,6 +212,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         editInvoice,
         removeInvoice,
         fetchClientNumber,
-        //fetchStatus,
+        providers,
+        fetchProviders,
     }
 })

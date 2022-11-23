@@ -122,7 +122,7 @@ class Invoice(models.Model):
     )
     created_at = models.DateTimeField(null=False, auto_now_add=True)
     credit_note = models.ForeignKey(CreditNote, null=True,default=None, on_delete=models.RESTRICT)
-    iva = models.DecimalField(max_digits=6, decimal_places=3)
+    iva = models.DecimalField(decimal_places=3, max_digits=15)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.RESTRICT)
     return_deadline = models.DateField(null=True,default=None)
     emission = models.DateField(null=True,default=None)

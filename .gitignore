@@ -274,3 +274,5 @@ yarn-error.log*
 *.sln
 *.sw*
 db
+
+storage/

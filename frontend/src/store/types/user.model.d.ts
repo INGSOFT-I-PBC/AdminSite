@@ -1,3 +1,4 @@
+import type { Gender } from './client.model'
 import type { Group } from './common.model'
 
 export interface Role {
@@ -75,10 +76,28 @@ export type UserForm = {
 
 export interface Employee {
     id?: number
+    created_at?: string
+    updated_at?: string
+    deleted_at?: string
     name: string
     lastname: string
     cid: string
-    role: Maybe<Role>
+    is_active: boolean
+    role: Maybe<Role> | undefined
+    phone_number: string
+    created_by: Maybe<Employee> | null
+    gender: Maybe<Gender> | undefined
+}
+
+export interface EmployeeForm {
+    name: string
+    lastname: string
+    cid: string
+    is_active: boolean
+    role: Maybe<Role> | undefined | number
+    phone_number: string
+    created_by?: Maybe<Employee> | null | number
+    gender: Maybe<Gender> | undefined | number
 }
 
 export default {}

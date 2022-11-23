@@ -18,9 +18,14 @@
 
     import { type Ref, onMounted } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
+    const props = defineProps({
+        id: Number,
+    })
+    const toast = useToast()
     const hoy = new Date()
     const showWaitOverlay = ref<boolean>(false)
     const itemLoading = ref(false)
@@ -72,9 +77,8 @@
     })
     const loadClient = async () => {
         itemLoading.value = true
-        formClient.value = await itemStore.fetchClientById(
-            Number(route.params.id)
-        )
+        console.log(Number(props.id))
+        formClient.value = await itemStore.fetchClientById(Number(props.id))
         onShowModalCityClick()
         itemLoading.value = false
     }
@@ -126,9 +130,10 @@
     }
     function editClient() {
         itemStore
-            .editClient(Number(route.params.id), formClient.value)
+            .editClient(Number(props.id), formClient.value)
             .then(() => {
-                router.push({ path: '/usuarios/clientes' })
+                toast.success('Cliente editado correctamente')
+                showWaitOverlay.value = false
             })
             .catch(error => {
                 if (error.response.status == 400) {
@@ -328,7 +333,7 @@
                 @ok="editClient()"
                 button-type="ok-cancel">
                 <h1 style="font-size: 15px; color: black; text-align: left">
-                    ¿Está seguro de modificar al Cliente?
+                    ¿Esta seguro de modificar al Cliente?
                 </h1>
             </ModalDialog>
             <div class="container" style="border-radius: 5px">

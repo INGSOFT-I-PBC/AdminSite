@@ -7,13 +7,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from api.views import *
-from api.views.clientview import ClientView
-from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
-from api.views.itemviews import ItemView
-from api.views.orders import OrderRequestView
-from api.views.provinceview import ProvinceCityView
 from api.views.sequence import *
-from api.views.statusview import StatusView
 from api.views.warehouse import *
 
 """ Definition of paginated data
@@ -27,15 +21,16 @@ router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
-router.register(r"invoices/all", views.FullInvoiceViewSet)
+router.register(r"invoices/all", views.InvoiceViewSet)
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
-router.register(r"clients/all", views.FullClientViewSet)
+router.register(r"clients/all", views.ClientViewSet)
 router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
+router.register(r"roles", views.RoleViewSet, "roleViewSet")
 router.register(r"providers", views.ProviderViewSet)
 router.register("purchase", views.PurchaseViewSet),
 router.register(r"sequence/all", views.FullSequenceViewSet)
@@ -101,10 +96,11 @@ urlpatterns = [
     path("user/<str:username>/activate", views.activate_user),
     path("user", views.create_user),
     # Employee management
+    path("employee", views.create_employee),
     path("employee/<int:id>", views.EmployeeView.as_view()),
     path("employee/<str:cid>", views.EmployeeView.as_view()),
     path("employee/<str:cid>/activate", views.activate_employee),
-    path("employee", views.create_employee),
+    path("employee/<str:cid>/inactivate", views.inactivate_employee),
     # Order management
     path("order/<int:id>", OrderRequestView.as_view()),
     path("order", create_order_request),
@@ -112,16 +108,18 @@ urlpatterns = [
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),
     path("provinces", ProvinceCityView.as_view()),
-    # path('users'),
     # Administration endpoints
     path("admin/permission_group/<int:id>", views.PermissionGroupView.as_view()),
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
+    path("role/<int:id>", views.RoleView.as_view()),
     # Providers endpoints
     path("provider/<int:id>", views.ProviderView.as_view()),
     path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
+    # Role management
+    path("role/<int:id>", views.RoleView.as_view()),
     # Invoice
     path(
         "invoice/client",
@@ -129,6 +127,16 @@ urlpatterns = [
         name="search-invoice-client",
     ),
     path("invoice", InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
+    path(
+        "invoice/quantity",
+        InvoiceView.as_view({"put": "edit_quantity"}),
+        name="save-invoice",
+    ),
+    path(
+        "invoice/details/item",
+        InvoiceView.as_view({"get": "search_item"}),
+        name="search-details-invoice",
+    ),
     path("invoice/editar", views.InvoicesView.as_view()),
     path("sequence", SequenceView.as_view()),
     path(
