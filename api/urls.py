@@ -84,7 +84,9 @@ urlpatterns = [
     path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
     # Role management
+    path("role", views.create_role),
     path("role/<int:id>", views.RoleView.as_view()),
+    path("role/<str:id>", views.RoleView.as_view()),
     # Invoice
     path(
         "invoice/client",

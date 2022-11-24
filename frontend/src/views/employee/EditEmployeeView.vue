@@ -6,6 +6,7 @@
     import ERow from '@components/custom/ERow.vue'
     import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
+    import WaitOverlay from '@components/custom/WaitOverlay.vue'
     import { useClientStore } from '@store/client'
     import { useEmployeeStore } from '@store/employee'
     import { useRoleStore } from '@store/role'
@@ -330,9 +331,13 @@
                         </ECol>
                     </ERow>
                     <ERow>
-                        <div class="col col-12 col-md-1">
-                            <EButton class="tw-w-full"> Guardar </EButton>
-                        </div>
+                        <ECol>
+                            <EButton
+                                left-icon="fa-floppy-disk"
+                                icon-provider="awesome">
+                                Guardar
+                            </EButton>
+                        </ECol>
                     </ERow>
                 </ValidationForm>
             </ECard>

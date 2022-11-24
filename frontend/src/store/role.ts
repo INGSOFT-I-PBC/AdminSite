@@ -3,6 +3,7 @@ import type {
     PaginatedResponse,
     Role,
 } from '@store-types'
+import type { MessageResponse } from '@store-types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
@@ -20,10 +21,6 @@ export const useRoleStore = defineStore('role', () => {
      * The pagination list of roles returned by a query
      */
     const paginatedRoles = ref<PaginatedResponse<Role>>()
-    /**
-     * All the roles listed on the database
-     */
-    const roles = ref<Role[]>()
 
     /**
      * This function make a request to teh backend and by the given parameters of
@@ -54,10 +51,34 @@ export const useRoleStore = defineStore('role', () => {
         return response
     }
 
+    /**
+     * This function creates an new role and saves it into the system.
+     */
+    function saveRole(role: Role) {
+        return axios.post<MessageResponse>('/api/v1/role', role)
+    }
+
+    /**
+     * This function update a role.
+     */
+    function updateRole(id: number | string, data: Role) {
+        return axios.put<MessageResponse>(`/api/v1/role/${id}`, data)
+    }
+
+    /**
+     * This function remove a role.
+     */
+    function removeRole(id: number | string) {
+        return axios.delete<MessageResponse>(`/api/v1/role/${id}`)
+    }
+
     return {
         role,
         paginatedRoles,
         fetchRole,
         fetchRoles,
+        saveRole,
+        updateRole,
+        removeRole,
     }
 })
