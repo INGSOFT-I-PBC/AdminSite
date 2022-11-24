@@ -47,3 +47,9 @@ class PartialProviderSerializer(Serializer):
         instance.address = validated_data.get("address", instance.address)
         instance.save()
         return instance
+
+
+class SimpleProviderSerializer(ModelSerializer):
+    class Meta:
+        model = Provider
+        fields = ["id", "name"]

@@ -1,17 +1,17 @@
+import datetime
+
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
+from rest_framework.parsers import FormParser, JSONParser, MultiPartParser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
-from api.models import Inventory, Item
-from django.http import JsonResponse
-import json
-from django.shortcuts import get_object_or_404
-from api.models import Warehouse, Item, Employee
+from rest_framework.viewsets import ModelViewSet
+
+from api.models import Employee, Inventory, Item, Warehouse
 from api.serializers import FullInventorySerializer, InventorySerializer
-from rest_framework import serializers
-from rest_framework import status
-from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
-from rest_framework.permissions import IsAuthenticated
+from api.serializers.warehouse import WhInventorySerializer
 
 
 class InventoryView(APIView):
@@ -87,7 +87,49 @@ class InventoryView(APIView):
             datos3 = {"message": "Items not found .."}
 
         return JsonResponse(datos3)
-class InventoryViewSet(ReadOnlyModelViewSet):
+class FullInventoryViewSet(ReadOnlyModelViewSet):
   
     queryset = Inventory.objects.all().order_by("-created_at")
     serializer_class = FullInventorySerializer
+
+
+class InventoryViewSet(ModelViewSet):
+    """
+    API endpoint that allows purchases to be viewed or edited.
+    """
+
+    queryset = Inventory.objects.all()
+    serializer_class = WhInventorySerializer
+
+    def get_queryset(self):
+        queryset = Inventory.objects.all()
+        params = self.request.query_params.copy()
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("warehouse_id", None):
+            queryset = queryset.filter(
+                warehouse=params.get("warehouse_id")
+            ).prefetch_related("item")
+
+        if params.get("item_name", None):
+            queryset = queryset.filter(
+                item__name__icontains=params.get("warehouse_name")
+            )
+
+        if params.get("min_quantity", None):
+            queryset = queryset.filter(quantity__gte=params.get("min_quantity"))
+
+        if params.get("max_quantity", None):
+            queryset = queryset.filter(quantity__lte=params.get("max_quantity"))
+
+        if params.get("from_date", None):
+            queryset = queryset.filter(updated_at__gte=(params["from_date"]))
+
+        if params.get("to_date", None):
+            to_date = params.get("to_date", None) + datetime.timedelta(days=1)
+            queryset = queryset.filter(updated_at__lte=to_date)
+
+        return queryset

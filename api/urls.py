@@ -39,8 +39,11 @@ router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"roles", views.RoleViewSet, "roleViewSet")
 router.register(r"providers", views.ProviderViewSet)
+router.register("purchase", views.PurchaseViewSet),
 router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"payment/all", views.FullPaymentViewSet)
+router.register(r"inventory", views.InventoryViewSet)
+
 
 urlpatterns = [
     # List return paths
@@ -51,6 +54,38 @@ urlpatterns = [
     path("auth/me", user_data, name="user-data"),
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
+    path("warehouse/order", WhOrderRequestView.as_view(), name="wh-orders"),
+    path(
+        "warehouse/inventory",
+        WhInventorysViewSet.as_view({"get": "list"}),
+        name="wh-inventory",
+    ),
+    path(
+        "warehouse/purchase",
+        PurchaseViewSet.as_view({"get": "list"}),
+        name="wh-purchase",
+    ),
+    path(
+        "warehouse/purchase/confirm",
+        confirm_purchase,
+        name="wh-confirm-purchase",
+    ),
+    path(
+        "warehouse/movements",
+        WhTransactionViewSet.as_view({"get": "list"}),
+        name="wh-movements",
+    ),
+    path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
+    path(
+        "warehouse/tomas-fisicas",
+        WhTomasFisicasViewSet.as_view({"get": "list"}),
+        name="wh-tomas",
+    ),
+    path(
+        "warehouse/tomas-fisicas/all",
+        WhLatestTomaFisicaView.as_view(),
+        name="all-wh-tomas",
+    ),
     path("items", ItemView.as_view(), name="item-list"),
     path("items/<int:id>", views.ItemView.as_view()),
     path("item/<int:id>/activate", views.activate_item),

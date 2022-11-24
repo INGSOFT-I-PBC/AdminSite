@@ -11,6 +11,7 @@ from api.views.orders import *
 from api.views.payment import *
 from api.views.providers import *
 from api.views.provinceview import *
+from api.views.purchase import *
 from api.views.roleview import *
 from api.views.sequence import *
 from api.views.statusview import *
@@ -30,6 +31,7 @@ __all__ = [
     "ItemView",
     "CategoryView",
     "InventoryView",
+    "InventoryViewSet",
     "user_data",
     "PermissionsViewSet",
     "ItemView",
@@ -58,6 +60,8 @@ __all__ = [
     "FullPaymentViewSet",
     "ProviderViewSet",
     "ProviderView",
+    "confirm_purchase",
+    "PurchaseViewSet",
     "create_provider",
     "GroupView",
     "PaginatedIItemViewSet",
