@@ -16,7 +16,7 @@ from rest_framework.permissions import IsAuthenticated
 
 class InventoryView(APIView):
     """
-    This View holds multiple methods for the Items
+    This View holds multiple methods for the Inventory
     """
 
     permission_classes = (IsAuthenticated,)
@@ -87,3 +87,7 @@ class InventoryView(APIView):
             datos3 = {"message": "Items not found .."}
 
         return JsonResponse(datos3)
+class InventoryViewSet(ReadOnlyModelViewSet):
+  
+    queryset = Inventory.objects.all().order_by("-created_at")
+    serializer_class = FullInventorySerializer

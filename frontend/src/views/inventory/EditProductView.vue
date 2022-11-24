@@ -60,13 +60,14 @@
                     model: '',
                     name: '',
                     price: 0,
-                    status_id: 0,
+
                     warehouse_id: 0,
                     quantity: normalValue,
                     item_id: 0,
                     codigo: '',
                     created_by: '',
                     created_id: 0,
+                    is_active: true,
                 },
             }
         },
@@ -74,22 +75,10 @@
             showProduct() {
                 this.productModalShow = true
             },
-            async loadStatus(name: string) {
-                this.formStatus = await ItemDataService.fetchStatus(name)
-                this.entrada.status_id = this.formStatus.id
-                console.log(this.entrada.status_id)
-            },
+
             validarCheckbox() {
-                const checkbox = document.getElementById(
-                    'check'
-                ) as HTMLInputElement
-                if (!checkbox.checked) {
-                    //this.entrada.status_id = 1
-                    this.loadStatus('inactive')
-                } else {
-                    //this.entrada.status_id = 3
-                    this.loadStatus('active')
-                }
+                this.entrada.is_active = !this.entrada.is_active
+                console.log(this.entrada.is_active)
             },
             performUpload() {
                 const formDataItem = new FormData()
@@ -123,8 +112,8 @@
 
                 this.validarCheckbox()
                 formDataItem.append(
-                    'status_id',
-                    this.entrada.status_id.toString()
+                    'is_active',
+                    this.entrada.is_active.toString()
                 )
                 formDataItem.append('codename', this.entrada.codigo)
                 return formDataItem
@@ -245,7 +234,7 @@
                         this.entrada.quantity = this.items['0'].quantity
 
                         this.entrada.name = this.items['0'].nombreItem
-                        this.entrada.status_id = this.items['0'].status_id_Item
+                        this.entrada.is_active = this.items['0'].is_active
 
                         this.fecha_hora.fecha = new Date(
                             this.items['0'].created_at
@@ -298,7 +287,6 @@
                 this.showAllProducts(String(this.route.params.id))
             this.showAllCategory()
             this.showAllWarehouses()
-            this.loadStatus(this.formStatus.name)
         },
         components: {
             ECard,
@@ -490,7 +478,7 @@
                                     role="switch"
                                     id="check"
                                     @change="validarCheckbox()"
-                                    checked />
+                                    :checked="entrada.is_active" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>

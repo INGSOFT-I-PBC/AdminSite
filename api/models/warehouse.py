@@ -82,6 +82,9 @@ class Inventory(TimestampModel):
 
     def codename_Item(self):
         return self.item.codename
+    def is_active(self):
+        return self.item.is_active
+
 
 
 class WarehouseTransaction(models.Model):
