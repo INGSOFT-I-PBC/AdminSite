@@ -297,9 +297,7 @@
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid align_button">
-                    <EButton variant="secondary" @click="clean"
-                        >+ Agregar Rol
-                    </EButton>
+                    <EButton @click="clean">+ Agregar Rol </EButton>
                 </div>
             </nav>
             <div
