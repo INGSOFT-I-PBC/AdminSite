@@ -6,7 +6,7 @@ from api.views.groups import *
 from api.views.inventoryviews import *
 from api.views.invoiceview import *
 from api.views.itemview import *
-from api.views.itemviews import ItemView
+from api.views.itemviews import *
 from api.views.orders import *
 from api.views.payment import *
 from api.views.providers import *
