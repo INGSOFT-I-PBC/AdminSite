@@ -1,4 +1,5 @@
 @import '~bootstrap/scss/bootstrap';
+@import '~bootstrap/scss/bootstrap';
 
 // Style for b-list-paginator tag
 .paginator{
@@ -54,6 +55,43 @@
         --bs-list-group-action-hover-bg: theme(colors.primary.light / 70%)!important;
     }
 
+}
+
+
+/*Style of table*/
+.table {
+    >thead {
+        @apply tw-bg-secondary tw-text-white tw-font-bold;
+    }
+
+    @media (prefers-color-scheme: dark) {
+        color: white !important;
+        --bs-table-striped-color: theme(colors.zinc.400);
+        --bs-table-hover-color: theme('colors.primary.light');
+        --bs-table-hover-bg: theme(colors.primary.light / 15%);
+    }
+}
+
+/*Style of buttons ver detalles, editar, eliminar*/
+.t-button-group {
+    max-width: fit-content !important;
+    @apply tw-rounded tw-overflow-hidden tw-flex tw-place-content-stretch tw-place-items-stretch;
+
+    >button {
+        border-radius: 0.3rem;
+        margin-left: 0.5rem;
+        min-width: auto;
+        max-width: 100%;
+    }
+}
+
+/*Style of the switch*/
+.form-check-input:checked {
+    color: theme('colors.primary.light');
+    border-color: #212529;
+}
+
+
 // .tab-nav{
 
 //     --bs-nav-link-padding-x: 1rem !important;
@@ -67,7 +105,5 @@
 //     color: var(--bs-nav-pills-link-active-color);
 //     background-color: var(----bs-nav-pills-link-active-bg);
 //     }
-
-}
 
 

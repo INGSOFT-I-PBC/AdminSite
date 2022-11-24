@@ -2,10 +2,11 @@ import type { Gender } from './client.model'
 import type { Group } from './common.model'
 
 export interface Role {
-    id: number
+    id?: number | string
     name: string
     codename: string
     role_class: string
+    created_at?: string
 }
 
 export interface Permission {
