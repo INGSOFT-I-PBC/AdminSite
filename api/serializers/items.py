@@ -49,7 +49,7 @@ class ItemSerializer(ModelSerializer):
             "category_id",
             "created_by",
             "codename",
-            "status_id",
+            "is_active",
         ]
 
 
@@ -73,5 +73,5 @@ class ItemSerializer2(ModelSerializer):
             "price",
             "category_id",
             "created_by",
-            "status_id",
+            "is_active",
         ]
