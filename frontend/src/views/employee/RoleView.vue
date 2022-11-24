@@ -153,7 +153,7 @@
             (f.codename.value = ''),
             (f.role_class.value = ''),
             (formFecha.value.fecha = date.toLocaleDateString()),
-            (formFecha.value.fecha = date.toLocaleTimeString())
+            (formFecha.value.hora = date.toLocaleTimeString())
 
         /*Ocultar y mostrar divs*/
         divGuardar.value = true
@@ -303,7 +303,7 @@
                 </div>
             </nav>
             <div
-                class="row d-inline-flex allign-content-center tw-bg-slate-50 dark:tw-bg-slate-700">
+                class="row d-inline-flex allign-content-center tw-bg-slate-50 dark:tw-bg-slate-800">
                 <div
                     class="col-2 mx-1 tw-flex-col tw-rounded-lg tw-bg-white dark:tw-bg-slate-800">
                     <b-pagination
@@ -328,7 +328,7 @@
                         </b-list-group-item>
                     </b-list-group>
                 </div>
-                <div class="col-md tw-bg-slate-50 dark:tw-bg-slate-700">
+                <div class="col-md tw-bg-slate-50 dark:tw-bg-slate-800">
                     <ValidationForm
                         @onsubmit.prevent="inactive"
                         :validation-schema="roleFormValidation">
