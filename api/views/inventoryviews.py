@@ -7,8 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ModelViewSet
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import Employee, Inventory, Item, Warehouse
 from api.serializers import FullInventorySerializer, InventorySerializer
@@ -89,8 +88,9 @@ class InventoryView(APIView):
 
         return JsonResponse(datos3)
 
+
 class FullInventoryViewSet(ReadOnlyModelViewSet):
-  
+
     queryset = Inventory.objects.all().order_by("-created_at")
     serializer_class = FullInventorySerializer
 
