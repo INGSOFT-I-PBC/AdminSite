@@ -1,25 +1,28 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from api.models.common import Status
+from api.models.invoice import Invoice
 from api.models.items import Item
-from .warehouse import Warehouse
-
-from .provider import Provider
-from .orders import OrderStatus
-from .invoice import InvoiceDetails
-from .users import Employee
-from django.core.validators import MinValueValidator
+from api.models.orders import OrderRequest
+from api.models.provider import Provider
+from api.models.users import Employee
+from api.models.warehouse import Warehouse
 
 
 class Purchase(models.Model):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
+    aproved_at = models.DateTimeField(null=False, auto_now_add=True)
     provider = models.ForeignKey(Provider, on_delete=models.RESTRICT)
-    order_origin = models.ForeignKey(OrderStatus, on_delete=models.RESTRICT, null=True)
+    order_origin = models.ForeignKey(OrderRequest, on_delete=models.RESTRICT, null=True)
     reference = models.IntegerField()
     warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
-    invoice = models.ForeignKey(InvoiceDetails, on_delete=models.RESTRICT)
+    invoice = models.ForeignKey(
+        Invoice, null=True, default=None, on_delete=models.RESTRICT
+    )
+
     img_details = models.CharField(max_length=255, null=True)
 
     class Meta:

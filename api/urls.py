@@ -7,7 +7,13 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from api.views import *
+from api.views.clientview import ClientView
+from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
+from api.views.itemviews import ItemView
+from api.views.orders import OrderRequestView
+from api.views.provinceview import ProvinceCityView
 from api.views.sequence import *
+from api.views.statusview import StatusView
 from api.views.warehouse import *
 
 """ Definition of paginated data
@@ -28,12 +34,16 @@ router.register(r"provinces/all", views.FullProvinceViewSet)
 router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
+router.register(r"inventory/all", views.FullInventoryViewSet, "paginatedInventoryVS")
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"roles", views.RoleViewSet, "roleViewSet")
 router.register(r"providers", views.ProviderViewSet)
+router.register("purchase", views.PurchaseViewSet),
 router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"payment/all", views.FullPaymentViewSet)
+router.register(r"inventory", views.InventoryViewSet)
+
 
 urlpatterns = [
     # List return paths
@@ -44,8 +54,42 @@ urlpatterns = [
     path("auth/me", user_data, name="user-data"),
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
+    path("warehouse/order", WhOrderRequestView.as_view(), name="wh-orders"),
+    path(
+        "warehouse/inventory",
+        WhInventorysViewSet.as_view({"get": "list"}),
+        name="wh-inventory",
+    ),
+    path(
+        "warehouse/purchase",
+        PurchaseViewSet.as_view({"get": "list"}),
+        name="wh-purchase",
+    ),
+    path(
+        "warehouse/purchase/confirm",
+        confirm_purchase,
+        name="wh-confirm-purchase",
+    ),
+    path(
+        "warehouse/movements",
+        WhTransactionViewSet.as_view({"get": "list"}),
+        name="wh-movements",
+    ),
+    path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
+    path(
+        "warehouse/tomas-fisicas",
+        WhTomasFisicasViewSet.as_view({"get": "list"}),
+        name="wh-tomas",
+    ),
+    path(
+        "warehouse/tomas-fisicas/all",
+        WhLatestTomaFisicaView.as_view(),
+        name="all-wh-tomas",
+    ),
     path("items", ItemView.as_view(), name="item-list"),
-    path("items/<int:pk>", ItemView.as_view(), name="item_process"),
+    path("items/<int:id>", views.ItemView.as_view()),
+    path("item/<int:id>/activate", views.activate_item),
+    path("item/<int:id>/inactivate", views.inactivate_item),
     path("category", CategoryView.as_view(), name="category-list"),
     path("category/<int:id>", CategoryView.as_view(), name="category_process"),
     path("inventory", InventoryView.as_view(), name="inventory-list"),

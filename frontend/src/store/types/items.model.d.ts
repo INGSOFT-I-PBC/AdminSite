@@ -18,7 +18,8 @@ export interface Item {
     iva: number
     model: string
     name: string
-    price: string
+    price: number
+    codename: string
 }
 
 export interface FullItem extends Item {

@@ -1,9 +1,9 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from .common import Status, TimestampModel
-from .items import Item
-from .users import Employee
+from api.models.common import Status, TimestampModel
+from api.models.items import Item
+from api.models.users import Employee
 
 
 class Warehouse(TimestampModel):
@@ -82,6 +82,9 @@ class Inventory(TimestampModel):
 
     def codename_Item(self):
         return self.item.codename
+    def is_active(self):
+        return self.item.is_active
+
 
 
 class WarehouseTransaction(models.Model):
@@ -109,3 +112,15 @@ class WhTransactionDetails(models.Model):
 
     class Meta:
         db_table = "wh_transaction_details"
+
+
+class WhTomasFisicas(models.Model):
+
+    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+    done_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
+    created_at = models.DateTimeField(null=False, auto_now_add=True)
+    novedad = models.CharField(max_length=300, blank=True)
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
+
+    class Meta:
+        db_table = "tomas_fisicas"

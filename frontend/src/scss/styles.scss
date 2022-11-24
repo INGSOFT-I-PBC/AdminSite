@@ -54,6 +54,7 @@
         --bs-list-group-action-hover-color: #f8f9fa!important;
         --bs-list-group-action-hover-bg: theme(colors.primary.light / 70%)!important;
     }
+
 }
 
 
@@ -90,9 +91,21 @@
     border-color: #212529;
 }
 
-.form-check-input:focus {
-    background-color: theme('colors.primary.light');
-    border-color: #212529;
+
+// .tab-nav{
+
+//     --bs-nav-link-padding-x: 1rem !important;
+//     --bs-nav-link-padding-y: 0.5rem !important;
+//     --bs-nav-link-font-weight: !important;
+//     --bs-nav-link-color: theme('colors.primary.light') !important;
+//     --bs-nav-link-hover-color: theme(colors.primary.light / 70%) !important;
+//     --bs-nav-link-disabled-color: white !important;
+//     --bs-nav-pills-link-active-color: #212529!important;
+//     --bs-nav-pills-link-active-bg: theme('colors.primary.light')!important;
+//     color: var(--bs-nav-pills-link-active-color);
+//     background-color: var(----bs-nav-pills-link-active-bg);
+//     }
+
 }
 
 

@@ -14,11 +14,13 @@
 
     import { defineComponent } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     export default defineComponent({
         name: 'AddProductView',
         data() {
             const route = useRoute()
+            const toast = useToast()
             const authStore = useAuthStore()
             const name = authStore.userData?.name
             const employee_id = authStore.userData?.employee as number
@@ -51,6 +53,7 @@
                 formSequence,
                 formStatus,
                 route,
+                toast,
                 router,
                 hoy,
                 normalValue,
@@ -81,6 +84,7 @@
                     quantity: normalValue,
                     item_id: 0,
                     codigo: '',
+                    is_active: true,
                 },
             }
         },
@@ -113,7 +117,8 @@
                 console.log(this.formSequenceEditado)
             },
             validarCheckbox() {
-                console.log()
+                this.entrada.is_active = !this.entrada.is_active
+                console.log(this.entrada.is_active)
             },
             async showAllCategory() {
                 ItemDataService.getAllCategory()
@@ -160,8 +165,8 @@
 
                 this.validarCheckbox()
                 formDataItem.append(
-                    'status_id',
-                    this.entrada.status_id.toString()
+                    'is_active',
+                    this.entrada.is_active.toString()
                 )
                 this.loadSequence('ITEM')
                 formDataItem.append('codename', this.entrada.codigo)
@@ -223,20 +228,22 @@
                 reader.readAsDataURL(file)
             },
             onSubmit(value: any) {
-                console.log('probando')
                 this.productModalShow = true
             },
             validateName(value: any) {
                 // if the field is empty
                 if (!value) {
+                    this.toast.error('LLene el campo Nombre')
                     return 'Este campo es requerido'
                 }
                 if (!isNaN(value)) {
+                    this.toast.error('Formato invalido en el campo Nombre')
                     return 'Inválido'
                 }
                 const regex = /^[a-zA-ZÀ-ÿ ]+$/
 
                 if (!regex.test(value)) {
+                    this.toast.error('Formato invalido en el campo Nombre')
                     return 'Inválido'
                 }
 
@@ -245,14 +252,20 @@
             validateMarca(value: any) {
                 // if the field is empty
                 if (!value) {
+                    this.toast.error('LLene el campo Marca')
+
                     return 'Este campo es requerido'
                 }
                 if (!isNaN(value)) {
+                    this.toast.error('Formato invalido en el campo Marca')
                     return 'Inválido'
                 }
                 const regex = /^[a-zA-ZÀ-ÿ ]+$/
 
                 if (!regex.test(value)) {
+                    this.toast.error('Formato invalido en el campo Marca')
+
+                    this.toast.error('LLene el campo Marca')
                     return 'Inválido'
                 }
 
@@ -262,14 +275,8 @@
             validateModelo(value: any) {
                 // if the field is empty
                 if (!value) {
-                    return 'Este campo es requerido'
-                }
+                    this.toast.error('LLene el campo Modelo')
 
-                return true
-            },
-            validateCategoria(value: any) {
-                // if the field is empty
-                if (!value) {
                     return 'Este campo es requerido'
                 }
 
@@ -278,29 +285,18 @@
             validatePrecio(value: any) {
                 // if the field is empty
                 if (!value) {
+                    this.toast.error('Llene el campo Precio')
+
                     return 'Este campo es requerido'
                 }
                 if (isNaN(value)) {
+                    this.toast.error('Formato invalido en el campo Precio')
+
                     return 'Inválido'
                 }
                 if (value < 0) {
-                    return 'Inválido'
-                }
+                    this.toast.error('Formato invalido en el campo Precio')
 
-                return true
-            },
-
-            validateIva(value: any) {
-                // if the field is empty
-                if (isNaN(value)) {
-                    return 'Inválido'
-                }
-                if (value < 0) {
-                    return 'Inválido'
-                }
-                if (value == 0 || value == 12) {
-                    return true
-                } else {
                     return 'Inválido'
                 }
 
@@ -317,7 +313,6 @@
             this.showAllWarehouses()
             this.loadStatus(this.formStatus.name.toString())
             this.loadSequence('ITEM')
-            //console.log("hola"+this.formStatus.value.name)
         },
     })
 </script>
@@ -552,7 +547,7 @@
                                         role="switch"
                                         id="check"
                                         @change="validarCheckbox()"
-                                        checked />
+                                        :checked="entrada.is_active" />
                                     <label
                                         class="form-check-label"
                                         for="flexSwitchCheckDefault"></label>
