@@ -7,6 +7,7 @@
     import { useEmployeeStore } from '@store/employee'
     import type { Employee } from '@store/types'
     import type { TableField } from 'bootstrap-vue-3'
+    import moment from 'moment'
 
     import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
@@ -57,7 +58,8 @@
         employees: Employee[]
     }
 
-    async function showEmployees(page: number) {
+    async function showEmployees(e: Event | null, page: number) {
+        console.log(e)
         showWaitOverlay.value = true
         try {
             const dataEmployeeTable =
@@ -140,12 +142,8 @@
             })
     }
 
-    function removeItem(index: number) {
-        form.value.employees.splice(index, 1)
-    }
-
     onMounted(() => {
-        return showEmployees(currentPage.value)
+        return showEmployees(null, currentPage.value)
     })
 </script>
 
@@ -170,9 +168,9 @@
                                 >Fecha de creación:</span
                             >
                             <span class="col-6">{{
-                                detailSelectedItem?.item?.created_at?.split(
-                                    'T'
-                                )[0]
+                                moment(
+                                    detailSelectedItem?.item?.created_at
+                                ).format('DD/MM/YYYY')
                             }}</span>
                         </div>
                         <div class="row" v-if="k == 'created_at'">
@@ -180,9 +178,9 @@
                                 >Hora de creación:</span
                             >
                             <span class="col-6">{{
-                                detailSelectedItem?.item?.created_at
-                                    ?.split('T')[1]
-                                    .split('.')[0]
+                                moment(
+                                    detailSelectedItem?.item?.created_at
+                                ).format('HH:mm:ss')
                             }}</span>
                         </div>
                         <div class="row" v-else-if="k == 'name'">
@@ -278,12 +276,14 @@
                 </nav>
                 <BTable :fields="formFields" :items="form.employees">
                     <template #cell(date)="{ index }">{{
-                        form.employees[index].created_at?.split('T')[0]
+                        moment(form.employees[index].created_at).format(
+                            'DD/MM/YYYY'
+                        )
                     }}</template>
                     <template #cell(hour)="{ index }">{{
-                        form.employees[index].created_at
-                            ?.split('T')[1]
-                            .split('.')[0]
+                        moment(form.employees[index].created_at).format(
+                            'HH:mm:ss'
+                        )
                     }}</template>
                     <template #cell(role)="{ index }">{{
                         form.employees[index].role?.name
