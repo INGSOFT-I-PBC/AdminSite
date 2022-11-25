@@ -205,6 +205,4 @@ class FullInvoiceViewSet(InvoiceViewSet):
     pagination_class = None
 
 
-"""class OrderRequestViewSet(ReadOnlyModelViewSet):
-    queryset = OrderRequest.objects.all().order_by("id")
-    serializer_class = ClientSerializer"""
+

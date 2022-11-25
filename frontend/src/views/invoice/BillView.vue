@@ -3,6 +3,7 @@
     import ECard from '@components/custom/ECard.vue'
     import ECol from '@components/custom/ECol.vue'
     import ERow from '@components/custom/ERow.vue'
+    import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
@@ -14,10 +15,12 @@
         Invoice,
     } from '@store/types'
     import { isMessage } from '@store/types'
+    import { BIconFileEarmarkSlidesFill } from 'bootstrap-icons-vue'
     //import { useToast } from 'vue-toastification'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
 
     import { onMounted } from 'vue'
+    import type { Ref } from 'vue'
     import { useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
 
@@ -30,19 +33,25 @@
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
     const itemStore = useInvoiceStore()
+    const emission: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
+    const endDate: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
     //const toast = useToast()
+    const filterText = ref<string>('')
     const itemInfoShow = ref<boolean>(false)
     const toast = useToast()
 
-    const templateList = [
-        { label: 'Por fecha de creación', value: '1' },
-        { label: 'Por creador', value: '2' },
+    const templateList = ref<
         {
-            label: 'Por tipo de ID',
-            value: '3',
-        },
-        { label: 'Por Nombres y apellidos', value: '4' },
-    ]
+            label: string
+            value: 'emission' | 'created' | 'cid' | 'name'
+        }[]
+    >([
+        //{ label: 'Por creador', value: 'created' },
+        { label: 'Por tipo de ID', value: 'cid' },
+        { label: 'Por Nombres y apellidos', value: 'name' },
+        { label: 'Por fecha de creación', value: 'emission' },
+    ])
+    const filterName = ref(templateList.value[0])
     type SelectedItem = { item: Invoice | null }
     const detailSelectedItem = ref<SelectedItem>({
         item: null,
@@ -51,8 +60,9 @@
     const formFields: TableField[] = [
         '#',
         { label: 'Secuencia', key: 'code' },
-
+        { label: 'Emisión', key: 'emission' },
         'Cliente',
+        { label: 'Cedúla Cliente', key: 'cid' },
         { label: 'Metodo de pago', key: 'name' },
         { label: 'Subtotal', key: 'subtotal' },
         { label: 'Total IVA', key: 'iva' },
@@ -62,6 +72,9 @@
     ]
 
     const form = ref<Form>({
+        items: [],
+    })
+    const formFiltres = ref<Form>({
         items: [],
     })
     type Form = {
@@ -85,7 +98,80 @@
 
         per_page: 10,
     }
+    function cleanFilters() {
+        filterText.value = ''
+        formFiltres.value.items.splice(0, formFiltres.value.items.length)
+        showInvoices()
+    }
+    function makeSearch(valor: any) {
+        itemStore.providers?.data.splice(0, itemStore.providers?.data.length)
+        if (filterText.value != '') {
+            showWaitOverlay.value = true
+            itemStore
+                .getAllInvoice()
+                .then(response => {
+                    formFiltres.value.items = []
+                    formFiltres.value.items = response.data
+                    itemStore.providers?.data.splice(
+                        0,
+                        itemStore.providers?.data.length
+                    )
+                    for (let i = 0; i < formFiltres.value.items.length; i++) {
+                        if (
+                            (filterText.value ==
+                                (formFiltres.value.items[i].client as IClient)
+                                    .name &&
+                                valor == 'name') ||
+                            (filterText.value ==
+                                (formFiltres.value.items[i].client as IClient)
+                                    .number_id &&
+                                valor == 'cid')
+                        ) {
+                            console.log('entre')
+                            itemStore.providers?.data.push(
+                                formFiltres.value.items[i]
+                            )
+                        }
+                    }
 
+                    showWaitOverlay.value = false
+                })
+                .catch((e: Error) => {
+                    console.log(e)
+                })
+        }
+        if (filterText.value == '' && valor == 'emission') {
+            showWaitOverlay.value = true
+
+            itemStore
+                .getAllInvoice()
+                .then(response => {
+                    formFiltres.value.items = []
+                    formFiltres.value.items = response.data
+                    itemStore.providers?.data.splice(
+                        0,
+                        itemStore.providers?.data.length
+                    )
+                    for (let i = 0; i < formFiltres.value.items.length; i++) {
+                        if (
+                            new Date(formFiltres.value.items[i].emission) >=
+                                new Date(emission.value) &&
+                            new Date(formFiltres.value.items[i].emission) <=
+                                new Date(endDate.value)
+                        ) {
+                            itemStore.providers?.data.push(
+                                formFiltres.value.items[i]
+                            )
+                        }
+                    }
+
+                    showWaitOverlay.value = false
+                })
+                .catch((e: Error) => {
+                    console.log(e)
+                })
+        }
+    }
     function showInvoices() {
         showWaitOverlay.value = true
 
@@ -139,10 +225,8 @@
         itemForm.value.index = index
         productModalShow.value = true
     }
+
     showInvoices()
-    onMounted(() => {
-        return onShowModalClick()
-    })
 </script>
 
 <template>
@@ -224,20 +308,48 @@
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
-                            v-model="model"
+                            v-model="filterName"
+                            :clearable="true"
                             top-label="Seleccione un filtro"
                             :options="templateList" />
                     </ECol>
-                    <form class="d-flex" role="search">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Buscar cliente"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
+                    <ECol cols="9" md="6" xl="2" class="mt-3">
+                        <InputText
+                            label="Fecha Min"
+                            type="date"
+                            v-model="emission"
+                            :readonly="filterName.value != 'emission'" />
+                    </ECol>
+                    <ECol cols="9" md="6" xl="2" class="mt-3">
+                        <InputText
+                            label="Fecha Max"
+                            type="date"
+                            v-model="endDate"
+                            :readonly="filterName.value != 'emission'" />
+                    </ECol>
+                </div>
+                <div
+                    class="container-fluid"
+                    style="justify-content: flex-end; align-items: stretch">
+                    <ECol cols="9" md="6" xl="3" class="mt-3">
+                        <InputText
+                            v-model="filterText"
+                            label="Cuadro de búsqueda"
+                            :placeholder="`Búsqueda por ${filterName.label}`"
+                            :readonly="filterName.value == 'emission'" />
+                    </ECol>
+                    <ECol cols="9" md="6" xl="1" class="mt-4">
+                        <EButton
+                            class="mt-4 tw-ml-4"
+                            @click="makeSearch(`${filterName.value}`)"
+                            >Buscar</EButton
+                        >
+                    </ECol>
+                    <ECol cols="9" md="6" xl="1" class="mt-4">
+                        <EButton class="mt-4" @click="cleanFilters"
+                            >Limpiar</EButton
+                        >
+                    </ECol>
                 </div>
             </nav>
 
@@ -253,6 +365,15 @@
                                     'client'
                                 ] as IClient
                             ).name
+                        }}
+                    </template>
+                    <template #cell(cid)="{ index }"
+                        >{{
+                            (
+                                itemStore.providers?.data[index][
+                                    'client'
+                                ] as IClient
+                            ).number_id
                         }}
                     </template>
                     <template #cell(name)="{ index }"
@@ -299,6 +420,7 @@
                         :per-page="searchParam.per_page ?? 10"
                         next-text="Siguiente"
                         prev-text="Anterior"
+                        class="paginator"
                         hide-goto-end-buttons
                         @page-click="onPaginationClick" />
                 </div>
