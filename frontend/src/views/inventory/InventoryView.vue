@@ -410,6 +410,7 @@
                         :per-page="searchParam.per_page ?? 10"
                         next-text="Siguiente"
                         prev-text="Anterior"
+                        class="paginator"
                         hide-goto-end-buttons
                         @page-click="onPaginationClick" />
                 </div>

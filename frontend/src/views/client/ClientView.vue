@@ -289,6 +289,7 @@
                         next-text="Siguiente"
                         prev-text="Anterior"
                         hide-goto-end-buttons
+                        class="paginator"
                         @page-click="onPaginationClick" />
                 </div>
             </WaitOverlay>

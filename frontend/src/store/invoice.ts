@@ -48,6 +48,9 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         allInvoice.value = data
         return data
     }
+    async function getAllInvoice() {
+        return await axios.get<Invoice[]>('/api/v1/list/invoice', {})
+    }
 
     async function fetchClientNumber(number_id: string) {
         return (
@@ -202,6 +205,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         currentPaginatedItemPage,
         currentPaginatedInvoicePage,
         fetchIInventoryById,
+        getAllInvoice,
         editquantityInventory,
         fetchPayment,
         fetchInvoiceById,
