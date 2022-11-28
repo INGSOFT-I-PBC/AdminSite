@@ -1,9 +1,11 @@
 import type Item from '@/interfaz/items'
 import type Status from '@/interfaz/items'
+import type { PaginatedResponse } from '@store-types'
 import axios, { type AxiosResponse } from 'axios'
 
 /* eslint-disable */
 class ItemDataService {
+    clients = ref<PaginatedResponse<any>>()
     async getAll(): Promise<any> {
         return await axios.get('/api/v1/inventory', {
             headers: {
@@ -11,6 +13,43 @@ class ItemDataService {
             },
         })
     }
+    async getAllPaginated(params?: PaginationOptions) {
+        const response = (
+            await axios.get<PaginatedResponse<any>>(
+                '/api/v1/list/inventory/all',
+                { params }
+            )
+        ).data
+        this.clients.value = response
+        return response
+    }
+    /**
+     * This function make a request to the backend and by the given parameter, change the status
+     *
+     * @param identifier The identifier of the employee
+     */
+    async fetchActivateItem(identifier: Number) {
+        const response = (
+            await axios.post<any>(`/api/v1/item/${identifier}/activate`)
+        ).data
+        this.clients.value = response
+        return response
+    }
+
+    /**
+     * This function make a request to the backend and by the given parameter, change the status
+     *
+     * @param identifier The identifier of the item
+     */
+
+    async fetchInactivateItem(identifier: Number) {
+        const response = (
+            await axios.post<any>(`/api/v1/item/${identifier}/inactivate`)
+        ).data
+        this.clients.value = response
+        return response
+    }
+
     async getAllCategory(): Promise<any> {
         return await axios.get('/api/v1/category', {
             headers: {

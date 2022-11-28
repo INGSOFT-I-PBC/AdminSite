@@ -2,10 +2,12 @@
     import EButton from '@components/custom/EButton.vue'
     import ECard from '@components/custom/ECard.vue'
     import ERow from '@components/custom/ERow.vue'
+    import ModalDialog from '@components/custom/ModalDialog.vue'
     import WaitOverlay from '@components/custom/WaitOverlay.vue'
     import { useEmployeeStore } from '@store/employee'
     import type { Employee } from '@store/types'
     import type { TableField } from 'bootstrap-vue-3'
+    import moment from 'moment'
 
     import { onMounted } from 'vue'
     import { useRouter } from 'vue-router'
@@ -29,6 +31,10 @@
     const currentPage = ref(1)
     const totalRows = ref(100)
 
+    /*Modal*/
+    const itemInfoShow = ref<boolean>(false)
+    const empModalDelete = ref(false)
+
     const formFields: TableField[] = [
         { label: 'Fecha de creación', key: 'date' },
         { label: 'Hora de creación', key: 'hour' },
@@ -39,13 +45,12 @@
         { label: 'Estado', key: 'is_active' },
         'Acciones',
     ]
-    /*
-let selectedEmployee: Optional<employeeModel> = null
-function showEmployee(employee: employeeModel) {
-    selectedEmployee = employee
-    employeeModalShow.value = true
-}
-*/
+
+    type SelectedItem = { item: Employee | null }
+    const detailSelectedItem = ref<SelectedItem>({
+        item: null,
+    })
+
     const form = ref<Form>({
         employees: [],
     })
@@ -53,7 +58,8 @@ function showEmployee(employee: employeeModel) {
         employees: Employee[]
     }
 
-    async function showEmployees(page: number) {
+    async function showEmployees(e: Event | null, page: number) {
+        console.log(e)
         showWaitOverlay.value = true
         try {
             const dataEmployeeTable =
@@ -97,6 +103,10 @@ function showEmployee(employee: employeeModel) {
             console.log(error)
         }
     }
+    async function showItem(item: Employee) {
+        detailSelectedItem.value.item = item
+        itemInfoShow.value = true
+    }
 
     function goAdd(): void {
         router.push({ path: '/usuarios/empleado/agregar' })
@@ -106,13 +116,141 @@ function showEmployee(employee: employeeModel) {
         router.push({ path: `/usuarios/empleado/editar/${String(id)}` })
     }
 
+    let id2 = 0
+    let index2 = 0
+    function deleteProduct(id: number, index: number): void {
+        id2 = id
+        index2 = index
+        empModalDelete.value = true
+    }
+
+    function acceptace(): void {
+        employeeRepository
+            .removeEmployee(id2)
+            .then(() => {
+                form.value.employees.splice(index2, 1)
+                toast.success('Empleado eliminado con éxito')
+            })
+            .catch(error => {
+                console.log(error)
+                toast.error('Error al eliminar empleado')
+            })
+            .finally(() => {
+                id2 = 0
+                index2 = 0
+                empModalDelete.value = false
+            })
+    }
+
     onMounted(() => {
-        return showEmployees(currentPage.value)
+        return showEmployees(null, currentPage.value)
     })
 </script>
 
 <template>
     <main>
+        <ModalDialog v-model:show="itemInfoShow" size="xl">
+            <template #dialog-title>
+                <b class="tw-text-2xl"
+                    >Detalle del Empleado {{ detailSelectedItem.item?.name }}
+                    {{ detailSelectedItem.item?.lastname }}</b
+                >
+            </template>
+
+            <div class="container">
+                <div
+                    class="row tw-pb-3 align-content-center justify-content-center gy-2">
+                    <template
+                        v-for="(d, k) in detailSelectedItem.item"
+                        :key="k">
+                        <div class="row" v-if="k == 'created_at'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Fecha de creación:</span
+                            >
+                            <span class="col-6">{{
+                                moment(
+                                    detailSelectedItem?.item?.created_at
+                                ).format('DD/MM/YYYY')
+                            }}</span>
+                        </div>
+                        <div class="row" v-if="k == 'created_at'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Hora de creación:</span
+                            >
+                            <span class="col-6">{{
+                                moment(
+                                    detailSelectedItem?.item?.created_at
+                                ).format('HH:mm:ss')
+                            }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'name'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Nombre:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'cid'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Cédula:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+
+                        <div class="row" v-if="k == 'is_active'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Estado:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.is_active
+                                    ? 'Activo'
+                                    : 'Inactivo'
+                            }}</span>
+                        </div>
+                        <div class="row" v-if="k == 'role'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Rol:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.role?.name
+                            }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'phone_number'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Celular:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'created_by'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Creado por:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.created_by?.name
+                            }}</span>
+                        </div>
+                        <div class="row" v-if="k == 'gender'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Sexo:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.gender?.name
+                            }}</span>
+                        </div>
+                    </template>
+                </div>
+            </div>
+        </ModalDialog>
+        <ModalDialog
+            id="client-modal"
+            v-model:show="empModalDelete"
+            title="Eliminar Cliente"
+            ok-text="Eliminar"
+            @ok="acceptace"
+            button-type="ok-cancel">
+            <h1 style="font-size: 15px; color: black; text-align: left">
+                ¿Está seguro de eliminar al empleado?
+            </h1>
+        </ModalDialog>
         <WaitOverlay :show="showWaitOverlay">
             <!--
             <ModalDialog id="employee-modal" v-model:show="employeeModalShow" title="Detalle del empleado">
@@ -130,28 +268,22 @@ function showEmployee(employee: employeeModel) {
                     </h1>
                 </ERow>
                 <nav class="navbar">
-                    <div class="container-fluid align">
+                    <div class="container-fluid align_button">
                         <EButton variant="secondary" @click="goAdd"
                             >+ Agregar empleado
                         </EButton>
-                        <!--
-                        <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="Buscar empleado"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
-                    --></div>
+                    </div>
                 </nav>
                 <BTable :fields="formFields" :items="form.employees">
                     <template #cell(date)="{ index }">{{
-                        form.employees[index].created_at?.split('T')[0]
+                        moment(form.employees[index].created_at).format(
+                            'DD/MM/YYYY'
+                        )
                     }}</template>
                     <template #cell(hour)="{ index }">{{
-                        form.employees[index].created_at
-                            ?.split('T')[1]
-                            .split('.')[0]
+                        moment(form.employees[index].created_at).format(
+                            'HH:mm:ss'
+                        )
                     }}</template>
                     <template #cell(role)="{ index }">{{
                         form.employees[index].role?.name
@@ -168,9 +300,12 @@ function showEmployee(employee: employeeModel) {
                         </div>
                     </template>
 
-                    <template #cell(Acciones)="{ item }">
+                    <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
-                            <e-button left-icon="fa-eye" variant="secondary"
+                            <e-button
+                                left-icon="fa-eye"
+                                variant="secondary"
+                                @click="showItem(item)"
                                 >Ver detalles
                             </e-button>
                             <e-button
@@ -178,6 +313,12 @@ function showEmployee(employee: employeeModel) {
                                 variant="success"
                                 @click="goEdit(item['id'])"
                                 >Editar
+                            </e-button>
+                            <e-button
+                                left-icon="fa-trash-can"
+                                variant="cancel"
+                                @click="deleteProduct(item['id'], index)">
+                                Eliminar
                             </e-button>
                         </div>
                     </template>
@@ -200,7 +341,7 @@ function showEmployee(employee: employeeModel) {
 </template>
 
 <style lang="scss">
-    .align {
+    .align_button {
         padding: 0;
     }
 </style>

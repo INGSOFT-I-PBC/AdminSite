@@ -1,8 +1,7 @@
 from rest_framework import serializers
 
 from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
-
-from .auth import EmployeeSerializer
+from api.serializers.auth import EmployeeSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):

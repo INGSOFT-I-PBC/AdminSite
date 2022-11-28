@@ -54,7 +54,7 @@
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.2.0",
-        "@trivago/prettier-plugin-sort-imports": "^3.4.0",
+        "@trivago/prettier-plugin-sort-imports": "^4.0.0",
         "@types/bootstrap": "^5.2.5",
         "@types/jsdom": "^20.0.0",
         "@types/node": "18.8.0",

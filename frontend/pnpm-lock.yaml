@@ -9,7 +9,7 @@ specifiers:
   '@headlessui/vue': ^1.7.3
   '@popperjs/core': ^2.11.6
   '@rushstack/eslint-patch': ^1.2.0
-  '@trivago/prettier-plugin-sort-imports': ^3.4.0
+  '@trivago/prettier-plugin-sort-imports': ^4.0.0
   '@types/bootstrap': ^5.2.5
   '@types/jsdom': ^20.0.0
   '@types/node': 18.8.0
@@ -92,7 +92,7 @@ dependencies:
 
 devDependencies:
   '@rushstack/eslint-patch': 1.2.0
-  '@trivago/prettier-plugin-sort-imports': 3.4.0_prettier@2.7.1
+  '@trivago/prettier-plugin-sort-imports': 4.0.0_prettier@2.7.1
   '@types/bootstrap': 5.2.5
   '@types/jsdom': 20.0.0
   '@types/node': 18.8.0
@@ -819,9 +819,10 @@ packages:
     engines: {node: '>= 10'}
     dev: true
 
-  /@trivago/prettier-plugin-sort-imports/3.4.0_prettier@2.7.1:
-    resolution: {integrity: sha512-485Iailw8X5f7KetzRka20RF1kPBEINR5LJMNwlBZWY1gRAlVnv5dZzyNPnLxSP0Qcia8HETa9Cdd8LlX9o+pg==}
+  /@trivago/prettier-plugin-sort-imports/4.0.0_prettier@2.7.1:
+    resolution: {integrity: sha512-Tyuk5ZY4a0e2MNFLdluQO9F6d1awFQYXVVujEPFfvKPPXz8DADNHzz73NMhwCSXGSuGGZcA/rKOyZBrxVNMxaA==}
     peerDependencies:
+      '@vue/compiler-sfc': 3.x
       prettier: 2.x
     dependencies:
       '@babel/core': 7.17.8
@@ -829,7 +830,6 @@ packages:
       '@babel/parser': 7.18.9
       '@babel/traverse': 7.17.3
       '@babel/types': 7.17.0
-      '@vue/compiler-sfc': 3.2.41
       javascript-natural-sort: 0.7.1
       lodash: 4.17.21
       prettier: 2.7.1

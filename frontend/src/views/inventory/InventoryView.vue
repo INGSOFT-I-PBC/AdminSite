@@ -9,16 +9,26 @@
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import Table from '@components/holders/Table.vue'
+    import type { BvEvent } from 'bootstrap-vue-3'
 
     import { onMounted, reactive } from 'vue'
     import { useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
+    const toast = useToast()
     const router = useRouter()
     const showWaitOverlay = ref<boolean>(true)
     const filtro = ref<boolean>(true)
-    const items3: product[] = []
+    let items3: product[] = []
+    type SearchParam = PaginationOptions
+    //Paginated
+    const searchParam: SearchParam = {
+        page: 1,
+
+        per_page: 10,
+    }
     function cleanFilters() {
         filterText.value = ''
         items3.splice(0, items3.length)
@@ -29,6 +39,7 @@
             showWaitOverlay.value = true
             ItemDataService.getAll()
                 .then(response => {
+                    items3 = []
                     items = response.data
                     console.log(items)
                     for (let i = 0; i < items.length; i++) {
@@ -55,6 +66,7 @@
                                 actions: items[i].item_id,
                                 id_item: items[i].item_id,
                                 id: items[i].id,
+                                is_active: items[i].is_active,
                             })
                         }
                     }
@@ -121,7 +133,7 @@
             },
             {
                 label: 'Estado',
-                attribute: 'state',
+                attribute: 'is_active',
             },
             {
                 label: 'Acciones',
@@ -158,32 +170,34 @@
         actions: number | string
         id_item: number
         id: number
+        is_active: boolean
     }
     let items: Item[]
-    const items2: product[] = []
+    let items2: product[] = []
     async function showAllProducts() {
-        ItemDataService.getAll()
+        ItemDataService.getAllPaginated(searchParam)
             .then(response => {
                 items = response.data
                 console.log(items)
-                if (filterText.value == '') {
-                    for (let i = 0; i < items.length; i++) {
-                        items2.push({
-                            code: items[i].codename_Item,
-                            name: items[i].nombreItem,
-                            marc: items[i].brandItem,
-                            model: items[i].modelItem,
-                            category: items[i].category_name_Item,
-                            descrip: items[i].brandItem,
-                            price: items[i].priceItem,
-                            stock: items[i].quantity,
-                            state: items[i].status_id_Item,
-                            actions: items[i].item_id,
-                            id_item: items[i].item_id,
-                            id: items[i].id,
-                        })
-                    }
+
+                for (let i = 0; i < items.length; i++) {
+                    items2.push({
+                        code: items[i].codename_Item,
+                        name: items[i].nombreItem,
+                        marc: items[i].brandItem,
+                        model: items[i].modelItem,
+                        category: items[i].category_name_Item,
+                        descrip: items[i].brandItem,
+                        price: items[i].priceItem,
+                        stock: items[i].quantity,
+                        state: items[i].status_id_Item,
+                        actions: items[i].item_id,
+                        id_item: items[i].item_id,
+                        id: items[i].id,
+                        is_active: items[i].is_active,
+                    })
                 }
+
                 tableSettings.rows = items2
                 showWaitOverlay.value = false
                 console.log(tableSettings.rows)
@@ -192,21 +206,49 @@
                 console.log(e)
             })
     }
+    async function changeStatus(item: product) {
+        if (item.is_active) {
+            inactivateItem(item)
+        } else {
+            activateItem(item)
+        }
+    }
+    async function activateItem(item: product) {
+        try {
+            await ItemDataService.fetchActivateItem(item.id_item)
+            toast.success('Producto activado con éxito')
+            item.is_active = true
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    async function inactivateItem(item: product) {
+        try {
+            await ItemDataService.fetchInactivateItem(item.id_item)
+            toast.success('Producto inactivado con éxito')
+            item.is_active = false
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    function onPaginationClick(event: BvEvent, page: number) {
+        searchParam.page = page
+        console.log(page)
+        items2 = []
+        showAllProducts()
+    }
     function go(id: number): void {
         console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
     function acceptace(): void {
-        ItemDataService.deleteInventory(items2[num].id)
+        ItemDataService.deleteItem(items2[num].id_item)
             .then(response => {
                 console.log(response.data)
-                ItemDataService.deleteItem(items2[num].id_item).then(
-                    response => {
-                        console.log(response.data)
-                        removeItem(num)
-                    }
-                )
+                removeItem(num)
             })
+
             .catch((e: Error) => {
                 console.log(e)
             })
@@ -330,24 +372,12 @@
                         <div v-if="colIdx == 8">
                             <div class="form-check form-switch">
                                 <input
-                                    v-if="
-                                        items2[rowIdx].state == 1 ||
-                                        items2[rowIdx].state == 2
-                                    "
                                     class="form-check-input"
+                                    name="status"
                                     type="checkbox"
                                     role="switch"
-                                    id="flexSwitchCheckDefault"
-                                    checked />
-                                <input
-                                    v-else
-                                    class="form-check-input"
-                                    type="checkbox"
-                                    role="switch"
-                                    id="flexSwitchCheckDefault" />
-                                <label
-                                    class="form-check-label"
-                                    for="flexSwitchCheckDefault"></label>
+                                    :checked="items2[rowIdx].is_active"
+                                    @change="changeStatus(items2[rowIdx])" />
                             </div>
                         </div>
 
@@ -372,6 +402,18 @@
                         </div>
                     </template>
                 </Table>
+                <div class="row">
+                    <BPagination
+                        align="center"
+                        v-model="searchParam.page"
+                        :total-rows="ItemDataService.clients.value?.total ?? 1"
+                        :per-page="searchParam.per_page ?? 10"
+                        next-text="Siguiente"
+                        prev-text="Anterior"
+                        class="paginator"
+                        hide-goto-end-buttons
+                        @page-click="onPaginationClick" />
+                </div>
             </WaitOverlay>
 
             <!-- </ECol>h

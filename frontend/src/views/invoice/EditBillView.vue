@@ -9,6 +9,7 @@
     import type {
         Client,
         IClient,
+        IEditInventory,
         IInventory,
         IInvoiceDetails,
         IItem,
@@ -98,7 +99,7 @@
     const iformShow = computed(() => ({
         codigo: itemForm.value.item?.item?.codename?.toString(),
         nombre: itemForm.value.item?.item?.name ?? '',
-        quantity: itemForm.value.quantity ?? 1,
+        iquantity: itemForm.value.iquantity ?? 1,
         priceIVA:
             Number(itemForm.value.item?.item?.price) *
             Number(itemForm.value.item?.item?.iva),
@@ -106,7 +107,7 @@
         total:
             Number(itemForm.value.item?.item?.price) *
             Number(itemForm.value.item?.item?.iva) *
-            Number(itemForm.value.quantity),
+            Number(itemForm.value.iquantity),
     }))
 
     const loadClient = async (number_id: string) => {
@@ -132,7 +133,7 @@
         showWaitOverlay.value = false
     })
     type QuantifiedItem = IInventory & {
-        quantity: number
+        iquantity: number
         subtotal: number
         totalIVA: number
         total: number
@@ -148,7 +149,7 @@
 
     type ItemForm = {
         item: IInventory | null
-        quantity: string
+        iquantity: string
         total: string
         subtotal: string
         totalIVA: string
@@ -163,7 +164,7 @@
 
     const itemForm = ref<ItemForm>({
         item: null,
-        quantity: '1',
+        iquantity: '1',
         total: '0',
         subtotal: '0',
         totalIVA: '0',
@@ -182,7 +183,7 @@
         'Código',
         'Descripción',
         'Medida',
-        { label: 'Cantidad', key: 'quantity' },
+        { label: 'Cantidad', key: 'iquantity' },
         { label: 'Precio IVA', key: 'price' },
         { label: 'IVA', key: 'iva' },
         { label: 'Total', key: 'total' },
@@ -237,7 +238,7 @@
             anulated: false,
             invoice_details: data.items.map(it => ({
                 price: Number(it.item?.price),
-                quantity: it.quantity,
+                quantity: it.iquantity,
                 item: Number(it.item?.id),
             })),
         }
@@ -245,6 +246,17 @@
         itemStore
             .editInvoice(Number(route.params.id), saveData)
             .then(() => {
+                for (const i of form.value.items) {
+                    const editquantity: IEditInventory = {
+                        quantity: i.quantity - i.iquantity,
+                    }
+                    console.log(i.item?.id)
+                    console.log(editquantity.quantity)
+                    itemStore.editquantityInventory(
+                        Number(i.item?.id),
+                        editquantity
+                    )
+                }
                 toast.success('Factura registrada correctamente')
                 data.items.splice(0, data.items.length)
                 formSequence.value.number += 1
@@ -271,33 +283,35 @@
     }
 
     function itemcantidad(index: number) {
-        /*const numInputs = document.getElementById(
-            'cantidad'
-        ) as HTMLInputElement*/
         const numInputs = document.querySelectorAll('input[id=cantidad]')
 
         numInputs.forEach(function (input) {
             input.addEventListener('change', function (e) {
-                if (
-                    String(form.value.items[index].quantity) == '' ||
-                    form.value.items[index].quantity < 0
-                ) {
-                    form.value.items[index].quantity = 1
+                if (String(form.value.items[index].iquantity) == '') {
+                    form.value.items[index].iquantity = 1
                     console.log(index)
-                    //(e.target as HTMLInputElement).value = 1
+                } else if (
+                    form.value.items[index].iquantity >
+                    form.value.items[index].quantity
+                ) {
+                    toast.error(
+                        `El stock del producto ${form.value.items[index].item?.codename} es de ${form.value.items[index].quantity}`
+                    )
+                    form.value.items[index].iquantity =
+                        form.value.items[index].quantity
                 }
                 itemForm.value.subtotal = '0'
                 itemForm.value.totalIVA = '0'
                 itemForm.value.totalInvoice = '0'
                 for (const i of form.value.items) {
                     const suma =
-                        Number(i.quantity) *
+                        Number(i.iquantity) *
                         (Number(i.item?.price) +
                             Number(i.item?.price) * Number(i.item?.iva))
                     i.total = Number(suma.toFixed(2))
-                    i.subtotal = Number(i.quantity) * Number(i.item?.price)
+                    i.subtotal = Number(i.iquantity) * Number(i.item?.price)
                     i.totalIVA =
-                        Number(i.quantity) *
+                        Number(i.iquantity) *
                         Number(i.item?.price) *
                         Number(i.item?.iva)
                     itemForm.value.subtotal = (
@@ -330,33 +344,33 @@
             return
         }
         const suma =
-            Number(itemForm.value.quantity) *
+            Number(itemForm.value.iquantity) *
             (Number(itemForm.value.item?.item?.price) +
                 Number(itemForm.value.item?.item?.price) *
                     Number(itemForm.value.item?.item?.iva))
         form.value.items.push({
             ...itemForm.value.item,
-            quantity: Number(itemForm.value.quantity),
+            iquantity: Number(itemForm.value.iquantity),
             total: Number(suma.toFixed(2)),
         } as QuantifiedItem)
         itemForm.value.subtotal = (
             Number(itemForm.value.subtotal) +
-            Number(itemForm.value.quantity) *
+            Number(itemForm.value.iquantity) *
                 Number(itemForm.value.item?.item?.price)
         ).toFixed(2)
 
         itemForm.value.totalIVA = (
             Number(itemForm.value.totalIVA) +
-            Number(itemForm.value.quantity) *
+            Number(itemForm.value.iquantity) *
                 Number(itemForm.value.item?.item?.price) *
                 Number(itemForm.value.item?.item?.iva)
         ).toFixed(2)
 
         const subtotal =
-            Number(itemForm.value.quantity) *
+            Number(itemForm.value.iquantity) *
             Number(itemForm.value.item?.item?.price)
         const totalIva =
-            Number(itemForm.value.quantity) *
+            Number(itemForm.value.iquantity) *
             (Number(itemForm.value.item?.item?.price) *
                 Number(itemForm.value.item?.item?.iva))
         itemForm.value.totalInvoice = (
@@ -366,7 +380,7 @@
         ).toFixed(2)
 
         itemForm.value.item = null
-        //itemForm.value.quantity = '1'
+        //itemForm.value.iquantity = '1'
         itemForm.value.total = '0'
         toast.success('Producto añadido a la tabla')
     }
@@ -382,13 +396,15 @@
         itemForm.value.totalInvoice = '0'
         for (const i of form.value.items) {
             const suma =
-                Number(i.quantity) *
+                Number(i.iquantity) *
                 (Number(i.item?.price) +
                     Number(i.item?.price) * Number(i.item?.iva))
             i.total = Number(suma.toFixed(2))
-            i.subtotal = Number(i.quantity) * Number(i.item?.price)
+            i.subtotal = Number(i.iquantity) * Number(i.item?.price)
             i.totalIVA =
-                Number(i.quantity) * Number(i.item?.price) * Number(i.item?.iva)
+                Number(i.iquantity) *
+                Number(i.item?.price) *
+                Number(i.item?.iva)
             itemForm.value.subtotal = (
                 Number(itemForm.value.subtotal) + Number(i.subtotal.toFixed(2))
             ).toFixed(2)
@@ -565,35 +581,35 @@
                 (value.item as IItem)?.id
             )
 
-            itemForm.value.quantity = String(value.quantity)
+            itemForm.value.iquantity = String(value.quantity)
             const suma =
-                Number(itemForm.value.quantity) *
+                Number(itemForm.value.iquantity) *
                 (Number(itemForm.value.item?.item?.price) +
                     Number(itemForm.value.item?.item?.price) *
                         Number(itemForm.value.item?.item?.iva))
             form.value.items.push({
                 ...itemForm.value.item,
-                quantity: Number(itemForm.value.quantity),
+                iquantity: Number(itemForm.value.iquantity),
                 total: Number(suma.toFixed(2)),
             } as QuantifiedItem)
             itemForm.value.subtotal = (
                 Number(itemForm.value.subtotal) +
-                Number(itemForm.value.quantity) *
+                Number(itemForm.value.iquantity) *
                     Number(itemForm.value.item?.item?.price)
             ).toFixed(2)
 
             itemForm.value.totalIVA = (
                 Number(itemForm.value.totalIVA) +
-                Number(itemForm.value.quantity) *
+                Number(itemForm.value.iquantity) *
                     Number(itemForm.value.item?.item?.price) *
                     Number(itemForm.value.item?.item?.iva)
             ).toFixed(2)
 
             const subtotal =
-                Number(itemForm.value.quantity) *
+                Number(itemForm.value.iquantity) *
                 Number(itemForm.value.item?.item?.price)
             const totalIva =
-                Number(itemForm.value.quantity) *
+                Number(itemForm.value.iquantity) *
                 (Number(itemForm.value.item?.item?.price) *
                     Number(itemForm.value.item?.item?.iva))
             itemForm.value.totalInvoice = (
@@ -603,7 +619,7 @@
             ).toFixed(2)
 
             itemForm.value.item = null
-            itemForm.value.quantity = '1'
+            itemForm.value.iquantity = '1'
             itemForm.value.total = '0'
         })
         /*itemForm.value.item = (iinvoice?.invoice_details[1] as IInvoiceDetails)
@@ -766,7 +782,7 @@
                         {{ form.items[index]?.item?.brand }}
                     </template>
                     <template #cell(Medida)="{}">Unidad </template>
-                    <template #cell(quantity)="{ index }">
+                    <template #cell(iquantity)="{ index }">
                         <ECol cols="2" lg="3">
                             <input
                                 :required="true"
@@ -775,7 +791,8 @@
                                 style="text-align: center"
                                 type="number"
                                 id="cantidad"
-                                v-model="form.items[index].quantity"
+                                v-model="form.items[index].iquantity"
+                                onkeypress="return (  event.charCode <32 &&  event.charCode !=127)"
                                 @input="itemcantidad(index)" />
                         </ECol>
                     </template>

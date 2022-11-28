@@ -53,6 +53,7 @@
                         v-slot="{ field, handleChange, errorMessage }">
                         <InputText
                             label="Número de teléfono"
+                            :formatter="(txt: string | null) => txt?.replace(/[^-+()0-9\s]/g, '') ?? ''"
                             :model-value="field.value as string"
                             @update:model-value="handleChange"
                             info-status="danger"
@@ -83,6 +84,27 @@
                             :info-label="errorMessage" />
                     </Field>
                 </div>
+                <div class="col col-12 col-xxl-5">
+                    <SimpleFormInput name="address" label="Dirección" />
+                </div>
+                <template v-if="updateMode">
+                    <div class="col col-12 col-lg-6">
+                        <InputText
+                            label="Creado por"
+                            readonly
+                            :model-value="`${creatorData?.name} ${creatorData?.lastname}`" />
+                    </div>
+                    <div class="col col-12 col-lg-6">
+                        <InputText
+                            label="Fecha creación"
+                            readonly
+                            :model-value="
+                                moment(updateProviderModel?.created_at).format(
+                                    'YYYY-MM-DD'
+                                )
+                            " />
+                    </div>
+                </template>
                 <div class="col col-12">
                     <Title size="2xl" class="tw-mb-2"
                         >Localización del proveedor</Title
@@ -157,8 +179,11 @@
     import ECard from '@components/custom/ECard.vue'
     import InputText from '@components/custom/InputText.vue'
     import Title from '@components/custom/Title.vue'
+    import { useEmployeeStore } from '@store'
     import { useProviderStore } from '@store/provider'
+    import type { Employee } from '@store/types'
     import type { Provider, ProviderModel } from '@store/types/provider.model'
+    import moment from 'moment'
     import type MapBrowserEvent from 'ol/MapBrowserEvent'
     import type { Coordinate } from 'ol/coordinate'
     import { Field, type SubmissionContext, defineRule } from 'vee-validate'
@@ -166,6 +191,8 @@
 
     import { type PropType, computed } from 'vue'
     import { useToast } from 'vue-toastification'
+
+    import { SimpleFormInput } from '@custom-components'
 
     defineRule('required', (value: unknown): boolean | string => {
         switch (typeof value) {
@@ -194,6 +221,7 @@
      */
     const toast = useToast()
     const providerRepository = useProviderStore()
+    const employeeRepo = useEmployeeStore()
     /**
      * Map definition refs
      */
@@ -207,6 +235,7 @@
     const map = ref()
     const view = ref()
     const hasChanged = ref(false)
+    const creatorData = ref<Employee>()
     //#endregion
     /**
      * Provider Form rules and definition
@@ -218,6 +247,7 @@
         email: '',
         phone_no: '',
         document_path: '',
+        address: '',
     })
 
     const vSchema = object({
@@ -245,12 +275,15 @@
         phone_no: string()
             .min(8, 'Número de teléfono muy corto')
             .max(25, 'Número de teléfono muy extenso')
-            .matches(/\d/g, 'El campo solo debe contener dígitos')
-            .required(),
+            .required('El campo es obligatorio'),
         document_path: string()
-            .min(7, 'Mínimo 7 dígitos')
+            .min(10, 'Mínimo 10 dígitos')
             .max(128, 'El documento ingresado es muy extenso')
             .matches(/\d/g, 'El campo solo debe contener dígitos')
+            .required('El campo es obligatorio'),
+        address: string()
+            .min(7, 'Mínimo 7 caracteres')
+            .max(512, 'La dirección es muy larga')
             .required('El campo es obligatorio'),
     })
 
@@ -307,6 +340,16 @@
     }
     //eslint-disable-next-line vue/no-setup-props-destructure
     if (props.updateMode && props.updateProviderModel) {
+        employeeRepo
+            .fetchEmployee(props.updateProviderModel?.created_by)
+            .then(data => {
+                creatorData.value = data
+            })
+            .catch(err => {
+                toast.error(
+                    'Fallo al obtener datos adicionales, intentelo más tarde'
+                )
+            })
         //eslint-disable-next-line vue/no-setup-props-destructure
         const { latitude, longitude } = props.updateProviderModel
         console.debug(

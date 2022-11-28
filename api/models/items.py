@@ -75,6 +75,8 @@ class Item(TimestampModel):
     codename = models.CharField(
         max_length=128, unique=True, help_text="The codename or identifier for the item"
     )
+    is_active = models.BooleanField(null=False, default=True)
+
 
     class Meta:
         db_table = "items"
