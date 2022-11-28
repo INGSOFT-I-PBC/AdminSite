@@ -90,9 +90,19 @@ export const menus: MenuItem[] = [
                 routeName: 'movimiento-inventario-view',
             },
             {
-                label: 'Proveedores',
-                path: '/bodegas/proveedores',
-                routeName: 'proveedores-view',
+                label: 'Etiquetas Stock',
+                children: [
+                    {
+                        label: 'Creación Etiquetas',
+                        path: '/bodegas/stock/crear/codigo-barra',
+                        routeName: 'warehouse-create-stock-barcodes',
+                    },
+                    {
+                        label: 'Visualizar Etiquetas',
+                        path: '/bodegas/stock/lectura/codigo-barras',
+                        routeName: 'warehouse-stock-barcodes',
+                    },
+                ],
             },
         ],
     },

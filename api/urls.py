@@ -7,13 +7,7 @@ from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
 from api.views import *
-from api.views.clientview import ClientView
-from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
-from api.views.itemviews import ItemView
-from api.views.orders import OrderRequestView
-from api.views.provinceview import ProvinceCityView
 from api.views.sequence import *
-from api.views.statusview import StatusView
 from api.views.warehouse import *
 
 """ Definition of paginated data
@@ -49,46 +43,61 @@ urlpatterns = [
     path("auth/me/permissions", self_permissions, name="user-permissions"),
     path("auth/me", user_data, name="user-data"),
     # Path for models
+    #
+    #### Warehouse related
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
+    # path("warehouse/<int:warehouse>/barcodes"),
+    path("warehouse/<int:warehouse>/barcode/<int:pk>", views.BarcodeView.as_view()),
+    path("warehouse/<int:warehouse>/barcode/<str:label>", views.BarcodeView.as_view()),
+    path("warehouse/barcode", create_stock_barcode),
+    #
+    #### Items related
     path("items", ItemView.as_view(), name="item-list"),
     path("items/<int:pk>", ItemView.as_view(), name="item_process"),
     path("category", CategoryView.as_view(), name="category-list"),
     path("category/<int:id>", CategoryView.as_view(), name="category_process"),
+    path("item/<int:id>", views.find_item, name="item"),
+    path("item/<int:id>/properties", views.get_item_properties),
+    #
+    #### Inventory related
     path("inventory", InventoryView.as_view(), name="inventory-list"),
     path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
-    # Item management
-    path("item/<int:id>", views.find_item, name="item"),
-    path("item/<int:id>/properties", views.get_item_properties),
+    #
     # User management
     path("user/<int:id>", views.UserView.as_view()),
     path("user/<str:username>", views.UserView.as_view()),
     path("user/<int:id>/activate", views.activate_user),
     path("user/<str:username>/activate", views.activate_user),
     path("user", views.create_user),
+    #
     # Employee management
     path("employee", views.create_employee),
     path("employee/<int:id>", views.EmployeeView.as_view()),
     path("employee/<str:cid>", views.EmployeeView.as_view()),
     path("employee/<str:cid>/activate", views.activate_employee),
     path("employee/<str:cid>/inactivate", views.inactivate_employee),
+    #
     # Order management
-    path("order/<int:id>", OrderRequestView.as_view()),
+    path("order/<int:id>", WhOrderRequestView.as_view()),
     path("order", create_order_request),
     path("detailed/order/<int:id>", views.get_full_order),
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),
     path("provinces", ProvinceCityView.as_view()),
+    #
     # Administration endpoints
     path("admin/permission_group/<int:id>", views.PermissionGroupView.as_view()),
     path("admin/permission/<int:id>", PermissionsView.as_view()),
     path("admin/permission/<str:codename>", PermissionsView.as_view()),
     path("admin/permission", create_permission),
     path("role/<int:id>", views.RoleView.as_view()),
+    #
     # Providers endpoints
     path("provider/<int:id>", views.ProviderView.as_view()),
     path("provider", create_provider),
     path("auth/reset-password", reset_password, name="reset-user-password"),
+    #
     # Invoice
     path(
         "invoice/client",

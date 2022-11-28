@@ -61,4 +61,8 @@ __all__ = [
     "RoleViewSet",
     "get_full_order",
     "create_order_request",
+    "ClientView",
+    "InvoiceView",
+    "PaginatedItemInvoiceView",
+    "create_stock_barcode",
 ]

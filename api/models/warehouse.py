@@ -1,9 +1,9 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 
-from .common import Status, TimestampModel
-from .items import Item
-from .users import Employee
+from api.models.common import Status, TimestampModel
+from api.models.items import Item
+from api.models.users import Employee
 
 
 class Warehouse(TimestampModel):
@@ -109,3 +109,90 @@ class WhTransactionDetails(models.Model):
 
     class Meta:
         db_table = "wh_transaction_details"
+
+
+class WarehouseBarcode(models.Model):
+    """WarehouseBarcode
+
+    This class represent a record for a barcode stock inventory
+    management, this should be only used for stock control and
+    not for sale or other. Is designed to hold the information
+    of the items and where it's supposed to be stored, additionally
+    the order request, maybe associated to this item, can be added
+    as additional information.
+
+    Args:
+        batch_no (CharField):
+            This field holds the batch number that this barcode is
+            related at.
+
+        expiration_date (DateField):
+            If this barcode has an expiration date, can be stored here.
+
+        is_active (BooleanField):
+            This control flag, checks if this range/single barcode are
+            active or not. That means that if we want to update the barcode. We should update the
+
+        serial_start (IntegerField):
+            The start number of all the barcodes generated on an single
+            record.
+
+        serial_end (IntegerField):
+            The end number of all the barcodes generated on a single
+            record.
+
+    """
+
+    serial_start = models.PositiveBigIntegerField(null=False)
+
+    serial_end = models.PositiveIntegerField(null=False)
+    batch_no = models.CharField(max_length=32, editable=True, blank=False)
+
+    label = models.CharField(blank=False, null=False, max_length=32)
+
+    expiration_date = models.DateField(default=None, null=True)
+
+    created_by = models.OneToOneField(
+        Employee, related_name="associated_barcodes", on_delete=models.RESTRICT
+    )
+
+    updated_by = models.OneToOneField(
+        Employee,
+        related_name="updated_barcodes",
+        default=None,
+        null=True,
+        on_delete=models.RESTRICT,
+    )
+
+    is_active = models.BooleanField(default=True, null=False)
+
+    created_at = models.DateTimeField(null=False, editable=False, auto_now=True)
+
+    updated_at = models.DateTimeField(null=True, editable=False, auto_now_add=True)
+
+    warehouse = models.OneToOneField(
+        Warehouse, related_name="stock_barcodes", null=False, on_delete=models.RESTRICT
+    )
+
+    order_request = models.OneToOneField(
+        "OrderRequest", null=True, default=None, on_delete=models.RESTRICT
+    )
+
+    class Meta:
+        db_table = "wh_stock_barcodes"
+
+
+class WhBarcodeItems(models.Model):
+
+    barcode = models.OneToOneField(
+        WarehouseBarcode, on_delete=models.RESTRICT, null=False, related_name="content"
+    )
+
+    item = models.OneToOneField(
+        Item, on_delete=models.RESTRICT, null=False, related_name="item"
+    )
+
+    quantity = models.PositiveIntegerField(null=False)
+
+    class Meta:
+        db_table = "wh_stock_barcode_content"

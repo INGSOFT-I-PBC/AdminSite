@@ -54,4 +54,35 @@ export const warehouses: Array<RouteConfig> = [
             pageTitle: 'Gestion Pedidos',
         },
     },
+    {
+        path: '/bodegas/stock/crear/codigo-barra',
+        name: 'warehouse-create-stock-barcodes',
+        component: () =>
+            import('@views/warehouse/barcodes/BarcodeManagementView.vue'),
+        meta: {
+            permission: 'can_create_barcodes',
+            pageTitle: 'Creación de Códigos de Barras',
+            breadcrumb: [
+                { text: 'Bodega' },
+                {
+                    text: 'Códigos barras',
+                    href: '/bodegas/stock/lectura/codigo-barras',
+                },
+                { text: 'Crear' },
+            ],
+        },
+    },
+    {
+        path: '/bodegas/stock/lectura/codigo-barras',
+        name: 'warehouse-stock-barcodes',
+        component: () => import('@views/warehouse/barcodes/BarcodeViewer.vue'),
+        meta: {
+            permission: 'can_view_barcodes',
+            pageTitle: 'Gestión Código de Barras',
+            breadcrumb: [
+                { text: 'Bodega' },
+                { text: 'Códigos barras', active: true },
+            ],
+        },
+    },
 ]

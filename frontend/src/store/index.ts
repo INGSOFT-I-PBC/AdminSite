@@ -22,3 +22,5 @@ export * from './provider'
 export * from './users'
 export * from './warehouse'
 export * from './payment'
+
+export * from './barcodes'
