@@ -124,12 +124,19 @@
         if (valor == 'emission') {
             filterText.value = ''
             cleanQuery()
-            if (new Date(emission.value) > new Date(endDate.value)) {
+            if (
+                moment(emission.value as string).format('YYYY-MM-DD') >
+                moment(endDate.value as string).format('YYYY-MM-DD')
+            ) {
                 toast.error('Fecha min es mayor a Fecha max')
                 return
             } else {
-                inventoryForm.from_date = emission.value.valueOf
-                inventoryForm.to_date = endDate.value.valueOf
+                inventoryForm.from_date = moment(
+                    emission.value as string
+                ).format('YYYY-MM-DD')
+                inventoryForm.to_date = moment(endDate.value as string).format(
+                    'YYYY-MM-DD'
+                )
                 showInvoices2(inventoryForm)
             }
         }
