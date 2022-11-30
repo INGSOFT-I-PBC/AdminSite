@@ -6,20 +6,13 @@
     import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
+    import type { PaginatedResponse } from '@store-types'
     import { useInvoiceStore } from '@store/invoice'
-    import type {
-        IClient,
-        IPayment,
-        IServerOptions,
-        Invoice,
-    } from '@store/types'
-    import { isMessage } from '@store/types'
-    import { BIconFileEarmarkSlidesFill } from 'bootstrap-icons-vue'
+    import type { IClient, IPayment, Invoice } from '@store/types'
     //import { useToast } from 'vue-toastification'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
+    import moment from 'moment'
 
-    import { onMounted } from 'vue'
     import type { Ref } from 'vue'
     import { useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
@@ -35,7 +28,6 @@
     const itemStore = useInvoiceStore()
     const emission: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
     const endDate: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
-    //const toast = useToast()
     const filterText = ref<string>('')
     const itemInfoShow = ref<boolean>(false)
     const toast = useToast()
@@ -100,106 +92,83 @@
     }
     function cleanFilters() {
         filterText.value = ''
-        formFiltres.value.items.splice(0, formFiltres.value.items.length)
-        showInvoices()
+        //formFiltres.value.items.splice(0, formFiltres.value.items.length)
+        cleanQuery()
+        showInvoices2(inventoryForm)
+        //showInvoices()
     }
-    function makeSearch(valor: any) {
-        itemStore.providers?.data.splice(0, itemStore.providers?.data.length)
-        if (filterText.value != '') {
-            showWaitOverlay.value = true
-            itemStore
-                .getAllInvoice()
-                .then(response => {
-                    formFiltres.value.items = []
-                    formFiltres.value.items = response.data
-                    itemStore.providers?.data.splice(
-                        0,
-                        itemStore.providers?.data.length
-                    )
-                    for (let i = 0; i < formFiltres.value.items.length; i++) {
-                        if (
-                            (filterText.value ==
-                                (formFiltres.value.items[i].client as IClient)
-                                    .name &&
-                                valor == 'name') ||
-                            (filterText.value ==
-                                (formFiltres.value.items[i].client as IClient)
-                                    .number_id &&
-                                valor == 'cid')
-                        ) {
-                            console.log('entre')
-                            itemStore.providers?.data.push(
-                                formFiltres.value.items[i]
-                            )
-                        }
-                    }
+    function cleanQuery() {
+        inventoryForm.from_date = ''
+        inventoryForm.to_date = ''
+        inventoryForm.client_name = ''
+        inventoryForm.client_cid = ''
+    }
 
-                    showWaitOverlay.value = false
-                })
-                .catch((e: Error) => {
-                    console.log(e)
-                })
+    const inventoryForm: Record<string, any> = ref({
+        from_date: '',
+        to_date: '',
+        client_name: '',
+        client_cid: '',
+    })
+    async function onSubmitSearch(valor: any) {
+        if (valor == 'name') {
+            cleanQuery()
+            inventoryForm.client_name = filterText.value.trim()
+            showInvoices2(inventoryForm)
         }
-        if (filterText.value == '' && valor == 'emission') {
-            showWaitOverlay.value = true
-
-            itemStore
-                .getAllInvoice()
-                .then(response => {
-                    formFiltres.value.items = []
-                    formFiltres.value.items = response.data
-                    itemStore.providers?.data.splice(
-                        0,
-                        itemStore.providers?.data.length
-                    )
-                    for (let i = 0; i < formFiltres.value.items.length; i++) {
-                        if (
-                            new Date(formFiltres.value.items[i].emission) >=
-                                new Date(emission.value) &&
-                            new Date(formFiltres.value.items[i].emission) <=
-                                new Date(endDate.value)
-                        ) {
-                            itemStore.providers?.data.push(
-                                formFiltres.value.items[i]
-                            )
-                        }
-                    }
-
-                    showWaitOverlay.value = false
-                })
-                .catch((e: Error) => {
-                    console.log(e)
-                })
+        if (valor == 'cid') {
+            cleanQuery()
+            inventoryForm.client_cid = filterText.value.trim()
+            showInvoices2(inventoryForm)
+        }
+        if (valor == 'emission') {
+            filterText.value = ''
+            cleanQuery()
+            if (new Date(emission.value) > new Date(endDate.value)) {
+                toast.error('Fecha min es mayor a Fecha max')
+                return
+            } else {
+                inventoryForm.from_date = emission.value.valueOf
+                inventoryForm.to_date = endDate.value.valueOf
+                showInvoices2(inventoryForm)
+            }
         }
     }
-    function showInvoices() {
+
+    async function showInvoices2(query: any) {
         showWaitOverlay.value = true
 
-        itemStore
-            .fetchProviders(searchParam)
-            .catch(() => {
-                toast.error('No se pudo realizar la búsqueda ')
-            })
-            .finally(() => {
-                if (itemStore.providers?.data !== undefined) {
-                    form.value.items = itemStore.providers?.data
+        const res = await itemStore
+            .fetchPaginatedListInvoice(query, searchParam)
+            .then(() => {
+                if (
+                    (itemStore.paginatedIInvoice as PaginatedResponse<Invoice>)
+                        .data !== undefined
+                ) {
+                    form.value.items = (
+                        itemStore.paginatedIInvoice as PaginatedResponse<Invoice>
+                    ).data
                 }
-                //(
-                //as PaginatedResponse<Invoice>
-                //).data
+
                 console.log(form.value.items)
+                showWaitOverlay.value = false
+            })
+            .catch(() => {
+                if (filterName.value.value == 'emission') {
+                    toast.error(
+                        'LLene los campos de Fecha min y Fecha max para realizar la búsqueda'
+                    )
+                } else {
+                    toast.error('No se pudo realizar la búsqueda ')
+                }
                 showWaitOverlay.value = false
             })
     }
     function onPaginationClick(event: BvEvent, page: number) {
         searchParam.page = page
-        console.log(page)
-        showInvoices()
+        showInvoices2(inventoryForm)
     }
 
-    function onShowModalClick() {
-        showInvoices()
-    }
     async function showItem(item: Invoice) {
         detailSelectedItem.value.item = item
         itemInfoShow.value = true
@@ -226,7 +195,7 @@
         productModalShow.value = true
     }
 
-    showInvoices()
+    showInvoices2(inventoryForm)
 </script>
 
 <template>
@@ -286,11 +255,21 @@
                             <span class="col-6">{{ d }}</span>
                         </div>
 
-                        <div class="row" v-if="k == 'created_at'">
+                        <div class="row" v-if="k.toString() == 'created_at'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >fecha de creación:</span
+                                >Fecha de creación:</span
                             >
-                            <span class="col-6">{{ d }}</span>
+                            <span class="col-6"
+                                >{{ moment(d as string).format('DD/MM/YYYY') }}
+                            </span>
+                        </div>
+                        <div class="row" v-if="k.toString() == 'created_at'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Hora de creación:</span
+                            >
+                            <span class="col-6"
+                                >{{ moment(d as string).format('HH:mm:ss') }}
+                            </span>
                         </div>
                     </template>
                 </div>
@@ -341,7 +320,7 @@
                     <ECol cols="9" md="6" xl="1" class="mt-4">
                         <EButton
                             class="mt-4 tw-ml-4"
-                            @click="makeSearch(`${filterName.value}`)"
+                            @click="onSubmitSearch(`${filterName.value}`)"
                             >Buscar</EButton
                         >
                     </ECol>
@@ -356,12 +335,14 @@
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
-                <BTable :fields="formFields" :items="itemStore.providers?.data">
+                <BTable
+                    :fields="formFields"
+                    :items="itemStore.paginatedIInvoice?.data">
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
                     <template #cell(Cliente)="{ index }"
                         >{{
                             (
-                                itemStore.providers?.data[index][
+                                itemStore.paginatedIInvoice?.data[index][
                                     'client'
                                 ] as IClient
                             ).name
@@ -370,7 +351,7 @@
                     <template #cell(cid)="{ index }"
                         >{{
                             (
-                                itemStore.providers?.data[index][
+                                itemStore.paginatedIInvoice?.data[index][
                                     'client'
                                 ] as IClient
                             ).number_id
@@ -379,7 +360,7 @@
                     <template #cell(name)="{ index }"
                         >{{
                             (
-                                itemStore.providers?.data[index][
+                                itemStore.paginatedIInvoice?.data[index][
                                     'payment_method'
                                 ] as IPayment
                             ).name
@@ -416,12 +397,11 @@
                     <BPagination
                         align="center"
                         v-model="searchParam.page"
-                        :total-rows="itemStore.providers?.total ?? 1"
+                        :total-rows="itemStore.paginatedIInvoice?.total ?? 1"
                         :per-page="searchParam.per_page ?? 10"
                         next-text="Siguiente"
                         prev-text="Anterior"
                         class="paginator"
-                        hide-goto-end-buttons
                         @page-click="onPaginationClick" />
                 </div>
             </WaitOverlay>

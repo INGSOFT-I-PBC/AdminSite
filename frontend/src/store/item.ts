@@ -23,6 +23,24 @@ class ItemDataService {
         this.clients.value = response
         return response
     }
+    async fetchPaginatedListInventory(
+        options: any,
+        paginated_opt: PaginationOptions
+    ) {
+        const queryParams = {
+            ...options,
+            page: paginated_opt.page,
+            per_page: paginated_opt.per_page,
+        }
+        const response = (
+            await axios.get<PaginatedResponse<any>>('/api/v1/inventories', {
+                params: queryParams,
+            })
+        ).data
+        this.clients.value = response
+        return response
+    }
+
     /**
      * This function make a request to the backend and by the given parameter, change the status
      *

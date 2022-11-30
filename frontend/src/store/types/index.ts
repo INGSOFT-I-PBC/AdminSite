@@ -41,4 +41,5 @@ export type {
     IInventory,
     IEditInventory,
 } from './invoice.model'
+export type { Inventory, IEmployee } from './inventory.model'
 export type { Sequence } from './sequence.model'
