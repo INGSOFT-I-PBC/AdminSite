@@ -20,10 +20,12 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     const inventory: Ref<Optional<IInventory>> = ref(null)
     const paginatedInvoice: Ref<Optional<PaginatedAPIResponse<Invoice>>> =
         ref(null)
+    const paginatedIInvoice = ref<PaginatedResponse<Invoice>>() // Ref<Optional<PaginatedAPIResponse<Invoice>>> =
+    // ref(null)
 
     const paginatedItems: Ref<Optional<PaginatedAPIResponse<IInventory>>> =
         ref(null)
-    const providers = ref<PaginatedResponse<Invoice>>()
+
     //const providers: Ref<Optional<PaginatedAPIResponse<Invoice>>> = ref(null)
 
     const currentPaginatedItemPage = computed(() => {
@@ -41,12 +43,26 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
 
     const allPayment: Ref<Optional<IPayment[]>> = ref(null)
 
-    async function fetchAllInvoice() {
-        const data = await (
-            await axios.get<Invoice[]>('/api/v1/list/invoices/all')
+    async function fetchPaginatedListInvoice(
+        options: any,
+        paginated_opt: PaginationOptions
+    ) {
+        const queryParams = {
+            ...options,
+            page: paginated_opt.page,
+            per_page: paginated_opt.per_page,
+        }
+        const response = (
+            await axios.get<PaginatedResponse<Invoice>>('/api/v1/invoices', {
+                params: queryParams,
+            })
         ).data
-        allInvoice.value = data
-        return data
+        paginatedIInvoice.value = response
+        return response
+    }
+
+    async function getAllInvoice() {
+        return await axios.get<Invoice[]>('/api/v1/list/invoice', {})
     }
 
     async function fetchClientNumber(number_id: string) {
@@ -125,26 +141,13 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         invoice.value = data
         return data
     }
-    /* async function fetchIInventoryById(id: number) {
-        const data = (
-            await axios.get<IInventory>(`/api/v1/invoice/details/item?id=${id}`)
-        ).data
-        inventory.value = data
-        return data
-    }*/
+
     async function fetchIInventoryById(id: number) {
         return (
             await axios.get<IInventory>(`/api/v1/invoice/details/item?id=${id}`)
         ).data
     }
 
-    /*async function fetchStatus(name: string) {
-        const data = await (
-            await axios.get<Status>(`/api/v1/status?name=${name}`)
-        ).data
-        status.value = data
-        return data
-    }*/
     async function fetchIItemsPaginated(options: PaginationOptions) {
         const data = await (
             await axios.get<PaginatedAPIResponse<IInventory>>(
@@ -168,22 +171,6 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         paginatedInvoice.value = response
         return response
     }
-    /**
-     * This method will fetch a paginated list of users that are
-     * filtered by the given params.
-     *
-     * @param params the search params
-     */
-    async function fetchProviders(params?: PaginationOptions) {
-        const response = (
-            await axios.get<PaginatedResponse<Invoice>>(
-                '/api/v1/list/invoices/all',
-                { params }
-            )
-        ).data
-        providers.value = response
-        return response
-    }
 
     async function fetchPayment() {
         const data = await (
@@ -196,23 +183,23 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     return {
         invoice,
         paginatedInvoice,
+        paginatedIInvoice,
         paginatedItems,
         allInvoice,
         inventory,
         currentPaginatedItemPage,
         currentPaginatedInvoicePage,
+        fetchPaginatedListInvoice,
         fetchIInventoryById,
+        getAllInvoice,
         editquantityInventory,
         fetchPayment,
         fetchInvoiceById,
-        fetchAllInvoice,
         fetchIItemsPaginated,
         fetchInvoicePaginated,
         saveInvoice,
         editInvoice,
         removeInvoice,
         fetchClientNumber,
-        providers,
-        fetchProviders,
     }
 })

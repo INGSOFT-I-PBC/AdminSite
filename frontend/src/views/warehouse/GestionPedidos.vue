@@ -1612,7 +1612,7 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 purchaseForm.aproved_date
                                                             "
@@ -1624,7 +1624,7 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 purchaseForm.invoice_date
                                                             "
@@ -1638,7 +1638,7 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 purchaseForm.status
                                                             "
@@ -2185,7 +2185,7 @@
                                                         </Datepicker>
                                                     </div>
                                                     <div
-                                                        class="col-sm-3 col-lg-4 col-xl-2">
+                                                        class="col-sm-3 col-lg-4 col-xl-2 form-check-input">
                                                         <b-form-checkbox
                                                             class="tw-text-xl"
                                                             v-model="
@@ -2200,7 +2200,7 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 movementForm.salida
                                                             "

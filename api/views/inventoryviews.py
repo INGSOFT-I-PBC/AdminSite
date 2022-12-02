@@ -93,6 +93,38 @@ class FullInventoryViewSet(ReadOnlyModelViewSet):
 
     queryset = Inventory.objects.all().order_by("-created_at")
     serializer_class = FullInventorySerializer
+class FullInventoryViewSet2(ModelViewSet):
+
+    queryset = Inventory.objects.all().order_by("-created_at")
+    serializer_class = FullInventorySerializer
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("id", None):
+            queryset = queryset.filter(id=params.get("id", None))
+            return queryset
+
+        if params.get("code", None):
+            queryset = queryset.filter(item__codename__icontains=params.get("code"))
+
+        if params.get("stock", None):
+            queryset = queryset.filter(quantity__gte = params.get("stock"))
+
+        if params.get("name", None):
+            queryset = queryset.filter(item__name__icontains=params.get("name"))
+
+        if params.get("category", None):
+            queryset = queryset.filter(item__category__name__icontains=params.get("category"))
+
+
+        return queryset
+
+
 
 
 class InventoryViewSet(ModelViewSet):

@@ -27,7 +27,6 @@ router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
-router.register(r"invoices/all", views.InvoiceViewSet)
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"clients/all", views.ClientViewSet)
 router.register(r"provinces/all", views.FullProvinceViewSet)
@@ -35,7 +34,6 @@ router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"items", views.PaginatedItemViewSet, "paginatedItemVS")
 router.register(r"inventory/all", views.FullInventoryViewSet, "paginatedInventoryVS")
-router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"roles", views.RoleViewSet, "roleViewSet")
 router.register(r"providers", views.ProviderViewSet)
@@ -94,6 +92,11 @@ urlpatterns = [
     path("category/<int:id>", CategoryView.as_view(), name="category_process"),
     path("inventory", InventoryView.as_view(), name="inventory-list"),
     path("inventory/<int:pk>", InventoryView.as_view(), name="inventory_process"),
+    path(
+        "inventories",
+        FullInventoryViewSet2.as_view({"get": "list"}),
+
+    ),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     # Item management
     path("item/<int:id>", views.find_item, name="item"),
@@ -132,6 +135,11 @@ urlpatterns = [
     path("role/<int:id>", views.RoleView.as_view()),
     path("role/<str:id>", views.RoleView.as_view()),
     # Invoice
+    path(
+        "invoices",
+        InvoiceViewSet.as_view({"get": "list"}),
+        name="invoices",
+    ),
     path(
         "invoice/client",
         InvoiceView.as_view({"get": "search_client"}),

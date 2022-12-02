@@ -3,21 +3,17 @@
     import ECard from '@components/custom/ECard.vue'
     import ECol from '@components/custom/ECol.vue'
     import ERow from '@components/custom/ERow.vue'
+    import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
-    import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
+    import type { PaginatedResponse } from '@store-types'
     import { useInvoiceStore } from '@store/invoice'
-    import type {
-        IClient,
-        IPayment,
-        IServerOptions,
-        Invoice,
-    } from '@store/types'
-    import { isMessage } from '@store/types'
+    import type { IClient, IPayment, Invoice } from '@store/types'
     //import { useToast } from 'vue-toastification'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
+    import moment from 'moment'
 
-    import { onMounted } from 'vue'
+    import type { Ref } from 'vue'
     import { useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
 
@@ -30,19 +26,24 @@
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
     const itemStore = useInvoiceStore()
-    //const toast = useToast()
+    const emission: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
+    const endDate: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
+    const filterText = ref<string>('')
     const itemInfoShow = ref<boolean>(false)
     const toast = useToast()
 
-    const templateList = [
-        { label: 'Por fecha de creación', value: '1' },
-        { label: 'Por creador', value: '2' },
+    const templateList = ref<
         {
-            label: 'Por tipo de ID',
-            value: '3',
-        },
-        { label: 'Por Nombres y apellidos', value: '4' },
-    ]
+            label: string
+            value: 'emission' | 'created' | 'cid' | 'name'
+        }[]
+    >([
+        //{ label: 'Por creador', value: 'created' },
+        { label: 'Por tipo de ID', value: 'cid' },
+        { label: 'Por Nombres y apellidos', value: 'name' },
+        { label: 'Por fecha de creación', value: 'emission' },
+    ])
+    const filterName = ref(templateList.value[0])
     type SelectedItem = { item: Invoice | null }
     const detailSelectedItem = ref<SelectedItem>({
         item: null,
@@ -51,8 +52,9 @@
     const formFields: TableField[] = [
         '#',
         { label: 'Secuencia', key: 'code' },
-
+        { label: 'Emisión', key: 'emission' },
         'Cliente',
+        { label: 'Cedúla Cliente', key: 'cid' },
         { label: 'Metodo de pago', key: 'name' },
         { label: 'Subtotal', key: 'subtotal' },
         { label: 'Total IVA', key: 'iva' },
@@ -62,6 +64,9 @@
     ]
 
     const form = ref<Form>({
+        items: [],
+    })
+    const formFiltres = ref<Form>({
         items: [],
     })
     type Form = {
@@ -85,35 +90,92 @@
 
         per_page: 10,
     }
+    function cleanFilters() {
+        filterText.value = ''
+        //formFiltres.value.items.splice(0, formFiltres.value.items.length)
+        cleanQuery()
+        showInvoices2(inventoryForm)
+        //showInvoices()
+    }
+    function cleanQuery() {
+        inventoryForm.from_date = ''
+        inventoryForm.to_date = ''
+        inventoryForm.client_name = ''
+        inventoryForm.client_cid = ''
+    }
 
-    function showInvoices() {
+    const inventoryForm: Record<string, any> = ref({
+        from_date: '',
+        to_date: '',
+        client_name: '',
+        client_cid: '',
+    })
+    async function onSubmitSearch(valor: any) {
+        if (valor == 'name') {
+            cleanQuery()
+            inventoryForm.client_name = filterText.value.trim()
+            showInvoices2(inventoryForm)
+        }
+        if (valor == 'cid') {
+            cleanQuery()
+            inventoryForm.client_cid = filterText.value.trim()
+            showInvoices2(inventoryForm)
+        }
+        if (valor == 'emission') {
+            filterText.value = ''
+            cleanQuery()
+            if (
+                moment(emission.value as string).format('YYYY-MM-DD') >
+                moment(endDate.value as string).format('YYYY-MM-DD')
+            ) {
+                toast.error('Fecha min es mayor a Fecha max')
+                return
+            } else {
+                inventoryForm.from_date = moment(
+                    emission.value as string
+                ).format('YYYY-MM-DD')
+                inventoryForm.to_date = moment(endDate.value as string).format(
+                    'YYYY-MM-DD'
+                )
+                showInvoices2(inventoryForm)
+            }
+        }
+    }
+
+    async function showInvoices2(query: any) {
         showWaitOverlay.value = true
 
-        itemStore
-            .fetchProviders(searchParam)
-            .catch(() => {
-                toast.error('No se pudo realizar la búsqueda ')
-            })
-            .finally(() => {
-                if (itemStore.providers?.data !== undefined) {
-                    form.value.items = itemStore.providers?.data
+        const res = await itemStore
+            .fetchPaginatedListInvoice(query, searchParam)
+            .then(() => {
+                if (
+                    (itemStore.paginatedIInvoice as PaginatedResponse<Invoice>)
+                        .data !== undefined
+                ) {
+                    form.value.items = (
+                        itemStore.paginatedIInvoice as PaginatedResponse<Invoice>
+                    ).data
                 }
-                //(
-                //as PaginatedResponse<Invoice>
-                //).data
+
                 console.log(form.value.items)
+                showWaitOverlay.value = false
+            })
+            .catch(() => {
+                if (filterName.value.value == 'emission') {
+                    toast.error(
+                        'LLene los campos de Fecha min y Fecha max para realizar la búsqueda'
+                    )
+                } else {
+                    toast.error('No se pudo realizar la búsqueda ')
+                }
                 showWaitOverlay.value = false
             })
     }
     function onPaginationClick(event: BvEvent, page: number) {
         searchParam.page = page
-        console.log(page)
-        showInvoices()
+        showInvoices2(inventoryForm)
     }
 
-    function onShowModalClick() {
-        showInvoices()
-    }
     async function showItem(item: Invoice) {
         detailSelectedItem.value.item = item
         itemInfoShow.value = true
@@ -139,10 +201,8 @@
         itemForm.value.index = index
         productModalShow.value = true
     }
-    showInvoices()
-    onMounted(() => {
-        return onShowModalClick()
-    })
+
+    showInvoices2(inventoryForm)
 </script>
 
 <template>
@@ -202,11 +262,21 @@
                             <span class="col-6">{{ d }}</span>
                         </div>
 
-                        <div class="row" v-if="k == 'created_at'">
+                        <div class="row" v-if="k.toString() == 'created_at'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >fecha de creación:</span
+                                >Fecha de creación:</span
                             >
-                            <span class="col-6">{{ d }}</span>
+                            <span class="col-6"
+                                >{{ moment(d as string).format('DD/MM/YYYY') }}
+                            </span>
+                        </div>
+                        <div class="row" v-if="k.toString() == 'created_at'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Hora de creación:</span
+                            >
+                            <span class="col-6"
+                                >{{ moment(d as string).format('HH:mm:ss') }}
+                            </span>
                         </div>
                     </template>
                 </div>
@@ -224,41 +294,80 @@
                     </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
-                            v-model="model"
+                            v-model="filterName"
+                            :clearable="true"
                             top-label="Seleccione un filtro"
                             :options="templateList" />
                     </ECol>
-                    <form class="d-flex" role="search">
-                        <input
-                            class="form-control me-2"
-                            type="search"
-                            placeholder="Buscar cliente"
-                            aria-label="Search" />
-                        <button class="btn btn-outline-black" type="submit">
-                            Search
-                        </button>
-                    </form>
+                    <ECol cols="9" md="6" xl="2" class="mt-3">
+                        <InputText
+                            label="Fecha Min"
+                            type="date"
+                            v-model="emission"
+                            :readonly="filterName.value != 'emission'" />
+                    </ECol>
+                    <ECol cols="9" md="6" xl="2" class="mt-3">
+                        <InputText
+                            label="Fecha Max"
+                            type="date"
+                            v-model="endDate"
+                            :readonly="filterName.value != 'emission'" />
+                    </ECol>
+                </div>
+                <div
+                    class="container-fluid"
+                    style="justify-content: flex-end; align-items: stretch">
+                    <ECol cols="9" md="6" xl="3" class="mt-3">
+                        <InputText
+                            v-model="filterText"
+                            label="Cuadro de búsqueda"
+                            :placeholder="`Búsqueda por ${filterName.label}`"
+                            :readonly="filterName.value == 'emission'" />
+                    </ECol>
+                    <ECol cols="9" md="6" xl="1" class="mt-4">
+                        <EButton
+                            class="mt-4 tw-ml-4"
+                            @click="onSubmitSearch(`${filterName.value}`)"
+                            >Buscar</EButton
+                        >
+                    </ECol>
+                    <ECol cols="9" md="6" xl="1" class="mt-4">
+                        <EButton class="mt-4" @click="cleanFilters"
+                            >Limpiar</EButton
+                        >
+                    </ECol>
                 </div>
             </nav>
 
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
-                <BTable :fields="formFields" :items="itemStore.providers?.data">
+                <BTable
+                    :fields="formFields"
+                    :items="itemStore.paginatedIInvoice?.data">
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
                     <template #cell(Cliente)="{ index }"
                         >{{
                             (
-                                itemStore.providers?.data[index][
+                                itemStore.paginatedIInvoice?.data[index][
                                     'client'
                                 ] as IClient
                             ).name
                         }}
                     </template>
+                    <template #cell(cid)="{ index }"
+                        >{{
+                            (
+                                itemStore.paginatedIInvoice?.data[index][
+                                    'client'
+                                ] as IClient
+                            ).number_id
+                        }}
+                    </template>
                     <template #cell(name)="{ index }"
                         >{{
                             (
-                                itemStore.providers?.data[index][
+                                itemStore.paginatedIInvoice?.data[index][
                                     'payment_method'
                                 ] as IPayment
                             ).name
@@ -295,11 +404,11 @@
                     <BPagination
                         align="center"
                         v-model="searchParam.page"
-                        :total-rows="itemStore.providers?.total ?? 1"
+                        :total-rows="itemStore.paginatedIInvoice?.total ?? 1"
                         :per-page="searchParam.per_page ?? 10"
                         next-text="Siguiente"
                         prev-text="Anterior"
-                        hide-goto-end-buttons
+                        class="paginator"
                         @page-click="onPaginationClick" />
                 </div>
             </WaitOverlay>
