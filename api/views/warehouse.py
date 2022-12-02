@@ -184,8 +184,8 @@ class WhInventorysViewSet(ModelViewSet):
         if params.get("name", None):
             queryset = queryset.filter(item__name__icontains=params.get("name"))
 
-        if params.get("code", None):
-            queryset = queryset.filter(item__code_icontains=params.get("code"))
+        if params.get("codename", None):
+            queryset = queryset.filter(item__codename__icontains=params.get("codename"))
 
         if params.get("min_quantity", None):
             queryset = queryset.filter(quantity__gte=params.get("min_quantity"))
