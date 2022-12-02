@@ -2185,9 +2185,9 @@
                                                         </Datepicker>
                                                     </div>
                                                     <div
-                                                        class="col-sm-3 col-lg-4 col-xl-2 form-check-input">
+                                                        class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 movementForm.entrada
                                                             "
