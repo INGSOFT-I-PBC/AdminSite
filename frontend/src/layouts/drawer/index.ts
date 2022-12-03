@@ -141,6 +141,12 @@ export const menus: MenuItem[] = [
         path: '/facturacion',
     },
     {
+        label: 'Cierre de Caja',
+        icon: 'inbox',
+        children: [],
+        path: '/close-box',
+    },
+    {
         id: 'logout',
         label: 'Cerrar Sesión',
         forceRender: true,

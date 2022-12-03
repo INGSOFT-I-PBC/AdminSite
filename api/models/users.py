@@ -44,6 +44,7 @@ class Employee(TimestampModel):
         "self", on_delete=models.RESTRICT, default=None, null=True
     )
     gender = models.ForeignKey(Gender, null=True, on_delete=models.RESTRICT)
+    address = models.CharField(max_length=256, null=True)
 
     class Meta:
         db_table = "employees"

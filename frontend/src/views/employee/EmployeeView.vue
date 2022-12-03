@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import { isMessage } from '@/store/types/typesafe'
     import EButton from '@components/custom/EButton.vue'
     import ECard from '@components/custom/ECard.vue'
     import ERow from '@components/custom/ERow.vue'
@@ -131,9 +132,13 @@
                 form.value.employees.splice(index2, 1)
                 toast.success('Empleado eliminado con éxito')
             })
-            .catch(error => {
-                console.log(error)
-                toast.error('Error al eliminar empleado')
+            .catch(err => {
+                if (isMessage(err)) {
+                    toast.error(err.message)
+                } else {
+                    toast.error('Error al eliminar el empleado')
+                    console.error(err)
+                }
             })
             .finally(() => {
                 id2 = 0
@@ -151,10 +156,7 @@
     <main>
         <ModalDialog v-model:show="itemInfoShow" size="xl">
             <template #dialog-title>
-                <b class="tw-text-2xl"
-                    >Detalle del Empleado {{ detailSelectedItem.item?.name }}
-                    {{ detailSelectedItem.item?.lastname }}</b
-                >
+                <b class="tw-text-2xl">Detalle del Empleado </b>
             </template>
 
             <div class="container">
@@ -183,9 +185,23 @@
                                 ).format('HH:mm:ss')
                             }}</span>
                         </div>
+                        <div class="row" v-else-if="k == 'created_by'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Creado por:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.created_by?.name
+                            }}</span>
+                        </div>
                         <div class="row" v-else-if="k == 'name'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
-                                >Nombre:</span
+                                >Nombres:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+                        <div class="row" v-else-if="k == 'lastname'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Apellidos:</span
                             >
                             <span class="col-6">{{ d }}</span>
                         </div>
@@ -194,17 +210,6 @@
                                 >Cédula:</span
                             >
                             <span class="col-6">{{ d }}</span>
-                        </div>
-
-                        <div class="row" v-if="k == 'is_active'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >Estado:</span
-                            >
-                            <span class="col-6">{{
-                                detailSelectedItem?.item?.is_active
-                                    ? 'Activo'
-                                    : 'Inactivo'
-                            }}</span>
                         </div>
                         <div class="row" v-if="k == 'role'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
@@ -220,20 +225,29 @@
                             >
                             <span class="col-6">{{ d }}</span>
                         </div>
-                        <div class="row" v-else-if="k == 'created_by'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >Creado por:</span
-                            >
-                            <span class="col-6">{{
-                                detailSelectedItem?.item?.created_by?.name
-                            }}</span>
-                        </div>
+
                         <div class="row" v-if="k == 'gender'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >Sexo:</span
                             >
                             <span class="col-6">{{
                                 detailSelectedItem?.item?.gender?.name
+                            }}</span>
+                        </div>
+                        <div class="row" v-if="k == 'address'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Dirección:</span
+                            >
+                            <span class="col-6">{{ d }}</span>
+                        </div>
+                        <div class="row" v-if="k == 'is_active'">
+                            <span class="tw-w-1/2 tw-font-bold col-6"
+                                >Estado:</span
+                            >
+                            <span class="col-6">{{
+                                detailSelectedItem?.item?.is_active
+                                    ? 'Activo'
+                                    : 'Inactivo'
                             }}</span>
                         </div>
                     </template>
@@ -324,11 +338,14 @@
                     </template>
                 </BTable>
                 <b-pagination
+                    align="center"
                     v-model="currentPage"
                     :total-rows="totalRows"
                     :per-page="perPage"
                     @page-click="showEmployees"
                     :limit="5"
+                    next-text="Siguiente"
+                    prev-text="Anterior"
                     hide-goto-end-buttons
                     class="paginator">
                 </b-pagination>
