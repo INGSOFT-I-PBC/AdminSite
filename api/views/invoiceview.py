@@ -1,5 +1,5 @@
-import datetime
 
+import datetime
 from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework import status, viewsets
@@ -8,7 +8,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ReadOnlyModelViewSet,ModelViewSet
 
 from api.models import Client, Invoice, InvoiceDetails, Item,Inventory
 from api.serializers.invoices import (
@@ -196,13 +196,36 @@ class InvoicesView(APIView):
         return response("invoice anulated successfully")
 
 
-class InvoiceViewSet(ReadOnlyModelViewSet):
+
+class InvoiceViewSet(ModelViewSet):
+
     queryset = Invoice.objects.all().order_by("-created_at").exclude(anulated=True)
     serializer_class = FullInvoiceSerializer
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
 
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
 
-class FullInvoiceViewSet(InvoiceViewSet):
-    pagination_class = None
+        if params.get("id", None):
+            queryset = queryset.filter(id=params.get("id", None))
+            return queryset
+
+        if params.get("client_name", None):
+            queryset = queryset.filter(client__name__icontains=params.get("client_name"))
+
+        if params.get("client_cid", None):
+            queryset = queryset.filter(client__number_id__icontains=params.get("client_cid"))
+
+        if params.get("from_date", None):
+            queryset = queryset.filter(emission__gte=(params["from_date"]))
+        if params.get("to_date", None):
+            queryset = queryset.filter(emission__lte=(params["to_date"]))
+
+        return queryset
+
 
 
 
