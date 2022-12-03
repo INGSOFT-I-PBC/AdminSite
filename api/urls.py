@@ -35,6 +35,9 @@ router.register("purchase", views.PurchaseViewSet),
 router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"payment/all", views.FullPaymentViewSet)
 router.register(r"inventory", views.InventoryViewSet)
+router.register(r"products", views.ProductViewSet)
+router.register(r"product/<int:pk>/variants", views.ProductVariantViewSet)
+router.register(r"products/variants", views.ProductVariantViewSet)
 
 
 urlpatterns = [
@@ -101,7 +104,6 @@ urlpatterns = [
     path(
         "inventories",
         FullInventoryViewSet2.as_view({"get": "list"}),
-
     ),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     #
@@ -172,4 +174,12 @@ urlpatterns = [
         PaginatedItemInvoiceView.as_view(),
         name="search-invoice-items",
     ),
+    # =============================
+    # >     Product endpoints     <
+    # =============================
+    path("product", create_product),
+    path("product/variant", create_prod_variant),
+    path("product/<int:pk>", ProductView.as_view()),
+    path("product/variant/<int:pk>", ProductVariantView.as_view()),
+    path("product/variant/<str:sku>", ProductVariantView.as_view()),
 ]
