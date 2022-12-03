@@ -155,6 +155,7 @@ class UpdateEmployeeSerializer(serializers.ModelSerializer):
             "lastname",
             "cid",
             "is_active",
+            "created_by",
             "role",
             "phone_number",
             "gender",

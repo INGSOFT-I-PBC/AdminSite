@@ -149,6 +149,7 @@
         } finally {
             showWaitOverlay.value = false
         }
+        console.log(f)
     }
 
     function submit() {

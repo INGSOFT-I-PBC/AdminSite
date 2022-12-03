@@ -28,7 +28,7 @@
     const employeeRepository = useEmployeeStore()
 
     /*Pagination*/
-    const perPage = ref(7)
+    const perPage = ref(6)
     const currentPage = ref(1)
     const totalRows = ref(100)
 
