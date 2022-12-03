@@ -310,22 +310,6 @@
                         &ZeroWidthSpace;
                     </small>
                 </ECol>
-                <!--<ECol cols="12" lg="6" xl="3">
-                    <InputText
-                        label="Correo electrónico"
-                        v-model="
-                            employeeFormValidation.email.value
-                        "
-                        :info-label="
-                            employeeFormValidation.email.errorMessage
-                        "
-                        :status="
-                            Boolean(
-                                employeeFormValidation.email.errorMessage
-                            )
-                        "
-                        info-status="danger" />
-                </ECol>-->
                 <ECol cols="12" lg="6" xl="6">
                     <InputText
                         label="Dirección"
