@@ -1,7 +1,10 @@
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from api.models.common import TimestampModel
+from api.models.warehouse import Warehouse
 
+from .auth import Employee
 from .provider import Provider
 
 
@@ -110,3 +113,18 @@ class ProductProviders(models.Model):
 
     class Meta:
         db_table = "product_providers"
+
+
+class InventoryProduct(TimestampModel):
+
+    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+
+    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
+
+    product = models.ForeignKey(ProductVariant, on_delete=models.RESTRICT)
+    updated_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
+
+    quantity = models.IntegerField(validators=[MinValueValidator(0)])
+
+    class Meta:
+        db_table = "product_inventory"

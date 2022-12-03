@@ -84,6 +84,12 @@ urlpatterns = [
         WhLatestTomaFisicaView.as_view(),
         name="all-wh-tomas",
     ),
+    # Product Variants
+    path(
+        "warehouse/product-inventory",
+        WhProductInventoryViewSet.as_view({"get": "list"}),
+        name="product-inventory",
+    ),
     path("items", ItemView.as_view(), name="item-list"),
     path("items/<int:id>", views.ItemView.as_view()),
     path("item/<int:id>/activate", views.activate_item),
@@ -95,7 +101,6 @@ urlpatterns = [
     path(
         "inventories",
         FullInventoryViewSet2.as_view({"get": "list"}),
-
     ),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     # Item management

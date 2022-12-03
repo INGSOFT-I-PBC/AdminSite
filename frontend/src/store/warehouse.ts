@@ -2,6 +2,8 @@ import type {
     Item,
     MessageResponse,
     PaginatedAPIResponse,
+    Product,
+    ProductProps,
     Purchase,
 } from '@store-types'
 import type {
@@ -135,6 +137,23 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             const result = await (
                 await axios.get<PaginatedAPIResponse<Movement>>(
                     '/api/v1/warehouse/movements',
+                    { params: queryParams }
+                )
+            ).data
+            return result
+        },
+        async fetchPaginatedProductInventory(
+            options: any,
+            paginated_opt: PaginationOptions
+        ) {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            const result = await (
+                await axios.get<PaginatedAPIResponse<Product>>(
+                    '/api/v1/warehouse/product-inventory',
                     { params: queryParams }
                 )
             ).data

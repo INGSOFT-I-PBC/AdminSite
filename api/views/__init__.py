@@ -9,6 +9,7 @@ from api.views.itemview import *
 from api.views.itemviews import *
 from api.views.orders import *
 from api.views.payment import *
+from api.views.products import *
 from api.views.providers import *
 from api.views.provinceview import *
 from api.views.purchase import *
@@ -52,8 +53,10 @@ __all__ = [
     "StatusView",
     "ProvinceViewSet",
     "ProvinceCityView",
+    "WhProductInventoryViewSet",
     "FullGenderViewSet",
-    "InvoiceView","InvoiceViewSet",
+    "InvoiceView",
+    "InvoiceViewSet",
     "PaginatedItemInvoiceView",
     "InvoicesView",
     "FullSequenceViewSet",

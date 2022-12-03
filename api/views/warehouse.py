@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.core.paginator import Paginator
 from django.db.models import OuterRef, Q, Subquery
 from django.http import JsonResponse
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -21,6 +22,21 @@ from api.serializers.warehouse import (
     WhWithTomaFisicaSerializer,
 )
 from api.utils import error_response
+
+
+class CustomPagination(PageNumberPagination):
+    page_size = 1000
+    page_size_query_param = "per_page"
+
+    def get_paginated_response(self, data):
+        return Response(
+            {
+                "data": data,
+                "page": self.page.number,
+                "lastPage": self.page.paginator.num_pages,
+                "total": self.page.paginator.count,
+            }
+        )
 
 
 class WarehouseView(APIView):
@@ -160,7 +176,7 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
 
 
 class WhInventorysViewSet(ModelViewSet):
-
+    pagination_class = CustomPagination
     queryset = Inventory.objects.all().order_by("-id")
     serializer_class = WhInventorySerializer
 
@@ -250,6 +266,7 @@ class WhTransactionViewSet(ModelViewSet):
 
     queryset = WarehouseTransaction.objects.all().order_by("-created_at")
     serializer_class = WhTransactionSerializer
+    pagination_class = CustomPagination
 
     def get_queryset(self):
         queryset = self.queryset.select_related("created_by", "status")
@@ -329,6 +346,7 @@ class WhOrderRequestViewSet(ReadOnlyModelViewSet):
 
 
 class WhLatestTomaFisicaView(APIView):
+
     def get(self, request):
         try:
 
@@ -356,7 +374,7 @@ class WhTomasFisicasViewSet(ModelViewSet):
 
     queryset = WhTomasFisicas.objects.all().order_by("-created_at")
     serializer_class = TomasFisicasSerializer
-
+    pagination_class = CustomPagination
     def get_queryset(self):
         queryset = self.queryset
         params = self.request.query_params.copy()

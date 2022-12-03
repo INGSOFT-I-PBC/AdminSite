@@ -8,7 +8,7 @@ export const warehouses: Array<RouteConfig> = [
             breadcrumb: [
                 {
                     text: 'Bodegas',
-                    href: '/bodegas',
+                    href: '/bodegas/gestion',
                 },
                 {
                     text: 'Nuevo pedido',
@@ -22,9 +22,17 @@ export const warehouses: Array<RouteConfig> = [
         component: () => import('@views/warehouse/GestionTomasFisicas.vue'),
         name: 'tomas-fisica-view',
         meta: {
-            pageTitle: 'Tomas Fisicas',
-            permission: 'view_dashboard',
-            breadcrumb: [{ text: 'inicio' }, { text: 'dashboard' }],
+            pageTitle: 'Tomas Físicas',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas/gestion',
+                },
+                {
+                    text: 'Nueva Toma',
+                    active: true,
+                },
+            ],
         },
     },
 
@@ -52,6 +60,21 @@ export const warehouses: Array<RouteConfig> = [
         component: () => import('@views/warehouse/GestionPedidos.vue'),
         meta: {
             pageTitle: 'Gestion Pedidos',
+        },
+    },
+
+    {
+        path: '/bodegas/gestion',
+        name: 'gestion-view',
+        component: () => import('@views/warehouse/GestionBodegas.vue'),
+        meta: {
+            pageTitle: 'Gestión de Bodegas',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas',
+                },
+            ],
         },
     },
 ]

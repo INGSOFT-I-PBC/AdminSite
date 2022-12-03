@@ -16,6 +16,8 @@ export type {
     Movement,
 } from './warehouse.model'
 
+export type { Product, ProductProps } from './product.model'
+
 export type { MinimalPurchase, Purchase } from './purchase.model'
 
 export type { Category, FullItem, Item, MetaData } from './items.model'
