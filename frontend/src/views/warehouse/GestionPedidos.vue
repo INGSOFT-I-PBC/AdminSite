@@ -30,7 +30,7 @@
     import { Form as ValidationForm, useField } from 'vee-validate'
     import * as yup from 'yup'
 
-    import { computed, onMounted, ref } from 'vue'
+    import { computed, ref, watch } from 'vue'
     import { useToast } from 'vue-toastification'
 
     import {
@@ -91,6 +91,8 @@
 
     const showAllWarehouses = ref(true)
 
+    const stopWatcher = ref(true)
+
     const whInformationPerPage = ref(15)
 
     const detailSelectedItem = ref<SelectedItem>({
@@ -101,7 +103,7 @@
     const allWarehousesFields: TableField[] = [
         '#',
         { label: 'Nombre', key: 'name' },
-        'FechaTomaFisica',
+        'FechaTomaFísica',
         'RealizadaPor',
         'Novedad',
         'Detalles',
@@ -300,7 +302,7 @@
             'provider_name',
             yup.string().optional().nullable(true)
         ),
-        status: useField('status_p', yup.string().optional().nullable(true)),
+        status: false,
         invoice_code: useField(
             'invoice_code',
             yup.string().optional().nullable(true)
@@ -369,7 +371,7 @@
             yup.string().optional().nullable(true)
         ),
         status: useField('status_m', yup.string().optional().nullable(true)),
-        notes: useField('reference', yup.string().optional().nullable(true)),
+        notes: useField('notes_m', yup.string().optional().nullable(true)),
     })
 
     const itemInfoShow = ref(false)
@@ -396,7 +398,7 @@
         paginateMain(whPageCount.value, page - 1)
     }
 
-    function resetWhData(): void {
+    function resetWhPage(): void {
         for (const controller of arrayControllers) {
             ;(controller.currentPage = 1), (controller.totalRows = 1)
         }
@@ -462,7 +464,7 @@
         const query: Record<string, any> = {
             warehouse_id: activeWhInformation.value.bodega.id,
         }
-        showWaitOverlay.value = true
+        stopWatcher.value = true
         switch (tabOption) {
             case 'inventory': {
                 const f = inventoryForm.value
@@ -481,7 +483,7 @@
                     return
                 }
                 query.name = f.name.value
-                query.codename = f.codename.value as number
+                query.codename = f.codename.value
                 query.max_price = f.max_price.value as number
                 query.min_price = f.min_price.value as number
                 query.max_quantity = f.max_quantity.value as number
@@ -492,10 +494,10 @@
                     .then(() => {
                         if (activeWhInformation.value.inventory.length < 1) {
                             toast.error(
-                                'No se ha encontrado registros en la busqueda'
+                                'No se ha encontrado registros en la búsqueda'
                             )
                         } else {
-                            toast.success('Busqueda exitosa')
+                            toast.success('Búsqueda exitosa')
                         }
                     })
                     .catch(err => {
@@ -506,7 +508,9 @@
                         }
                     })
                     .finally(() => {
+                        controller.currentPage = 1
                         showWaitOverlay.value = false
+                        stopWatcher.value = false
                     })
                 break
             }
@@ -516,7 +520,6 @@
                     f.from_date.errorMessage ||
                     f.to_date.errorMessage ||
                     f.provider_name.errorMessage ||
-                    f.status.errorMessage ||
                     f.invoice_code.errorMessage ||
                     f.reference.errorMessage
                 ) {
@@ -524,7 +527,7 @@
                     showWaitOverlay.value = false
                     return
                 } else if (!f.aproved_date && !f.invoice_date) {
-                    toast.error('Marque un tipo de busqueda por fecha')
+                    toast.error('Marque un tipo de búsqueda por fecha')
                     showWaitOverlay.value = false
                     return
                 }
@@ -533,17 +536,18 @@
                 query.aproved_date = f.aproved_date
                 query.invoice_date = f.invoice_date
                 query.provider_name = f.provider_name.value
-                query.status = f.status.value
-                query.invoice_code = f.invoice_code.value
+                f.status
+                    ? (query.status = DELIVERED_PURCHASE_STATUS.value)
+                    : (query.invoice_code = f.invoice_code.value)
                 query.reference = f.reference.value as number
                 fetchManager(tabOption, query, { per_page: 15, page: 1 })
                     .then(() => {
                         if (activeWhInformation.value.purchases.length < 1) {
                             toast.error(
-                                'No se ha encontrado registros en la busqueda'
+                                'No se ha encontrado registros en la búsqueda'
                             )
                         } else {
-                            toast.success('Busqueda exitosa')
+                            toast.success('Búsqueda exitosa')
                         }
                     })
                     .catch(err => {
@@ -554,7 +558,9 @@
                         }
                     })
                     .finally(() => {
+                        controller.currentPage = 1
                         showWaitOverlay.value = false
+                        stopWatcher.value = false
                     })
 
                 break
@@ -580,10 +586,10 @@
                     .then(() => {
                         if (activeWhInformation.value.tomasFisicas.length < 1) {
                             toast.error(
-                                'No se ha encontrado registros en la busqueda'
+                                'No se ha encontrado registros en la búsqueda'
                             )
                         } else {
-                            toast.success('Busqueda exitosa')
+                            toast.success('Búsqueda exitosa')
                         }
                     })
                     .catch(err => {
@@ -594,7 +600,9 @@
                         }
                     })
                     .finally(() => {
+                        controller.currentPage = 1
                         showWaitOverlay.value = false
+                        stopWatcher.value = false
                     })
                 break
             }
@@ -611,23 +619,30 @@
                     toast.error('Verifique los datos antes buscar')
                     showWaitOverlay.value = false
                     return
+                } else if (!f.entrada && !f.salida) {
+                    toast.error('Escoga tipo de movimiento (Salida/Entrada)')
+                    showWaitOverlay.value = false
+                    return
                 }
                 query.from_date = f.from_date.value
                 query.to_date = f.to_date.value
                 query.done_by_name = f.done_by_name.value
-                query.notas = f.notes.value
+                query.notes = f.notes.value
                 query.warehouse_name = f.warehouse_name.value
                 query.status = f.status.value
                 query.entrada = f.entrada
                 query.salida = f.salida
+                console.log(f.entrada)
+                console.log(f.salida)
+                console.log(query)
                 fetchManager(tabOption, query, { per_page: 15, page: 1 })
                     .then(() => {
                         if (activeWhInformation.value.movements.length < 1) {
                             toast.error(
-                                'No se ha encontrado registros en la busqueda'
+                                'No se ha encontrado registros en la búsqueda'
                             )
                         } else {
-                            toast.success('Busqueda exitosa')
+                            toast.success('Búsqueda exitosa')
                         }
                     })
                     .catch(err => {
@@ -638,23 +653,14 @@
                         }
                     })
                     .finally(() => {
+                        controller.currentPage = 1
                         showWaitOverlay.value = false
+                        stopWatcher.value = false
                     })
 
                 break
             }
         }
-        await fetchManager(
-            tabOption,
-            { warehouse_id: activeWhInformation.value.bodega.id },
-            { page: 1, per_page: whInformationPerPage.value }
-        )
-
-        controller.currentPage = 1
-
-        fetchManager(tabOption, query, { page: 1, per_page: 20 })
-
-        showWaitOverlay.value = false
     }
 
     async function onReset(
@@ -680,7 +686,7 @@
                 purchaseForm.value.aproved_date = false
                 purchaseForm.value.invoice_date = false
                 purchaseForm.value.provider_name.resetField()
-                purchaseForm.value.status.resetField()
+                purchaseForm.value.status = false
                 purchaseForm.value.invoice_code.resetField()
                 purchaseForm.value.reference.resetField()
                 break
@@ -713,33 +719,11 @@
         showWaitOverlay.value = false
     }
 
-    async function onPageChanged(
-        tabOption: string,
-        controller: whCardController
-    ) {
-        showWaitOverlay.value = true
-
-        const pageOpt = {
-            page: controller.currentPage,
-            per_page: whInformationPerPage.value,
-        }
-
-        await fetchManager(
-            tabOption,
-            { warehouse_id: activeWhInformation.value.bodega.id },
-            pageOpt
-        )
-
-        showWaitOverlay.value = false
-    }
-
     function wharehouseButtonPressed(
         event: Event,
         whId: number,
         index: number
     ) {
-        showAllWarehouses.value = true
-
         activeWharehouseButton.value = whId
 
         activeWhInformation.value.bodega = (warehouse.getWarehouseList ?? [])[
@@ -747,17 +731,48 @@
         ]
 
         showWaitOverlay.value = true
+        stopWatcher.value = true
+        resetWhPage()
 
-        resetWhData()
+        Promise.all([
+            fetchManager(
+                'inventory',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: 1,
+                    per_page: whInformationPerPage.value,
+                }
+            ),
 
-        onPageChanged('inventory', invTabController.value)
-        onPageChanged('tomas-fisicas', tomasFisicasTabController.value)
-        onPageChanged('purchases', purchaseTabController.value)
-        onPageChanged('movements', movementTabController.value).then(() => {
+            fetchManager(
+                'tomas-fisicas',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: 1,
+                    per_page: whInformationPerPage.value,
+                }
+            ),
+            fetchManager(
+                'purchases',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: 1,
+                    per_page: whInformationPerPage.value,
+                }
+            ),
+            fetchManager(
+                'movements',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: 1,
+                    per_page: whInformationPerPage.value,
+                }
+            ),
+        ]).then(() => {
+            showAllWarehouses.value = false
             showWaitOverlay.value = false
+            stopWatcher.value = false
         })
-
-        showAllWarehouses.value = false
     }
     function purchaseConfirmHandler(item: Purchase) {
         selectedPurchase.value = item
@@ -799,15 +814,74 @@
             return text
         }
     }
+    const loadInv = async () => {
+        showWaitOverlay.value = true
+        if (!stopWatcher.value) {
+            await fetchManager(
+                'inventory',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: invTabController.value.currentPage,
+                    per_page: whInformationPerPage.value,
+                }
+            )
+            showWaitOverlay.value = false
+        }
+    }
+    const loadPurchase = async () => {
+        showWaitOverlay.value = true
+        if (!stopWatcher.value) {
+            await fetchManager(
+                'purchases',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: purchaseTabController.value.currentPage,
+                    per_page: whInformationPerPage.value,
+                }
+            )
+            showWaitOverlay.value = false
+        }
+    }
+    const loadTomas = async () => {
+        showWaitOverlay.value = true
+        if (!stopWatcher.value) {
+            await fetchManager(
+                'tomas-fisicas',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: tomasFisicasTabController.value.currentPage,
+                    per_page: whInformationPerPage.value,
+                }
+            )
+            showWaitOverlay.value = false
+        }
+    }
+    const loadMovements = async () => {
+        showWaitOverlay.value = true
+        if (!stopWatcher.value) {
+            await fetchManager(
+                'movements',
+                { warehouse_id: activeWhInformation.value.bodega.id },
+                {
+                    page: movementTabController.value.currentPage,
+                    per_page: whInformationPerPage.value,
+                }
+            )
+            showWaitOverlay.value = false
+        }
+    }
+
+    watch(invTabController.value, loadInv)
+    watch(purchaseTabController.value, loadPurchase)
+    watch(tomasFisicasTabController.value, loadTomas)
+    watch(movementTabController.value, loadMovements)
 
     warehouse.fetchWarehouses().then(() => {
         whRows.value = (warehouse.getWarehouseList ?? []).length
         paginateAside(whPageCount.value, 0)
     })
     warehouse.fetchWarehousesLatestTomasFisicas().then(it => {
-        console.log(it)
         allWarehousesTableInformation = it as unknown as WhWithTomaFisica[]
-        console.log(allWarehousesTableInformation)
         paginateMain(whPageCount.value, 0)
         showWaitOverlay.value = false
     })
@@ -884,7 +958,7 @@
                         <b-form inline class="col-3">
                             <b-form-input
                                 id="wh-search"
-                                placeholder="Busqueda de Bodega">
+                                placeholder="Búsqueda de Bodega">
                             </b-form-input>
                         </b-form>
                         <e-button type="button" variant="primary" class="col-1"
@@ -923,7 +997,7 @@
                                 (item.whtf_done_by_lastname ?? '--')
                             }}
                         </template>
-                        <template #cell(FechaTomaFisica)="{ item }">
+                        <template #cell(FechaTomaFísica)="{ item }">
                             {{ truncate(item.whtf_created_at, 10, '') }}
                         </template>
                         <template #cell(Novedad)="{ item }">
@@ -969,17 +1043,19 @@
                                     type="button"
                                     variant="primary"
                                     class="col-2 mx-1 col-md-3 col-sm-4"
-                                    >Desplegar Busqueda
+                                    >Desplegar Búsqueda
                                 </e-button>
                                 <b-collapse id="collapse-1" class="mt-2">
                                     <ECard>
                                         <ValidationForm
                                             v-slot="{ handleReset }"
                                             @submit="
-                                                onSubmit(
-                                                    'inventory',
-                                                    invTabController
-                                                )
+                                                () => {
+                                                    onSubmit(
+                                                        'inventory',
+                                                        invTabController
+                                                    )
+                                                }
                                             "
                                             :validation-schema="inventoryForm">
                                             <div class="row" align-v="start">
@@ -1204,7 +1280,7 @@
                                                 <div
                                                     class="col-2 col-md-3 col-sm-4 mt-4 text-center">
                                                     <EButton class="">
-                                                        Confirmar Busqueda
+                                                        Confirmar Búsqueda
                                                     </EButton>
                                                 </div>
                                                 <div
@@ -1221,7 +1297,7 @@
                                                         "
                                                         type="button"
                                                         variant="secondary">
-                                                        Limpiar Busqueda
+                                                        Limpiar Búsqueda
                                                     </e-button>
                                                 </div>
                                             </div>
@@ -1299,10 +1375,13 @@
                                 :items="activeWhInformation.inventory"
                                 class="table">
                                 <template #cell(#)="{ index }">
-                                    {{ index + 1 }}
+                                    {{
+                                        (index + 1) *
+                                        invTabController.currentPage
+                                    }}
                                 </template>
                                 <template #cell(PVenta)="{ item }">
-                                    {{ item.price * item.quantity }}
+                                    {{ item.price * item.iva }}
                                 </template>
                                 <template #cell(Acciones)="{ item }">
                                     <e-button
@@ -1321,9 +1400,6 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whinv-table"
                                 align="center"
-                                @page-click.left="
-                                    onPageChanged('inventory', invTabController)
-                                "
                                 :limit="10"
                                 hide-goto-end-buttons
                                 class="paginator"></b-pagination>
@@ -1345,7 +1421,7 @@
                                         type="button"
                                         variant="primary"
                                         class="col-2 mx-1 col-md-3 col-sm-4"
-                                        >Desplegar Busqueda
+                                        >Desplegar Búsqueda
                                     </e-button>
                                     <b-collapse id="collapse-2" class="mt-2">
                                         <ModalDialog
@@ -1536,7 +1612,7 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 purchaseForm.aproved_date
                                                             "
@@ -1548,13 +1624,11 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 purchaseForm.invoice_date
                                                             "
                                                             name="checkbox-1"
-                                                            value="true"
-                                                            unchecked-value="false"
                                                             switch>
                                                             Buscar Por Fecha de
                                                             Pago
@@ -1564,16 +1638,14 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
-                                                                purchaseForm
-                                                                    .status
-                                                                    .value
+                                                                purchaseForm.status
                                                             "
                                                             name="checkbox-2"
                                                             switch>
                                                             Buscar Compras
-                                                            Enregadas
+                                                            Entregadas
                                                         </b-form-checkbox>
                                                     </div>
                                                 </div>
@@ -1650,7 +1722,7 @@
                                                     <div
                                                         class="col-2 mt-4 text-center">
                                                         <EButton class="">
-                                                            Confirmar Busqueda
+                                                            Confirmar Búsqueda
                                                         </EButton>
                                                     </div>
 
@@ -1668,7 +1740,7 @@
                                                             "
                                                             type="button"
                                                             variant="secondary">
-                                                            Limpiar Busqueda
+                                                            Limpiar Búsqueda
                                                         </e-button>
                                                     </div>
                                                 </div>
@@ -1682,7 +1754,10 @@
                                 :fields="purchasesFields"
                                 :items="activeWhInformation.purchases">
                                 <template #cell(#)="{ index }">
-                                    {{ index + 1 }}
+                                    {{
+                                        (index + 1) *
+                                        purchaseTabController.currentPage
+                                    }}
                                 </template>
                                 <template #cell(FechaCreación)="{ item }">
                                     {{ truncate(item.aproved_at, 10, '') }}
@@ -1742,12 +1817,6 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.left="
-                                    onPageChanged(
-                                        'purchases',
-                                        purchaseTabController
-                                    )
-                                "
                                 :limit="10"
                                 hide-goto-end-buttons
                                 class="paginator"></b-pagination>
@@ -1768,7 +1837,7 @@
                                     type="button"
                                     variant="primary"
                                     class="col-2 mx-1 col-md-3 col-sm-4"
-                                    >Desplegar Busqueda
+                                    >Desplegar Búsqueda
                                 </e-button>
                                 <b-collapse id="collapse-3" class="mt-2">
                                     <ECard>
@@ -1922,7 +1991,7 @@
                                                     <div
                                                         class="col-2 mt-4 col-sm-3 text-center">
                                                         <EButton class="">
-                                                            Confirmar Busqueda
+                                                            Confirmar Búsqueda
                                                         </EButton>
                                                     </div>
 
@@ -1940,7 +2009,7 @@
                                                             "
                                                             type="button"
                                                             variant="secondary">
-                                                            Limpiar Busqueda
+                                                            Limpiar Búsqueda
                                                         </e-button>
                                                     </div>
                                                 </div>
@@ -1954,7 +2023,10 @@
                                 :fields="tomasFisFields"
                                 :items="activeWhInformation.tomasFisicas">
                                 <template #cell(#)="{ index }">
-                                    {{ index + 1 }}
+                                    {{
+                                        (index + 1) *
+                                        tomasFisicasTabController.currentPage
+                                    }}
                                 </template>
                                 <template #cell(FechaRealizacion)="{ item }">
                                     {{ truncate(item.created_at, 10, '') }}
@@ -1984,12 +2056,6 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.left="
-                                    onPageChanged(
-                                        'tomas-fisicas',
-                                        tomasFisicasTabController
-                                    )
-                                "
                                 :limit="10"
                                 hide-goto-end-buttons
                                 class="paginator"></b-pagination>
@@ -2010,7 +2076,7 @@
                                         type="button"
                                         variant="primary"
                                         class="col-2 mx-1 col-md-3 col-sm-4"
-                                        >Desplegar Busqueda
+                                        >Desplegar Búsqueda
                                     </e-button>
                                     <b-collapse id="collapse-4" class="mt-2">
                                         <ECard>
@@ -2121,14 +2187,26 @@
                                                     <div
                                                         class="col-sm-3 col-lg-4 col-xl-2">
                                                         <b-form-checkbox
-                                                            class="tw-text-xl"
+                                                            class="tw-text-xl form-check-input"
                                                             v-model="
                                                                 movementForm.entrada
                                                             "
-                                                            value="true"
-                                                            unchecked-value="false"
+                                                            name="checkbox-3"
                                                             switch>
                                                             Buscar Entradas a
+                                                            Bodega
+                                                        </b-form-checkbox>
+                                                    </div>
+                                                    <div
+                                                        class="col-sm-3 col-lg-4 col-xl-2">
+                                                        <b-form-checkbox
+                                                            class="tw-text-xl form-check-input"
+                                                            v-model="
+                                                                movementForm.salida
+                                                            "
+                                                            name="checkbox-4"
+                                                            switch>
+                                                            Buscar Salidas de
                                                             Bodega
                                                         </b-form-checkbox>
                                                     </div>
@@ -2179,11 +2257,33 @@
                                                             "
                                                             info-status="danger" />
                                                     </div>
-
+                                                    <div
+                                                        class="col-lg-6 col-xl-3 col-sm-12 mt-auto">
+                                                        <InputText
+                                                            label="Nombre de Bodega Relacionada"
+                                                            v-model="
+                                                                movementForm
+                                                                    .warehouse_name
+                                                                    .value
+                                                            "
+                                                            :info-label="
+                                                                movementForm
+                                                                    .warehouse_name
+                                                                    .errorMessage
+                                                            "
+                                                            :status="
+                                                                Boolean(
+                                                                    movementForm
+                                                                        .warehouse_name
+                                                                        .errorMessage
+                                                                )
+                                                            "
+                                                            info-status="danger" />
+                                                    </div>
                                                     <div
                                                         class="col-2 mt-4 text-center">
                                                         <EButton class="">
-                                                            Confirmar Busqueda
+                                                            Confirmar Búsqueda
                                                         </EButton>
                                                     </div>
 
@@ -2201,7 +2301,7 @@
                                                             "
                                                             type="button"
                                                             variant="secondary">
-                                                            Limpiar Busqueda
+                                                            Limpiar Búsqueda
                                                         </e-button>
                                                     </div>
                                                 </div>
@@ -2215,7 +2315,10 @@
                                 :fields="movementsFields"
                                 :items="activeWhInformation.movements">
                                 <template #cell(#)="{ index }">
-                                    {{ index + 1 }}
+                                    {{
+                                        (index + 1) *
+                                        movementTabController.currentPage
+                                    }}
                                 </template>
 
                                 <template #cell(Creada)="{ item }">
@@ -2263,12 +2366,6 @@
                                 :per-page="whInformationPerPage"
                                 aria-controls="whpurchase-table"
                                 align="center"
-                                @page-click.left="
-                                    onPageChanged(
-                                        'movements',
-                                        movementTabController
-                                    )
-                                "
                                 :limit="10"
                                 hide-goto-end-buttons
                                 class="paginator"></b-pagination>
