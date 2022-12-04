@@ -1,6 +1,7 @@
 from django.db import models
 
 from api.models.common import TimestampModel
+from api.utils import PathAndRename
 
 from .provider import Provider
 
@@ -21,6 +22,8 @@ class Product(TimestampModel):
         default=0,
         help_text="The base price or the common price for a product",
     )
+
+    is_active = models.BooleanField(default=True, null=False)
 
     class Meta:
         db_table = "products"
@@ -75,6 +78,21 @@ class ProductVariant(TimestampModel):
     price = models.DecimalField(max_digits=20, decimal_places=3, null=False, default=0)
 
     active = models.BooleanField(default=True, null=False)
+
+    img = models.ImageField(upload_to=PathAndRename("products"), null=True, blank=True)
+
+    def _delete_resources(self):
+        obj = None
+        try:
+            obj = ProductVariant.objects.get(id=self.pk)
+        except ProductVariant.DoesNotExist:
+            return  # If there is not registry of prev avoid
+        if obj is not None and self.img != obj.img:
+            obj.img.delete()  # delete previous image
+
+    def save(self, *args, **kwargs):
+        self._delete_resources()
+        return super(ProductVariant, self).save(*args, **kwargs)
 
     class Meta:
         db_table = "products_variant"
