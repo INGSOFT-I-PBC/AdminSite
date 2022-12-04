@@ -195,9 +195,14 @@ class WhTransactionSerializer(ModelSerializer):
 
 
 class TomasFisicasSerializer(ModelSerializer):
-
     done_by = EmployeeSerializer()
 
+    class Meta:
+        model = WhTomasFisicas
+        fields = "__all__"
+
+
+class SimpleTomasFisicasSerializer(ModelSerializer):
     class Meta:
         model = WhTomasFisicas
         fields = "__all__"

@@ -28,17 +28,6 @@ class WhProductInventoryViewSet(ModelViewSet):
     pagination_class = CustomPagination
     queryset = InventoryProduct.objects.all().order_by("-id")
     serializer_class = ProductInventorySerializer
-    #     id:number ,
-    #     base_price: number,
-    #     sku: string,
-    #     created_at: string,
-    #     product_name: string,
-    #     variant_name:string,
-    #     price: number,
-    #     summary:string,
-    #     short_description: string,
-    #     brand_name:string ,
-    #     props: ProductProps[]
 
     def get_queryset(self):
 

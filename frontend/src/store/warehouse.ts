@@ -9,6 +9,7 @@ import type {
 import type {
     Movement,
     TomaFisica,
+    TomaFisicaQuery,
     WhWithTomaFisica,
 } from '@store/types/warehouse.model'
 import axios from 'axios'
@@ -17,6 +18,7 @@ import { defineStore } from 'pinia'
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
 
 type QuantifiedItem = Item & { quantity: number }
+type QuantifiedProduct = Product & { quantity: number }
 
 export interface WarehouseState {
     lastWarehouseList: Optional<Warehouse[]>
@@ -113,6 +115,17 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             ).data
             return result
         },
+        async saveTomasFisicas(tomaFisica: TomaFisicaQuery) {
+            const data = await (
+                await axios.post<MessageResponse>(
+                    '/api/v1/warehouse/tomas-fisicas',
+                    tomaFisica
+                )
+            ).data
+
+            return data
+        },
+
         async fetchWarehousesLatestTomasFisicas(
             options: Optional<PaginationOptions> = null
         ) {
@@ -152,7 +165,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
                 per_page: paginated_opt.per_page,
             }
             const result = await (
-                await axios.get<PaginatedAPIResponse<Product>>(
+                await axios.get<PaginatedAPIResponse<QuantifiedProduct>>(
                     '/api/v1/warehouse/product-inventory',
                     { params: queryParams }
                 )

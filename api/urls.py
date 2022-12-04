@@ -76,7 +76,7 @@ urlpatterns = [
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     path(
         "warehouse/tomas-fisicas",
-        WhTomasFisicasViewSet.as_view({"get": "list"}),
+        WhTomasFisicasViewSet.as_view({"get": "list", "post": "create_toma_fisica"}),
         name="wh-tomas",
     ),
     path(

@@ -3,6 +3,7 @@ from datetime import datetime, timedelta
 from django.core.paginator import Paginator
 from django.db.models import OuterRef, Q, Subquery
 from django.http import JsonResponse
+from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.request import Request
 from rest_framework.response import Response
@@ -15,13 +16,14 @@ from api.models.warehouse import WarehouseTransaction, WhTomasFisicas
 from api.serializers.order import OrderSerializer
 from api.serializers.warehouse import (
     FullWarehouseSerializer,
+    SimpleTomasFisicasSerializer,
     TomasFisicasSerializer,
     WarehouseSerializer,
     WhInventorySerializer,
     WhTransactionSerializer,
     WhWithTomaFisicaSerializer,
 )
-from api.utils import error_response
+from api.utils import error_response, response
 
 
 class CustomPagination(PageNumberPagination):
@@ -346,7 +348,6 @@ class WhOrderRequestViewSet(ReadOnlyModelViewSet):
 
 
 class WhLatestTomaFisicaView(APIView):
-
     def get(self, request):
         try:
 
@@ -375,6 +376,7 @@ class WhTomasFisicasViewSet(ModelViewSet):
     queryset = WhTomasFisicas.objects.all().order_by("-created_at")
     serializer_class = TomasFisicasSerializer
     pagination_class = CustomPagination
+
     def get_queryset(self):
         queryset = self.queryset
         params = self.request.query_params.copy()
@@ -409,3 +411,19 @@ class WhTomasFisicasViewSet(ModelViewSet):
             queryset = queryset.filter(created_at__lte=to_date)
 
         return queryset
+
+    def create_toma_fisica(self, request):
+
+        data = request.data
+        data["done_by"] = request.user.employee_id
+        tomas_fisicas = SimpleTomasFisicasSerializer(
+            data=data,
+        )
+        try:
+            tomas_fisicas.is_valid(raise_exception=True)
+            tomas_fisicas.save()
+
+            return response("Toma Física creada")
+        except Exception as e:
+            print(e)
+            return error_response("Data is not valid")

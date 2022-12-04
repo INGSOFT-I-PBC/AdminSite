@@ -111,7 +111,7 @@
 
     const inventoryFields: TableField[] = [
         '#',
-        { label: 'Codigo Producto', key: 'codename' },
+        { label: 'Código Producto', key: 'codename' },
         { label: 'Nombre Producto', key: 'name' },
         { label: 'Stock', key: 'quantity' },
         { label: 'Precio', key: 'price' },
@@ -122,7 +122,7 @@
     const purchasesFields: TableField[] = [
         '#',
         'FechaCreación',
-        { label: 'Codigo Orden', key: 'reference' },
+        { label: 'Código Orden', key: 'reference' },
         'Proveedor',
         'Entregado',
         'Pago',

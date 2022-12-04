@@ -82,9 +82,9 @@ class Inventory(TimestampModel):
 
     def codename_Item(self):
         return self.item.codename
+
     def is_active(self):
         return self.item.is_active
-
 
 
 class WarehouseTransaction(models.Model):
@@ -119,7 +119,7 @@ class WhTomasFisicas(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     done_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
-    novedad = models.CharField(max_length=300, blank=True)
+    novedad = models.TextField(blank=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
 
     class Meta:
