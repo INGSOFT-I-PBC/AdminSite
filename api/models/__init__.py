@@ -7,17 +7,12 @@ from .invoice import CreditNote, Invoice, InvoiceDetails, PaymentMethod
 from .items import Category, CategoryParam, Item, ItemMetaData
 from .offices import BranchOffice
 from .orders import OrderRequest, OrderRequestDetail, OrderStatus
-from .products import (
-    Product,
-    ProductMeta,
-    ProductProviders,
-    ProductVariant,
-    VariantMeta,
-)
+from .products import Product, ProductAttribute, ProductProvider, ProductVariant
 from .provider import Provider
 from .purchases import Purchase, PurchaseDetail, PurchaseStatus
 from .roles import Role
 from .sequence import Sequence
+from .test import *
 from .users import Employee
 from .warehouse import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
 
@@ -58,8 +53,8 @@ __all__ = [
     "Gender",
     "Sequence",
     "Product",
-    "ProductMeta",
-    "ProductProviders",
+    "ProductAttribute",
+    "ProductProvider",
     "ProductVariant",
-    "VariantMeta",
+    "TestModel",
 ]
