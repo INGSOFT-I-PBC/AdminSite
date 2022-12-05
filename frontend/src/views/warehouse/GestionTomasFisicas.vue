@@ -41,7 +41,7 @@
     const invTableData = ref<SelectionProduct[]>([])
 
     const paginateRows = ref<number>(25)
-    const currentPage = ref<number>(0)
+    const currentPage = ref<number>(1)
     const paginatedTableData = ref<SelectionProduct[]>([])
 
     const tomaFisicaNotes = ref('')
@@ -174,8 +174,8 @@
     function paginateData() {
         if (!stopWatcher.value) {
             paginatedTableData.value = (invTableData.value ?? []).slice(
-                currentPage.value * paginateRows.value,
-                (currentPage.value + 1) * paginateRows.value
+                (currentPage.value - 1) * paginateRows.value,
+                currentPage.value * paginateRows.value
             )
         }
     }
