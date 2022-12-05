@@ -46,6 +46,7 @@
 
     const authStore = useAuthStore()
     const nameEmployee = authStore.userData?.name
+    const nameNoteCredit = ref('Nota de Crédito')
     const itemStore = useInvoiceStore()
 
     const paymentStore = usePaymentStore()
@@ -694,7 +695,14 @@
                             v-model="nameEmployee"
                             readonly />
                     </ECol>
-                    <ECol cols="12" lg="6" xl="1"> </ECol>
+
+                    <ECol cols="6" lg="6" xl="2">
+                        <InputText
+                            label="Tipo de Documento"
+                            placeholder=""
+                            v-model="nameNoteCredit"
+                            readonly />
+                    </ECol>
                 </ERow>
 
                 <ERow style="align-items: center">

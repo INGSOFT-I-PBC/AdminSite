@@ -29,4 +29,14 @@ export const bill: Array<RouteConfig> = [
             breadcrumb: [{ text: 'Facturacion', href: '/facturacion' }],
         },
     },
+    {
+        path: '/facturacion/cancel/:id',
+        name: 'cancelbill-panel',
+        component: () => import('@views/invoice/CancelBillView.vue'),
+        meta: {
+            pageTitle: 'Facturas',
+            permission: 'view_dashboard',
+            breadcrumb: [{ text: 'Facturacion', href: '/facturacion' }],
+        },
+    },
 ]

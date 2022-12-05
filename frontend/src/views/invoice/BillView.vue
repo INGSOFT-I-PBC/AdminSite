@@ -39,8 +39,8 @@
         }[]
     >([
         //{ label: 'Por creador', value: 'created' },
-        { label: 'Por tipo de ID', value: 'cid' },
-        { label: 'Por Nombres y apellidos', value: 'name' },
+        { label: 'Por Cédula de Cliente', value: 'cid' },
+        { label: 'Por Nombres y apellidos de Cliente', value: 'name' },
         { label: 'Por fecha de creación', value: 'emission' },
     ])
     const filterName = ref(templateList.value[0])
@@ -195,6 +195,10 @@
     function goEdit(id: number): void {
         console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
+    }
+    function goCancelBill(id: number): void {
+        console.log(id)
+        router.push({ path: `/facturacion/cancel/${String(id)}` })
     }
     function onSubmit(id: number, index: number) {
         itemForm.value.id = id
@@ -374,24 +378,19 @@
                         }}
                     </template>
 
-                    <template #cell(Acciones)="{ item, index }">
+                    <template #cell(Acciones)="{ item }">
                         <div class="t-button-group">
                             <e-button
                                 left-icon="fa-eye"
                                 variant="secondary"
-                                @click="showItem(item)"
+                                @click="goEdit(item['id'])"
                                 >Ver detalles</e-button
                             >
-                            <e-button
-                                left-icon="fa-edit"
-                                variant="success"
-                                @click="goEdit(item['id'])"
-                                >Editar</e-button
-                            >
+
                             <e-button
                                 left-icon="fa-cancel"
                                 variant="cancel"
-                                @click="onSubmit(item['id'], index)">
+                                @click="goCancelBill(item['id'])">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"
                                     >Anular</span
