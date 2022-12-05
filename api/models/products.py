@@ -1,3 +1,5 @@
+from hashlib import sha1
+
 from django.db import models
 
 from api.mixins import AuditMixin, SoftDeleteMixin, TimestampMixin
@@ -80,18 +82,20 @@ class ProductVariant(TimestampMixin, SoftDeleteMixin):
             obj.img.delete()  # delete previous image
 
     def _shorten(self, value: str):
-        return value.lower().strip().replace(" ", "")[-4]
+        return sha1(value.encode("utf-8")).hexdigest()[0:5]
 
     def save(self, *args, **kwargs):
         super(ProductVariant, self).save(*args, **kwargs)
         self._delete_resources()
-        self.sku = "{:03}{:02}-{}-{}-{}".format(
-            self.product.pk,
-            self.pk,
-            self._shorten(self.product.product_name),
-            self._shorten(self.variant_name),
-            self._shorten(self.product.brand_name),
-        )
+        if not self.sku:
+            self.sku = "{:03}{:02}-{}{}-{}".format(
+                self.product.pk,
+                self.pk,
+                self._shorten(self.product.product_name),
+                self._shorten(self.variant_name),
+                self._shorten(self.product.brand_name),
+            )
+            self.save()
 
     class Meta:
         db_table = "products_variant"
@@ -130,7 +134,7 @@ class ProductAttribute(models.Model):
     )
 
     option = models.ForeignKey(
-        ProductVariant, related_name="attributes", on_delete=models.RESTRICT
+        ProductVariant, related_name="attributes", on_delete=models.RESTRICT, null=True
     )
 
     name = models.CharField(max_length=50, null=False, blank=False)
