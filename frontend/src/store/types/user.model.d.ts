@@ -88,6 +88,7 @@ export interface Employee {
     phone_number: string
     created_by: Maybe<Employee> | null
     gender: Maybe<Gender> | undefined
+    address: string | null
 }
 
 export interface EmployeeForm {
@@ -99,6 +100,7 @@ export interface EmployeeForm {
     phone_number: string
     created_by?: Maybe<Employee> | null | number
     gender: Maybe<Gender> | undefined | number
+    address: string | null
 }
 
 export default {}
