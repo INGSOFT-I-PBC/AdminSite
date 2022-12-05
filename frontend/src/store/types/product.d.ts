@@ -1,0 +1,55 @@
+interface AttributeHolder {
+    attributes: ProductAttribute[]
+}
+
+interface BaseProduct extends AttributeHolder {
+    product_name: string
+    summary: string
+    short_description: string
+    brand_name: string
+    base_price: string
+}
+
+interface BaseProductVariant extends AttributeHolder {
+    variant_name: string
+    sku: string
+    price: string
+    stock_level: number
+}
+
+export interface VariantCreateForm extends Partial<AttributeHolder> {
+    variant_name: string
+    price: string
+}
+
+export interface ProductCreationForm
+    extends Partial<AttributeHolder>,
+        BaseProduct {
+    variants?: VariantCreateForm[]
+}
+
+export interface ProductAttribute {
+    name: string
+    value: string
+    type: string
+}
+
+// TODO: complete this type
+export interface ProductCategory {
+    name: string
+}
+
+export type ProductSearchOptions = Partial<{
+    name: string
+}>
+
+export interface Product extends BaseProduct {
+    id: number
+    created_at: string
+    created_by: number
+}
+
+export interface ProductVariant extends BaseProductVariant {
+    id: number
+    img: string | null
+}

@@ -16,9 +16,20 @@ class ProductVariantSerializer(_srl.ModelSerializer):
 
 
 class _SimpleProductVariant(_srl.ModelSerializer):
+
+    attributes = SimpleAttributeSerializer(many=True, required=False)
+
     class Meta:
         model = ProductVariant
-        fields = ["id", "variant_name", "sku", "price", "img"]
+        fields = [
+            "id",
+            "variant_name",
+            "sku",
+            "price",
+            "img",
+            "stock_level",
+            "attributes",
+        ]
 
 
 class ProductSerializer(_srl.ModelSerializer):
