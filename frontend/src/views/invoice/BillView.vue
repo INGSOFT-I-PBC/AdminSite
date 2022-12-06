@@ -9,7 +9,6 @@
     import type { PaginatedResponse } from '@store-types'
     import { useInvoiceStore } from '@store/invoice'
     import type { IClient, IPayment, Invoice } from '@store/types'
-    //import { useToast } from 'vue-toastification'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
     import moment from 'moment'
 
@@ -66,9 +65,7 @@
     const form = ref<Form>({
         items: [],
     })
-    const formFiltres = ref<Form>({
-        items: [],
-    })
+
     type Form = {
         items: Invoice[]
     }
@@ -92,10 +89,8 @@
     }
     function cleanFilters() {
         filterText.value = ''
-        //formFiltres.value.items.splice(0, formFiltres.value.items.length)
         cleanQuery()
         showInvoices2(inventoryForm)
-        //showInvoices()
     }
     function cleanQuery() {
         inventoryForm.from_date = ''
@@ -176,10 +171,6 @@
         showInvoices2(inventoryForm)
     }
 
-    async function showItem(item: Invoice) {
-        detailSelectedItem.value.item = item
-        itemInfoShow.value = true
-    }
     function removeItem(index: number) {
         console.log(index)
         form.value.items.splice(index, 1)
@@ -199,11 +190,6 @@
     function goCancelBill(id: number): void {
         console.log(id)
         router.push({ path: `/facturacion/cancel/${String(id)}` })
-    }
-    function onSubmit(id: number, index: number) {
-        itemForm.value.id = id
-        itemForm.value.index = index
-        productModalShow.value = true
     }
 
     showInvoices2(inventoryForm)
