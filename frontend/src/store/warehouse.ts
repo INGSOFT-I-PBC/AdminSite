@@ -50,6 +50,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             this.paginatedWarehouse = result
             return result
         },
+        //FETCH
         async fetchPaginatedWarehouseInventory(options: WarehouseQuery , paginated_opt:PaginationOptions) {
             const queryParams = {...options, page:paginated_opt.page, per_page : paginated_opt.per_page}
             const result = await (
