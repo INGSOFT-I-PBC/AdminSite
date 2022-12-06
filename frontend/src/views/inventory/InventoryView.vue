@@ -86,7 +86,6 @@
     }
 
     function removeItem(index: number) {
-        console.log(index)
         form.value.items.splice(index, 1)
     }
 
@@ -100,7 +99,6 @@
         cleanQuery()
 
         showInvoices2(inventoryForm)
-        console.log('clean')
     }
     function cleanQuery() {
         inventoryForm.category = ''
@@ -123,7 +121,6 @@
         }
         if (valor == 'code') {
             cleanQuery()
-            console.log('entre')
 
             inventoryForm.code = filterText.value.trim()
             showInvoices2(inventoryForm)
@@ -134,7 +131,6 @@
             inventoryForm.category = filterText.value.trim()
             showInvoices2(inventoryForm)
         }
-        console.log('fuerasubmir')
     }
 
     function showInvoices2(query: any) {
@@ -171,7 +167,6 @@
                 }
                 showWaitOverlay.value = false
             })
-        console.log('show2')
     }
     async function changeStatus(item: Inventory) {
         if (item.is_active) {
@@ -201,13 +196,10 @@
     }
     function onPaginationClick(event: BvEvent, page: number) {
         searchParam.page = page
-        console.log(page)
 
         showInvoices2(inventoryForm)
-        console.log('paginated')
     }
     function go(id: number): void {
-        console.log(id)
         router.push({ path: `/inventario/editar/${String(id)}` })
     }
     type DeleteInvoice = {
@@ -222,7 +214,6 @@
     function acceptace(): void {
         ItemDataService.deleteItem(itemForm.value.id)
             .then(response => {
-                console.log(response.data)
                 removeItem(itemForm.value.index)
             })
 
