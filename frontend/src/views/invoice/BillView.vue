@@ -157,7 +157,6 @@
                     ).data
                 }
 
-                console.log(form.value.items)
                 showWaitOverlay.value = false
             })
             .catch(() => {
@@ -181,7 +180,6 @@
         itemInfoShow.value = true
     }
     function removeItem(index: number) {
-        console.log(index)
         form.value.items.splice(index, 1)
     }
     function deleteProduct(): void {
@@ -193,7 +191,6 @@
         router.push({ path: '/facturacion/agregar' })
     }
     function goEdit(id: number): void {
-        console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
     }
     function onSubmit(id: number, index: number) {
