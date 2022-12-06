@@ -292,7 +292,7 @@
                     <EButton variant="secondary" @click="go"
                         >+ Agregar factura
                     </EButton>
-                    <ECol cols="9" md="6" xl="4">
+                    <ECol cols="9" md="6" xl="3">
                         <ListBox
                             v-model="filterName"
                             :clearable="true"
