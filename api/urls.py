@@ -138,11 +138,7 @@ urlpatterns = [
     path("role/<int:id>", views.RoleView.as_view()),
     path("role/<str:id>", views.RoleView.as_view()),
     # Invoice
-    path(
-        "invoices",
-        InvoiceViewSet.as_view({"get": "list"}),
-        name="invoices",
-    ),
+    path("invoices", InvoiceViewSet.as_view({"get": "list"}), name="invoices"),
     path(
         "invoice/client",
         InvoiceView.as_view({"get": "search_client"}),
