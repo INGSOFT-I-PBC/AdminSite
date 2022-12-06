@@ -55,7 +55,7 @@
         { label: 'Emisión', key: 'emission' },
         'Cliente',
         { label: 'Cedúla Cliente', key: 'cid' },
-        { label: 'Metodo de pago', key: 'name' },
+        { label: 'Método de pago', key: 'name' },
         { label: 'Subtotal', key: 'subtotal' },
         { label: 'Total IVA', key: 'iva' },
         { label: 'Total', key: 'total' },
