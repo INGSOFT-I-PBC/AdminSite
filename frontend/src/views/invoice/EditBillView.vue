@@ -1,17 +1,13 @@
 <script setup lang="ts">
     import SequenceDataService from '@/store/sequence'
     import EButton from '@components/custom/EButton.vue'
-    import Title from '@components/custom/Title.vue'
-    import Table from '@components/holders/Table.vue'
     import { useAuthStore } from '@store'
     import { useInvoiceStore } from '@store/invoice'
     import { usePaymentStore } from '@store/payment'
     import type {
-        Client,
         IClient,
         IEditInventory,
         IInventory,
-        IInvoiceDetails,
         IItem,
         IPayment,
         IServerOptions,
@@ -20,21 +16,15 @@
     } from '@store/types'
     import { type Sequence, isMessage } from '@store/types'
     import type { TableField } from 'bootstrap-vue-3'
-    import { Console } from 'console'
-    import { all } from 'ol/loadingstrategy'
-    import * as VeeValidate from 'vee-validate'
     import { ErrorMessage, Field } from 'vee-validate'
     import { Form as EForm } from 'vee-validate'
-    import { string } from 'yup'
 
     import { onMounted } from 'vue'
     import { computed, watch } from 'vue'
-    import type { ServerOptions } from 'vue3-easy-data-table'
     import { useRoute, useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
 
     import {
-        ECard,
         ECol,
         ERow,
         InputText,
