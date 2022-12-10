@@ -42,7 +42,7 @@
         WaitOverlay,
     } from '@custom-components'
 
-    //import EmployeeSearch from '@components/EmployeeSearch.vue'
+    import EmployeeSearch from '../admin/utils/EmployeeSearch.vue'
 
     const showWaitOverlay = ref(false)
     const targetEmployee = ref<Employee>()
@@ -89,34 +89,54 @@
         },
     ]
 
-    const userForm = ref({
-        username: useField(
-            'username',
-            yup.string().required('El campo es requerido')
-        ),
-        email: useField('email', yup.string().email().required()),
-        group: useField('group', yup.object().required()),
-        password: useField('password', yup.string().min(8).max(50).required()),
-        passwordConfirm: useField(
-            'password_confirm',
-            yup.string().min(8).max(50).required()
-        ),
-        employee: useField('employee', yup.object().required()),
-    })
+    const message = ref('El campo es requerido')
 
     const historyForm = ref({
-        username: useField(
-            'username',
-            yup.string().required('El campo es requerido')
+        employee: useField('employee', yup.object().required(message.value)),
+        date: useField('date', yup.date().required(message.value)),
+        num_caja: useField('num_caja', yup.number().required(message.value)),
+        valor_apertura: useField(
+            'valor_apertura',
+            yup.number().required(message.value)
         ),
-        email: useField('email', yup.string().email().required()),
-        group: useField('group', yup.object().required()),
-        password: useField('password', yup.string().min(8).max(50).required()),
-        passwordConfirm: useField(
-            'password_confirm',
-            yup.string().min(8).max(50).required()
+        un_cent: useField('un_cent', yup.number().required(message.value)),
+        cinco_cent: useField(
+            'cinco_cent',
+            yup.number().required(message.value)
         ),
-        employee: useField('employee', yup.object().required()),
+        diez_cent: useField('diez_cent', yup.number().required(message.value)),
+        veinticinco_cent: useField(
+            'veinte_cent',
+            yup.number().required(message.value)
+        ),
+        cincuenta_cent: useField(
+            'cincuenta_cent',
+            yup.number().required(message.value)
+        ),
+        un_dolar_moneda: useField(
+            'un_dolar_moneda',
+            yup.number().required(message.value)
+        ),
+        un_dolar_billete: useField(
+            'un_dolar_billete',
+            yup.number().required(message.value)
+        ),
+        cinco_billete: useField(
+            'cinco_dolares',
+            yup.number().required(message.value)
+        ),
+        diez_billete: useField(
+            'diez_dolares',
+            yup.number().required(message.value)
+        ),
+        veinte_billete: useField(
+            'veinte_dolares',
+            yup.number().required(message.value)
+        ),
+        cincuenta_billete: useField(
+            'cincuenta_dolares',
+            yup.number().required(message.value)
+        ),
     })
 
     const generateReport = () => {
@@ -168,7 +188,12 @@
 
     function showTable() {
         showReportTable.value = true
+        console.log()
     }
+    /*
+    function onMounted() {
+
+    }*/
 </script>
 
 <template>
@@ -181,7 +206,7 @@
                 @item-select="
                     employee => {
                         targetEmployee = employee
-                        userForm.employee.value = employee
+                        historyForm.employee.value = employee
                         showEmployeeDialog = false
                     }
                 " />
@@ -205,7 +230,7 @@
                             readonly
                             @right-icon-click="showEmployeeDialog = true"
                             info-status="danger"
-                            :info-label="userForm.employee.errorMessage" />
+                            :info-label="historyForm.employee.errorMessage" />
                     </div>
                     <div class="col-lg-4 col-xl-3 col-sm-6">
                         <Datepicker
@@ -220,71 +245,188 @@
                                 <InputText
                                     label="Fecha"
                                     :model-value="value"
+                                    :info-label="historyForm.date.errorMessage"
+                                    :status="
+                                        Boolean(historyForm.date.errorMessage)
+                                    "
                                     info-status="danger" />
                             </template>
                         </Datepicker>
                     </div>
                     <div class="col-lg-6 col-xl-3 col-sm-12 mt-auto">
-                        <InputText label="Saldo Inicial" info-status="danger" />
+                        <InputText
+                            label="Saldo Inicial"
+                            v-model="historyForm.valor_apertura.value"
+                            :info-label="
+                                historyForm.valor_apertura.errorMessage
+                            "
+                            :status="
+                                Boolean(historyForm.valor_apertura.errorMessage)
+                            "
+                            info-status="danger" />
+                    </div>
+                    <div class="col-lg-6 col-xl-3 col-sm-12 mt-auto">
+                        <InputText
+                            label="N° Caja"
+                            v-model="historyForm.num_caja.value"
+                            :info-label="historyForm.num_caja.errorMessage"
+                            :status="Boolean(historyForm.num_caja.errorMessage)"
+                            info-status="danger" />
                     </div>
 
                     <div class="row" align-v="start">
-                        <label>Detalle de monedas </label>
+                        <b class="tw-text-2xl my-3">Detalle de monedas</b>
                     </div>
 
                     <div class="row" align-v="start">
                         <div class="col-sm-3 col-lg-4 col-xl-2">
-                            <InputText label="1 centavo" info-status="danger" />
+                            <InputText
+                                label="1 centavo"
+                                v-model="historyForm.un_cent.value"
+                                :info-label="historyForm.un_cent.errorMessage"
+                                :status="
+                                    Boolean(historyForm.un_cent.errorMessage)
+                                "
+                                info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
                             <InputText
                                 label="5 centavos"
+                                v-model="historyForm.cinco_cent.value"
+                                :info-label="
+                                    historyForm.cinco_cent.errorMessage
+                                "
+                                :status="
+                                    Boolean(historyForm.cinco_cent.errorMessage)
+                                "
                                 info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
                             <InputText
                                 label="25 centavos"
+                                v-model="historyForm.veinticinco_cent.value"
+                                :info-label="
+                                    historyForm.veinticinco_cent.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.veinticinco_cent
+                                            .errorMessage
+                                    )
+                                "
                                 info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
                             <InputText
                                 label="50 centavos"
+                                v-model="historyForm.cincuenta_cent.value"
+                                :info-label="
+                                    historyForm.cincuenta_cent.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.cincuenta_cent.errorMessage
+                                    )
+                                "
                                 info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
-                            <InputText label="1 dolar" info-status="danger" />
+                            <InputText
+                                label="1 dólar"
+                                v-model="historyForm.un_dolar_moneda.value"
+                                :info-label="
+                                    historyForm.un_dolar_moneda.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.un_dolar_moneda.errorMessage
+                                    )
+                                "
+                                info-status="danger" />
                         </div>
                     </div>
 
                     <div class="row" align-v="start">
-                        <label>Detalle de billetes </label>
+                        <b class="tw-text-2xl my-3">Detalle de billetes</b>
                     </div>
 
                     <div class="row" align-v="start">
                         <div class="col-sm-3 col-lg-4 col-xl-2">
-                            <InputText label="1 dolar" info-status="danger" />
+                            <InputText
+                                label="1 dólar"
+                                v-model="historyForm.un_dolar_billete.value"
+                                :info-label="
+                                    historyForm.un_dolar_billete.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.un_dolar_billete
+                                            .errorMessage
+                                    )
+                                "
+                                info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
-                            <InputText label="5 dólares" info-status="danger" />
+                            <InputText
+                                label="5 dólares"
+                                v-model="historyForm.cinco_billete.value"
+                                :info-label="
+                                    historyForm.cinco_billete.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.cinco_billete.errorMessage
+                                    )
+                                "
+                                info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
                             <InputText
                                 label="10 dólares"
+                                v-model="historyForm.diez_billete.value"
+                                :info-label="
+                                    historyForm.diez_billete.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.diez_billete.errorMessage
+                                    )
+                                "
                                 info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
                             <InputText
                                 label="20 dólares"
+                                v-model="historyForm.veinte_billete.value"
+                                :info-label="
+                                    historyForm.veinte_billete.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.veinte_billete.errorMessage
+                                    )
+                                "
                                 info-status="danger" />
                         </div>
                         <div class="col-sm-3 col-lg-4 col-xl-2">
                             <InputText
                                 label="50 dólares"
+                                v-model="historyForm.cincuenta_billete.value"
+                                :info-label="
+                                    historyForm.cincuenta_billete.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        historyForm.cincuenta_billete
+                                            .errorMessage
+                                    )
+                                "
                                 info-status="danger" />
                         </div>
                     </div>
-
-                    <div class="row" align-v="start">
+                </div>
+                <div class="row" align-v="start">
+                    <div class="col-sm-3 col-lg-4 col-xl-2 my-3">
                         <EButton
                             type="button"
                             variant="primary"
@@ -296,17 +438,23 @@
             </ValidationForm>
         </ECard>
 
-        <div v-if="showReportTable">
-            <BTable
-                id="whinv-table"
-                :fields="historyFields"
-                :items="tableData"
-                class="table">
-            </BTable>
-        </div>
+        <div v-if="showReportTable" class="my-4">
+            <ECard>
+                <BTable
+                    id="whinv-table"
+                    :fields="historyFields"
+                    :items="tableData"
+                    class="table">
+                </BTable>
 
-        <div class="row" align-v="start">
-            <EButton> Generar PDF </EButton>
+                <div class="row" align-v="start">
+                    <div class="col-sm-3 col-lg-4 col-xl-2 my-3">
+                        <EButton type="button" variant="primary">
+                            Generar PDF
+                        </EButton>
+                    </div>
+                </div>
+            </ECard>
         </div>
     </WaitOverlay>
 </template>

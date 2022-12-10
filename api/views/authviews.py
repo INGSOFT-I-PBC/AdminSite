@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from django.http import JsonResponse
-
 # from django.shortcuts import render
+from django.db.models import Q
+from django.http import JsonResponse
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.permissions import IsAuthenticated
@@ -67,6 +67,15 @@ class EmployeeViewSet(viewsets.ReadOnlyModelViewSet):
 
     queryset = Employee.objects.all().order_by("-id")
     serializer_class = ShowEmployeeSerializer
+
+    def get_queryset(self):
+        params = self.request.query_params.copy()
+        if params.get("name", None):
+            self.queryset = self.queryset.filter(
+                Q(name__icontains=params.get("name"))
+                | Q(lastname__icontains=params.get("name"))
+            )
+        return self.queryset
 
 
 class PermissionsViewSet(viewsets.ModelViewSet):

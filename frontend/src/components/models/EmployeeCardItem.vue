@@ -1,6 +1,6 @@
 <template>
     <div
-        class="card hover:tw-scale-105 tw-transition-all tw-duration-150 tw-ease-in-out">
+        class="card hover:tw-scale-105 tw-transition-all tw-duration-150 tw-ease-in-out dark:tw-bg-slate-800">
         <div class="card-body" @click="$emit('itemClick', model)">
             <div class="row">
                 <div class="col col-auto">
@@ -12,11 +12,14 @@
                 </div>
                 <div class="col">
                     <h5 class="card-title">
-                        <span class="tw-text-md tw-text-gray-500 tw-font-bold"
+                        <span
+                            class="tw-text-md tw-text-gray-500 tw-font-bold dark:tw-text-white"
                             >#{{ model.cid }}</span
                         >
                     </h5>
-                    <h6>{{ model.name }}&ThinSpace;{{ model.lastname }}</h6>
+                    <h6 class="tw-text-black dark:tw-text-white">
+                        {{ model.name }}&ThinSpace;{{ model.lastname }}
+                    </h6>
                 </div>
             </div>
         </div>
