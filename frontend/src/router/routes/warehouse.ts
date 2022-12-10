@@ -41,7 +41,17 @@ export const warehouses: Array<RouteConfig> = [
         name: 'movimiento-inventario-view',
         component: () => import('@views/warehouse/MovimientosInventario.vue'),
         meta: {
-            pageTitle: 'Movimiento Inventario',
+            pageTitle: 'Movimientos de Bodega',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas/gestion',
+                },
+                {
+                    text: 'Movimientos',
+                    active: true,
+                },
+            ],
         },
     },
 

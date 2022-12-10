@@ -81,4 +81,5 @@ __all__ = [
     "ProductViewSet",
     "CreateProductView",
     "FullProductView",
+    "VariantAttributesViewSet",
 ]

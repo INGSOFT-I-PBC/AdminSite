@@ -5,8 +5,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
-from api.models.products import InventoryProduct
-from api.serializers.productsInventory import ProductInventorySerializer
+from api.models.products import ProductStockWarehouse
+from api.serializers.warehouse import WhStockSerializer
 
 
 class CustomPagination(PageNumberPagination):
@@ -26,8 +26,8 @@ class CustomPagination(PageNumberPagination):
 
 class WhProductInventoryViewSet(ModelViewSet):
     pagination_class = CustomPagination
-    queryset = InventoryProduct.objects.all().order_by("-id")
-    serializer_class = ProductInventorySerializer
+    queryset = ProductStockWarehouse.objects.all().order_by("-id")
+    serializer_class = WhStockSerializer
 
     def get_queryset(self):
 

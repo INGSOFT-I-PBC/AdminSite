@@ -4,17 +4,35 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
+from rest_framework.pagination import PageNumberPagination as _PNPaginator
 from rest_framework.request import Request
+from rest_framework.response import Response
 from rest_framework.views import APIView as _APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet as _ROViewSet
 
-from api.models.products import Product, ProductVariant
+from api.models.products import Product, ProductAttribute, ProductVariant
 from api.serializers.product import (
     InputProductSerializer,
+    ProductAttributeSerializer,
     ProductSerializer,
     ProductVariantSerializer,
 )
 from api.utils import error_response, response
+
+
+class CustomPagination(_PNPaginator):
+    page_size = 10000
+    page_size_query_param = "per_page"
+
+    def get_paginated_response(self, data):
+        return Response(
+            {
+                "data": data,
+                "page": self.page.number,
+                "lastPage": self.page.paginator.num_pages,
+                "total": self.page.paginator.count,
+            }
+        )
 
 
 class ProductViewSet(_ROViewSet):
@@ -108,3 +126,30 @@ def create_product(request: Request):
 @api_view(["POST"])
 def create_prod_variant(request: Request):
     pass
+
+
+class VariantAttributesViewSet(_ROViewSet):
+    queryset = ProductAttribute.objects.all()
+    serializer_class = ProductAttributeSerializer
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = self.queryset.select_related("product", "option")
+        params = self.request.query_params.copy()
+
+        if (not params.get("variant_id", False)) and (not params.get("sku", False)):
+            return error_response("Invalid request")
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("sku", None):
+            queryset = queryset.filter(option__sku=params.get("sku"))
+            return queryset
+
+        if params.get("variant_id", None):
+            queryset = queryset.filter(option__id=params.get("variant_id"))
+            return queryset
+
+        return error_response("Invalid request")

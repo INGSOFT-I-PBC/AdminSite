@@ -1,7 +1,7 @@
 from datetime import datetime, timedelta
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import OuterRef, Prefetch, Q, Subquery
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
@@ -12,14 +12,23 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import Inventory, OrderRequest, Warehouse
 from api.models.common import Status
-from api.models.warehouse import WarehouseTransaction, WhTomasFisicas
+from api.models.products import ProductStockWarehouse, ProductVariant
+from api.models.warehouse import (
+    WarehouseTransaction,
+    WhTomasFisicas,
+    WhTomasFisicasDetails,
+)
 from api.serializers.order import OrderSerializer
 from api.serializers.warehouse import (
+    FullTomasDetailSerializer,
     FullWarehouseSerializer,
     SimpleTomasFisicasSerializer,
+    TomasDetailSerializer,
     TomasFisicasSerializer,
+    TranactionWithProductsSerializer,
     WarehouseSerializer,
     WhInventorySerializer,
+    WhStockSerializer,
     WhTransactionSerializer,
     WhWithTomaFisicaSerializer,
 )
@@ -177,13 +186,15 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
         return Response(self.serializer_class.data)
 
 
-class WhInventorysViewSet(ModelViewSet):
+class WhStockViewSet(ModelViewSet):
     pagination_class = CustomPagination
-    queryset = Inventory.objects.all().order_by("-id")
-    serializer_class = WhInventorySerializer
+    queryset = ProductStockWarehouse.objects.all().order_by("-id")
+    serializer_class = WhStockSerializer
 
     def get_queryset(self):
-        queryset = self.queryset
+        queryset = self.queryset.select_related("product", "variant").filter(
+            variant__is_active=True
+        )
         params = self.request.query_params.copy()
 
         if params.get("order_by", None):
@@ -197,29 +208,32 @@ class WhInventorysViewSet(ModelViewSet):
         if params.get("warehouse_id", None):
             queryset = queryset.filter(
                 warehouse_id=params.get("warehouse_id")
-            ).prefetch_related("item")
+            ).prefetch_related("variant", "product")
 
         if params.get("name", None):
-            queryset = queryset.filter(item__name__icontains=params.get("name"))
+            queryset = queryset.filter(
+                Q(variant__variant_name__icontains=params.get("name"))
+                | Q(product__product_name__icontains=params.get("name"))
+            )
 
-        if params.get("codename", None):
-            queryset = queryset.filter(item__codename__icontains=params.get("codename"))
+        if params.get("sku", None):
+            queryset = queryset.filter(variant__sku__icontains=params.get("sku"))
 
         if params.get("min_quantity", None):
-            queryset = queryset.filter(quantity__gte=params.get("min_quantity"))
+            queryset = queryset.filter(stock_level__gte=params.get("min_quantity"))
 
         if params.get("max_quantity", None):
-            queryset = queryset.filter(quantity__lte=params.get("max_quantity"))
+            queryset = queryset.filter(stock_level__lte=params.get("max_quantity"))
 
         if params.get("min_price", None):
-            queryset = queryset.filter(item__price__gte=params.get("min_price"))
+            queryset = queryset.filter(variant__price__gte=params.get("min_price"))
 
         if params.get("max_price", None):
-            queryset = queryset.filter(item__price__lte=params.get("max_price"))
+            queryset = queryset.filter(variant__price__lte=params.get("max_price"))
 
         if params.get("from_date", None):
             queryset = queryset.filter(updated_at__gte=(params["from_date"]))
-        #%H:%M:%S
+
         if params.get("to_date", None):
             to_date = datetime.strptime(
                 (params.get("to_date")), "%Y-%m-%dT%H:%M:%S.%f%z"
@@ -338,6 +352,49 @@ class WhTransactionViewSet(ModelViewSet):
         return queryset
 
 
+class WhTransactionDetailsViewSet(ModelViewSet):
+    queryset = WarehouseTransaction.objects.all()
+    serializer_class = TranactionWithProductsSerializer
+
+    def get_queryset(self):
+
+        queryset = self.queryset.select_related(
+            "created_by", "status"
+        ).prefetch_related("wh_transaction_details")
+        params = self.request.query_params.copy()
+
+        if (not params.get("id", False)) and (not params.get("warehouse_id", False)):
+            return error_response("Invalid request")
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("id", None):
+            queryset = queryset.filter(id=params.get("id"))
+            return queryset
+
+        if params.get("warehouse_id", None):
+
+            if params.get("entrada", None) and params.get("salida", None):
+                queryset = queryset.filter(
+                    Q(warehouse_destiny=params.get("warehouse_id"))
+                    | Q(warehouse_origin=params.get("warehouse_id"))
+                )
+
+            elif params.get("entrada", None):
+                queryset = queryset.filter(
+                    warehouse_destiny__name__icontains=params.get("warehouse_name")
+                )
+
+            elif params.get("salida", None):
+                queryset = queryset.filter(
+                    warehouse_origin__name__icontains=params.get("warehouse_name")
+                )
+
+        return queryset
+
+
 class WhOrderRequestViewSet(ReadOnlyModelViewSet):
     """
     API Endpoint that allows only read operation on the given Orders that are registered and available
@@ -369,6 +426,28 @@ class WhLatestTomaFisicaView(APIView):
 
         except Exception as e:
             return error_response("Invalid query")
+
+
+class TomasFisicasDetailsViewSet(ModelViewSet):
+    queryset = WhTomasFisicasDetails
+    serializer_class = FullTomasDetailSerializer
+    pagination_class = CustomPagination
+
+    def get_queryset(self):
+        queryset = self.queryset.objects.order_by("id")
+        params = self.request.query_params.copy()
+        print(params)
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("toma_fisica", None):
+            queryset = queryset.filter(
+                toma_fisica__id=params.get("toma_fisica")
+            ).select_related("product", "variant")
+            return queryset
+
+        return error_response("Invalid request")
 
 
 class WhTomasFisicasViewSet(ModelViewSet):
@@ -416,14 +495,36 @@ class WhTomasFisicasViewSet(ModelViewSet):
 
         data = request.data
         data["done_by"] = request.user.employee_id
-        tomas_fisicas = SimpleTomasFisicasSerializer(
+        tomas_serializer = SimpleTomasFisicasSerializer(
             data=data,
         )
-        try:
-            tomas_fisicas.is_valid(raise_exception=True)
-            tomas_fisicas.save()
+        details = request.data.pop("details", None)
+        # There were no details givem, toma had no issues
+        if not details or len(details) == 0:
 
-            return response("Toma Física creada")
-        except Exception as e:
-            print(e)
-            return error_response("Data is not valid")
+            try:
+                tomas_serializer.is_valid(raise_exception=True)
+                tomas_serializer.save()
+                return response("Toma Física created")
+            except Exception as e:
+                return error_response("Data is not valid")
+
+        if tomas_serializer.is_valid(raise_exception=True):
+
+            details = [x for x in details if x]
+            toma_fisica: WhTomasFisicas = tomas_serializer.save()
+            for detail in details:
+                detail["toma_fisica"] = toma_fisica.pk
+
+            details_serializer = TomasDetailSerializer(data=details, many=True)
+
+            try:
+                details_serializer.is_valid(raise_exception=True)
+
+            except Exception as e:
+                toma_fisica.delete()
+                raise e
+            details_serializer.save()
+            serializer = TomasFisicasSerializer(toma_fisica)
+            return JsonResponse(serializer.data, status=201)
+        return error_response("Data is not valid")

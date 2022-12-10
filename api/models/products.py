@@ -178,21 +178,6 @@ class ProductProvider(models.Model):
         db_table = "product_providers"
 
 
-class InventoryProduct(TimestampModel):
-
-    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-
-    warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
-
-    product = models.ForeignKey(ProductVariant, on_delete=models.RESTRICT)
-    updated_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
-
-    quantity = models.IntegerField(validators=[MinValueValidator(0)])
-
-    class Meta:
-        db_table = "product_inventory"
-
-
 class ProductCategory(models.Model):
     """Product Category
     A transition table for Many to many relationship with products
@@ -224,6 +209,8 @@ class ProductStockWarehouse(TimestampMixin, SoftDeleteMixin, models.Model):
         on_delete=models.RESTRICT,
         help_text="The location where the stock is supposed",
     )
+
+    updated_by = models.ForeignKey("Employee", on_delete=models.RESTRICT)
 
     stock_level = models.PositiveBigIntegerField(default=0)
 
