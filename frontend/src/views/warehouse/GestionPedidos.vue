@@ -1,11 +1,64 @@
 <script setup lang="ts">
-    import { WaitOverlay } from '@custom-components'
+    import { usePurchaseStore } from '@store/purchase'
+    import type { Status, Warehouse } from '@store/types'
+    import { useWarehouseStore } from '@store/warehouse'
+
+    import { useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
+
+    import { EButton, ECard, ListBox, WaitOverlay } from '@custom-components'
 
     const showWaitOverlay = ref(true)
+    const router = useRouter()
+
+    const purchase = usePurchaseStore()
+    const warehouse = useWarehouseStore()
+    const toast = useToast()
+
+    const selectedWarehouse = ref<Warehouse>()
+
+    const selectedStatus = ref<Status>()
+
+    warehouse
+        .fetchWarehouses()
+        .then((): void => {
+            showWaitOverlay.value = false
+        })
+        .catch((): void => {
+            toast.error('Error de carga')
+            showWaitOverlay.value = false
+        })
 </script>
 
 <template>
-    <WaitOverlay :show="showWaitOverlay"> </WaitOverlay>
+    <WaitOverlay :show="showWaitOverlay">
+        <ECard>
+            <div class="container">
+                <div class="row">
+                    <h1 class="title my-2 col-5 dark-mode-text">
+                        Bodegas Disponibles
+                    </h1>
+                </div>
+                <div class="row inline-flex">
+                    <ListBox
+                        class="col-3"
+                        v-model="selectedWarehouse"
+                        placeholder="Filtro por bodega"
+                        label="name"
+                        :options="warehouse.getWarehouseList ?? []" />
+
+                    <ListBox
+                        class="col-3 tw-capitalize"
+                        v-model="selectedStatus"
+                        placeholder="Filtro por estado actual"
+                        label="display"
+                        :options="purchase.getPurchaseStatus() ?? []" />
+
+                    <e-button class="col-2"> Buscar </e-button>
+                </div>
+            </div>
+        </ECard>
+    </WaitOverlay>
 </template>
 <style lang="scss">
     h1.title {
@@ -17,6 +70,10 @@
         --bs-list-group-border-radius: 0.25rem;
         --bs-list-group-item-padding-x: 0.8rem;
         --bs-list-group-item-padding-y: 0.3rem;
+    }
+
+    .dark-mode-text {
+        @apply dark:tw-text-white tw-text-secondary-dark;
     }
 
     .table {

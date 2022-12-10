@@ -16,7 +16,8 @@
     import { Form as ValidationForm, useField } from 'vee-validate'
     import * as yup from 'yup'
 
-    import { ref, watch } from 'vue'
+    import { onMounted, ref, watch } from 'vue'
+    import { useRoute } from 'vue-router'
     import { useToast } from 'vue-toastification'
 
     import {
@@ -41,6 +42,7 @@
         props: ProductProps[]
     }
 
+    const router = useRoute()
     const toast = useToast()
     const warehouse = useWarehouseStore()
     const itemStore = useItemStore()
@@ -426,19 +428,27 @@
         toast.success('Producto chequeado', { timeout: 2000 })
     }
 
-    warehouse
-        .fetchWarehouses()
-        .then(() => {
-            showWaitOverlay.value = false
-        })
-        .catch(e => {
-            toast.error('Error de carga')
-            showWaitOverlay.value = false
-        })
-
     watch(searchString, filterData)
     watch(codeInputString, checkNewLine)
     watch(currentPage, paginateData)
+    onMounted(() => {
+        const warehouse_id = router.params.id
+        warehouse
+            .fetchWarehouses()
+            .then(() => {
+                showWaitOverlay.value = false
+                if (warehouse_id.length > 0 && warehouse.getWarehouseList) {
+                    selectedWarehouse.value = warehouse.getWarehouseList.find(
+                        wh => (wh.id = Number(warehouse_id))
+                    )
+                    triggerWhChange()
+                }
+            })
+            .catch(e => {
+                toast.error('Error de carga')
+                showWaitOverlay.value = false
+            })
+    })
 </script>
 
 <template>

@@ -33,6 +33,7 @@
     import * as yup from 'yup'
 
     import { computed, ref, watch } from 'vue'
+    import { useRouter } from 'vue-router'
     import { useToast } from 'vue-toastification'
 
     import {
@@ -43,6 +44,8 @@
         ModalDialog,
         WaitOverlay,
     } from '@custom-components'
+
+    const router = useRouter()
 
     /**
      * Contains the current status name stored in the database that correspons to a delivered purchase
@@ -2341,6 +2344,11 @@
                                     type="button"
                                     variant="primary"
                                     class="col-2 mx-1 col-md-3 col-sm-4"
+                                    @click.left="
+                                        router.push({
+                                            path: `/bodegas/tomas-fisicas/${activeWhInformation.bodega.id}`,
+                                        })
+                                    "
                                     >Realizar Nueva Toma Física
                                 </e-button>
                                 <b-collapse id="collapse-3" class="mt-2">
