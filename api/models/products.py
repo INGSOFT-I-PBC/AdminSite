@@ -1,11 +1,14 @@
 from hashlib import sha1
 
+from django.core.validators import MinValueValidator
 from django.db import models
 
 from api.mixins import AuditMixin, SoftDeleteMixin, TimestampMixin
 from api.models.common import TimestampModel
+from api.models.warehouse import Warehouse
 from api.utils import PathAndRename
 
+from .auth import Employee
 from .provider import Provider
 
 
@@ -206,6 +209,8 @@ class ProductStockWarehouse(TimestampMixin, SoftDeleteMixin, models.Model):
         on_delete=models.RESTRICT,
         help_text="The location where the stock is supposed",
     )
+
+    updated_by = models.ForeignKey("Employee", on_delete=models.RESTRICT)
 
     stock_level = models.PositiveBigIntegerField(default=0)
 

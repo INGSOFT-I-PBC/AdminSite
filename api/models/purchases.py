@@ -5,6 +5,7 @@ from api.models.common import Status
 from api.models.invoice import Invoice
 from api.models.items import Item
 from api.models.orders import OrderRequest
+from api.models.products import Product, ProductVariant
 from api.models.provider import Provider
 from api.models.users import Employee
 from api.models.warehouse import Warehouse
@@ -33,7 +34,8 @@ class PurchaseDetail(models.Model):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.RESTRICT)
+    variant = models.ForeignKey(ProductVariant, on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     price = models.DecimalField(
         validators=[MinValueValidator(0)], decimal_places=3, max_digits=15
     )

@@ -1,3 +1,4 @@
+import type { ProductVariant, SimpleProduct } from './product.model'
 import type { Employee } from './user.model'
 
 export interface MinimalWarehouse {
@@ -17,11 +18,32 @@ export interface TomaFisica {
     warehouse: number
 }
 
+export interface TomaFisicaDetail {
+    id?: number
+    toma_fisica?: number
+    product: number
+    variant: number
+    new_stock: number
+    previous_stock: number
+    novedad: string
+}
+
+export interface FullTomaFisicaDetail {
+    id?: number
+    toma_fisica?: number
+    product: Product
+    variant: ProductVariant
+    new_stock: number
+    previous_stock: number
+    novedad: string
+}
+
 export interface TomaFisicaQuery {
     id?: number
     done_by?: number
     creaed_at?: string
     novedad?: string
+    details?: TomaFisicaDetailsPost[]
     warehouse?: number
 }
 
@@ -68,6 +90,14 @@ export interface WhWithTomaFisica {
     whtf_done_by_name: string
     whtf_done_by_lastname: string
     whtf_novedad?: string
+}
+
+export interface WarehouseStock {
+    product: SimpleProduct
+    variant: ProductVariant
+    updated_by: Employee
+    updated_at: string
+    stock_level: number
 }
 
 export default {}
