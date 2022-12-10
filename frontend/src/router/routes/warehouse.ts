@@ -18,7 +18,7 @@ export const warehouses: Array<RouteConfig> = [
         },
     },
     {
-        path: '/bodegas/tomas-fisicas',
+        path: '/bodegas/tomas-fisicas/:id?',
         component: () => import('@views/warehouse/GestionTomasFisicas.vue'),
         name: 'tomas-fisica-view',
         meta: {

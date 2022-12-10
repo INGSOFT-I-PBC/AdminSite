@@ -1,3 +1,5 @@
+import type { ProductVariant, SimpleProduct } from './product.model'
+
 export interface MinimalPurchase {
     img_details: string
     aproved_at: string
@@ -17,6 +19,15 @@ export interface MinimalPurchase {
 
 export interface Purchase extends MinimalPurchase {
     id: number
+}
+
+export interface FUllPurchaseDetails {
+    id?: number
+    price: number
+    quantity: number
+    purchase: number
+    product: SimpleProduct
+    variant: ProductVariant
 }
 
 export interface PurchaseQuery {
