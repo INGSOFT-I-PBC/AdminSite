@@ -14,7 +14,16 @@ export type {
     TomaFisica,
     WhWithTomaFisica,
     Movement,
+    WarehouseStock,
+    TomaFisicaDetail,
+    FullTomaFisicaDetail,
 } from './warehouse.model'
+
+export type {
+    SimpleProduct,
+    ProductProps,
+    ProductVariant,
+} from './product.model'
 
 export type { MinimalPurchase, Purchase } from './purchase.model'
 

@@ -1,7 +1,7 @@
 """ API Url Configuration
 The `urlpatterns` list the URLs to the Views
 """
-from django.urls import include, path
+from django.urls import include, path, re_path
 from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
@@ -14,6 +14,7 @@ from api.views.orders import OrderRequestView
 from api.views.provinceview import ProvinceCityView
 from api.views.sequence import *
 from api.views.statusview import StatusView
+from api.views.test import CreateTestView, TestAPIView
 from api.views.warehouse import *
 
 """ Definition of paginated data
@@ -41,6 +42,9 @@ router.register("purchase", views.PurchaseViewSet),
 router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"payment/all", views.FullPaymentViewSet)
 router.register(r"inventory", views.InventoryViewSet)
+router.register(r"products", views.ProductViewSet)
+router.register("product/(?P<product>\d+)/variants", views.ProductVariantViewSet)
+router.register(r"products/variants", views.ProductVariantViewSet)
 
 
 urlpatterns = [
@@ -54,8 +58,8 @@ urlpatterns = [
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
     path("warehouse/order", WhOrderRequestView.as_view(), name="wh-orders"),
     path(
-        "warehouse/inventory",
-        WhInventorysViewSet.as_view({"get": "list"}),
+        "warehouse/stock",
+        WhStockViewSet.as_view({"get": "list"}),
         name="wh-inventory",
     ),
     path(
@@ -76,13 +80,24 @@ urlpatterns = [
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     path(
         "warehouse/tomas-fisicas",
-        WhTomasFisicasViewSet.as_view({"get": "list"}),
+        WhTomasFisicasViewSet.as_view({"get": "list", "post": "create_toma_fisica"}),
         name="wh-tomas",
+    ),
+    path(
+        "warehouse/tomas-fisicas/details",
+        TomasFisicasDetailsViewSet.as_view({"get": "list"}),
+        name="wh-tomas-details",
     ),
     path(
         "warehouse/tomas-fisicas/all",
         WhLatestTomaFisicaView.as_view(),
         name="all-wh-tomas",
+    ),
+    # Product Variants
+    path(
+        "warehouse/product-inventory",
+        WhProductInventoryViewSet.as_view({"get": "list"}),
+        name="product-inventory",
     ),
     path("items", ItemView.as_view(), name="item-list"),
     path("items/<int:id>", views.ItemView.as_view()),
@@ -95,7 +110,6 @@ urlpatterns = [
     path(
         "inventories",
         FullInventoryViewSet2.as_view({"get": "list"}),
-
     ),
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     # Item management
@@ -163,4 +177,17 @@ urlpatterns = [
         PaginatedItemInvoiceView.as_view(),
         name="search-invoice-items",
     ),
+    # =====================================
+    # <|        Product endpoints        |>
+    # =====================================
+    path("product", CreateProductView.as_view()),
+    path("products/variant", create_prod_variant),
+    path("products/variant/props", VariantAttributesViewSet.as_view({"get": "list"})),
+    path("product/<int:pk>", FullProductView.as_view()),
+    path("product/<int:product>/variant/<str:sku>", ProductVariantView.as_view()),
+    path("product/<int:product>/variant/<int:id>", ProductVariantView.as_view()),
+    path("products/variant/<str:sku>", ProductVariantView.as_view()),
+    # -====[ Test Api view urls ]====-
+    path("utils/test", CreateTestView.as_view()),
+    re_path(r"utils/test/(?P<id>\d+)", TestAPIView.as_view()),
 ]

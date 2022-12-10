@@ -8,6 +8,7 @@ from api.serializers.item import *
 from api.serializers.items import *
 from api.serializers.order import *
 from api.serializers.payment import *
+from api.serializers.product import *
 from api.serializers.provider import *
 from api.serializers.role import *
 from api.serializers.sequence import *
@@ -44,4 +45,5 @@ __all__ = [
     "GetEmployeeSerializer",
     "ShowEmployeeSerializer",
     "UpdateEmployeeSerializer",
+    "InputProductSerializer",
 ]

@@ -9,6 +9,7 @@
     import type { PaginatedResponse } from '@store-types'
     import { useInvoiceStore } from '@store/invoice'
     import type { IClient, IPayment, Invoice } from '@store/types'
+    //import { useToast } from 'vue-toastification'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
     import moment from 'moment'
 
@@ -38,8 +39,8 @@
         }[]
     >([
         //{ label: 'Por creador', value: 'created' },
-        { label: 'Por Cédula de Cliente', value: 'cid' },
-        { label: 'Por Nombres y apellidos de Cliente', value: 'name' },
+        { label: 'Por tipo de ID', value: 'cid' },
+        { label: 'Por Nombres y apellidos', value: 'name' },
         { label: 'Por fecha de creación', value: 'emission' },
     ])
     const filterName = ref(templateList.value[0])
@@ -65,7 +66,9 @@
     const form = ref<Form>({
         items: [],
     })
-
+    const formFiltres = ref<Form>({
+        items: [],
+    })
     type Form = {
         items: Invoice[]
     }
@@ -89,8 +92,10 @@
     }
     function cleanFilters() {
         filterText.value = ''
+        //formFiltres.value.items.splice(0, formFiltres.value.items.length)
         cleanQuery()
         showInvoices2(inventoryForm)
+        //showInvoices()
     }
     function cleanQuery() {
         inventoryForm.from_date = ''
@@ -171,6 +176,10 @@
         showInvoices2(inventoryForm)
     }
 
+    async function showItem(item: Invoice) {
+        detailSelectedItem.value.item = item
+        itemInfoShow.value = true
+    }
     function removeItem(index: number) {
         console.log(index)
         form.value.items.splice(index, 1)
@@ -183,17 +192,14 @@
     function go(): void {
         router.push({ path: '/facturacion/agregar' })
     }
-    function goNote(): void {
-        router.push({ path: '/facturacion/notascredito' })
-    }
-
     function goEdit(id: number): void {
         console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
     }
-    function goCancelBill(id: number): void {
-        console.log(id)
-        router.push({ path: `/facturacion/cancel/${String(id)}` })
+    function onSubmit(id: number, index: number) {
+        itemForm.value.id = id
+        itemForm.value.index = index
+        productModalShow.value = true
     }
 
     showInvoices2(inventoryForm)
@@ -279,16 +285,10 @@
 
         <ECard>
             <ERow>
-                <h1 style="font-size: 35px; color: black">Facturas</h1>
+                <h1 style="font-size: 35px; color: black">Notas de crédito</h1>
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton variant="secondary" @click="go"
-                        >+ Agregar factura
-                    </EButton>
-                    <EButton variant="secondary" @click="goNote"
-                        >Notas de crédito
-                    </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="filterName"
@@ -371,19 +371,24 @@
                         }}
                     </template>
 
-                    <template #cell(Acciones)="{ item }">
+                    <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
                             <e-button
                                 left-icon="fa-eye"
                                 variant="secondary"
-                                @click="goEdit(item['id'])"
+                                @click="showItem(item)"
                                 >Ver detalles</e-button
                             >
-
+                            <e-button
+                                left-icon="fa-edit"
+                                variant="success"
+                                @click="goEdit(item['id'])"
+                                >Editar</e-button
+                            >
                             <e-button
                                 left-icon="fa-cancel"
                                 variant="cancel"
-                                @click="goCancelBill(item['id'])">
+                                @click="onSubmit(item['id'], index)">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"
                                     >Anular</span

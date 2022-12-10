@@ -1,4 +1,8 @@
+import os
+from uuid import uuid4
+
 from django.http import JsonResponse
+from django.utils.deconstruct import deconstructible
 from rest_framework import pagination
 from rest_framework.response import Response
 
@@ -66,3 +70,16 @@ def teapot(msg: str = "I'm a teapot"):
     return JsonResponse(
         {"error": None, "message": msg, "code": "IM_A_TEAPOT"}, status=418
     )
+
+
+@deconstructible
+class PathAndRename(object):
+    def __init__(self, sub_path):
+        self.path = sub_path
+
+    def __call__(self, instance, filename):
+        ext = filename.split(".")[-1]
+        # set filename as random string
+        filename = "{}.{}".format(uuid4().hex, ext)
+        # return the whole path to the file
+        return os.path.join(self.path, filename)

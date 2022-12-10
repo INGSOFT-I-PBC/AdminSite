@@ -20,6 +20,16 @@ export const bill: Array<RouteConfig> = [
         },
     },
     {
+        path: '/facturacion/notascredito',
+        name: 'viewnotescredit-panel',
+        component: () => import('@views/invoice/CreditNotes.vue'),
+        meta: {
+            pageTitle: 'Notas de crédito',
+            permission: 'view_dashboard',
+            breadcrumb: [{ text: 'Facturacion', href: '/facturacion' }],
+        },
+    },
+    {
         path: '/facturacion/editar/:id',
         name: 'editbill-panel',
         component: () => import('@views/invoice/EditBillView.vue'),

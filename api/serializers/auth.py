@@ -103,16 +103,32 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 class ShowEmployeeSerializer(serializers.ModelSerializer):
     role = RoleSerializer()
+    created_by = EmployeeSerializer()
+    gender = GenderSerializer()
+    address = serializers.CharField(allow_blank=True, allow_null=True, required=True)
 
     class Meta:
         model = Employee
-        fields = ["id", "created_at", "name", "lastname", "cid", "role", "is_active"]
+        fields = [
+            "id",
+            "created_at",
+            "created_by",
+            "name",
+            "lastname",
+            "cid",
+            "role",
+            "phone_number",
+            "gender",
+            "is_active",
+            "address",
+        ]
 
 
 class GetEmployeeSerializer(serializers.ModelSerializer):
     role = RoleSerializer()
     created_by = ShowEmployeeSerializer()
     gender = GenderSerializer()
+    address = serializers.CharField(allow_blank=True, allow_null=True, required=True)
 
     class Meta:
         model = Employee
@@ -125,10 +141,13 @@ class GetEmployeeSerializer(serializers.ModelSerializer):
             "phone_number",
             "created_by",
             "gender",
+            "address",
         ]
 
 
 class UpdateEmployeeSerializer(serializers.ModelSerializer):
+    address = serializers.CharField(allow_blank=True, allow_null=True, required=True)
+
     class Meta:
         model = Employee
         fields = [
@@ -136,9 +155,11 @@ class UpdateEmployeeSerializer(serializers.ModelSerializer):
             "lastname",
             "cid",
             "is_active",
+            "created_by",
             "role",
             "phone_number",
             "gender",
+            "address",
         ]
 
 
