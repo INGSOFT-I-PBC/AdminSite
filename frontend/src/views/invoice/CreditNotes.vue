@@ -192,10 +192,6 @@
     function go(): void {
         router.push({ path: '/facturacion/agregar' })
     }
-    function goNote(): void {
-        router.push({ path: '/facturacion/notascredito' })
-    }
-
     function goEdit(id: number): void {
         console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
@@ -289,16 +285,10 @@
 
         <ECard>
             <ERow>
-                <h1 style="font-size: 35px; color: black">Facturas</h1>
+                <h1 style="font-size: 35px; color: black">Notas de crédito</h1>
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
-                    <EButton variant="secondary" @click="go"
-                        >+ Agregar factura
-                    </EButton>
-                    <EButton variant="secondary" @click="goNote"
-                        >Notas de crédito
-                    </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="filterName"
