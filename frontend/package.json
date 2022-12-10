@@ -59,7 +59,7 @@
         "@types/node": "18.8.0",
         "@types/ol": "^6.5.3",
         "@vitejs/plugin-vue": "^4.0.0",
-        "@vitejs/plugin-vue-jsx": "^2.0.1",
+        "@vitejs/plugin-vue-jsx": "^3.0.0",
         "@vue/eslint-config-prettier": "^7.0.0",
         "@vue/eslint-config-typescript": "^11.0.2",
         "@vue/runtime-core": "^3.2.41",
