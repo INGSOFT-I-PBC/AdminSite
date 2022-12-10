@@ -14,7 +14,6 @@ export function isMessage<T>(
         typeof response == 'object' ? Object.keys(response ?? {}).length : 0
     let incidences = 0
     Object.keys(response ?? {}).forEach(key => {
-        console.log('checking key: ', key)
         if (['error', 'message', 'code'].includes(key)) {
             incidences += 1
         }

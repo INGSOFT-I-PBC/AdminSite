@@ -65,6 +65,11 @@ export const menus: MenuItem[] = [
         icon: 'package',
         children: [
             {
+                label: 'Gestión Bodegas',
+                path: '/bodegas/gestion',
+                routeName: 'gestion-view',
+            },
+            {
                 label: 'Pedidos',
                 children: [
                     {

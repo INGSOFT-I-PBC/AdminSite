@@ -176,3 +176,87 @@ class DataProdVariantSerializer(_srl.Serializer):
     sku = _srl.CharField(allow_null=False, allow_blank=False, max_length=128)
     price = _srl.DecimalField(max_digits=20, decimal_places=3, allow_null=False)
     img = _srl.ImageField(required=False)
+
+
+class SimpleProductSerializer(_srl.ModelSerializer):
+    id = _srl.IntegerField()
+    product_name = _srl.CharField(max_length=128)
+    summary = _srl.CharField()
+    short_description = _srl.CharField(max_length=256)
+    brand_name = _srl.CharField(max_length=50)
+    base_price = _srl.DecimalField(max_digits=14, decimal_places=3)
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "product_name",
+            "summary",
+            "short_description",
+            "brand_name",
+            "base_price",
+        ]
+
+
+class ProductVariantSerializer(_srl.ModelSerializer):
+
+    id = _srl.IntegerField()
+    created_at = _srl.DateTimeField()
+    updated_at = _srl.DateTimeField()
+    deleted_at = _srl.DateTimeField()
+    variant_name = _srl.CharField(max_length=50)
+    sku = _srl.CharField(max_length=128)
+    price = _srl.DecimalField(max_digits=14, decimal_places=3)
+    is_active = _srl.BooleanField()
+    product = SimpleProductSerializer()
+
+    def to_representation(self, obj):
+        """Move fields from product to Vaariant representation."""
+        representation = super().to_representation(obj)
+        product_representation = representation.pop("product")
+        for key in product_representation:
+            if key == "id":
+                representation["prod_id"] = product_representation[key]
+            else:
+                representation[key] = product_representation[key]
+
+        return representation
+
+    class Meta:
+        model = ProductVariant
+        fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "variant_name",
+            "sku",
+            "price",
+            "is_active",
+            "product",
+        ]
+
+
+class SimpleVariantSerializer(_srl.ModelSerializer):
+
+    id = _srl.IntegerField()
+    created_at = _srl.DateTimeField()
+    updated_at = _srl.DateTimeField()
+    deleted_at = _srl.DateTimeField()
+    variant_name = _srl.CharField(max_length=50)
+    sku = _srl.CharField(max_length=128)
+    price = _srl.DecimalField(max_digits=14, decimal_places=3)
+    is_active = _srl.BooleanField()
+
+    class Meta:
+        model = ProductVariant
+        fields = [
+            "id",
+            "created_at",
+            "updated_at",
+            "deleted_at",
+            "variant_name",
+            "sku",
+            "price",
+            "is_active",
+        ]

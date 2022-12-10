@@ -58,8 +58,8 @@ urlpatterns = [
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
     path("warehouse/order", WhOrderRequestView.as_view(), name="wh-orders"),
     path(
-        "warehouse/inventory",
-        WhInventorysViewSet.as_view({"get": "list"}),
+        "warehouse/stock",
+        WhStockViewSet.as_view({"get": "list"}),
         name="wh-inventory",
     ),
     path(
@@ -80,13 +80,24 @@ urlpatterns = [
     path("warehouse/puchase-order", WhOrderRequestView.as_view(), name="wh-orders"),
     path(
         "warehouse/tomas-fisicas",
-        WhTomasFisicasViewSet.as_view({"get": "list"}),
+        WhTomasFisicasViewSet.as_view({"get": "list", "post": "create_toma_fisica"}),
         name="wh-tomas",
+    ),
+    path(
+        "warehouse/tomas-fisicas/details",
+        TomasFisicasDetailsViewSet.as_view({"get": "list"}),
+        name="wh-tomas-details",
     ),
     path(
         "warehouse/tomas-fisicas/all",
         WhLatestTomaFisicaView.as_view(),
         name="all-wh-tomas",
+    ),
+    # Product Variants
+    path(
+        "warehouse/product-inventory",
+        WhProductInventoryViewSet.as_view({"get": "list"}),
+        name="product-inventory",
     ),
     path("items", ItemView.as_view(), name="item-list"),
     path("items/<int:id>", views.ItemView.as_view()),
@@ -171,6 +182,7 @@ urlpatterns = [
     # =====================================
     path("product", CreateProductView.as_view()),
     path("products/variant", create_prod_variant),
+    path("products/variant/props", VariantAttributesViewSet.as_view({"get": "list"})),
     path("product/<int:pk>", FullProductView.as_view()),
     path("product/<int:product>/variant/<str:sku>", ProductVariantView.as_view()),
     path("product/<int:product>/variant/<int:id>", ProductVariantView.as_view()),
