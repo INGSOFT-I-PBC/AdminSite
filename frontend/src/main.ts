@@ -15,16 +15,13 @@ import '@/scss/styles.scss'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
-import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
-import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap.css'
 
 import '../scss/datepicker-theme.scss'
 import './assets/main.css'
-import './index.css'
 import './scss/styles.scss'
+import './index.css'
 
 import { awesomeIcons } from './icons'
 import router from './router'
