@@ -1,6 +1,7 @@
 <script setup lang="ts">
     import { useItemStore } from '@store/items'
     import { useOrderStore } from '@store/order'
+    import { useProductStore } from '@store/product'
     import {
         type Item,
         type MessageResponse,
@@ -9,6 +10,7 @@
     } from '@store/types'
     import type { ItemProps } from '@store/types/items.model'
     import type { OrderSaveData } from '@store/types/orders.model'
+    import type { Product } from '@store/types/product'
     import { useWarehouseStore } from '@store/warehouse'
     import type { TableField } from 'bootstrap-vue-3'
 
@@ -33,6 +35,7 @@
      * Utility object definitions
      */
     const itemStore = useItemStore()
+    const productStore = useProductStore()
     const toast = useToast()
     /**
      * View Holders
@@ -55,6 +58,11 @@
     const itemPageLength = computed(() => {
         const items = itemStore.paginatedItems
         if (items == null || isMessage(items)) return 0
+        return items.total
+    })
+    const productPageLength = computed(() => {
+        const items = productStore.products
+        if (isMessage(items) || !items) return 0
         return items.total
     })
     type QuantifiedItem = Item & { quantity: number }
@@ -83,6 +91,14 @@
         { text: 'Modelo', value: 'model' },
         { text: 'Categoría', value: 'category.name' },
     ]
+
+    const productFields = [
+        { text: 'Código', value: 'id' },
+        { text: 'Nombre de producto', value: 'product_name' },
+        { text: 'Descripción', value: 'short_description' },
+        { text: 'Marca', value: 'brand_name' },
+        { text: 'Variantes', value: 'variants' },
+    ]
     const formFields: TableField[] = [
         '#',
         { label: 'Nombre de producto', key: 'name' },
@@ -106,6 +122,11 @@
         return itemStore.paginatedItems?.data || []
     })
 
+    const products = computed((): Product[] => {
+        if (isMessage(productStore.products)) return []
+        return productStore.products?.data ?? []
+    })
+
     warehouse.fetchWarehouses().then(() => {
         showWaitOverlay.value = false
     })
@@ -118,6 +139,7 @@
     const loadItems = async () => {
         itemLoading.value = true
         await itemStore.fetchItemsPaginated(itemPaginationOptions.value)
+        await productStore.fetchProducts(itemPaginationOptions.value)
         itemLoading.value = false
     }
 
@@ -211,12 +233,13 @@
                 <!-- <div
                     class="tw-overflow-y-auto tw-max-h-72 tw-text-black dark:tw-text-white"> -->
                 <EasyDataTable
-                    :headers="itemHeader"
-                    :items="items"
+                    class="tw-z-10"
+                    :headers="productFields"
+                    :items="products"
                     buttons-pagination
                     :rows-items="[5, 10, 15, 20]"
                     v-model:server-options="serverOpts"
-                    :server-items-length="itemPageLength"
+                    :server-items-length="productPageLength"
                     table-class-name="custom-data-table"
                     :loading="itemLoading"
                     @click-row="onRowClick" />
@@ -442,5 +465,13 @@
             min-width: auto;
             max-width: 100%;
         }
+    }
+    .pagination__rows-per-page {
+        .select-items {
+            @apply tw-z-50;
+        }
+    }
+    .easy-data-table__rows-selector {
+        @apply tw-flex tw-relative;
     }
 </style>
