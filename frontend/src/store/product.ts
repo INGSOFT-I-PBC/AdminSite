@@ -27,7 +27,9 @@ export const useProductStore = defineStore('store-product', () => {
         product.value = response
         return response
     }
-    async function fetchProducts(params?: ProductSearchOptions) {
+    async function fetchProducts(
+        params?: ProductSearchOptions & PaginationOptions
+    ) {
         const response = (
             await axios.get<PaginatedResponse<Product>>(
                 `/api/v1/list/products`,

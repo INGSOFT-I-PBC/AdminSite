@@ -45,6 +45,7 @@ export type ProductSearchOptions = Partial<{
 
 export interface Product extends BaseProduct {
     id: number
+    variants: ProductVariant[]
     created_at: string
     created_by: number
 }
