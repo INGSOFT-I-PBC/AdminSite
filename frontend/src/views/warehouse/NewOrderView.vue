@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import { useItemStore } from '@store/items'
     import { useOrderStore } from '@store/order'
     import { useProductStore } from '@store/product'
     import {
@@ -8,9 +7,12 @@
         type Warehouse,
         isMessage,
     } from '@store/types'
-    import type { ItemProps } from '@store/types/items.model'
     import type { OrderSaveData } from '@store/types/orders.model'
-    import type { Product } from '@store/types/product'
+    import type {
+        Product,
+        ProductAttribute,
+        ProductVariant,
+    } from '@store/types/product'
     import { useWarehouseStore } from '@store/warehouse'
     import type { TableField } from 'bootstrap-vue-3'
 
@@ -34,7 +36,6 @@
     /**
      * Utility object definitions
      */
-    const itemStore = useItemStore()
     const productStore = useProductStore()
     const toast = useToast()
     /**
@@ -50,27 +51,33 @@
         rowsPerPage: 5,
     })
     const itemLoading = ref(false)
-    const itemPaginationOptions = computed<PaginationOptions>(() => ({
+    const paginationOptions = computed<PaginationOptions>(() => ({
         page: serverOpts.value.page,
         per_page: serverOpts.value.rowsPerPage,
     }))
 
-    const itemPageLength = computed(() => {
-        const items = itemStore.paginatedItems
-        if (items == null || isMessage(items)) return 0
-        return items.total
-    })
+    const detailParamsDictionary: {
+        [name: string]: keyof ProductVariantInformation
+    } = {
+        Código: 'id',
+        SKU: 'sku',
+        'Nombre de Variante': 'variant_name',
+        'Cantidad en stock': 'stock_level',
+    }
+
+    const pickedProduct = ref<Product>()
+
     const productPageLength = computed(() => {
         const items = productStore.products
         if (isMessage(items) || !items) return 0
         return items.total
     })
-    type QuantifiedItem = Item & { quantity: number }
-    type SelectedItem = { item: Item | null; props: ItemProps[] }
-    const detailSelectedItem = ref<SelectedItem>({
-        item: null,
-        props: [],
-    })
+    type ProductVariantInformation = ProductVariant & {
+        parent: Product
+        all_attributes: ProductAttribute[]
+    }
+    type QuantifiedItem = ProductVariantInformation & { quantity: number }
+    const detailSelectedItem = ref<ProductVariantInformation>()
 
     /**
      * Definition of page-used form
@@ -84,13 +91,8 @@
         item: Item | null
         quantity: string
     }
-    const itemHeader = [
-        { text: 'Código', value: 'id' },
-        { text: 'Nombre de producto', value: 'name' },
-        { text: 'Marca', value: 'brand' },
-        { text: 'Modelo', value: 'model' },
-        { text: 'Categoría', value: 'category.name' },
-    ]
+
+    const selectedVariant = ref<ProductVariant>()
 
     const productFields = [
         { text: 'Código', value: 'id' },
@@ -99,6 +101,7 @@
         { text: 'Marca', value: 'brand_name' },
         { text: 'Variantes', value: 'variants' },
     ]
+
     const formFields: TableField[] = [
         '#',
         { label: 'Nombre de producto', key: 'name' },
@@ -107,19 +110,16 @@
         { label: 'Cantidad', key: 'quantity' },
         'Acciones',
     ]
+
     const form = ref<Form>({
         bodega: undefined,
         comentario: '',
         items: [],
     })
+
     const itemForm = ref<ItemForm>({
         item: null,
         quantity: '0',
-    })
-
-    const items = computed((): Item[] => {
-        if (isMessage(itemStore.paginatedItems)) return []
-        return itemStore.paginatedItems?.data || []
     })
 
     const products = computed((): Product[] => {
@@ -132,14 +132,16 @@
     })
 
     const iformShow = computed(() => ({
-        nombre: itemForm.value.item?.name ?? '',
-        detalle: itemForm.value.item?.category?.description ?? '',
-        codigo: itemForm.value.item?.id?.toString(),
+        nombre: pickedProduct.value?.product_name,
+        variantes: pickedProduct.value?.variants,
+        detalle: pickedProduct.value?.summary,
+        variante: selectedVariant?.value,
+        marca: pickedProduct.value?.brand_name,
     }))
     const loadItems = async () => {
         itemLoading.value = true
-        await itemStore.fetchItemsPaginated(itemPaginationOptions.value)
-        await productStore.fetchProducts(itemPaginationOptions.value)
+        //await itemStore.fetchItemsPaginated(itemPaginationOptions.value)
+        await productStore.fetchProducts(paginationOptions.value)
         itemLoading.value = false
     }
 
@@ -154,15 +156,19 @@
         productModalShow.value = true
     }
 
-    function onRowClick(selectedItem: Item) {
+    function onRowClick(selectedItem: Product) {
         console.log('Data: ', selectedItem)
-        itemForm.value.item = selectedItem
+        pickedProduct.value = selectedItem
+        if (selectedItem.variants.length == 1) {
+            // Automatically pick the first variant
+            selectedVariant.value = selectedItem.variants[0]
+        }
         productModalShow.value = false
     }
     function addToTable() {
-        const targetItem = itemForm.value.item
+        const targetItem = selectedVariant.value
         if (!targetItem) {
-            toast.error('Seleccione un ítem para añadirlo a la tabla')
+            toast.error('Seleccione un producto para añadirlo a la tabla')
             return
         }
         if (form.value.items.findIndex(it => targetItem.id == it.id) >= 0) {
@@ -170,11 +176,18 @@
             return
         }
         form.value.items.push({
-            ...itemForm.value.item,
+            ...targetItem,
             quantity: Number(itemForm.value.quantity),
+            parent: pickedProduct.value,
+            all_attributes: [
+                ...targetItem.attributes,
+                ...(pickedProduct.value?.attributes ?? []),
+            ],
         } as QuantifiedItem)
         itemForm.value.item = null
         itemForm.value.quantity = '0'
+        pickedProduct.value = undefined
+        selectedVariant.value = undefined
         toast.success('Item añadido a la tabla')
     }
 
@@ -212,11 +225,8 @@
                 showWaitOverlay.value = false
             })
     }
-    async function showItem(item: Item) {
-        detailSelectedItem.value.item = item
-        detailSelectedItem.value.props = await itemStore.fetchItemProperties(
-            item.id
-        )
+    async function showItem(item: ProductVariantInformation) {
+        detailSelectedItem.value = item
         itemInfoShow.value = true
     }
     watch(serverOpts, loadItems)
@@ -242,43 +252,84 @@
                     :server-items-length="productPageLength"
                     table-class-name="custom-data-table"
                     :loading="itemLoading"
-                    @click-row="onRowClick" />
+                    @click-row="onRowClick"
+                    show-index>
+                    <template #item-variants="{ variants }">
+                        {{
+                            variants
+                                .map((it: ProductVariant) => it.variant_name)
+                                .join(', ')
+                        }}
+                    </template>
+                </EasyDataTable>
             </ModalDialog>
-            <ModalDialog v-model:show="itemInfoShow" size="xl">
+            <ModalDialog v-model:show="itemInfoShow" size="xl" ok-text="Cerrar">
                 <template #dialog-title>
-                    <b class="tw-text-2xl"
-                        >Detalle del Ítem {{ detailSelectedItem.item?.name }}</b
-                    >
+                    <b class="tw-text-2xl">
+                        Detalle del Ítem
+                        {{
+                            detailSelectedItem?.parent.product_name +
+                            ' ' +
+                            detailSelectedItem?.variant_name
+                        }}
+                    </b>
                 </template>
                 <div class="container">
                     <h3 class="tw-text-xl tw-font-bold">Detalle</h3>
                     <div
                         class="row tw-pb-3 align-content-center justify-content-center gy-2">
                         <template
-                            v-for="(d, k) in detailSelectedItem.item"
-                            :key="k">
-                            <div
-                                class="tw-rounded tw-ring-1 tw-ring-slate-500 tw-py-1 col-12 col-md-5 tw-mx-2"
-                                v-if="
-                                    !['category', 'img', 'quantity'].includes(k)
-                                ">
+                            v-for="(key, human_field) in detailParamsDictionary"
+                            :key="key">
+                            <div class="col-12">
                                 <div class="row">
-                                    <span class="tw-w-1/2 tw-font-bold col-6"
-                                        >{{ k }}:</span
-                                    >
-                                    <span class="col-6">{{ d }}</span>
+                                    <span class="tw-font-bold col-4">
+                                        {{ human_field }}:
+                                    </span>
+                                    <span
+                                        class="col-4"
+                                        v-if="detailSelectedItem !== undefined">
+                                        {{
+                                            detailSelectedItem[
+                                                key as keyof ProductVariantInformation
+                                            ]
+                                        }}
+                                    </span>
                                 </div>
                             </div>
                         </template>
+                        <div class="col-12">
+                            <div class="row">
+                                <span class="col-4 tw-font-bold"> Marca: </span>
+                                <span class="col-4">
+                                    {{ detailSelectedItem?.parent.brand_name }}
+                                </span>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="row">
+                                <span class="col-4 tw-font-bold">
+                                    Descripcion corta:
+                                </span>
+                                <p class="col-4 tw-text-ellipsis">
+                                    {{
+                                        detailSelectedItem?.parent
+                                            .short_description
+                                    }}
+                                </p>
+                            </div>
+                        </div>
                     </div>
                     <div
-                        v-if="detailSelectedItem.props"
+                        v-if="detailSelectedItem?.all_attributes"
                         class="tw-ring-1 tw-ring-slate-500 tw-rounded tw-pb-3 row">
                         <h3 class="col-12 tw-text-xl tw-py-1.5">
                             <b>Caracteríticas del Ítem</b>
                         </h3>
                         <template
-                            v-for="(param, idx) in detailSelectedItem.props"
+                            v-for="(
+                                param, idx
+                            ) in detailSelectedItem.all_attributes"
                             :key="idx">
                             <div class="col-6 col-md-3 col-xl-2 tw-text-md">
                                 <b>{{ param.name }}:</b>
@@ -303,18 +354,13 @@
                     <ECol cols="12" lg="6" xl="4">
                         <div class="tw-flex tw-flex-col">
                             <label
-                                class="tw-font-bold tw-text-md lg:tw-text-base tw-text-left"
-                                >Comentario del pedido</label
-                            >
+                                class="tw-font-bold tw-text-md lg:tw-text-base tw-text-left">
+                                Comentario del pedido
+                            </label>
                             <TextArea
                                 v-model="form.comentario"
                                 placeholder="Comentario" />
                         </div>
-
-                        <!-- <InputText
-                            type="text-area"
-                            label="Comentario del pedido"
-                            placeholder="Razón o comentario del pedido" /> -->
                     </ECol>
                 </ERow>
                 <ERow>
@@ -345,8 +391,8 @@
                         <ECol cols="12" lg="6">
                             <InputText
                                 label="Código de producto"
-                                placeholder="Código no disponible (Seleccione un ítem)"
-                                :model-value="iformShow.codigo"
+                                placeholder="Seleccione una variante para visualizar"
+                                :model-value="iformShow.variante?.sku"
                                 readonly />
                         </ECol>
                         <ECol cols="12" lg="6">
@@ -362,18 +408,30 @@
                                     resize="vertical" />
                             </div>
                         </ECol>
+                        <ECol
+                            cols="12"
+                            lg="6"
+                            v-if="(iformShow.variantes?.length ?? 0) > 1">
+                            <ListBox
+                                v-model="selectedVariant"
+                                :options="iformShow.variantes"
+                                label="variant_name"
+                                top-label="Variedad a solicitar"
+                                placeholder="Seleccionar variedad" />
+                        </ECol>
                         <ECol cols="12" lg="5">
                             <InputText
                                 label="Cantidad del Producto"
-                                v-model.number="itemForm.quantity"
-                                :formatter="(it: string) => it.replace(/\D/g, '')" />
+                                v-model="itemForm.quantity"
+                                :formatter="(it: string) => it
+                                .replace(/(\D|0+(?=\d+))/g, '') || '0'" />
                         </ECol>
                         <ECol cols="12" lg="auto">
                             <EButton
                                 class="tw-w-full lg:tw-w-auto"
                                 left-icon="plus"
                                 :disabled="
-                                    itemForm.item == null ||
+                                    !selectedVariant ||
                                     Number(itemForm.quantity) <= 0
                                 "
                                 @click="addToTable">
@@ -389,6 +447,14 @@
                     <BTable :fields="formFields" :items="form.items">
                         <template #cell(#)="{ index }">
                             {{ index + 1 }}
+                        </template>
+                        <template #cell(name)="{ item }">
+                            {{
+                                `${item.parent.product_name} - ${item.variant_name}`
+                            }}
+                        </template>
+                        <template #cell(brand)="{ item }">
+                            {{ item.parent.brand_name }}
                         </template>
                         <template #cell(Acciones)="{ item, index }">
                             <div class="t-button-group">
