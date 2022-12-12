@@ -380,7 +380,7 @@
                 <ECol cols="12"> -->
                 <ECard>
                     <Title size="2xl"> Datos del Ítem seleccionado </Title>
-                    <ERow align-v="start">
+                    <ERow align-v="middle">
                         <ECol cols="12" lg="6">
                             <InputText
                                 label="Producto seleccionado"
@@ -425,6 +425,26 @@
                                 v-model="itemForm.quantity"
                                 :formatter="(it: string) => it
                                 .replace(/(\D|0+(?=\d+))/g, '') || '0'" />
+                        </ECol>
+                        <ECol cols="12" lg="3" v-if="selectedVariant">
+                            <InputText
+                                label="Stock global"
+                                :model-value="
+                                    selectedVariant?.stock_level.toString()
+                                "
+                                :status="
+                                    selectedVariant?.stock_level
+                                        ? selectedVariant.stock_level > 0
+                                        : null
+                                "
+                                readonly />
+                        </ECol>
+                        <ECol cols="12" lg="3" v-if="selectedVariant">
+                            <!-- TODO: Update this from api -->
+                            <InputText
+                                label="Stock en bodega"
+                                :model-value="'0'"
+                                readonly />
                         </ECol>
                         <ECol cols="12" lg="auto">
                             <EButton
