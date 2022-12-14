@@ -29,7 +29,7 @@ specifiers:
   bootstrap-icons: ^1.9.1
   bootstrap-icons-vue: ^1.8.1
   bootstrap-vue-3: ^0.4.0
-  cypress: ^11.0.0
+  cypress: ^12.0.0
   eslint: ^8.25.0
   eslint-plugin-cypress: ^2.12.1
   eslint-plugin-prettier: ^4.2.1
@@ -101,15 +101,15 @@ devDependencies:
   '@types/jsdom': 20.0.0
   '@types/node': 18.8.0
   '@types/ol': 6.5.3
-  '@vitejs/plugin-vue': 4.0.0_vite@3.1.8+vue@3.2.41
-  '@vitejs/plugin-vue-jsx': 3.0.0_vite@3.1.8+vue@3.2.41
+  '@vitejs/plugin-vue': 4.0.0_vite@4.0.0+vue@3.2.41
+  '@vitejs/plugin-vue-jsx': 3.0.0_vite@4.0.0+vue@3.2.41
   '@vue/eslint-config-prettier': 7.0.0_znq2sm4m5bonjw4qqm6mwhbe2q
   '@vue/eslint-config-typescript': 11.0.2_qsmcthc5ijamuzfurbvbpwqwnm
   '@vue/runtime-core': 3.2.41
   '@vue/test-utils': 2.1.0_vue@3.2.41
   '@vue/tsconfig': 0.1.3_@types+node@18.8.0
   autoprefixer: 10.4.12_postcss@8.4.18
-  cypress: 11.0.1
+  cypress: 12.1.0
   eslint: 8.25.0
   eslint-plugin-cypress: 2.12.1_eslint@8.25.0
   eslint-plugin-prettier: 4.2.1_znq2sm4m5bonjw4qqm6mwhbe2q
@@ -1341,7 +1341,7 @@ packages:
       eslint-visitor-keys: 3.3.0
     dev: true
 
-  /@vitejs/plugin-vue-jsx/3.0.0_vite@3.1.8+vue@3.2.41:
+  /@vitejs/plugin-vue-jsx/3.0.0_vite@4.0.0+vue@3.2.41:
     resolution: {integrity: sha512-vurkuzgac5SYuxd2HUZqAFAWGTF10diKBwJNbCvnWijNZfXd+7jMtqjPFbGt7idOJUn584fP1Ar9j/GN2jQ3Ew==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -1351,13 +1351,13 @@ packages:
       '@babel/core': 7.20.5
       '@babel/plugin-transform-typescript': 7.20.2_@babel+core@7.20.5
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.20.5
-      vite: 3.1.8_sass@1.55.0
+      vite: 4.0.0_4eaycc3336swc56yc3pdsd353y
       vue: 3.2.41
     transitivePeerDependencies:
       - supports-color
     dev: true
 
-  /@vitejs/plugin-vue/4.0.0_vite@3.1.8+vue@3.2.41:
+  /@vitejs/plugin-vue/4.0.0_vite@4.0.0+vue@3.2.41:
     resolution: {integrity: sha512-e0X4jErIxAB5oLtDqbHvHpJe/uWNkdpYV83AOG2xo2tEVSzCzewgJMtREZM30wXnM5ls90hxiOtAuVU6H5JgbA==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -2185,9 +2185,9 @@ packages:
   /csstype/2.6.21:
     resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
 
-  /cypress/11.0.1:
-    resolution: {integrity: sha512-NuEfd0Vim492RJ3m/+bbTZ3OZrqXgfAfuLaZfIQ9D5lKocS3EDr2tyAarZdAhKwLyoh7OJ33jwMeMFIDbzYqog==}
-    engines: {node: '>=12.0.0'}
+  /cypress/12.1.0:
+    resolution: {integrity: sha512-7fz8N84uhN1+ePNDsfQvoWEl4P3/VGKKmAg+bJQFY4onhA37Ys+6oBkGbNdwGeC7n2QqibNVPhk8x3YuQLwzfw==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
     dependencies:
