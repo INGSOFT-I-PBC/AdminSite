@@ -29,7 +29,7 @@ specifiers:
   bootstrap-icons: ^1.9.1
   bootstrap-icons-vue: ^1.8.1
   bootstrap-vue-3: ^0.4.0
-  cypress: ^11.0.0
+  cypress: ^12.0.0
   eslint: ^8.25.0
   eslint-plugin-cypress: ^2.12.1
   eslint-plugin-prettier: ^4.2.1
@@ -109,7 +109,7 @@ devDependencies:
   '@vue/test-utils': 2.1.0_vue@3.2.41
   '@vue/tsconfig': 0.1.3_@types+node@18.11.15
   autoprefixer: 10.4.12_postcss@8.4.18
-  cypress: 11.0.1
+  cypress: 12.1.0
   eslint: 8.25.0
   eslint-plugin-cypress: 2.12.1_eslint@8.25.0
   eslint-plugin-prettier: 4.2.1_znq2sm4m5bonjw4qqm6mwhbe2q
@@ -1347,7 +1347,7 @@ packages:
       '@babel/core': 7.20.5
       '@babel/plugin-transform-typescript': 7.20.2_@babel+core@7.20.5
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.20.5
-      vite: 4.0.0_rvjkrqm63doxcd3rysur57omeq
+      vite: 4.0.0_4eaycc3336swc56yc3pdsd353y
       vue: 3.2.41
     transitivePeerDependencies:
       - supports-color
@@ -2181,9 +2181,9 @@ packages:
   /csstype/2.6.21:
     resolution: {integrity: sha512-Z1PhmomIfypOpoMjRQB70jfvy/wxT50qW08YXO5lMIJkrdq4yOTR+AW7FqutScmB9NkLwxo+jU+kZLbofZZq/w==}
 
-  /cypress/11.0.1:
-    resolution: {integrity: sha512-NuEfd0Vim492RJ3m/+bbTZ3OZrqXgfAfuLaZfIQ9D5lKocS3EDr2tyAarZdAhKwLyoh7OJ33jwMeMFIDbzYqog==}
-    engines: {node: '>=12.0.0'}
+  /cypress/12.1.0:
+    resolution: {integrity: sha512-7fz8N84uhN1+ePNDsfQvoWEl4P3/VGKKmAg+bJQFY4onhA37Ys+6oBkGbNdwGeC7n2QqibNVPhk8x3YuQLwzfw==}
+    engines: {node: ^14.0.0 || ^16.0.0 || >=18.0.0}
     hasBin: true
     requiresBuild: true
     dependencies:
