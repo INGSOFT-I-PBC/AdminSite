@@ -26,6 +26,7 @@ import './index.css'
 import { awesomeIcons } from './icons'
 import router from './router'
 import './types'
+import PrimeVue from 'primevue/config';
 
 const app = createApp(defineAsyncComponent(() => import('./App.vue')))
 
@@ -46,6 +47,7 @@ app.use(createPinia())
 app.use(BootstrapVue3)
 app.use(router)
 app.use(Toast, defToastOptions)
+app.use(PrimeVue)
 app.use(OpenLayersMap)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component(

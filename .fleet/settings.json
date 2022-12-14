@@ -1,6 +1,6 @@
 {
   "autoSave": false,
-  "editor.guides": [],
+  "editor.guides": [80, 100],
   "[vue]": {
     "formatter.prettier.enabled": true,
   },
