@@ -22,7 +22,7 @@ export interface PurchaseChild {
     details?: FullPurchaseDetails[]
     img_details?: string
     invoice?: number | { id: number; code: string }
-    provider?: number | { id: number; name: string }
+    provider?: { id: number; name: string }
     is_purchased: boolean
     is_delivered: boolean
     purchase_header?: number
@@ -50,7 +50,7 @@ export interface FullPurchaseDetails {
     purchase_child?: number
     quantity: number
     variant: ProductVariant
-    provider?: number | { id: number; name: string }
+    provider?: { id: number; name: string }
 }
 
 export interface PurchaseQuery {
@@ -71,5 +71,3 @@ export interface PurchaseQuery {
     warehouse_id?: number
     warhouse_name?: string
 }
-
-export default {}

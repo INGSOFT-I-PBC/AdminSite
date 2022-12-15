@@ -310,8 +310,7 @@
                     return (
                         d.product.product_name.includes(searchString.value) ||
                         d.variant.variant_name.includes(searchString.value) ||
-                        (Number.isNaN(d.provider) &&
-                            d.provider?.name.includes(searchString.value)) ||
+                        d.provider?.name.includes(searchString.value) ||
                         d.variant.sku.includes(searchString.value)
                     )
                 })
@@ -328,10 +327,6 @@
             stopWatcher.value = false
         }
     }
-
-    // function isProvider(obj:SimpleProvider|number|undefined): obj is SimpleProvider{
-    //     return (<SimpleProvider>obj).name !== undefined
-    // }
 
     const truncate = (text: string, length: number, suffix: string): string => {
         if (typeof text == undefined || text == null) {

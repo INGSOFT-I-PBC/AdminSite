@@ -1,5 +1,6 @@
 import type { Item } from './items.model'
 import type { Employee } from './user.model'
+import { Warehouse } from './warehouse.model'
 
 export type SaveItemData = {
     item: number
@@ -87,8 +88,6 @@ export interface SimpleOrderRequest {
     id: number
     requested_at: string | Date
     revised_by?: Employee
-    revised_at?: string | date
+    revised_at?: string | Date
     comment?: string
 }
-
-export default {}
