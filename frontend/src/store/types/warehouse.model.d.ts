@@ -8,6 +8,8 @@ export interface MinimalWarehouse {
 
 export interface Warehouse extends MinimalWarehouse {
     id: number
+    latitude?: number
+    longitude?: number
 }
 
 export interface TomaFisica {

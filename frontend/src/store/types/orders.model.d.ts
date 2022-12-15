@@ -74,13 +74,21 @@ export interface OrderRequest {
      */
     id: number
     requested_by: Employee
-    approved_by: Optional<Employee>
-    approved_at: Optional<string | Date>
+    revised_by: Optional<Employee>
+    revised_at: Optional<string | Date>
     items: OrderRequestDetail[]
     warehouse: string
     requested_at: string | Date
     comment: string
     status: OrderRequestStatus
+}
+
+export interface SimpleOrderRequest {
+    id: number
+    requested_at: string | Date
+    revised_by?: Employee
+    revised_at?: string | date
+    comment?: string
 }
 
 export default {}

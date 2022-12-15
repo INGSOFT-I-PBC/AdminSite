@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { useItemStore } from '@/store'
+    import { usePurchaseStore } from '@store/purchase'
     import {
         type FullTomaFisicaDetail,
         type MessageResponse,
@@ -18,6 +19,7 @@
     import { useWarehouseStore } from '@store/warehouse'
     import Datepicker from '@vuepic/vue-datepicker'
     import {
+        BBadge,
         BForm,
         BFormCheckbox,
         BFormInput,
@@ -27,6 +29,7 @@
         BTab,
         BTable,
         BTabs,
+        type ColorVariant,
         type TableField,
     } from 'bootstrap-vue-3'
     import { Form as ValidationForm, useField } from 'vee-validate'
@@ -86,6 +89,10 @@
      */
     const warehouse = useWarehouseStore()
     /**
+     * References the purchaseStore
+     */
+    const purchase = usePurchaseStore()
+    /**
      * References the itemStore
      */
     const itemStore = useItemStore()
@@ -136,12 +143,12 @@
      */
     const purchasesFields: TableField[] = [
         '#',
-        'FechaCreación',
+        'FechaAprobación',
         { label: 'Código Orden', key: 'reference' },
-        'Proveedor',
+        'AprobadoPor',
+        'RazonDeCompra',
+        'Estado',
         'Entregado',
-        'Pago',
-        'FechaPago',
         'Acciones',
     ]
     /**
@@ -371,7 +378,7 @@
      * Object that contains the validations for the movementForm. Uses yup
      * @property {FieldContext<any>} from_date Minimum date to query
      * @property {FieldContext<any>} from_date Maximum date to query
-     * @property {boolean} aproved_date Flag: purchases aproved in the range of the from_date and to_date range
+     * @property {boolean} approved_date Flag: purchases approved in the range of the from_date and to_date range
      * @property {boolean} invoice_date Flag: invoice date registered in the range of the from_date and to_date range
      * @property {FieldContext<any>} done_by_name Name of the employee that created the movement for the query
      * @property {FieldContext<any>} provider_name A related warehouse name to query
@@ -403,7 +410,7 @@
                 )
                 .typeError('Fecha Invalida')
         ),
-        aproved_date: true,
+        approved_date: true,
         invoice_date: false,
         provider_name: useField(
             'provider_name',
@@ -591,7 +598,7 @@
                 break
             }
             case 'purchases': {
-                let res = await warehouse.fetchPaginatedWarehousePurchase(
+                let res = await purchase.fetchPaginatedPurchases(
                     query,
                     paginated_opt
                 )
@@ -717,14 +724,14 @@
                     toast.error('Verifique los datos antes buscar')
                     showWaitOverlay.value = false
                     return
-                } else if (!f.aproved_date && !f.invoice_date) {
+                } else if (!f.approved_date && !f.invoice_date) {
                     toast.error('Marque un tipo de búsqueda por fecha')
                     showWaitOverlay.value = false
                     return
                 }
                 query.from_date = f.from_date.value
                 query.to_date = f.to_date.value
-                query.aproved_date = f.aproved_date
+                query.approved_date = f.approved_date
                 query.invoice_date = f.invoice_date
                 query.provider_name = f.provider_name.value
                 f.status
@@ -823,9 +830,6 @@
                 query.status = f.status.value
                 query.entrada = f.entrada
                 query.salida = f.salida
-                console.log(f.entrada)
-                console.log(f.salida)
-                console.log(query)
                 fetchManager(tabOption, query, { per_page: 15, page: 1 })
                     .then((): void => {
                         if (activeWhInformation.value.movements.length < 1) {
@@ -880,7 +884,7 @@
             case 'purchases': {
                 purchaseForm.value.from_date.resetField()
                 purchaseForm.value.to_date.resetField()
-                purchaseForm.value.aproved_date = false
+                purchaseForm.value.approved_date = false
                 purchaseForm.value.invoice_date = false
                 purchaseForm.value.provider_name.resetField()
                 purchaseForm.value.status = false
@@ -983,25 +987,18 @@
                 toast.error(e.message)
                 showWaitOverlay.value = false
             })
+            .finally(() => {
+                showWaitOverlay.value = false
+            })
     }
     /**
      * Contains information for the selected Purchase to be displayed in the purchase modal popup
      */
     const selectedPurchase = ref<Purchase>({
         id: -1,
-        img_details: '',
-        aproved_at: '',
-        invoice: {
-            id: -1,
-            code: '',
-        },
-        provider: {
-            id: -1,
-            name: '',
-        },
-        order_origin: -1,
+        approved_at: '',
+        order_origin: { id: -1, requested_at: '', revised_by: undefined },
         reference: -1,
-        warehouse: -1,
         status: 'Cargando',
     })
     /**
@@ -1018,8 +1015,10 @@
      */
     async function confirmarPedido(): Promise<void> {
         showWaitOverlay.value = true
-        const purchase_copy = { ...selectedPurchase.value }
-        purchase_copy.status = DELIVERED_PURCHASE_STATUS.value
+        const purchase_copy = {
+            id: selectedPurchase.value.id,
+            status: DELIVERED_PURCHASE_STATUS.value,
+        }
         warehouse
             .confirmPurchaseUser(purchase_copy as Purchase)
             .then((): void => {
@@ -1155,10 +1154,12 @@
      */
     function keyNaturalName(key: string): string {
         switch (key) {
+            case 'id':
+                return 'Código'
             case 'product_name':
                 return 'Producto'
             case 'variant_name':
-                return 'Variante'
+                return 'Nombre de Variante'
             case 'summary':
                 return 'Descripción'
             case 'short_description':
@@ -1170,7 +1171,7 @@
             case 'price':
                 return 'Precio de venta'
             case 'sku':
-                return 'Código(sku)'
+                return 'SKU'
         }
         return key
     }
@@ -1195,8 +1196,8 @@
      * Load manager for the inventory tab
      */
     const loadInv = async (): Promise<void> => {
-        showWaitOverlay.value = true
         if (!stopWatcher.value) {
+            showWaitOverlay.value = true
             await fetchManager(
                 'inventory',
                 { warehouse_id: activeWhInformation.value.bodega.id },
@@ -1212,8 +1213,8 @@
      * Load manager for the purchase tab
      */
     const loadPurchase = async (): Promise<void> => {
-        showWaitOverlay.value = true
         if (!stopWatcher.value) {
+            showWaitOverlay.value = true
             await fetchManager(
                 'purchases',
                 { warehouse_id: activeWhInformation.value.bodega.id },
@@ -1229,8 +1230,8 @@
      * Load manager for the tomas físicas tab
      */
     const loadTomas = async (): Promise<void> => {
-        showWaitOverlay.value = true
         if (!stopWatcher.value) {
+            showWaitOverlay.value = true
             await fetchManager(
                 'tomas-fisicas',
                 { warehouse_id: activeWhInformation.value.bodega.id },
@@ -1246,8 +1247,8 @@
      * Load manager for the movements tab
      */
     const loadMovements = async (): Promise<void> => {
-        showWaitOverlay.value = true
         if (!stopWatcher.value) {
+            showWaitOverlay.value = true
             await fetchManager(
                 'movements',
                 { warehouse_id: activeWhInformation.value.bodega.id },
@@ -1257,6 +1258,24 @@
                 }
             )
             showWaitOverlay.value = false
+        }
+    }
+    function statusColor(status?: string): ColorVariant {
+        switch (status) {
+            case 'entregado':
+                return 'success'
+            case 'aprovado':
+                return 'primary'
+            case 'transito':
+                return 'warning'
+            case 'rechazado':
+                return 'danger'
+            case 'cancelado':
+                return 'dark'
+            case 'pagado':
+                return 'light'
+            default:
+                return 'info'
         }
     }
 
@@ -1745,14 +1764,17 @@
                                 </b-collapse>
                             </div>
 
-                            <ModalDialog v-model:show="itemInfoShow" size="3xl">
+                            <ModalDialog
+                                v-model:show="itemInfoShow"
+                                size="3xl"
+                                class="dark-mode-text">
                                 <template #dialog-title>
                                     <b class="tw-text-2xl dark-mode-text"
                                         >Detalle del producto
                                         {{
                                             detailSelectedProduct.product
                                                 ?.product_name +
-                                            '/' +
+                                            ' ' +
                                             detailSelectedProduct.variant
                                                 ?.variant_name
                                         }}</b
@@ -1768,40 +1790,12 @@
                                         <template
                                             v-for="(
                                                 d, k
-                                            ) in detailSelectedProduct.product"
-                                            :key="k">
-                                            <div
-                                                class="tw-rounded tw-ring-1 tw-ring-yellow-400 tw-py-1 col-12 col-md-5 tw-mx-2"
-                                                v-if="
-                                                    ![
-                                                        'id',
-                                                        'base_price',
-                                                    ].includes(k)
-                                                ">
-                                                <div class="row">
-                                                    <span
-                                                        class="tw-w-1/2 tw-font-bold col-6 dark-mode-text"
-                                                        >{{
-                                                            keyNaturalName(k)
-                                                        }}:</span
-                                                    >
-                                                    <span
-                                                        class="col-6 dark-mode-text"
-                                                        >{{ d }}</span
-                                                    >
-                                                </div>
-                                            </div>
-                                        </template>
-                                        <template
-                                            v-for="(
-                                                d, k
                                             ) in detailSelectedProduct.variant"
                                             :key="k">
                                             <div
-                                                class="tw-rounded tw-ring-1 tw-ring-yellow-400 tw-py-1 col-12 col-md-5 tw-mx-2"
+                                                class="col-12"
                                                 v-if="
                                                     ![
-                                                        'id',
                                                         'base_price',
                                                         'created_at',
                                                         'updated_at',
@@ -1811,25 +1805,59 @@
                                                 ">
                                                 <div class="row">
                                                     <span
-                                                        class="tw-font-bold col-5 dark-mode-text tw-gap-x-2"
+                                                        class="tw-font-bold col-4 dark-mode-text"
                                                         >{{
                                                             keyNaturalName(k)
                                                         }}:</span
                                                     >
                                                     <span
-                                                        class="col-5 dark-mode-text"
+                                                        class="col-4 dark-mode-text"
                                                         >{{ d }}</span
                                                     >
                                                 </div>
                                             </div>
                                         </template>
+
+                                        <div class="col-12">
+                                            <div class="row">
+                                                <span
+                                                    class="col-4 tw-font-bold">
+                                                    Marca:
+                                                </span>
+                                                <span class="col-4">
+                                                    {{
+                                                        detailSelectedProduct
+                                                            .product?.brand_name
+                                                    }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <div class="row"></div>
+                                        <div class="col-12"></div>
+                                        <div class="col-12 mb-2">
+                                            <div class="row dark-mode-text">
+                                                <span
+                                                    class="col-4 tw-font-bold">
+                                                    Descripcion corta:
+                                                </span>
+                                                <p
+                                                    class="col-4 tw-text-ellipsis">
+                                                    {{
+                                                        detailSelectedProduct
+                                                            .product
+                                                            ?.short_description
+                                                    }}
+                                                </p>
+                                            </div>
+                                        </div>
                                     </div>
+
                                     <LoadingBar
                                         v-show="loadingProps"
                                         class="tw-mt-5" />
                                     <div
                                         v-if="detailSelectedProduct.props"
-                                        class="tw-ring-1 tw-ring-yellow-400 tw-rounded tw-pb-3 row">
+                                        class="tw-ring-1 tw-ring-slate-500 tw-rounded tw-pb-3 row">
                                         <h3
                                             class="col-12 tw-text-xl tw-py-1.5 dark-mode-text">
                                             <b>Características del Producto</b>
@@ -1844,7 +1872,7 @@
                                                 <b>{{ param.name }}:</b>
                                             </div>
                                             <div
-                                                class="col-6 col-md-3 col-xl-2 dark-mode-text">
+                                                class="col-6 col-md-3 col-xl-3 dark-mode-text">
                                                 {{ param.value }}
                                             </div>
                                         </template>
@@ -1931,7 +1959,7 @@
                                             <h1
                                                 class="tw-text-3xl tw-text-black dark:tw-text-white">
                                                 ¿Quiere confirmar que llegó el
-                                                pedido?
+                                                pedido en su totalidad?
                                             </h1>
 
                                             <div class="row">
@@ -1943,7 +1971,7 @@
                                                     </h3>
                                                     <p class="col-6">
                                                         {{
-                                                            selectedPurchase?.aproved_at
+                                                            selectedPurchase?.approved_at
                                                         }}
                                                     </p>
                                                 </div>
@@ -1956,46 +1984,6 @@
                                                     <p class="col-6">
                                                         {{
                                                             selectedPurchase?.reference
-                                                        }}
-                                                    </p>
-                                                </div>
-
-                                                <div
-                                                    class="row col-12 tw-rounded tw-ring-1 dark-mode-text tw-ring-yellow-400 tw-py-2">
-                                                    <h3
-                                                        class="tw-w-1/2 tw-font-bold col-6">
-                                                        Código de factura:
-                                                    </h3>
-                                                    <p class="col-6">
-                                                        {{
-                                                            selectedPurchase
-                                                                ?.invoice.code
-                                                        }}
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="row col-12 tw-rounded dark-mode-text tw-ring-1 tw-ring-yellow-400 tw-py-2">
-                                                    <h3
-                                                        class="tw-w-1/2 tw-font-bold col-6">
-                                                        Código de factura:
-                                                    </h3>
-                                                    <p class="col-6">
-                                                        {{
-                                                            selectedPurchase
-                                                                ?.invoice.code
-                                                        }}
-                                                    </p>
-                                                </div>
-                                                <div
-                                                    class="row col-12 tw-rounded tw-ring-1 dark-mode-text tw-ring-yellow-400 tw-py-2">
-                                                    <h3
-                                                        class="tw-w-1/2 tw-font-bold col-6">
-                                                        Proveedor
-                                                    </h3>
-                                                    <p class="col-6">
-                                                        {{
-                                                            selectedPurchase
-                                                                ?.provider.name
                                                         }}
                                                     </p>
                                                 </div>
@@ -2111,7 +2099,7 @@
                                                         <b-form-checkbox
                                                             class="tw-text-xl form-check-input"
                                                             v-model="
-                                                                purchaseForm.aproved_date
+                                                                purchaseForm.approved_date
                                                             "
                                                             switch>
                                                             Buscar Por Fecha de
@@ -2249,6 +2237,7 @@
 
                             <BTable
                                 outline
+                                class="tw-capitalize"
                                 :fields="purchasesFields"
                                 :items="activeWhInformation.purchases">
                                 <template #cell(#)="{ index }">
@@ -2260,8 +2249,40 @@
                                             whInformationPerPage
                                     }}
                                 </template>
-                                <template #cell(FechaCreación)="{ item }">
-                                    {{ truncate(item.aproved_at, 10, '') }}
+                                <template #cell(FechaAprobación)="{ item }">
+                                    {{ truncate(item.approved_at, 10, '') }}
+                                </template>
+                                'AprobadoPor',
+                                <template #cell(AprobadoPor)="{ item }">
+                                    {{
+                                        truncate(
+                                            item.order_origin.revised_by?.name +
+                                                ' ' +
+                                                item.order_origin.revised_by
+                                                    ?.lastname,
+                                            25,
+                                            '...'
+                                        )
+                                    }}
+                                </template>
+                                <template #cell(RazonDeCompra)="{ item }">
+                                    {{
+                                        item.order_origin.revised_by?.comment
+                                            ? truncate(
+                                                  item.order_origin.revised_by
+                                                      ?.comment,
+                                                  25,
+                                                  '...'
+                                              )
+                                            : '---'
+                                    }}
+                                </template>
+                                <template #cell(Estado)="{ item }">
+                                    <BBadge
+                                        class="tw-text-md"
+                                        :variant="statusColor(item.status)">
+                                        {{ item.status }}
+                                    </BBadge>
                                 </template>
                                 <template #cell(Entregado)="{ item }">
                                     <e-button
@@ -2287,26 +2308,16 @@
                                         Confirmar Entrega
                                     </e-button>
                                 </template>
-                                <template #cell(Proveedor)="{ item }">
-                                    {{ item.provider.name }}
-                                </template>
-                                <template #cell(Pago)="{ item }">
-                                    {{ item.invoice.code ?? '--' }}
-                                </template>
-                                <template #cell(FechaPago)="{ item }">
-                                    {{
-                                        truncate(
-                                            item.invoice.created_at,
-                                            10,
-                                            ''
-                                        )
-                                    }}
-                                </template>
-                                <template #cell(Acciones)="{}">
+                                <template #cell(Acciones)="{ item }">
                                     <e-button
                                         left-icon="fa-eye"
                                         type="button"
                                         variant="primary"
+                                        @click.left="
+                                            router.push({
+                                                path: `/bodegas/pedidos/${item.id}`,
+                                            })
+                                        "
                                         >Ver detalles
                                     </e-button>
                                 </template>

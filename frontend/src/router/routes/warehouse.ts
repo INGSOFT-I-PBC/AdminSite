@@ -21,6 +21,7 @@ export const warehouses: Array<RouteConfig> = [
         path: '/bodegas/tomas-fisicas/:id?',
         component: () => import('@views/warehouse/GestionTomasFisicas.vue'),
         name: 'tomas-fisica-view',
+        props: true,
         meta: {
             pageTitle: 'Tomas Físicas',
             breadcrumb: [
@@ -65,8 +66,9 @@ export const warehouses: Array<RouteConfig> = [
     },
 
     {
-        path: '/bodegas/pedidos',
+        path: '/bodegas/pedidos/:id?',
         name: 'pedidos-view',
+        props: true,
         component: () => import('@views/warehouse/GestionPedidos.vue'),
         meta: {
             pageTitle: 'Gestion Pedidos',
