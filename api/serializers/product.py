@@ -16,9 +16,20 @@ class ProductVariantSerializer(_srl.ModelSerializer):
 
 
 class _SimpleProductVariant(_srl.ModelSerializer):
+
+    attributes = SimpleAttributeSerializer(many=True, required=False)
+
     class Meta:
         model = ProductVariant
-        fields = ["id", "variant_name", "sku", "price", "img"]
+        fields = [
+            "id",
+            "variant_name",
+            "sku",
+            "price",
+            "img",
+            "stock_level",
+            "attributes",
+        ]
 
 
 class ProductSerializer(_srl.ModelSerializer):
@@ -27,8 +38,8 @@ class ProductSerializer(_srl.ModelSerializer):
     # attributes = SimpleAttributeSerializer(many=True, required=False)
     attributes = _srl.SerializerMethodField(read_only=True)
 
-    def get_variants(self, product):
-        qs = ProductVariant.objects.filter(is_active=True)
+    def get_variants(self, instance):
+        qs = ProductVariant.objects.filter(is_active=True, product=instance)
         return _SimpleProductVariant(instance=qs, many=True).data
 
     def get_attributes(self, instance):
