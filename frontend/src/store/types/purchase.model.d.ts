@@ -26,6 +26,7 @@ export interface PurchaseChild {
     is_purchased: boolean
     is_delivered: boolean
     purchase_header?: number
+    comment?: string
 }
 
 export interface PurchaseStatus {
