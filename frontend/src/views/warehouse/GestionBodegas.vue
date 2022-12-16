@@ -353,27 +353,38 @@
      * Manager computed variable to check minimum price is less thatn the maximum.
      * Contains the resulting error to be displayed
      */
-    const priceRangeError = computed((): string | undefined => {
+    const price_message = ref<string>()
+    const priceRangeError = (): void => {
         const f = inventoryForm.value
+        if (f.max_price.value != '' && f.min_price.value != '') {
+            if (Number(f.max_price.value) < Number(f.min_price.value)) {
+                price_message.value =
+                    'Precio máximo tiene que ser mayor que el mínimo'
+                return
+            }
+        }
 
-        return f.max_price.value != '' &&
-            f.min_price.value != '' &&
-            f.max_price.value <= f.min_price.value
-            ? 'Precio máximo tiene que ser mayor al mínimo'
-            : f.max_price.errorMessage
-    })
+        price_message.value = f.max_price.errorMessage
+    }
+
     /**
      * Manager computed variable to check minimum quantity is less thatn the maximum
      * Contains the resulting error to be displayed
      */
-    const quantityRangeError = computed((): string | undefined => {
+    const quantity_message = ref<string>()
+    const quantityRangeError = (): void => {
         const f = inventoryForm.value
-        return f.max_quantity.value != '' &&
-            f.min_quantity.value != '' &&
-            f.max_quantity.value <= f.min_quantity.value
-            ? 'Cantidad máxima tiene que ser mayor al minimo'
-            : f.max_quantity.errorMessage
-    })
+        if (f.max_quantity.value != '' && f.min_quantity.value != '') {
+            if (Number(f.max_quantity.value) < Number(f.min_quantity.value)) {
+                quantity_message.value =
+                    'Cantidad máxima tiene que ser mayor que la mínima'
+                return
+            }
+        }
+
+        quantity_message.value = f.max_quantity.errorMessage
+    }
+
     /**
      * Object that contains the validations for the movementForm. Uses yup
      * @property {FieldContext<any>} from_date Minimum date to query
@@ -673,8 +684,8 @@
                     f.min_quantity.errorMessage ||
                     f.from_date.errorMessage ||
                     f.to_date.errorMessage ||
-                    priceRangeError.value ||
-                    quantityRangeError.value
+                    price_message.value ||
+                    quantity_message.value
                 ) {
                     toast.error('Verifique los datos antes buscar')
                     showWaitOverlay.value = false
@@ -1682,7 +1693,7 @@
                                                                 .value
                                                         "
                                                         :info-label="
-                                                            quantityRangeError
+                                                            quantity_message
                                                         "
                                                         :status="
                                                             Boolean(
@@ -1690,6 +1701,9 @@
                                                                     .max_quantity
                                                                     .errorMessage
                                                             )
+                                                        "
+                                                        @input="
+                                                            quantityRangeError
                                                         "
                                                         info-status="danger" />
                                                 </div>
@@ -1724,7 +1738,7 @@
                                                                 .max_price.value
                                                         "
                                                         :info-label="
-                                                            priceRangeError
+                                                            price_message
                                                         "
                                                         :status="
                                                             Boolean(
@@ -1733,6 +1747,7 @@
                                                                     .errorMessage
                                                             )
                                                         "
+                                                        @input="priceRangeError"
                                                         info-status="danger" />
                                                 </div>
                                                 <div
