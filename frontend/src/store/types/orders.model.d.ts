@@ -84,10 +84,18 @@ export interface OrderRequest {
     status: OrderRequestStatus
 }
 
+export interface SimpleOrderStatus {
+    id?: number
+    created_by: Employee
+    created_at: string | Date
+    status: string
+}
+
 export interface SimpleOrderRequest {
     id: number
     requested_at: string | Date
     revised_by?: Employee
     revised_at?: string | Date
     comment?: string
+    status_list?: SimpleOrderStatus[]
 }

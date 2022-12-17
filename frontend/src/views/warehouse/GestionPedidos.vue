@@ -1,5 +1,6 @@
 <script setup lang="ts">
     import { useItemStore } from '@store'
+    import { useOrderStore } from '@store'
     import { usePurchaseStore } from '@store/purchase'
     import {
         type FullPurchase,
@@ -9,12 +10,14 @@
         type ProductProps,
         type ProductVariant,
         type Purchase,
+        type PurchaseChild,
         type PurchaseQuery,
         type SimpleProduct,
         type Status,
         type Warehouse,
         isMessage,
     } from '@store/types'
+    import type { SimpleOrderStatus } from '@store/types/orders.model'
     import { useWarehouseStore } from '@store/warehouse'
     import Datepicker from '@vuepic/vue-datepicker'
     import {
@@ -45,6 +48,7 @@
     const showWaitOverlay = ref(true)
     const router = useRoute()
     const itemStore = useItemStore()
+    const orderStore = useOrderStore()
 
     const purchaseStore = usePurchaseStore()
     const warehouse = useWarehouseStore()
@@ -60,8 +64,6 @@
         variant: ProductVariant
         props: ProductProps[]
     }
-    type SimpleProvider = { name: string; id: number }
-
     const detailSelectedProduct = ref<SelectedItem>()
 
     const isPurchaseSelected = ref<boolean>(false)
@@ -71,7 +73,6 @@
 
     const purchaseDetailsArr = ref<FullPurchaseDetails[]>()
     const paginatedPurchaseDetailsArr = ref<FullPurchaseDetails[]>()
-    const detailsPerPage = ref(30)
     const currentDetailsPage = ref(1)
     const searchString = ref('')
 
@@ -161,6 +162,8 @@
         'Acciones',
     ]
 
+    const showStatusAndChilds = ref<boolean>(false)
+
     async function onDetallesClicked(pid: number) {
         showWaitOverlay.value = true
 
@@ -177,10 +180,12 @@
             showWaitOverlay.value = false
             return
         }
+
         selectedPurchase.value = res.data[0] as FullPurchase
         const arrPromise: Promise<any>[] = []
 
         purchaseDetailsArr.value = []
+
         for (const p_child of selectedPurchase.value.childs) {
             arrPromise.push(
                 purchaseStore
@@ -202,12 +207,29 @@
             )
         }
 
+        try {
+            let order_res = await orderStore.fetchRequests(
+                { order_id: selectedPurchase.value.order_origin.id },
+                { page: 1, per_page: 100 }
+            )
+
+            if (isMessage(order_res)) {
+                toast.error('Error al cargar estados de la orden')
+            } else {
+                order_res = order_res as PaginatedResponse<SimpleOrderStatus>
+                selectedPurchase.value.order_origin.status_list = order_res.data
+            }
+        } catch {
+            toast.error('Error al cargar estados de la orden')
+        }
+
         Promise.all(arrPromise)
             .then(() => {
                 showWaitOverlay.value = false
                 isPurchaseSelected.value = true
                 purchaseDetailsArr.value?.sort()
                 filterData()
+                setInfoChildPurchase()
             })
             .finally(() => {
                 showWaitOverlay.value = false
@@ -362,7 +384,7 @@
         }
         return key
     }
-    function statusColor(status?: string): ColorVariant {
+    function statusPurchaseColor(status?: string): ColorVariant {
         switch (status) {
             case 'entregado':
                 return 'success'
@@ -378,6 +400,55 @@
                 return 'light'
             default:
                 return 'info'
+        }
+    }
+
+    function statusOrderColor(status?: string): ColorVariant {
+        switch (status) {
+            case 'AP':
+                return 'success'
+            case 'PA':
+                return 'warning'
+            case 'NG':
+                return 'danger'
+            default:
+                return 'dark'
+        }
+    }
+    function parseStatus(status?: string): string {
+        switch (status) {
+            case 'AP':
+                return 'Aprobado'
+            case 'PA':
+                return 'Pendiente aprobación'
+            case 'CR':
+                return 'Necesita Corrección'
+            case 'NG':
+                return 'Desaprobado'
+            default:
+                return 'Desconocido'
+        }
+    }
+
+    const arrInfoChildPurchase =
+        ref<{ total: number; num_variants: number }[]>()
+
+    function setInfoChildPurchase(): void {
+        for (const child of purchaseDetailsArr.value ?? []) {
+            const filtered_arr = purchaseDetailsArr.value?.filter(
+                product => product.provider?.name == child.provider?.name
+            )
+            let stock = 0
+            for (const product of filtered_arr ?? []) {
+                stock += product.quantity
+            }
+
+            const variants = filtered_arr ? filtered_arr.length : 0
+
+            arrInfoChildPurchase.value?.push({
+                total: stock,
+                num_variants: variants,
+            })
         }
     }
 
@@ -532,7 +603,7 @@
                                 <div class="row">
                                     <ListBox
                                         class="col-4"
-                                        top-label="Estado"
+                                        top-label="Último Estado"
                                         v-model="selectedStatus"
                                         placeholder="Filtro por estado de la compra"
                                         label="display"
@@ -637,7 +708,7 @@
                                                 )
                                             "
                                             info-status="danger"
-                                            label="Código de Orden" />
+                                            label="Código de Compra" />
                                     </div>
                                     <div
                                         class="col-3 col-lg-4 col-xl-4 col-sm-6 mt-auto">
@@ -731,7 +802,7 @@
                         <template #cell(Estado)="{ item }">
                             <BBadge
                                 class="tw-text-md"
-                                :variant="statusColor(item.status)">
+                                :variant="statusPurchaseColor(item.status)">
                                 {{ item.status }}
                             </BBadge>
                         </template>
@@ -768,7 +839,7 @@
                         type="button"
                         class="col-3 my-3"
                         @click.left="isPurchaseSelected = false">
-                        Regreasr a todas las compras
+                        Regresar a todas las compras
                     </e-button>
                 </div>
                 <div class="row my-2">
@@ -916,16 +987,186 @@
                                 </div>
                                 <div
                                     class="col-6 col-md-3 col-xl-2 dark-mode-text">
-                                    {{ param.value }}
+                                    <b>{{ param.value }}</b>
                                 </div>
                             </template>
                         </div>
                     </div>
                 </ModalDialog>
+                <ModalDialog
+                    v-model:show="showStatusAndChilds"
+                    size="3xl"
+                    class="dark-mode-text">
+                    <div class="container">
+                        <div
+                            class="row mb-2 tw-ring-2 dark:tw-ring-white py-2 tw-ring-black">
+                            <div class="col-3 tw-text-md">
+                                <b>Origen de la orden:</b>
+                            </div>
+                            <div class="col-3 tw-font-light">
+                                <b> #{{ selectedPurchase?.order_origin.id }}</b>
+                            </div>
+                            <div class="col-3 tw-text-md">
+                                <b>Revisada por: </b>
+                            </div>
+                            <div class="col-3 tw-font-light">
+                                <b>
+                                    {{
+                                        selectedPurchase?.order_origin
+                                            .revised_by?.name +
+                                        ' ' +
+                                        selectedPurchase?.order_origin
+                                            .revised_by?.lastname
+                                    }}
+                                </b>
+                            </div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col-6 tw-text-md">
+                                <b>Fecha de revisión: </b>
+                            </div>
+                            <div class="col-6 tw-font-light">
+                                <b>
+                                    ({{
+                                        moment(
+                                            selectedPurchase?.order_origin
+                                                .revised_by?.created_at
+                                        )
+                                    }})
+                                </b>
+                            </div>
+                        </div>
+
+                        <div class="row mb-2">
+                            <div class="col-6 tw-text-md dark-mode-text">
+                                <b>Commentario de la orden:</b>
+                            </div>
+                            <div
+                                class="col-6 tw-font-light text-break text-wrap">
+                                <b>
+                                    ({{
+                                        selectedPurchase?.order_origin.comment
+                                            ? selectedPurchase?.order_origin
+                                                  .comment
+                                            : 'Sin comentarios'
+                                    }})
+                                </b>
+                            </div>
+                        </div>
+                    </div>
+                    <e-button
+                        v-b-toggle.order-collapse
+                        variant="primary"
+                        type="button"
+                        class="col-4 mb-2">
+                        Ver Estados De La Orden
+                    </e-button>
+                    <b-collapse id="order-collapse">
+                        <template
+                            v-for="(order, ix) of selectedPurchase?.order_origin
+                                .status_list"
+                            :key="ix">
+                            <div
+                                class="row tw-ring-2 dark:tw-ring-white py-2 tw-ring-black mb-3 pt-3 tw-capitalize">
+                                <div class="row col-5">
+                                    <BBadge
+                                        class="tw-text-lg mx-2"
+                                        :variant="
+                                            statusOrderColor(order.status)
+                                        ">
+                                        {{
+                                            '( ' +
+                                            (ix + 1) +
+                                            ' ) ' +
+                                            parseStatus(order.status)
+                                        }}
+                                    </BBadge>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-3 tw-text-md">
+                                        <b>Estado creado por: </b>
+                                    </div>
+                                    <div class="col-3 tw-font-light">
+                                        <b>
+                                            {{
+                                                order.created_by?.name +
+                                                ' ' +
+                                                order.created_by?.lastname
+                                            }}
+                                        </b>
+                                    </div>
+                                </div>
+                                <div class="row mb-2">
+                                    <div class="col-6 tw-text-md">
+                                        <b>Fecha del estado nuevo: </b>
+                                    </div>
+                                    <div class="col-6 tw-font-light">
+                                        <b>
+                                            ({{ moment(order.created_at) }})
+                                        </b>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </b-collapse>
+
+                    <div class="row tw-text-lg tw-font-bold mb-3">
+                        Estados de la compra:
+                    </div>
+
+                    <template
+                        v-for="(status, ix) in selectedPurchase?.status_list"
+                        :key="ix">
+                        <div
+                            class="row tw-ring-2 dark:tw-ring-white py-2 tw-ring-black mb-3 pt-3 tw-capitalize">
+                            <div class="row col-5">
+                                <BBadge
+                                    class="tw-text-lg mx-2"
+                                    :variant="
+                                        statusPurchaseColor(status.status)
+                                    ">
+                                    {{
+                                        '( ' + (ix + 1) + ' ) ' + status.status
+                                    }}
+                                </BBadge>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-3 tw-text-md">
+                                    <b>Estado creado por: </b>
+                                </div>
+                                <div class="col-3 tw-font-light">
+                                    <b>
+                                        {{
+                                            status.created_by?.name +
+                                            ' ' +
+                                            status.created_by?.lastname
+                                        }}
+                                    </b>
+                                </div>
+                            </div>
+                            <div class="row mb-2">
+                                <div class="col-6 tw-text-md">
+                                    <b>Fecha del estado nuevo: </b>
+                                </div>
+                                <div class="col-6 tw-font-light">
+                                    <b> ({{ moment(status.created_at) }}) </b>
+                                </div>
+                            </div>
+                        </div>
+                    </template>
+                </ModalDialog>
                 <div class="row">
                     <InputText
                         v-model="searchString"
-                        label="Búsqueda de producto" />
+                        label="Búsqueda de producto"
+                        class="col-3" />
+
+                    <e-button
+                        variant="primary"
+                        class="col-3 my-4"
+                        @click="showStatusAndChilds = true">
+                        Ver estados de la Compra
+                    </e-button>
                 </div>
                 <div class="row">
                     <BTable

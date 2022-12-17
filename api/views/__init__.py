@@ -54,6 +54,7 @@ __all__ = [
     "LogoutViewSet",
     "OrderRequestView",
     "OrderRequestViewSet",
+    "OrderStatusListViewSet",
     "PaginatedIItemViewSet",
     "PaginatedItemInvoiceView",
     "PaginatedItemViewSet",

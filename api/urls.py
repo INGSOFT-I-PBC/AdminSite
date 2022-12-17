@@ -135,6 +135,7 @@ urlpatterns = [
     path("detailed/order/<int:id>", views.get_full_order),
     path("order", create_order_request),
     path("order/<int:id>", OrderRequestView.as_view()),
+    path("order/status", OrderStatusListViewSet.as_view({"get": "list"})),
     path("provinces", ProvinceCityView.as_view()),
     path("status", StatusView.as_view()),
     # =====================================

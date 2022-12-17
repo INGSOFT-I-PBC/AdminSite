@@ -116,7 +116,7 @@ class PurchaseAditionalInfoSerialzier(serializers.ModelSerializer):
         return PurchaseChildSerializer(qs, many=True).data
 
     def get_status_list(self, instance):
-        qs = PurchaseStatus.objects.filter(purchase=instance)
+        qs = PurchaseStatus.objects.filter(purchase=instance).order_by("created_at")
         return StatusPurchaseSerializer(qs, many=True).data
 
     class Meta:
