@@ -90,7 +90,7 @@
                 leave-to-class="tw-max-h-0 tw-opacity-0">
                 <DrawerMenu
                     class="tw-ml-5 tw-mt-2"
-                    v-if="hasChilds && toggleChild"
+                    v-show="hasChilds && toggleChild"
                     ref="sub_item">
                     <template
                         v-for="(childItem, idx) of data.children"
