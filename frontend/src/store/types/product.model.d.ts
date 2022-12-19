@@ -22,4 +22,5 @@ export type ProductVariant = {
     sku: string
     price: number
     is_active: boolean
+    img?: string
 }

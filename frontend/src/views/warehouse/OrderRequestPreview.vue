@@ -41,8 +41,8 @@
                 <InputText
                     label="Revisado por"
                     :model-value="
-                        orderModel?.approved_at
-                            ? `${orderModel?.approved_by?.name} ${orderModel?.approved_by?.lastname}`
+                        orderModel?.revised_at
+                            ? `${orderModel?.revised_by?.name} ${orderModel?.revised_by?.lastname}`
                             : '----'
                     "
                     read-only></InputText>

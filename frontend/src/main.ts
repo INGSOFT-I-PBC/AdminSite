@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import BootstrapVue3 from 'bootstrap-vue-3'
 import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config'
 import 'vite/modulepreload-polyfill'
 
 import { computed, createApp, defineAsyncComponent, ref } from 'vue'
@@ -20,13 +21,12 @@ import 'bootstrap/dist/css/bootstrap.css'
 
 import '../scss/datepicker-theme.scss'
 import './assets/main.css'
-import './scss/styles.scss'
 import './index.css'
+import './scss/styles.scss'
 
 import { awesomeIcons } from './icons'
 import router from './router'
 import './types'
-import PrimeVue from 'primevue/config';
 
 const app = createApp(defineAsyncComponent(() => import('./App.vue')))
 
