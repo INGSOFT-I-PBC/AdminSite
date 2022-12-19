@@ -1347,7 +1347,7 @@ packages:
       '@babel/core': 7.20.5
       '@babel/plugin-transform-typescript': 7.20.2_@babel+core@7.20.5
       '@vue/babel-plugin-jsx': 1.1.1_@babel+core@7.20.5
-      vite: 4.0.0_4eaycc3336swc56yc3pdsd353y
+      vite: 4.0.0_rvjkrqm63doxcd3rysur57omeq
       vue: 3.2.41
     transitivePeerDependencies:
       - supports-color

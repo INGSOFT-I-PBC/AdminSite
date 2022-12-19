@@ -7,6 +7,7 @@ import type {
     ProductCreationForm,
     ProductSearchOptions,
     ProductVariant,
+    SimpleProductStock,
 } from './types/product'
 
 /**
@@ -74,6 +75,18 @@ export const useProductStore = defineStore('store-product', () => {
         return response
     }
 
+    async function findStockByProduct(
+        productId: number,
+        options?: Record<'variant' | 'product' | 'warehouse', number>
+    ) {
+        return (
+            await axios.get<SimpleProductStock[]>(
+                `api/v1/list/products/${productId}/stock`,
+                { params: options }
+            )
+        ).data
+    }
+
     return {
         product,
         products,
@@ -85,5 +98,6 @@ export const useProductStore = defineStore('store-product', () => {
         fetchVariants,
         createProduct,
         updateProduct,
+        findStockByProduct,
     }
 })

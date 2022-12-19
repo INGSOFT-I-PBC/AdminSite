@@ -46,4 +46,5 @@ __all__ = [
     "ShowEmployeeSerializer",
     "UpdateEmployeeSerializer",
     "InputProductSerializer",
+    "ProductStockSerializer",
 ]
