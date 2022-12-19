@@ -50,6 +50,15 @@ export interface Product extends BaseProduct {
     created_by: number
 }
 
+export interface SimpleProductStock {
+    readonly warehouse: number
+    readonly warehouse_name: string
+    readonly product: number
+    readonly variant: number
+    readonly stock_level: number
+    readonly updated_by: number
+}
+
 export interface ProductVariant extends BaseProductVariant {
     id: number
     img: string | null

@@ -1,6 +1,12 @@
 import rest_framework.serializers as _srl
 
-from api.models import Product, ProductAttribute, ProductVariant
+from api.models import (
+    Product,
+    ProductAttribute,
+    ProductStockWarehouse,
+    ProductVariant,
+    Warehouse,
+)
 
 
 class SimpleAttributeSerializer(_srl.ModelSerializer):
@@ -259,4 +265,26 @@ class SimpleVariantSerializer(_srl.ModelSerializer):
             "sku",
             "price",
             "is_active",
+        ]
+
+
+class ProductStockSerializer(_srl.ModelSerializer):
+    """Product Stock Serializer
+    this class has the target to represent the information for a given product.
+
+    Args:
+        _srl (Serializer): The parent class
+    """
+
+    warehouse_name = _srl.CharField(source="warehouse.name")
+
+    class Meta:
+        model = ProductStockWarehouse
+        fields = [
+            "warehouse",
+            "product",
+            "variant",
+            "stock_level",
+            "updated_by",
+            "warehouse_name",
         ]

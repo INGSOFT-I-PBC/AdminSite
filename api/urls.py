@@ -45,6 +45,8 @@ router.register(r"inventory", views.InventoryViewSet)
 router.register(r"products", views.ProductViewSet)
 router.register("product/(?P<product>\d+)/variants", views.ProductVariantViewSet)
 router.register(r"products/variants", views.ProductVariantViewSet)
+router.register(r"products/variants/<int:variant>/stock", views.ProductStockViewSet)
+router.register("products/(?P<product>\d+)/stock", views.ProductStockViewSet)
 
 
 urlpatterns = [
