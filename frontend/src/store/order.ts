@@ -10,6 +10,11 @@ import type {
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
+type OrderSearchParams = {
+    order_id: number
+    comment: string
+}
+
 export const useOrderStore = defineStore('orders', () => {
     const order = ref<OrderRequest>()
     const orderRequests = ref<PaginatedResponse<OrderRequest>>()
@@ -36,18 +41,12 @@ export const useOrderStore = defineStore('orders', () => {
      * @param params the search params for this route
      */
     async function fetchRequests(
-        options: any,
-        paginated_opt: PaginationOptions
+        params?: PaginationOptions & Partial<OrderSearchParams>
     ): Promise<PaginatedAPIResponse<SimpleOrderStatus>> {
-        const queryParams = {
-            ...options,
-            page: paginated_opt.page,
-            per_page: paginated_opt.per_page,
-        }
         const data = (
             await axios.get<PaginatedResponse<SimpleOrderStatus>>(
                 '/api/v1/order/status',
-                queryParams
+                { params }
             )
         ).data
 
