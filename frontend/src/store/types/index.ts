@@ -8,7 +8,31 @@ export type {
 
 export { isMessage } from './typesafe'
 
-export type { MinimalWarehouse, Warehouse } from './warehouse.model'
+export type {
+    MinimalWarehouse,
+    Warehouse,
+    TomaFisica,
+    WhWithTomaFisica,
+    Movement,
+    WarehouseStock,
+    TomaFisicaDetail,
+    FullTomaFisicaDetail,
+} from './warehouse.model'
+
+export type {
+    SimpleProduct,
+    ProductProps,
+    ProductVariant,
+} from './product.model'
+
+export type {
+    MinimalPurchase,
+    Purchase,
+    FullPurchase,
+    FullPurchaseDetails,
+    PurchaseChild,
+    PurchaseQuery,
+} from './purchase.model'
 
 export type { Category, FullItem, Item, MetaData } from './items.model'
 
@@ -31,5 +55,7 @@ export type {
     IInvoiceDetails,
     IPayment,
     IInventory,
+    IEditInventory,
 } from './invoice.model'
+export type { Inventory, IEmployee } from './inventory.model'
 export type { Sequence } from './sequence.model'

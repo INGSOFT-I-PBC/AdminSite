@@ -1,12 +1,19 @@
-import type { PaginatedResponse } from '@store-types'
+import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
 import type { MessageResponse } from '@store/types'
 import type {
     OrderRequest,
     OrderSaveData,
     RawOrderRequest,
+    SimpleOrderRequest,
+    SimpleOrderStatus,
 } from '@store/types/orders.model'
 import axios from 'axios'
 import { defineStore } from 'pinia'
+
+type OrderSearchParams = {
+    order_id: number
+    comment: string
+}
 
 export const useOrderStore = defineStore('orders', () => {
     const order = ref<OrderRequest>()
@@ -33,14 +40,16 @@ export const useOrderStore = defineStore('orders', () => {
      * This function returns a paginated list of Order Requests
      * @param params the search params for this route
      */
-    async function fetchRequests(params: PaginationOptions) {
+    async function fetchRequests(
+        params?: PaginationOptions & Partial<OrderSearchParams>
+    ): Promise<PaginatedAPIResponse<SimpleOrderStatus>> {
         const data = (
-            await axios.get<PaginatedResponse<OrderRequest>>(
-                '/api/v1/list/warehouses/order-requests',
+            await axios.get<PaginatedResponse<SimpleOrderStatus>>(
+                '/api/v1/order/status',
                 { params }
             )
         ).data
-        orderRequests.value = data
+
         return data
     }
 
@@ -78,6 +87,16 @@ export const useOrderStore = defineStore('orders', () => {
      */
     async function denyOrderRequest(target: number) {
         return partialUpdate(target, { status: 'NG' })
+    }
+
+    async function fetchStatus(params: PaginationOptions) {
+        const data = (
+            await axios.get<PaginatedResponse<SimpleOrderRequest>>(
+                '/api/v1/list/order/status',
+                { params }
+            )
+        ).data
+        return data
     }
 
     return {

@@ -65,7 +65,7 @@ class EmployeeViewSet(viewsets.ReadOnlyModelViewSet):
     API endpoint that allow the preview of employees
     """
 
-    queryset = Employee.objects.all().order_by("name", "lastname")
+    queryset = Employee.objects.all().order_by("-id")
     serializer_class = ShowEmployeeSerializer
 
 

@@ -65,6 +65,11 @@ export const menus: MenuItem[] = [
         icon: 'package',
         children: [
             {
+                label: 'Gestión Bodegas',
+                path: '/bodegas/gestion',
+                routeName: 'gestion-view',
+            },
+            {
                 label: 'Pedidos',
                 children: [
                     {
@@ -139,6 +144,12 @@ export const menus: MenuItem[] = [
         icon: 'clipboard',
         children: [],
         path: '/facturacion',
+    },
+    {
+        label: 'Cierre de Caja',
+        icon: 'inbox',
+        children: [],
+        path: '/close-box',
     },
     {
         id: 'logout',

@@ -13,6 +13,7 @@ import LoginView from '../views/auth/LoginView.vue'
 import { admin } from './routes/admin'
 import { bill } from './routes/bill'
 import { client } from './routes/client'
+import { closebox } from './routes/closebox'
 import { common } from './routes/common'
 import { employee } from './routes/employee'
 import { inventory } from './routes/inventory'
@@ -37,6 +38,7 @@ const routes = [
             ...role,
             ...client,
             ...bill,
+            ...closebox,
         ],
     },
     {

@@ -59,5 +59,17 @@
     "typescript.inlayHints.parameterTypes.enabled": true,
     "cSpell.words": ["endregion", "viewsets"],
     "spellright.language": [],
-    "spellright.documentTypes": ["markdown", "latex", "plaintext"]
+    "spellright.documentTypes": [
+        "markdown",
+        "latex",
+        "plaintext"
+    ],
+    "conventionalCommits.scopes": [
+        "api_models",
+        "api_views",
+        "api_urls",
+        "api",
+        "ui",
+        "frontend"
+    ]
 }

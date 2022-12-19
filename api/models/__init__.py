@@ -1,18 +1,26 @@
-from .auth import User, UserPermission, Permission, AuthManager, GroupPermission, Group
+from .auth import AuthManager, Group, GroupPermission, Permission, User, UserPermission
 from .cities import City, Province
+from .clients import Client, Gender
+from .common import Status
 from .historialcaja import HistorialCaja
-from .invoice import InvoiceDetails, PaymentMethod, CreditNote, Invoice
+from .invoice import CreditNote, Invoice, InvoiceDetails, PaymentMethod
 from .items import Category, CategoryParam, Item, ItemMetaData
 from .offices import BranchOffice
 from .orders import OrderRequest, OrderRequestDetail, OrderStatus
+from .products import (
+    Product,
+    ProductAttribute,
+    ProductProvider,
+    ProductStockWarehouse,
+    ProductVariant,
+)
 from .provider import Provider
 from .purchases import Purchase, PurchaseDetail, PurchaseStatus
-from .warehouse import Warehouse, WarehouseTransaction, WhTransactionDetails, Inventory
 from .roles import Role
-from .users import Employee
-from .common import Status
-from .clients import Client,Gender
 from .sequence import Sequence
+from .test import *
+from .users import Employee
+from .warehouse import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
 
 __all__ = [
     "User",
@@ -49,5 +57,11 @@ __all__ = [
     "Status",
     "Client",
     "Gender",
-    "Sequence"
+    "Sequence",
+    "Product",
+    "ProductAttribute",
+    "ProductProvider",
+    "ProductVariant",
+    "TestModel",
+    "ProductStockWarehouse",
 ]

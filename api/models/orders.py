@@ -2,6 +2,8 @@ from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from api.models.products import ProductVariant
+
 from .common import Status
 from .items import Item
 from .users import Employee
@@ -17,8 +19,6 @@ class OrderRequest(models.Model):
         APPROVED = "AP", _("Aprobado")
         NEGATED = "NG", _("Negada")
 
-    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-
     requested_at = models.DateTimeField(null=False, auto_now_add=True)
     requested_by = models.ForeignKey(
         Employee,
@@ -30,8 +30,8 @@ class OrderRequest(models.Model):
     revised_by = models.OneToOneField(
         Employee,
         on_delete=models.RESTRICT,
-        db_column="approved_by",
-        related_name="approved_by",
+        db_column="revised_by",
+        related_name="revised_by",
         default=None,
         null=True,
     )
@@ -51,12 +51,13 @@ class OrderRequest(models.Model):
 
 
 class OrderRequestDetail(models.Model):
-    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
     order_request = models.ForeignKey(
         OrderRequest, on_delete=models.CASCADE, related_name="items"
     )
-    item = models.ForeignKey(Item, on_delete=models.RESTRICT)
+    item = models.ForeignKey(
+        ProductVariant, on_delete=models.RESTRICT, related_name="ordered_on"
+    )
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
 
     class Meta:
@@ -64,7 +65,6 @@ class OrderRequestDetail(models.Model):
 
 
 class OrderStatus(models.Model):
-    id = models.BigAutoField(primary_key=True, auto_created=True, editable=False)
     order = models.ForeignKey(OrderRequest, on_delete=models.RESTRICT)
     status = models.ForeignKey(Status, on_delete=models.RESTRICT)
 

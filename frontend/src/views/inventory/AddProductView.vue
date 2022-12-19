@@ -14,11 +14,13 @@
 
     import { defineComponent } from 'vue'
     import { useRoute, useRouter } from 'vue-router'
+    import { useToast } from 'vue-toastification'
 
     export default defineComponent({
         name: 'AddProductView',
         data() {
             const route = useRoute()
+            const toast = useToast()
             const authStore = useAuthStore()
             const name = authStore.userData?.name
             const employee_id = authStore.userData?.employee as number
@@ -28,6 +30,7 @@
             const productModalShow = ref(false)
             const productModalShowError = ref(false)
             const msm400 = ref('')
+            const checked = ref(false)
             const router = useRouter()
             const formStatus = ref<Status>({
                 id: 0,
@@ -45,10 +48,12 @@
             })
 
             return {
+                checked,
                 formSequenceEditado,
                 formSequence,
                 formStatus,
                 route,
+                toast,
                 router,
                 hoy,
                 normalValue,
@@ -70,7 +75,7 @@
                 entrada: {
                     brand: '',
                     category_id: 0,
-                    iva: 0,
+                    iva: 12,
                     model: '',
                     name: '',
                     price: 0,
@@ -79,6 +84,7 @@
                     quantity: normalValue,
                     item_id: 0,
                     codigo: '',
+                    is_active: true,
                 },
             }
         },
@@ -111,7 +117,8 @@
                 console.log(this.formSequenceEditado)
             },
             validarCheckbox() {
-                console.log()
+                this.entrada.is_active = !this.entrada.is_active
+                console.log(this.entrada.is_active)
             },
             async showAllCategory() {
                 ItemDataService.getAllCategory()
@@ -142,6 +149,10 @@
                 formDataItem.append('updated_at', this.hoy.toISOString())
                 formDataItem.append('brand', this.entrada.brand)
                 formDataItem.append('img', this.image_field)
+                if (this.checked) {
+                    console.log(this.checked)
+                    this.entrada.iva = 0
+                }
                 formDataItem.append('iva', (this.entrada.iva / 100).toString())
                 formDataItem.append('model', this.entrada.model)
                 formDataItem.append('name', this.entrada.name)
@@ -154,8 +165,8 @@
 
                 this.validarCheckbox()
                 formDataItem.append(
-                    'status_id',
-                    this.entrada.status_id.toString()
+                    'is_active',
+                    this.entrada.is_active.toString()
                 )
                 this.loadSequence('ITEM')
                 formDataItem.append('codename', this.entrada.codigo)
@@ -217,20 +228,22 @@
                 reader.readAsDataURL(file)
             },
             onSubmit(value: any) {
-                console.log('probando')
                 this.productModalShow = true
             },
             validateName(value: any) {
                 // if the field is empty
                 if (!value) {
+                    this.toast.error('LLene el campo Nombre')
                     return 'Este campo es requerido'
                 }
                 if (!isNaN(value)) {
+                    this.toast.error('Formato invalido en el campo Nombre')
                     return 'Inválido'
                 }
                 const regex = /^[a-zA-ZÀ-ÿ ]+$/
 
                 if (!regex.test(value)) {
+                    this.toast.error('Formato invalido en el campo Nombre')
                     return 'Inválido'
                 }
 
@@ -239,14 +252,20 @@
             validateMarca(value: any) {
                 // if the field is empty
                 if (!value) {
+                    this.toast.error('LLene el campo Marca')
+
                     return 'Este campo es requerido'
                 }
                 if (!isNaN(value)) {
+                    this.toast.error('Formato invalido en el campo Marca')
                     return 'Inválido'
                 }
                 const regex = /^[a-zA-ZÀ-ÿ ]+$/
 
                 if (!regex.test(value)) {
+                    this.toast.error('Formato invalido en el campo Marca')
+
+                    this.toast.error('LLene el campo Marca')
                     return 'Inválido'
                 }
 
@@ -256,14 +275,8 @@
             validateModelo(value: any) {
                 // if the field is empty
                 if (!value) {
-                    return 'Este campo es requerido'
-                }
+                    this.toast.error('LLene el campo Modelo')
 
-                return true
-            },
-            validateCategoria(value: any) {
-                // if the field is empty
-                if (!value) {
                     return 'Este campo es requerido'
                 }
 
@@ -272,29 +285,18 @@
             validatePrecio(value: any) {
                 // if the field is empty
                 if (!value) {
+                    this.toast.error('Llene el campo Precio')
+
                     return 'Este campo es requerido'
                 }
                 if (isNaN(value)) {
+                    this.toast.error('Formato invalido en el campo Precio')
+
                     return 'Inválido'
                 }
                 if (value < 0) {
-                    return 'Inválido'
-                }
+                    this.toast.error('Formato invalido en el campo Precio')
 
-                return true
-            },
-
-            validateIva(value: any) {
-                // if the field is empty
-                if (isNaN(value)) {
-                    return 'Inválido'
-                }
-                if (value < 0) {
-                    return 'Inválido'
-                }
-                if (value == 0 || value == 12) {
-                    return true
-                } else {
                     return 'Inválido'
                 }
 
@@ -311,7 +313,6 @@
             this.showAllWarehouses()
             this.loadStatus(this.formStatus.name.toString())
             this.loadSequence('ITEM')
-            //console.log("hola"+this.formStatus.value.name)
         },
     })
 </script>
@@ -334,7 +335,7 @@
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Esta seguro de guardar el producto?
+                ¿Está seguro de guardar el producto?
             </h1>
         </ModalDialog>
 
@@ -512,31 +513,22 @@
                     <div class="container text-center" style="padding: 10px">
                         <div class="row">
                             <div class="col">
-                                <h6
+                                <InputText label="IVA" model-value="12" />
+                            </div>
+                            <div class="col" style="display: flex">
+                                <input
+                                    type="checkbox"
+                                    id="checkbox"
+                                    v-model="checked" />
+                                <label
                                     style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Iva*
-                                </h6>
-                                <Field
-                                    name="iva"
-                                    type="text"
-                                    class="form-control"
-                                    placeholder=""
-                                    aria-label="First name"
-                                    :rules="validateIva"
-                                    v-model="entrada.iva" />
-                                <div class="col">
-                                    <ErrorMessage
-                                        name="iva"
-                                        style="
-                                            font-size: 10px;
-                                            color: red;
-                                            text-align: left;
-                                        " />
-                                </div>
+                                        align-self: center;
+                                        font-weight: 700;
+                                        font-size: 1rem;
+                                    "
+                                    for="checkbox"
+                                    >IVA 0</label
+                                >
                             </div>
 
                             <div class="col">
@@ -555,7 +547,7 @@
                                         role="switch"
                                         id="check"
                                         @change="validarCheckbox()"
-                                        checked />
+                                        :checked="entrada.is_active" />
                                     <label
                                         class="form-check-label"
                                         for="flexSwitchCheckDefault"></label>

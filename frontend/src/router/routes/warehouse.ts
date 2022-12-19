@@ -8,7 +8,7 @@ export const warehouses: Array<RouteConfig> = [
             breadcrumb: [
                 {
                     text: 'Bodegas',
-                    href: '/bodegas',
+                    href: '/bodegas/gestion',
                 },
                 {
                     text: 'Nuevo pedido',
@@ -18,13 +18,22 @@ export const warehouses: Array<RouteConfig> = [
         },
     },
     {
-        path: '/bodegas/tomas-fisicas',
+        path: '/bodegas/tomas-fisicas/:id?',
         component: () => import('@views/warehouse/GestionTomasFisicas.vue'),
         name: 'tomas-fisica-view',
+        props: true,
         meta: {
-            pageTitle: 'Tomas Fisicas',
-            permission: 'view_dashboard',
-            breadcrumb: [{ text: 'inicio' }, { text: 'dashboard' }],
+            pageTitle: 'Tomas Físicas',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas/gestion',
+                },
+                {
+                    text: 'Nueva Toma',
+                    active: true,
+                },
+            ],
         },
     },
 
@@ -33,7 +42,17 @@ export const warehouses: Array<RouteConfig> = [
         name: 'movimiento-inventario-view',
         component: () => import('@views/warehouse/MovimientosInventario.vue'),
         meta: {
-            pageTitle: 'Movimiento Inventario',
+            pageTitle: 'Movimientos de Bodega',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas/gestion',
+                },
+                {
+                    text: 'Movimientos',
+                    active: true,
+                },
+            ],
         },
     },
 
@@ -47,8 +66,9 @@ export const warehouses: Array<RouteConfig> = [
     },
 
     {
-        path: '/bodegas/pedidos',
+        path: '/bodegas/pedidos/:id?',
         name: 'pedidos-view',
+        props: true,
         component: () => import('@views/warehouse/GestionPedidos.vue'),
         meta: {
             pageTitle: 'Gestion Pedidos',
@@ -65,6 +85,21 @@ export const warehouses: Array<RouteConfig> = [
                 { text: 'Bodegas' },
                 { text: 'Mantenimiento' },
                 { text: 'Inventario' },
+            ],
+        },
+    },
+
+    {
+        path: '/bodegas/gestion',
+        name: 'gestion-view',
+        component: () => import('@views/warehouse/GestionBodegas.vue'),
+        meta: {
+            pageTitle: 'Gestión de Bodegas',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas',
+                },
             ],
         },
     },

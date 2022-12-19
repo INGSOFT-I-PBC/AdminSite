@@ -4,13 +4,15 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import OrderRequest
+from api.models.orders import OrderStatus
 from api.serializers.order import (
     OrderDetailSerializer,
     OrderReadSerializer,
     OrderSerializer,
+    OrderStatusSerializer,
     PartialOrderSerializer,
 )
 from api.utils import error_response, response
@@ -98,3 +100,18 @@ def get_full_order(request, *args, **kwargs):
     order = search.get()
 
     return JsonResponse(OrderReadSerializer(order).data)
+
+
+class OrderStatusListViewSet(ModelViewSet):
+    queryset = OrderStatus.objects.all().order_by("-created_at")
+    serializer_class = OrderStatusSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
+        if params.get("comment", None):
+            queryset = queryset.filter(comment__icontains=params.get("comment"))
+        if params.get("order_id", None):
+            queryset = queryset.filter(order=params.get("order_id"))
+
+        return queryset
