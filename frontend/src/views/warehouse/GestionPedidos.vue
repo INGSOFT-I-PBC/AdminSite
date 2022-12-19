@@ -217,10 +217,11 @@
         }
 
         try {
-            let order_res = await orderStore.fetchRequests(
-                { order_id: selectedPurchase.value.order_origin.id },
-                { page: 1, per_page: 100 }
-            )
+            let order_res = await orderStore.fetchRequests({
+                order_id: selectedPurchase.value.order_origin.id,
+                page: 1,
+                per_page: 100,
+            })
 
             if (isMessage(order_res)) {
                 toast.error('Error al cargar estados de la orden')
