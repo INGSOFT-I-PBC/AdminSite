@@ -241,14 +241,12 @@ def create_purchase_status(request):
     status_obj = Status.objects.filter(name=request.data.get("status")).first()
     employee = User.objects.get(id=request.user.id).employee
 
-    print(employee)
     data = {
         "created_at": datetime.now(),
         "created_by": employee.id,
         "purchase": purchase.id,
         "status": status_obj.id,
     }
-    print(data)
 
     serializer = SavePurchaseStatusSerializer(data=data)
     if serializer.is_valid(raise_exception=True):

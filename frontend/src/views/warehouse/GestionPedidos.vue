@@ -76,6 +76,9 @@
     const currentDetailsPage = ref(1)
     const searchString = ref('')
 
+    const providerList = ref<{ id: number; name: string }[]>([])
+    const selectedProvider = ref<{ id: number; name: string }>()
+
     const purchaseForm = ref({
         from_date: useField(
             'to_date',
@@ -185,8 +188,14 @@
         const arrPromise: Promise<any>[] = []
 
         purchaseDetailsArr.value = []
+        providerList.value = []
+
+        providerList.value.push({ id: -1, name: 'Todos los productos' })
 
         for (const p_child of selectedPurchase.value.childs) {
+            providerList.value.push(
+                p_child.provider ? p_child.provider : { id: -2, name: 'N/A' }
+            )
             arrPromise.push(
                 purchaseStore
                     .fetchPurchaseDetails({ purchase_child_id: p_child.id })
@@ -334,6 +343,31 @@
                         d.variant.variant_name.includes(searchString.value) ||
                         d.provider?.name.includes(searchString.value) ||
                         d.variant.sku.includes(searchString.value)
+                    )
+                })
+                .slice(
+                    (currentDetailsPage.value - 1) * purchasePerPage.value,
+                    currentDetailsPage.value * purchasePerPage.value
+                )
+            stopWatcher.value = false
+        } else {
+            paginatedPurchaseDetailsArr.value = purchaseDetailsArr.value?.slice(
+                (currentDetailsPage.value - 1) * purchasePerPage.value,
+                currentDetailsPage.value * purchasePerPage.value
+            )
+            stopWatcher.value = false
+        }
+    }
+
+    function filterProvider(): void {
+        if (selectedProvider.value?.id != -1 && purchaseDetailsArr.value) {
+            currentDetailsPage.value = 1
+            paginatedPurchaseDetailsArr.value = purchaseDetailsArr.value
+                .filter(d => {
+                    return d.provider?.name.includes(
+                        selectedProvider.value?.name
+                            ? selectedProvider.value?.name
+                            : ''
                     )
                 })
                 .slice(
@@ -1068,9 +1102,9 @@
                             :key="ix">
                             <div
                                 class="row tw-ring-2 dark:tw-ring-white py-2 tw-ring-black mb-3 pt-3 tw-capitalize">
-                                <div class="row col-5">
+                                <div class="row col-12">
                                     <BBadge
-                                        class="tw-text-lg mx-2"
+                                        class="tw-text-lg mx-2 col-5"
                                         :variant="
                                             statusOrderColor(order.status)
                                         ">
@@ -1081,10 +1115,9 @@
                                             parseStatus(order.status)
                                         }}
                                     </BBadge>
-                                </div>
-                                <div class="row mb-2">
+
                                     <div class="col-3 tw-text-md">
-                                        <b>Estado creado por: </b>
+                                        <b>Creado por: </b>
                                     </div>
                                     <div class="col-3 tw-font-light">
                                         <b>
@@ -1096,9 +1129,9 @@
                                         </b>
                                     </div>
                                 </div>
-                                <div class="row mb-2">
-                                    <div class="col-6 tw-text-md">
-                                        <b>Fecha del estado nuevo: </b>
+                                <div class="row mb-2 allign-content-end mt-2">
+                                    <div class="col-3 tw-text-md">
+                                        <b>Fecha : </b>
                                     </div>
                                     <div class="col-6 tw-font-light">
                                         <b>
@@ -1119,9 +1152,9 @@
                         :key="ix">
                         <div
                             class="row tw-ring-2 dark:tw-ring-white py-2 tw-ring-black mb-3 pt-3 tw-capitalize">
-                            <div class="row col-5">
+                            <div class="row col-12">
                                 <BBadge
-                                    class="tw-text-lg mx-2"
+                                    class="tw-text-lg mx-2 col-5"
                                     :variant="
                                         statusPurchaseColor(status.status)
                                     ">
@@ -1129,10 +1162,9 @@
                                         '( ' + (ix + 1) + ' ) ' + status.status
                                     }}
                                 </BBadge>
-                            </div>
-                            <div class="row mb-2">
+
                                 <div class="col-3 tw-text-md">
-                                    <b>Estado creado por: </b>
+                                    <b>Creado por: </b>
                                 </div>
                                 <div class="col-3 tw-font-light">
                                     <b>
@@ -1144,9 +1176,9 @@
                                     </b>
                                 </div>
                             </div>
-                            <div class="row mb-2">
-                                <div class="col-6 tw-text-md">
-                                    <b>Fecha del estado nuevo: </b>
+                            <div class="row mb-2 allign-content-end mt-2">
+                                <div class="col-3 tw-text-md">
+                                    <b>Fecha : </b>
                                 </div>
                                 <div class="col-6 tw-font-light">
                                     <b> ({{ moment(status.created_at) }}) </b>
@@ -1167,6 +1199,14 @@
                         @click="showStatusAndChilds = true">
                         Ver estados de la Compra
                     </e-button>
+                    <ListBox
+                        class="col-4 mx-2"
+                        top-label="Proveedor"
+                        v-model="selectedProvider"
+                        placeholder="Filtro por proveedor"
+                        label="name"
+                        @change="filterProvider"
+                        :options="providerList ?? []" />
                 </div>
                 <div class="row">
                     <BTable

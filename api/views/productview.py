@@ -10,11 +10,17 @@ from rest_framework.response import Response
 from rest_framework.views import APIView as _APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet as _ROViewSet
 
-from api.models.products import Product, ProductAttribute, ProductVariant
+from api.models.products import (
+    Product,
+    ProductAttribute,
+    ProductStockWarehouse,
+    ProductVariant,
+)
 from api.serializers.product import (
     InputProductSerializer,
     ProductAttributeSerializer,
     ProductSerializer,
+    ProductStockSerializer,
     ProductVariantSerializer,
 )
 from api.utils import error_response, response
@@ -40,6 +46,27 @@ class ProductViewSet(_ROViewSet):
     serializer_class = ProductSerializer
     filter_backends = [OrderingFilter]
     ordering_fields = ["product_name", "summary", "brand_name", "base_price"]
+
+
+class ProductStockViewSet(_ROViewSet):
+    queryset = ProductStockWarehouse.objects.order_by("warehouse", "product", "variant")
+    serializer_class = ProductStockSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+        result = self.queryset
+        params = {**self.request.query_params.copy(), **self.kwargs}
+        if params.get("variant", None):
+            print("filter variant")
+            result = result.filter(variant=params.get("variant"))
+        if params.get("product", None):
+            print("filter product")
+            result = result.filter(product=params.get("product"))
+        if params.get("warehouse", None):
+            filter("filter warehouse")
+            result = result.filter(warehouse=params.get("warehouse"))
+        print("Hola sdfsdfs")
+        return result
 
 
 class ProductVariantViewSet(_ROViewSet):
