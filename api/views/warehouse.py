@@ -18,7 +18,7 @@ from api.models.warehouse import (
     WhTomasFisicas,
     WhTomasFisicasDetails,
 )
-from api.serializers.order import OrderSerializer
+from api.serializers.order import OrderSerializer, OrderSerializerORDREQ
 from api.serializers.warehouse import (
     FullTomasDetailSerializer,
     FullWarehouseSerializer,
@@ -528,3 +528,42 @@ class WhTomasFisicasViewSet(ModelViewSet):
             serializer = TomasFisicasSerializer(toma_fisica)
             return JsonResponse(serializer.data, status=201)
         return error_response("Data is not valid")
+
+
+class OrderRequestViewSet2(ModelViewSet):
+
+    queryset = (
+        OrderRequest.objects.all()
+        .select_related("warehouse")
+        .select_related("requested_by")
+        .order_by("id")
+    )
+
+    def list(self, request):
+        busqueda = request.query_params.get("busqueda")
+        filtro = request.query_params.get("filtro")
+
+        if busqueda != "":
+            if busqueda != None:
+                if filtro == "bodega":
+                    self.queryset = self.queryset.filter(
+                        warehouse__name__contains=busqueda
+                    )
+                if filtro == "solicitador":
+                    self.queryset = self.queryset.filter(
+                        requested_by__name__contains=busqueda
+                    )
+
+        serializer_class = OrderSerializerORDREQ(self.queryset, many=True)
+
+        page_number = request.query_params.get("page")
+
+        if page_number:
+
+            paginator = Paginator(self.queryset, 50)
+
+            page_obj = paginator.get_page(page_number)
+
+            return Response(OrderSerializerORDREQ(page_obj, many=True).data)
+
+        return Response(serializer_class.data)

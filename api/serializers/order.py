@@ -2,6 +2,7 @@ from rest_framework import serializers
 
 from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
 from api.serializers.auth import EmployeeSerializer
+from api.serializers.item import SimpleItemSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -78,6 +79,28 @@ class OrderReadSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrderRequest
         fields = "__all__"
+
+
+class OrderDetailSerializerprueba(serializers.ModelSerializer):
+    item = SimpleItemSerializer()
+
+    class Meta:
+        model = OrderRequestDetail
+        fields = ["order_request", "item", "quantity"]
+
+
+class OrderSerializerORDREQ(serializers.ModelSerializer):
+    class Meta:
+        model = OrderRequest
+        fields = "__all__"
+
+    def to_representation(self, instance):
+        return {
+            "id": instance.id,
+            "requested_at": instance.requested_at,
+            "requested_by": instance.requested_by.name,
+            "warehouse": instance.warehouse.name,
+        }
 
 
 class InputOrderSerializer(serializers.Serializer):

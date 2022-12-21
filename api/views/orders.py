@@ -4,11 +4,13 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
 from rest_framework.views import APIView
-from rest_framework.viewsets import ReadOnlyModelViewSet
+from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import OrderRequest
+from api.models.orders import OrderRequestDetail
 from api.serializers.order import (
     OrderDetailSerializer,
+    OrderDetailSerializerprueba,
     OrderReadSerializer,
     OrderSerializer,
     PartialOrderSerializer,
@@ -58,6 +60,27 @@ class OrderRequestView(APIView):
             target.revised_by = request.user.employee
             target.save()
         return response("Successfully updated order request")
+
+
+class OrderRequestFullView(ModelViewSet):
+    queryset = OrderRequestDetail.objects.all()
+    serializer_class = OrderDetailSerializerprueba
+
+    def get_queryset(self):
+        # print(request.GET)
+        try:
+
+            orders_details = (
+                self.queryset.filter(order_request=self.request.query_params.get("id"))
+                .select_related("item")
+                .select_related("item__category")
+            )
+
+            return orders_details
+
+        except Exception as e:
+            print(e)
+            return error_response("Invalid query")
 
 
 @api_view(["POST"])

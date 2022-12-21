@@ -16,21 +16,30 @@ import axios, { type AxiosResponse } from 'axios'
 import { defineStore } from 'pinia'
 
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
+import type { OrderDetails, OrderSaveData } from './types/orders.model'
+
+type identifier = number | string
 
 export interface WarehouseState {
     lastWarehouseList: Optional<Warehouse[]>
     paginatedWarehouse: Optional<PaginatedAPIResponse<Warehouse>>
+    lastOrdersWarehouseList: Optional<OrderSaveData[]>
+    OrderDetailsList: Optional<OrderDetails[]>
 }
 
 export const useWarehouseStore = defineStore('warehouse-store', {
     state: (): WarehouseState => ({
         lastWarehouseList: null,
         paginatedWarehouse: null,
+        lastOrdersWarehouseList: null,
+        OrderDetailsList: null,
     }),
 
     getters: {
         getWarehouseList: state => state.lastWarehouseList,
         getPaginatedWarehouse: state => state.paginatedWarehouse,
+        getOrdersWarehouseList: state => state.lastOrdersWarehouseList,
+        getOrderDetails: state => state.OrderDetailsList,
     },
 
     actions: {
@@ -194,6 +203,39 @@ export const useWarehouseStore = defineStore('warehouse-store', {
                     queryParams
                 )
             ).data
+        },
+
+        async fetchOrdersWarehouse(
+            options: Optional<OrderSaveData> = null,
+            busqueda = '',
+            filtro = ''
+        ) {
+            const dato = {
+                busqueda: busqueda != '' ? busqueda : '',
+                filtro: filtro,
+            }
+            //datobusqueda = busqueda;
+
+            const result = await (
+                await axios.get('/api/v1/list/warehouses/order-requests', {
+                    params: busqueda != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async fetchOrdersDetails(
+            idOrder: identifier,
+            options: Optional<OrderDetails> = null
+        ) {
+            const result = await (
+                await axios.get(`/api/v1/order-details?id=${idOrder}`, {
+                    params: options,
+                })
+            ).data
+
+            return result
         },
     },
 })

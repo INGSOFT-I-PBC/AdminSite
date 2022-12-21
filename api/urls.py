@@ -10,7 +10,7 @@ from api.views import *
 from api.views.clientview import ClientView
 from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
 from api.views.itemviews import ItemView
-from api.views.orders import OrderRequestView
+from api.views.orders import OrderRequestFullView, OrderRequestView
 from api.views.provinceview import ProvinceCityView
 from api.views.sequence import *
 from api.views.statusview import StatusView
@@ -27,6 +27,7 @@ router.register(r"permissions", views.PermissionsViewSet)
 router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
+router.register(r"warehouses/order-requests2", views.OrderRequestViewSet2)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"clients/all", views.ClientViewSet)
@@ -130,6 +131,11 @@ urlpatterns = [
     # Order management
     path("order/<int:id>", OrderRequestView.as_view()),
     path("order", create_order_request),
+    path(
+        "order-details",
+        OrderRequestFullView.as_view({"get": "list"}),
+        name="order-details",
+    ),
     path("detailed/order/<int:id>", views.get_full_order),
     path("clients", ClientView.as_view()),
     path("status", StatusView.as_view()),
