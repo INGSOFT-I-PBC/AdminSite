@@ -1,5 +1,5 @@
 # Editor libraries
-autopep8==2.0.0
+autopep8==2.0.1
 flake8==6.0.0
 pep8>=1.7.1
 pylint>=2.15.9
