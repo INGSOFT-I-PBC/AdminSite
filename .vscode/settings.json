@@ -26,9 +26,17 @@
         "source.organizeImports": false,
         "source.sortMembers": true
     },
-    "python.formatting.provider": "black",
+    "python.formatting.provider": "autopep8",
     "python.formatting.blackPath": "black",
-
+    "python.linting.enabled": true,
+    "python.analysis.typeCheckingMode": "off",
+    "python.analysis.autoImportCompletions": true,
+    "python.linting.lintOnSave": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+      "--load-plugin=pylint_django",
+      "--django-settings-module=backend.settings"
+    ],
     "eslint.codeAction.showDocumentation": {
         "enable": true
     },
@@ -45,7 +53,6 @@
     ],
     "eslint.codeActionsOnSave.mode": "all",
     "eslint.format.enable": true,
-    "python.linting.enabled": true,
     "prettier.endOfLine": "lf",
     "eslint.packageManager": "pnpm",
     "eslint.workingDirectories": ["./frontend", "./frontend/src"],
@@ -72,7 +79,4 @@
         "ui",
         "frontend"
     ],
-    "python.analysis.typeCheckingMode": "off",
-    "python.analysis.autoImportCompletions": true,
-
 }
