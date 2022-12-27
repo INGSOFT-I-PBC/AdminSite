@@ -1,6 +1,7 @@
 import { library } from '@fortawesome/fontawesome-svg-core'
 import BootstrapVue3 from 'bootstrap-vue-3'
 import { createPinia } from 'pinia'
+import PrimeVue from 'primevue/config'
 import 'vite/modulepreload-polyfill'
 
 import { computed, createApp, defineAsyncComponent, ref } from 'vue'
@@ -15,10 +16,7 @@ import '@/scss/styles.scss'
 import '@vuepic/vue-datepicker/dist/main.css'
 
 import 'bootstrap-icons/font/bootstrap-icons.css'
-import 'bootstrap-icons/font/bootstrap-icons.css'
 import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
-import 'bootstrap-vue-3/dist/bootstrap-vue-3.css'
-import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap.css'
 
 import '../scss/datepicker-theme.scss'
@@ -49,6 +47,7 @@ app.use(createPinia())
 app.use(BootstrapVue3)
 app.use(router)
 app.use(Toast, defToastOptions)
+app.use(PrimeVue)
 app.use(OpenLayersMap)
 app.component('EasyDataTable', Vue3EasyDataTable)
 app.component(

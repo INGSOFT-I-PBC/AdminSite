@@ -34,13 +34,14 @@
             default: '',
         },
     })
-    const emit = defineEmits(['update:modelValue'])
+    const emit = defineEmits(['update:modelValue', 'change'])
     const selectedItem = computed({
         get() {
             return props.modelValue
         },
         set(value) {
             emit('update:modelValue', value)
+            emit('change', value)
         },
     })
 </script>

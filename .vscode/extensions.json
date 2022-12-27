@@ -9,8 +9,10 @@
     "dbaeumer.vscode-eslint",
     "ms-python.python",
     "Vue.volar",
-    "bradlc.vscode-tailwindcss"
-
+    "bradlc.vscode-tailwindcss",
+    "batisteo.vscode-django",
+    "ms-python.isort",
+    "ms-python.vscode-pylance"
 	],
 	// List of extensions recommended by VS Code that should not be recommended for users of this workspace.
 	"unwantedRecommendations": [

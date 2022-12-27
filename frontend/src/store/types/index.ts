@@ -25,7 +25,14 @@ export type {
     ProductVariant,
 } from './product.model'
 
-export type { MinimalPurchase, Purchase } from './purchase.model'
+export type {
+    MinimalPurchase,
+    Purchase,
+    FullPurchase,
+    FullPurchaseDetails,
+    PurchaseChild,
+    PurchaseQuery,
+} from './purchase.model'
 
 export type { Category, FullItem, Item, MetaData } from './items.model'
 

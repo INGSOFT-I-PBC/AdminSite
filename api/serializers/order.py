@@ -1,7 +1,9 @@
 from rest_framework import serializers
 
 from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
+from api.models.orders import OrderStatus
 from api.serializers.auth import EmployeeSerializer
+from api.serializers.common import SimpleStatusSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -82,3 +84,22 @@ class OrderReadSerializer(serializers.ModelSerializer):
 
 class InputOrderSerializer(serializers.Serializer):
     pass
+
+
+class OrderStatusSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    created_at = serializers.DateTimeField()
+    created_by = EmployeeSerializer()
+    status = SimpleStatusSerializer()
+
+    def to_representation(self, obj):
+        """Move fields from status to purchase_status representation."""
+        representation = super().to_representation(obj)
+        status_representation = representation.pop("status")
+        representation["status"] = status_representation["name"]
+        return representation
+
+    class Meta:
+        model = OrderStatus
+        fields = ["id", "order", "status", "created_by", "created_at"]

@@ -83,24 +83,6 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
-        async fetchPaginatedWarehousePurchase(
-            options: any,
-            paginated_opt: PaginationOptions
-        ): Promise<PaginatedAPIResponse<Purchase>> {
-            const queryParams = {
-                ...options,
-                page: paginated_opt.page,
-                per_page: paginated_opt.per_page,
-            }
-            const result = await (
-                await axios.get<PaginatedAPIResponse<Purchase>>(
-                    '/api/v1/warehouse/purchase',
-                    { params: queryParams }
-                )
-            ).data
-            return result
-        },
-
         async fetchPaginatedWarehouseTomasFisicas(
             options: any,
             paginated_opt: PaginationOptions
