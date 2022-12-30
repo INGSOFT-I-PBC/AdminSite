@@ -162,6 +162,11 @@ urlpatterns = [
     path("purchase/details", PurchaseDetailsViewSet.as_view({"get": "list"})),
     path("purchase", PurchaseAditionalInfoViewSet.as_view({"get": "list"})),
     # =====================================
+    # <|         Movement endpoints       |>
+    # =====================================
+    path("movement/status", TransactionStatusViewSet.as_view({"get": "list"})),
+    path("movement", WhTransactionDetailsViewSet.as_view({"get": "list"})),
+    # =====================================
     # <|        Role endpoints       |>
     # =====================================
     path("role", views.create_role),

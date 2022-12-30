@@ -76,6 +76,7 @@ __all__ = [
     "RoleViewSet",
     "self_permissions",
     "StatusView",
+    "TransactionStatusViewSet",
     "UnpaginatedGroupViewSet",
     "user_data",
     "UserView",
