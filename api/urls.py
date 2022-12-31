@@ -6,6 +6,7 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
+from api.views.warehouse import TransactionStatusViewSet, WhTransactionDetailsViewSet
 
 """ Definition of paginated data
  This urls are read-only, for batch creation/update
@@ -151,6 +152,11 @@ urlpatterns = [
     # =====================================
     path("purchase/details", views.PurchaseDetailsViewSet.as_view({"get": "list"})),
     path("purchase", views.PurchaseAditionalInfoViewSet.as_view({"get": "list"})),
+    # =====================================
+    # <|         Movement endpoints       |>
+    # =====================================
+    path("movement/status", TransactionStatusViewSet.as_view({"get": "list"})),
+    path("movement", WhTransactionDetailsViewSet.as_view({"get": "list"})),
     # =====================================
     # <|        Role endpoints       |>
     # =====================================

@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Prefetch, Q, Subquery
+from django.db.models import F, OuterRef, Prefetch, Q, Subquery
+from django.db.models.aggregates import Max
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
@@ -14,6 +15,7 @@ from api.models import Inventory, OrderRequest, Warehouse
 from api.models.common import Status
 from api.models.products import ProductStockWarehouse, ProductVariant
 from api.models.warehouse import (
+    TransactionStatus,
     WarehouseTransaction,
     WhTomasFisicas,
     WhTomasFisicasDetails,
@@ -25,7 +27,8 @@ from api.serializers.warehouse import (
     SimpleTomasFisicasSerializer,
     TomasDetailSerializer,
     TomasFisicasSerializer,
-    TranactionWithProductsSerializer,
+    TransactionStatusSerializer,
+    TransactionWithProductsSerializer,
     WarehouseSerializer,
     WhInventorySerializer,
     WhStockSerializer,
@@ -349,22 +352,56 @@ class WhTransactionViewSet(ModelViewSet):
                 created_by__lastname__icontains=(params.get("created_by_name"))
             )
 
+        if params.get("warehouse_origin", None):
+            queryset = queryset.filter(
+                warehouse_origin__pk=params.get("warehouse_origin")
+            )
+
+        if params.get("warehouse_destiny", None):
+            queryset = queryset.filter(
+                warehouse_destiny__pk=params.get("warehouse_destiny")
+            )
+
+        if params.get("notes", None):
+            queryset = queryset.filter(notes__icontains=params.get("notes"))
+
+        if params.get("status", None):
+
+            p_status = (
+                TransactionStatus.objects.annotate(
+                    last_status_pk=Max(
+                        "warehouse_transaction__wh_transaction_status__pk"
+                    )
+                )
+                .filter(pk=F("last_status_pk"))
+                .filter(status__name__icontains=params.get("status"))
+            )
+
+            if params.get("status_from_date", None):
+                p_status = p_status.filter(
+                    created_at__gte=params.get("status_from_date")
+                )
+
+            if params.get("status_to_date", None):
+                to_date = datetime.strptime(
+                    (params.get("status_to_date")), "%Y-%m-%dT%H:%M:%S.%f%z"
+                ) + timedelta(days=1)
+
+                p_status = p_status.filter(created_at__gte=to_date)
+
+            queryset = queryset.filter(pk__in=Subquery(p_status.values("transaction")))
+
         return queryset
 
 
 class WhTransactionDetailsViewSet(ModelViewSet):
     queryset = WarehouseTransaction.objects.all()
-    serializer_class = TranactionWithProductsSerializer
+    serializer_class = TransactionWithProductsSerializer
+    pagination_class = None
 
     def get_queryset(self):
-
-        queryset = self.queryset.select_related(
-            "created_by", "status"
-        ).prefetch_related("wh_transaction_details")
+        queryset = self.queryset.select_related("created_by", "status")
         params = self.request.query_params.copy()
-
-        if (not params.get("id", False)) and (not params.get("warehouse_id", False)):
-            return error_response("Invalid request")
 
         if params.get("order_by", None):
             fields = params.pop("order_by")
@@ -391,6 +428,38 @@ class WhTransactionDetailsViewSet(ModelViewSet):
                 queryset = queryset.filter(
                     warehouse_origin__name__icontains=params.get("warehouse_name")
                 )
+            else:
+                queryset = queryset.filter(
+                    Q(warehouse_destiny=params.get("warehouse_id"))
+                    | Q(warehouse_origin=params.get("warehouse_id"))
+                )
+
+        return queryset
+
+
+class TransactionStatusViewSet(ModelViewSet):
+    queryset = TransactionStatus.objects.all()
+    serializer_class = TransactionStatusSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+
+        queryset = self.queryset.select_related("created_by", "status")
+        params = self.request.query_params.copy()
+
+        if (not params.get("id", False)) and (not params.get("transaction_id", False)):
+            return queryset.none()
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("id", None):
+            queryset = queryset.filter(id=params.get("id"))
+            return queryset
+
+        if params.get("transaction_id", None):
+            queryset = queryset.filter(transaction=params.get("transaction_id"))
 
         return queryset
 

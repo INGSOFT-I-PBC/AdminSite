@@ -55,6 +55,7 @@
     const cardTitle = ref<string>('')
 
     const selectedWarehouse = ref<Warehouse>()
+    const selectedProxyWarehouse = ref<Warehouse>()
 
     const codeInputString = ref('')
     const searchString = ref('')
@@ -312,8 +313,14 @@
      */
 
     async function triggerWhChange() {
-        if (selectedWarehouse.value && invTableData.value.length > 0) {
+        if (
+            selectedWarehouse.value &&
+            invTableData.value.length > 0 &&
+            selectedProxyWarehouse.value != selectedWarehouse.value
+        ) {
+            selectedWarehouse.value = selectedProxyWarehouse.value
             showChangeWhModal.value = true
+            return
         } else if (selectedWarehouse.value) {
             showWaitOverlay.value = true
 
@@ -321,6 +328,7 @@
                 { warehouse_id: selectedWarehouse.value.id },
                 { page: 1, per_page: 100000 }
             )
+
             if (isMessage(res)) {
                 toast.error(res.message + ' ' + res.code, { timeout: 2500 })
                 invTableData.value = []
@@ -462,7 +470,7 @@
                     </span>
                     <ListBox
                         class="col-3"
-                        v-model="selectedWarehouse"
+                        v-model="selectedProxyWarehouse"
                         placeholder="Seleccione un inventario a realizar la nueva toma física"
                         label="name"
                         :options="warehouse.getWarehouseList ?? []" />
@@ -558,7 +566,7 @@
                     </e-button>
                     <e-button
                         v-else
-                        :disabled="selectedWarehouse?.name === cardTitle"
+                        :disabled="selectedProxyWarehouse?.name === cardTitle"
                         type="button"
                         variant="primary"
                         class="col-1 mx-1 py-1 col-md-3 col-sm-4"

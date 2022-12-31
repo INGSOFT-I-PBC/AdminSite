@@ -50,6 +50,11 @@
     const itemStore = useItemStore()
     const orderStore = useOrderStore()
 
+    moment.locale('es', {
+        weekdays: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split(
+            '_'
+        ),
+    })
     const purchaseStore = usePurchaseStore()
     const warehouse = useWarehouseStore()
     const toast = useToast()
@@ -149,7 +154,7 @@
         'FechaAprobación',
         { label: 'Código Orden', key: 'reference' },
         'AprobadoPor',
-        'RazonDeCompra',
+        'RazónDeCompra',
         'Estado',
         'Acciones',
     ]
@@ -335,6 +340,7 @@
     }
 
     function filterData(): void {
+        stopWatcher.value = true
         if (searchString.value.length > 0 && purchaseDetailsArr.value) {
             currentDetailsPage.value = 1
             paginatedPurchaseDetailsArr.value = purchaseDetailsArr.value
@@ -536,7 +542,9 @@
 
     onMounted(() => {
         const purchase_id = router.params.id
-        onDetallesClicked(Number(purchase_id))
+        if (purchase_id) {
+            onDetallesClicked(Number(purchase_id))
+        }
     })
 </script>
 
@@ -823,7 +831,7 @@
                                 )
                             }}
                         </template>
-                        <template #cell(RazonDeCompra)="{ item }">
+                        <template #cell(RazónDeCompra)="{ item }">
                             {{
                                 item.order_origin.revised_by.comment
                                     ? truncate(
@@ -891,7 +899,7 @@
                             >
                             <span
                                 class="col-sm-12 col-12 col-md-6 col-xl-3 col-lg-3 tw-font-bold">
-                                Fecha de aprobacion:
+                                Fecha de aprobación:
                             </span>
                             <span
                                 class="col-sm-12 col-12 col-md-6 col-xl-3 col-lg-3"
@@ -968,7 +976,12 @@
                                         <span class="tw-font-bold col-4"
                                             >{{ keyNaturalName(k) }}:</span
                                         >
-                                        <span class="col-4">{{ d }}</span>
+                                        <span v-if="k == 'price'" class="col-4">
+                                            {{ Number(d).toFixed(2) }}</span
+                                        >
+                                        <span v-else class="col-4">{{
+                                            d
+                                        }}</span>
                                     </div>
                                 </div>
                             </template>
@@ -1062,12 +1075,12 @@
                             </div>
                             <div class="col-6 tw-font-light">
                                 <b>
-                                    ({{
+                                    {{
                                         moment(
                                             selectedPurchase?.order_origin
                                                 .revised_by?.created_at
-                                        )
-                                    }})
+                                        ).format('dddd DD/MM/yyyy HH:mm:ss')
+                                    }}
                                 </b>
                             </div>
                         </div>
@@ -1136,7 +1149,11 @@
                                     </div>
                                     <div class="col-6 tw-font-light">
                                         <b>
-                                            ({{ moment(order.created_at) }})
+                                            {{
+                                                moment(order.created_at).format(
+                                                    'dddd DD/MM/yyyy HH:mm:ss'
+                                                )
+                                            }}
                                         </b>
                                     </div>
                                 </div>
@@ -1182,7 +1199,13 @@
                                     <b>Fecha : </b>
                                 </div>
                                 <div class="col-6 tw-font-light">
-                                    <b> ({{ moment(status.created_at) }}) </b>
+                                    <b>
+                                        {{
+                                            moment(status.created_at).format(
+                                                'dddd DD/MM/yyyy HH:mm:ss'
+                                            )
+                                        }}
+                                    </b>
                                 </div>
                             </div>
                         </div>
@@ -1217,7 +1240,9 @@
                         :items="paginatedPurchaseDetailsArr ?? []">
                         <template #cell(#)="{ index }">
                             {{
-                                index + 1 + (currentPage - 1) * purchasePerPage
+                                index +
+                                1 +
+                                (currentDetailsPage - 1) * purchasePerPage
                             }}
                         </template>
                         <template #cell(Código)="{ item }">

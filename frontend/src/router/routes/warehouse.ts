@@ -69,9 +69,9 @@ export const warehouses: Array<RouteConfig> = [
         path: '/bodegas/pedidos/:id?',
         name: 'pedidos-view',
         props: true,
-        component: () => import('@views/warehouse/GestionPedidos.vue'),
+        component: () => import('@views/purchase/GestionPedidos.vue'),
         meta: {
-            pageTitle: 'Gestion Pedidos',
+            pageTitle: 'Gestión Pedidos',
         },
     },
 
