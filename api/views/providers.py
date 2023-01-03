@@ -52,8 +52,7 @@ class ProviderView(views.APIView):
         return JsonResponse(ProviderSerializer(provider.first()).data)
 
     def put(self, request: Request, **kwargs):
-        active_status = Status.objects.get(name="active").id
-        provider = Provider.objects.filter(**kwargs, status=active_status)
+        provider = Provider.objects.filter(**kwargs, is_active=True)
         if not provider.exists():
             return error_response(
                 "The requested provider doesn't exists", "ERR_NOT_EXISTS"
@@ -66,23 +65,18 @@ class ProviderView(views.APIView):
         new_data.is_valid(raise_exception=True)
         new_data.save()
 
-        return response("provider updated successfully")
+        return response("provider updated successfully", code="UPD_SUCCESS")
 
     def delete(self, request: Request, *args, **kwargs):
-        active_status = Status.objects.get(name="active").id
-        provider = Provider.objects.filter(**kwargs, status=active_status)
+        provider = Provider.objects.filter(**kwargs, is_active=True)
         if not provider.exists():
             return error_response(
                 "The requested provider doesn't exists", "ERR_NOT_EXISTS"
             )
         target = provider.first()
-        target.deleted_by = request.user.employee
-        target.deleted_at = datetime.now()
-        target.status = Status.objects.get(name="inactive")
-        target.save()
-        post_data = ProviderSerializer(target)
+        target.delete()
 
-        return JsonResponse(post_data.data)
+        return response("Provider deactivated succesfully", code="PROV_DEACTIVATED")
 
 
 @api_view(["POST"])
