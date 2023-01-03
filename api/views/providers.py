@@ -90,12 +90,9 @@ def create_provider(request: Request):
     data = request.data
     if not data:
         return error_response("No data was provided")
-
-    data["created_by"] = request.user.id
-    data["status"] = Status.objects.get(name="active").id
     provider_data = ProviderSerializer(data=data)
     search = Provider.objects.filter(
-        status=Status.objects.get(name="inactive"), document_path=data["document_path"]
+        is_active=False, document_path=data["document_path"]
     )
     if search.exists():
         provider_data = ProviderSerializer(search.first(), data=data)
