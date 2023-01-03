@@ -4,6 +4,7 @@ export type {
     DataResponse,
     MessageResponse,
     PaginatedAPIResponse,
+    BadValidationResponse,
 } from './requests'
 
 export { isMessage } from './typesafe'

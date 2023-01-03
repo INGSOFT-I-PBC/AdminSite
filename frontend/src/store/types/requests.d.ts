@@ -25,4 +25,9 @@ export type ErrorResponse<D = any> = AxiosError<MessageResponse, D>
 
 type RequestParams = Record<string, any>
 
+/**
+ * This type is a possible response given by a Serializer on django backend
+ */
+export type BadValidationResponse = Record<string, string[]>
+
 export default PaginatedResponse
