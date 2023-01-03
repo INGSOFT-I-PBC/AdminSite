@@ -86,10 +86,16 @@ def create_provider(request: Request):
         return error_response("No data was provided")
     provider_data = ProviderSerializer(data=data)
     search = Provider.objects.filter(
-        is_active=False, document_path=data["document_path"]
+        document_path=data["document_path"]
     )
+    if search.exists() and search.first().is_active:
+        return error_response("The given provider already exists")
     if search.exists():
-        provider_data = ProviderSerializer(search.first(), data=data)
+        target = search.first()
+        target.is_active = True
+        target.save()
+        return JsonResponse(data=ProviderSerializer(target).data)
+
     provider_data.is_valid(raise_exception=True)
     provider_data.save()
     return JsonResponse(data=provider_data.data)
