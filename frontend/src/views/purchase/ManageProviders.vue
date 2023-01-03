@@ -269,7 +269,7 @@
                                     <div class="row justify-items-stretch">
                                         <div
                                             class="col-auto"
-                                            v-if="provider.status == 6">
+                                            v-if="!provider.is_active">
                                             <BBadge variant="warning"
                                                 >Desactivado</BBadge
                                             >
@@ -290,7 +290,7 @@
                                 </BCardBody>
                                 <BCardFooter>
                                     <EButtonGroup>
-                                        <template v-if="provider.status == 1">
+                                        <template v-if="provider.is_active">
                                             <EButton
                                                 class="tw-bg-green-500 tw-text-white"
                                                 variant="success"
