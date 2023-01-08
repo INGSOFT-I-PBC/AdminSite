@@ -62,13 +62,14 @@ class _Item(serializers.ModelSerializer):
 
 
 class _DetailSerializer(serializers.ModelSerializer):
-    item_name = serializers.CharField(source="item.name")
-    item_category = serializers.CharField(source="item.category.name")
-    item_brand = serializers.CharField(source="item.brand")
+    item_name = serializers.CharField(source="item.variant_name")
+    # item_category = serializers.CharField(source="item.category.name")
+    item_brand = serializers.CharField(source="item.product.brand_name")
+    sku = serializers.CharField(source="item.sku")
 
     class Meta:
         model = OrderRequestDetail
-        fields = ("quantity", "item_name", "item_category", "item_brand")
+        fields = ("quantity", "item_name", "sku", "item_brand")
 
 
 class OrderReadSerializer(serializers.ModelSerializer):

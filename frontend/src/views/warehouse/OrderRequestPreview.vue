@@ -93,7 +93,7 @@
         '#',
         { label: 'Nombre ítem', key: 'item_name' },
         { label: 'Marca ítem', key: 'item_brand' },
-        { label: 'Categoría', key: 'item_category' },
+        // { label: 'Categoría', key: 'item_category' },
         { label: 'Cantidad', key: 'quantity' },
     ]
 
