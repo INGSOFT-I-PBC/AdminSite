@@ -31,7 +31,6 @@ from api.serializers.warehouse import (
     TomasDetailSerializer,
     TomasFisicasSerializer,
     TransactionDetailCreateSerializer,
-    TransactionDetailsSerializer,
     TransactionStatusSerializer,
     TransactionWithProductsSerializer,
     WarehouseSerializer,

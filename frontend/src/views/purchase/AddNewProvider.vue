@@ -181,8 +181,13 @@
     import Title from '@components/custom/Title.vue'
     import { useEmployeeStore } from '@store'
     import { useProviderStore } from '@store/provider'
-    import type { Employee } from '@store/types'
+    import type {
+        BadValidationResponse,
+        Employee,
+        MessageResponse,
+    } from '@store/types'
     import type { Provider, ProviderModel } from '@store/types/provider.model'
+    import axios from 'axios'
     import moment from 'moment'
     import type MapBrowserEvent from 'ol/MapBrowserEvent'
     import type { Coordinate } from 'ol/coordinate'
@@ -263,7 +268,8 @@
             .required('El campo es obligatorio'),
         website: string()
             .matches(
-                /[(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/,
+                // /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/,
+                /^(http(s?)\:\/\/){0,1}(([a-zA-Z]{1})|([a-zA-Z]{1}[a-zA-Z]{1})|([a-zA-Z]{1}[0-9]{1})|([0-9]{1}[a-zA-Z]{1})|([a-zA-Z0-9][a-zA-Z0-9-_]{1,61}[a-zA-Z0-9]))\.([a-zA-Z]{2,6}|[a-zA-Z0-9-]{2,30}\.[a-zA-Z]{2,3})$/g,
                 'El campo debe ser un url válido'
             )
             .max(100, 'El url es demasiado largo')
@@ -330,9 +336,18 @@
                 hasChanged.value = false
             })
             .catch(error => {
-                console.error(error)
-                if (error?.code && error?.response?.status >= 400) {
-                    toast.error('Proveedor ya existente')
+                if (
+                    axios.isAxiosError(error) &&
+                    (error.response?.status ?? 0) >= 400 &&
+                    (error.response?.status ?? 0) < 500
+                ) {
+                    const request = error.response
+                        ?.data as BadValidationResponse
+                    if (request.website) {
+                        toast.error('La URL es inválida')
+                    } else {
+                        toast.error('Proveedor ya existente')
+                    }
                 } else {
                     toast.error('No se pudo guardar el proveedor')
                 }
