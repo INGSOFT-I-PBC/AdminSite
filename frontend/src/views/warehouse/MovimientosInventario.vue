@@ -71,7 +71,7 @@
     const mainDataArr = ref<Movement[]>()
     const mainDataTotalRows = ref<number>(0)
 
-    const selectedStatus = ref<MovementStatus>()
+    const selectedStatus = ref<{ name: string; display: string }>()
     const showSpecificMovement = ref<boolean>(false)
 
     const productInfoShow = ref<boolean>(false)
@@ -153,7 +153,6 @@
             'created_by_name',
             yup.string().optional().nullable(true)
         ),
-        status: useField('status', yup.string().optional().nullable(true)),
         notes: useField('notes', yup.string().optional().nullable(true)),
     })
 
@@ -223,7 +222,6 @@
         movementForm.value.to_date.resetField()
         movementForm.value.created_by_name.resetField()
         movementForm.value.notes.resetField()
-        movementForm.value.status.resetField()
         movementForm.value.status_from_date.resetField()
         movementForm.value.status_to_date.resetField()
         selectedWarehouseDestiny.value = undefined
@@ -242,7 +240,6 @@
             f.from_date.errorMessage ||
             f.to_date.errorMessage ||
             f.created_by_name.errorMessage ||
-            f.status.errorMessage ||
             f.notes.errorMessage ||
             f.status_from_date.errorMessage ||
             f.status_to_date.errorMessage
@@ -268,7 +265,7 @@
         query.notes = f.notes.value
         query.warehouse_origin = selectedWarehouseOrigin.value?.id
         query.warehouse_destiny = selectedWarehouseDestiny.value?.id
-        query.status = f.status.value
+        query.status = selectedStatus.value?.name
         query.status_from_date = f.status_from_date.value
         query.status_to_date = f.status_to_date.value
         movement
@@ -705,7 +702,7 @@
                                                 class="tw-text-amber-700 dark:tw-text-amber-400">
                                                 {{ mainDataArr?.length }}
                                             </span>
-                                            Registros
+                                            Registros encontrados
                                         </h2>
                                     </div>
                                 </div>

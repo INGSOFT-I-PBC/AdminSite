@@ -13,8 +13,8 @@ import { defineStore } from 'pinia'
 /**
  * Names of the status for movements registered in the database
  */
-const PENDING_STATUS = { name: 'peniente', display: 'Pendiente' }
-const APROVED_STATUS = { name: 'aprovado', display: 'Aprovado' }
+const PENDING_STATUS = { name: 'pendiente', display: 'Pendiente' }
+const APROVED_STATUS = { name: 'aprobado', display: 'Aprobado' }
 const DELIVERED_STATUS = { name: 'entregado', display: 'Entregado' }
 const TRANSIT_STATUS = { name: 'transito', display: 'En Tránsito' }
 const CANCELED_STATUS = { name: 'cancelado', display: 'Cancelado' }

@@ -12,7 +12,7 @@ import { defineStore } from 'pinia'
  * Names of the status for puchase registered in the database
  */
 
-const APROVED_STATUS = { name: 'aprovado', display: 'Aprovado' }
+const APROVED_STATUS = { name: 'aprobado', display: 'Aprobado' }
 const DELIVERED_STATUS = { name: 'entregado', display: 'Entregado' }
 const TRANSIT_STATUS = { name: 'transito', display: 'En Tránsito' }
 const CANCELED_STATUS = { name: 'cancelado', display: 'Cancelado' }

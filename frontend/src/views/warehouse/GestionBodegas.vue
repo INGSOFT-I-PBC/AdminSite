@@ -1558,7 +1558,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Min de Actualizacion"
+                                                                label="Fecha Min de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "
@@ -1602,7 +1602,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Max de Actualizacion"
+                                                                label="Fecha Max de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "
@@ -2420,7 +2420,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Min de Actualizacion"
+                                                                label="Fecha Min de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "
@@ -2463,7 +2463,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Max de Actualizacion"
+                                                                label="Fecha Max de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "
