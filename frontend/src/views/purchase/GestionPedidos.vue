@@ -470,6 +470,11 @@
                 return 'Desconocido'
         }
     }
+    function getDisplayStatus(status_name: string) {
+        const status_list = purchaseStore.getPurchaseStatus()
+        const display_status = status_list?.find(s => s.name == status_name)
+        return display_status ? display_status.display : 'Estado no reconocido'
+    }
 
     const arrInfoChildPurchase =
         ref<{ total: number; num_variants: number }[]>()
@@ -772,20 +777,35 @@
                                             info-status="danger"
                                             label="Nombre de Provedor" />
                                     </div>
-                                    <div
-                                        class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2 text-center">
-                                        <e-button class="">
-                                            Confirmar Búsqueda
-                                        </e-button>
-                                    </div>
-                                    <div
-                                        class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2">
-                                        <e-button
-                                            @click.left="handleReset"
-                                            type="button"
-                                            variant="secondary">
-                                            Limpiar Búsqueda
-                                        </e-button>
+                                    <div class="row">
+                                        <div
+                                            class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2 text-center">
+                                            <e-button class="">
+                                                Confirmar Búsqueda
+                                            </e-button>
+                                        </div>
+                                        <div
+                                            class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2">
+                                            <e-button
+                                                @click.left="handleReset"
+                                                type="button"
+                                                variant="secondary">
+                                                Limpiar Búsqueda
+                                            </e-button>
+                                        </div>
+                                        <h2
+                                            class="dark-mode-text col-6 mt-4 tw-text-lg tw-font-bold">
+                                            <span
+                                                class="tw-text-amber-700 dark:tw-text-amber-400">
+                                                {{
+                                                    (
+                                                        paginatedPurchaseList ??
+                                                        []
+                                                    ).length
+                                                }}
+                                            </span>
+                                            Registros encontrados
+                                        </h2>
                                     </div>
                                 </div>
                             </div>
@@ -846,7 +866,7 @@
                             <BBadge
                                 class="tw-text-md"
                                 :variant="statusPurchaseColor(item.status)">
-                                {{ item.status }}
+                                {{ getDisplayStatus(item.status) }}
                             </BBadge>
                         </template>
                         <template #cell(Acciones)="{ item }">
@@ -1049,7 +1069,7 @@
                         <div
                             class="row mb-2 tw-ring-2 dark:tw-ring-white py-2 tw-ring-black">
                             <div class="col-3 tw-text-md">
-                                <b>Origen de la orden:</b>
+                                <b>Orden origen de la compra:</b>
                             </div>
                             <div class="col-3 tw-font-light">
                                 <b> #{{ selectedPurchase?.order_origin.id }}</b>
@@ -1177,7 +1197,10 @@
                                         statusPurchaseColor(status.status)
                                     ">
                                     {{
-                                        '( ' + (ix + 1) + ' ) ' + status.status
+                                        '( ' +
+                                        (ix + 1) +
+                                        ' ) ' +
+                                        getDisplayStatus(status.status)
                                     }}
                                 </BBadge>
 

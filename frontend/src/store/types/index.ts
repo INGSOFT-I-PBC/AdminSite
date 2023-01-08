@@ -21,6 +21,7 @@ export type {
     WarehouseStock,
     TomaFisicaDetail,
     FullTomaFisicaDetail,
+    MovementSaveData,
 } from './warehouse.model'
 
 export type {

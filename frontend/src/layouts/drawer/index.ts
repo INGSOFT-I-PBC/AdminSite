@@ -85,19 +85,24 @@ export const menus: MenuItem[] = [
                 ],
             },
             {
+                label: 'Movimientos',
+                children: [
+                    {
+                        label: 'Gestión Movimientos',
+                        path: '/bodegas/movimiento-inventario',
+                        routeName: 'movimiento-inventario-view',
+                    },
+                    {
+                        label: 'Solicitar Movimiento',
+                        path: '/bodegas/nuevo-movimiento',
+                        routeName: 'warehouse-new-movement',
+                    },
+                ],
+            },
+            {
                 label: 'Tomas físicas',
                 path: '/bodegas/tomas-fisicas',
                 routeName: 'tomas-fisica-view',
-            },
-            {
-                label: 'Visualizar Movimientos',
-                path: '/bodegas/movimiento-inventario',
-                routeName: 'movimiento-inventario-view',
-            },
-            {
-                label: 'Proveedores',
-                path: '/bodegas/proveedores',
-                routeName: 'proveedores-view',
             },
         ],
     },

@@ -157,6 +157,7 @@ urlpatterns = [
     # =====================================
     path("movement/status", TransactionStatusViewSet.as_view({"get": "list"})),
     path("movement", WhTransactionDetailsViewSet.as_view({"get": "list"})),
+    path('movement/create', views.create_movement),
     # =====================================
     # <|        Role endpoints       |>
     # =====================================
@@ -172,6 +173,11 @@ urlpatterns = [
         "warehouse/stock",
         views.WhStockViewSet.as_view({"get": "list"}),
         name="wh-inventory",
+    ),
+    path(
+        "warehouse/stock-props",
+        views.WhStockWithPropsViewSet.as_view({"get": "list"}),
+        name="wh-stock-props",
     ),
     path("warehouse/purchase/confirm", views.create_purchase_status),
     path(

@@ -22,6 +22,8 @@ export interface WarehouseState {
     paginatedWarehouse: Optional<PaginatedAPIResponse<Warehouse>>
 }
 
+export type StockWithProps = WarehouseStock & { props: ProductProps[] }
+
 export const useWarehouseStore = defineStore('warehouse-store', {
     state: (): WarehouseState => ({
         lastWarehouseList: null,
@@ -172,8 +174,24 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             }
             return (
                 await axios.get<PaginatedAPIResponse<ProductProps>>(
-                    `products/variant/props`,
-                    queryParams
+                    `/api/v1/products/variant/props`,
+                    { params: queryParams }
+                )
+            ).data
+        },
+        async fetchStockWithProps(
+            options: any,
+            paginated_opt: PaginationOptions
+        ): Promise<PaginatedAPIResponse<StockWithProps>> {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            return (
+                await axios.get<PaginatedAPIResponse<StockWithProps>>(
+                    `/api/v1/warehouse/stock-props`,
+                    { params: queryParams }
                 )
             ).data
         },

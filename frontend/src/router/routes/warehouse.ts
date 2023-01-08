@@ -57,11 +57,21 @@ export const warehouses: Array<RouteConfig> = [
     },
 
     {
-        path: '/bodegas/proveedores',
-        name: 'proveedores-view',
-        component: () => import('@views/warehouse/ProveedoresView.vue'),
+        path: '/bodegas/nuevo-movimiento',
+        name: 'new-movimiento-view',
+        component: () => import('@views/warehouse/NewMovimiento.vue'),
         meta: {
-            pageTitle: 'Proveedores',
+            pageTitle: 'Nuevo Movimiento',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas/gestion',
+                },
+                {
+                    text: 'Nuevo Movimiento',
+                    active: true,
+                },
+            ],
         },
     },
 

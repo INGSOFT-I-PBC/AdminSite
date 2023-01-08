@@ -93,9 +93,11 @@ from api.views.warehouse import (
     WhOrderRequestView,
     WhOrderRequestViewSet,
     WhStockViewSet,
+    WhStockWithPropsViewSet,
     WhTomasFisicasViewSet,
     WhTransactionDetailsViewSet,
     WhTransactionViewSet,
+    create_movement,
 )
 
 __all__ = [
@@ -108,6 +110,7 @@ __all__ = [
     create_employee,
     create_order_request,
     create_permission,
+    create_movement,
     create_prod_variant,
     create_product,
     create_provider,
@@ -189,5 +192,6 @@ __all__ = [
     WhStockViewSet,
     WhTomasFisicasViewSet,
     WhTransactionDetailsViewSet,
+    WhStockWithPropsViewSet,
     WhTransactionViewSet,
 ]

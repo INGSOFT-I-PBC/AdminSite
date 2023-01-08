@@ -119,9 +119,18 @@ export interface WhWithTomaFisica {
 export interface WarehouseStock {
     product: SimpleProduct
     variant: ProductVariant
-    updated_by: Employee
-    updated_at: string
+    updated_by?: Employee
+    updated_at?: string
     stock_level: number
+    is_active?: number
+    warehouse?: number
+}
+
+export interface MovementSaveData {
+    notes: string
+    details: MovementDetail[]
+    warehouse_destiny: number
+    warehouse_origin: number
 }
 
 export default {}
