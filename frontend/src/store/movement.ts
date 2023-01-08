@@ -3,6 +3,7 @@ import type {
     Movement,
     MovementDetail,
     MovementQuery,
+    MovementSaveData,
     MovementStatus,
     PaginatedAPIResponse,
 } from '@store-types'
@@ -35,7 +36,7 @@ export interface MovementState {
     paginatedMovement: Optional<PaginatedAPIResponse<Movement>>
 }
 
-export const useMovementStore = defineStore('purchases', {
+export const useMovementStore = defineStore('movement-store', {
     state: (): MovementState => ({
         lastPurchaseList: null,
         paginatedMovement: null,
@@ -89,6 +90,17 @@ export const useMovementStore = defineStore('purchases', {
                 await axios.get<MovementStatus[] | MessageResponse>(
                     '/api/v1/movement/status',
                     { params: options }
+                )
+            ).data
+            return result
+        },
+        async saveMovement(
+            data: MovementSaveData
+        ): Promise<Movement | MessageResponse> {
+            const result = await (
+                await axios.post<Movement | MessageResponse>(
+                    '/api/v1/movement/create',
+                    data
                 )
             ).data
             return result

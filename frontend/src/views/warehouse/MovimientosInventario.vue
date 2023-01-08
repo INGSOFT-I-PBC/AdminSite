@@ -50,7 +50,7 @@
         status_list?: MovementStatus[]
     }
 
-    const movementStore = useMovementStore()
+    const movement = useMovementStore()
 
     const toast = useToast()
     const warehouse = useWarehouseStore()
@@ -174,7 +174,7 @@
     async function onDetallesClicked(movement_id: number): Promise<void> {
         showWaitOverlay.value = true
         selectedMovement.value = undefined
-        movementStore
+        movement
             .fetchMovementInformation({ id: movement_id })
             .then(it => {
                 if (isMessage(it)) {
@@ -188,7 +188,7 @@
                 showSpecificMovement.value = true
                 showWaitOverlay.value = false
                 filterData()
-                movementStore
+                movement
                     .fetchMovementStatus({
                         transaction_id: selectedMovement.value.id,
                     })
@@ -271,7 +271,7 @@
         query.status = f.status.value
         query.status_from_date = f.status_from_date.value
         query.status_to_date = f.status_to_date.value
-        movementStore
+        movement
             .fetchPaginatedMovement(query, {
                 page: 1,
                 per_page: movementPerPage.value,
@@ -600,7 +600,7 @@
                                             placeholder="Filtro por estado de la compra"
                                             label="display"
                                             :options="
-                                                movementStore.getPurchaseStatus()
+                                                movement.getPurchaseStatus()
                                             " />
 
                                         <div
@@ -698,6 +698,15 @@
                                                 Limpiar Búsqueda
                                             </e-button>
                                         </div>
+
+                                        <h2
+                                            class="dark-mode-text col-6 mt-4 tw-text-lg tw-font-bold">
+                                            <span
+                                                class="tw-text-amber-700 dark:tw-text-amber-400">
+                                                {{ mainDataArr?.length }}
+                                            </span>
+                                            Registros
+                                        </h2>
                                     </div>
                                 </div>
                             </ValidationForm>
@@ -710,7 +719,6 @@
                         class="col-6 mx-1 my-3 col-lg-2 col-xl-2 col-md-3 col-sm-4"
                         >Desplegar Búsqueda
                     </e-button>
-                    <b-collapse id="collapse-1"> </b-collapse>
                     <BTable
                         outline
                         :fields="movementsFields"
@@ -954,7 +962,7 @@
                             class="row mb-2 tw-ring-2 dark:tw-ring-white py-2 tw-ring-black">
                             <div class="row mb-2">
                                 <div class="col-6 tw-text-md">
-                                    <b>Fecha de revisión: </b>
+                                    <b>Fecha de creación: </b>
                                 </div>
                                 <div class="col-6 tw-font-light">
                                     <b>
@@ -1091,6 +1099,10 @@
 <style lang="scss">
     .title {
         @apply tw-text-2xl tw-text-black dark:tw-text-neutral-100;
+    }
+
+    .dark-mode-text {
+        @apply dark:tw-text-white tw-text-secondary-dark;
     }
 
     .custom-Check:checked {

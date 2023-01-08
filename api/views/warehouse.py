@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+from shutil import move
 
 from django.core.paginator import Paginator
 from django.db.models import F, OuterRef, Prefetch, Q, Subquery
@@ -22,16 +23,21 @@ from api.models.warehouse import (
 )
 from api.serializers.order import OrderSerializer
 from api.serializers.warehouse import (
+    CreateTransactionStatusSerializer,
     FullTomasDetailSerializer,
     FullWarehouseSerializer,
     SimpleTomasFisicasSerializer,
+    SimpleTransactionSerializer,
     TomasDetailSerializer,
     TomasFisicasSerializer,
+    TransactionDetailCreateSerializer,
+    TransactionDetailsSerializer,
     TransactionStatusSerializer,
     TransactionWithProductsSerializer,
     WarehouseSerializer,
     WhInventorySerializer,
     WhStockSerializer,
+    WhStockWithPropsSerializer,
     WhTransactionSerializer,
     WhWithTomaFisicaSerializer,
 )
@@ -247,6 +253,15 @@ class WhStockViewSet(ModelViewSet):
         return queryset
 
 
+class WhStockWithPropsViewSet(WhStockViewSet):
+    pagination_class = CustomPagination
+    serializer_class = WhStockWithPropsSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset
+
+
 class WhOrderRequestView(APIView):
     def get(self, request):
 
@@ -435,6 +450,58 @@ class WhTransactionDetailsViewSet(ModelViewSet):
                 )
 
         return queryset
+
+
+@api_view(["POST"])
+def create_movement(request):
+    if not request.data:
+        return error_response("No data was provided")
+    details = request.data.pop("details")
+
+    details = [x for x in details if x]
+    if not details:
+        return error_response("A movement needs at least one product")
+
+    data = request.data
+    data["created_by"] = request.user.employee_id
+
+    status = Status.objects.filter(name='pendiente').first()
+    # TODO create status if its not in the db
+
+    data['status'] = status.id
+
+    serializer = SimpleTransactionSerializer(data=data)
+
+    if serializer.is_valid(raise_exception=True):
+        movement: WarehouseTransaction = serializer.save()
+        for detail in details:
+            # inject order, due client doesn't know which is created
+            detail["header"] = movement.pk
+            detail['variant'] = detail['variant']['id']
+            detail['product'] = detail['product']['id']
+
+        detail_serializer = TransactionDetailCreateSerializer(data=details, many=True)
+        try:  # Check if the inserted items are valid
+            detail_serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            movement.delete()
+            raise e
+
+        movement_status = {'created_by': request.user.employee_id, 'status': status.id, 'transaction': movement.id}
+        mv_status_serializer = CreateTransactionStatusSerializer(data=movement_status)
+
+        try:  # Check if the inserted items are valid
+            mv_status_serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            movement.delete()
+            raise e
+
+        mv_status_serializer.save()
+        detail_serializer.save()
+
+        serializer = SimpleTransactionSerializer(movement)
+        return JsonResponse(serializer.data, status=201)
+    return error_response("The given data was invalid")
 
 
 class TransactionStatusViewSet(ModelViewSet):

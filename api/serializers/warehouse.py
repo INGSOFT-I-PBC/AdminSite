@@ -1,3 +1,5 @@
+from types import MethodType
+
 from rest_framework.serializers import (
     CharField,
     DateTimeField,
@@ -8,7 +10,7 @@ from rest_framework.serializers import (
 )
 
 from api.models import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
-from api.models.products import ProductStockWarehouse, ProductVariant
+from api.models.products import ProductAttribute, ProductStockWarehouse, ProductVariant
 from api.models.warehouse import (
     TransactionStatus,
     WhTomasFisicas,
@@ -18,6 +20,7 @@ from api.serializers.auth import EmployeeSerializer
 from api.serializers.common import SimpleStatusSerializer
 from api.serializers.item import ItemSerializer, SimpleItemSerializer
 from api.serializers.product import (
+    ProductAttributeSerializer,
     ProductVariantSerializer,
     SimpleProductSerializer,
     SimpleVariantSerializer,
@@ -147,6 +150,32 @@ class WhStockSerializer(ModelSerializer):
         fields = ["product", "variant", "stock_level", "updated_by", "updated_at"]
 
 
+class WhStockWithPropsSerializer(ModelSerializer):
+
+    variant = SimpleVariantSerializer()
+    product = SimpleProductSerializer()
+    stock_level = IntegerField()
+    updated_by = SimpleEmployeeSerializer()
+    updated_at = DateTimeField()
+    props = SerializerMethodField(read_only=True)
+
+    def get_props(self, instance):
+        qs = ProductAttribute.objects.filter(option=instance.variant)
+        return ProductAttributeSerializer(qs, many=True).data
+
+    class Meta:
+        model = ProductStockWarehouse
+        fields = ["product", "variant", "stock_level", "props", "updated_by", "updated_at"]
+
+
+class SimpleTransactionSerializer(ModelSerializer):
+    notes = CharField(max_length=300)
+
+    class Meta:
+        model = WarehouseTransaction
+        fields = ['notes', 'created_by', 'status', 'warehouse_origin', 'warehouse_destiny']
+
+
 class WhTransactionSerializer(ModelSerializer):
 
     id = IntegerField()
@@ -198,6 +227,12 @@ class TransactionDetailsSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class TransactionDetailCreateSerializer(ModelSerializer):
+    class Meta:
+        model = WhTransactionDetails
+        fields = "__all__"
+
+
 class TransactionWithProductsSerializer(ModelSerializer):
 
     id = IntegerField()
@@ -238,6 +273,12 @@ class TransactionStatusSerializer(ModelSerializer):
         representation["status"] = status_representation["name"]
         return representation
 
+    class Meta:
+        model = TransactionStatus
+        fields = "__all__"
+
+
+class CreateTransactionStatusSerializer(ModelSerializer):
     class Meta:
         model = TransactionStatus
         fields = "__all__"

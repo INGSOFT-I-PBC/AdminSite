@@ -33,7 +33,7 @@ export interface PurchaseState {
     paginatedPurchase: Optional<PaginatedAPIResponse<Purchase>>
 }
 
-export const usePurchaseStore = defineStore('purchases', {
+export const usePurchaseStore = defineStore('purchases-store', {
     state: (): PurchaseState => ({
         lastPurchaseList: null,
         paginatedPurchase: null,
