@@ -29,6 +29,16 @@ declare global {
 
     var ref: typeof import('vue')['ref']
     var computed: typeof import('vue')['computed']
+
+    /**
+     * Checks if the given value is defined.
+     *
+     * @param value The value to check
+     */
+    function undef(value?: any): value is undefined
+
+    function defined<T = any>(value?: T): value is T
+
     /// eslint-disable no-var
     var router: typeof import('@store')
 

@@ -1,4 +1,4 @@
-#from api.views.authviews import *
+# from api.views.authviews import *
 from api.views.authviews import (
     EmployeeViewSet,
     LogoutViewSet,
@@ -84,7 +84,6 @@ from api.views.userview import (
 )
 from api.views.warehouse import (
     FullWarehouseViewSet,
-    OrderRequestViewSet,
     TomasFisicasDetailsViewSet,
     TransactionStatusViewSet,
     WarehouseView,

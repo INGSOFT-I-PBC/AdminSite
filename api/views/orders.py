@@ -30,6 +30,10 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
 
         return queryset
 
+    class Meta:
+
+        model = OrderRequest
+
 
 class OrderRequestView(APIView):
     def get(self, request: Request, id):

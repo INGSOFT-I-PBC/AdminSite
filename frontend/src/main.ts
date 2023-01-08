@@ -95,4 +95,9 @@ app.component(
 
 globalThis.ref = ref
 globalThis.computed = computed
+globalThis.undef = (value?: any): value is undefined => value == undefined
+globalThis.defined = function<T=any>(value?: T): value is T {
+    return value != undefined
+}
+
 app.mount('#app')
