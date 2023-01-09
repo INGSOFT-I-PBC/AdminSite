@@ -84,7 +84,6 @@ export const warehouses: Array<RouteConfig> = [
             pageTitle: 'Gestión Pedidos',
         },
     },
-
     {
         path: '/bodegas/gestion',
         name: 'gestion-view',
