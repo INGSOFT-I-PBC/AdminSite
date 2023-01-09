@@ -4,6 +4,7 @@ import type {
     Item,
     MessageResponse,
     PaginatedAPIResponse,
+    ProductProps,
 } from '@store-types'
 import type { ItemProps } from '@store/types/items.model'
 import axios from 'axios'
@@ -87,6 +88,17 @@ export const useItemStore = defineStore('item-store', () => {
         return (await axios.get<ItemProps[]>(`/api/v1/item/${id}/properties`))
             .data
     }
+    async function fetchProductProperties(params: {
+        variant_id?: number
+        sku?: string
+    }) {
+        return (
+            await axios.get<PaginatedAPIResponse<ProductProps>>(
+                `/api/v1/products/variant/props`,
+                { params: params }
+            )
+        ).data
+    }
 
     return {
         item,
@@ -100,5 +112,6 @@ export const useItemStore = defineStore('item-store', () => {
         editItem,
         removeItem,
         fetchItemProperties,
+        fetchProductProperties,
     }
 })

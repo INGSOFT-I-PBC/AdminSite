@@ -7,8 +7,8 @@ class FullInventorySerializer(ModelSerializer):
     """
     Serializer class that show all the data of the Warehouse model
     """
-
-    class Meta:
+    class Meta: 
+        
         model = Inventory
         fields = [
             "id",
@@ -31,6 +31,7 @@ class FullInventorySerializer(ModelSerializer):
             "status_id_Item",
             "created_by_Item",
             "codename_Item",
+            "is_active"
         ]
 
 

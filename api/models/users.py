@@ -40,10 +40,11 @@ class Employee(TimestampModel):
     role = models.ForeignKey("Role", on_delete=models.CASCADE)
     is_active = models.BooleanField(null=False, default=True)
     phone_number = models.CharField(max_length=16, null=True, default=None)
-    created_by = models.OneToOneField(
+    created_by = models.ForeignKey(
         "self", on_delete=models.RESTRICT, default=None, null=True
     )
     gender = models.ForeignKey(Gender, null=True, on_delete=models.RESTRICT)
+    address = models.CharField(max_length=256, null=True)
 
     class Meta:
         db_table = "employees"

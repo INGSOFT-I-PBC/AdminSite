@@ -6,6 +6,7 @@
     import ERow from '@components/custom/ERow.vue'
     import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
+    import WaitOverlay from '@components/custom/WaitOverlay.vue'
     import { useClientStore } from '@store/client'
     import { useEmployeeStore } from '@store/employee'
     import { useRoleStore } from '@store/role'
@@ -89,14 +90,14 @@
             'username',
             yup
                 .string()
-                .matches(/^[a-zA-Z]+$/, 'Nombre inválido')
+                .matches(/^[a-zA-Z\s]+$/, 'Nombre inválido')
                 .required(message)
         ),
         lastName: useField(
             'lastName',
             yup
                 .string()
-                .matches(/^[a-zA-Z]+$/, 'Apellido inválido')
+                .matches(/^[a-zA-Z\s]+$/, 'Apellido inválido')
                 .required(message)
         ),
         cid: useField(
@@ -114,6 +115,10 @@
                 .required(message)
         ),
         gender: useField('gender', yup.object().required(message)),
+        address: useField(
+            'address',
+            yup.string().nullable().max(256, 'Máximo 256 caracteres')
+        ),
     })
 
     function changeStatus() {
@@ -136,12 +141,15 @@
                 (f.role.value = infoEmployee.role),
                 (f.phone_number.value = infoEmployee.phone_number),
                 (form.value.created_by = infoEmployee.created_by),
-                (f.gender.value = infoEmployee.gender)
+                (f.gender.value = infoEmployee.gender),
+                (f.address.value =
+                    infoEmployee.address == '' ? null : infoEmployee.address)
         } catch (error) {
             console.log(error)
         } finally {
             showWaitOverlay.value = false
         }
+        console.log(f)
     }
 
     function submit() {
@@ -151,12 +159,12 @@
             f.name.errorMessage ||
             f.lastName.errorMessage ||
             f.phone_number.errorMessage ||
-            f.gender.errorMessage
+            f.gender.errorMessage ||
+            f.address.errorMessage
         ) {
             toast.error('Verifique los datos')
             return
         }
-
         employeeRepository
             .updateEmployee(Number(route.params.id), {
                 name: f.name.value,
@@ -166,6 +174,7 @@
                 role: f.role.value.id as number,
                 phone_number: f.phone_number.value,
                 gender: f.gender.value.id as number,
+                address: f.address.value,
             })
             .then(() => {
                 toast.success('Empleado actualizado correctamente')
@@ -175,7 +184,7 @@
                 if (isMessage(err)) {
                     toast.error(err.message)
                 } else {
-                    toast.error('Error desconocido')
+                    toast.error('Error al actualizar el empleado')
                     console.error(err)
                 }
             })
@@ -328,11 +337,30 @@
                                 &ZeroWidthSpace;
                             </small>
                         </ECol>
+                        <ECol cols="12" lg="6" xl="6">
+                            <InputText
+                                label="Dirección"
+                                v-model="employeeFormValidation.address.value"
+                                :info-label="
+                                    employeeFormValidation.address.errorMessage
+                                "
+                                :status="
+                                    Boolean(
+                                        employeeFormValidation.address
+                                            .errorMessage
+                                    )
+                                "
+                                info-status="danger" />
+                        </ECol>
                     </ERow>
                     <ERow>
-                        <div class="col col-12 col-md-1">
-                            <EButton class="tw-w-full"> Guardar </EButton>
-                        </div>
+                        <ECol>
+                            <EButton
+                                left-icon="fa-floppy-disk"
+                                icon-provider="awesome">
+                                Guardar
+                            </EButton>
+                        </ECol>
                     </ERow>
                 </ValidationForm>
             </ECard>

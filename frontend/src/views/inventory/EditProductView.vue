@@ -28,8 +28,10 @@
                 id: 0,
                 name: 'active',
             })
+            const checked = ref(false)
 
             return {
+                checked,
                 formStatus,
                 route,
                 normalValue,
@@ -54,17 +56,18 @@
                     updated_at: '',
                     brand: '',
                     category_id: 0,
-                    iva: 0,
+                    iva: 12,
                     model: '',
                     name: '',
                     price: 0,
-                    status_id: 0,
+
                     warehouse_id: 0,
                     quantity: normalValue,
                     item_id: 0,
                     codigo: '',
                     created_by: '',
                     created_id: 0,
+                    is_active: true,
                 },
             }
         },
@@ -72,22 +75,10 @@
             showProduct() {
                 this.productModalShow = true
             },
-            async loadStatus(name: string) {
-                this.formStatus = await ItemDataService.fetchStatus(name)
-                this.entrada.status_id = this.formStatus.id
-                console.log(this.entrada.status_id)
-            },
+
             validarCheckbox() {
-                const checkbox = document.getElementById(
-                    'check'
-                ) as HTMLInputElement
-                if (!checkbox.checked) {
-                    //this.entrada.status_id = 1
-                    this.loadStatus('inactive')
-                } else {
-                    //this.entrada.status_id = 3
-                    this.loadStatus('active')
-                }
+                this.entrada.is_active = !this.entrada.is_active
+                console.log(this.entrada.is_active)
             },
             performUpload() {
                 const formDataItem = new FormData()
@@ -98,7 +89,14 @@
                 if (typeof this.image_field != 'string') {
                     formDataItem.append('img', this.image_field)
                 }
-                formDataItem.append('iva', this.entrada.iva.toString())
+                if (this.checked) {
+                    console.log('no entiendo')
+                    console.log(this.checked)
+                    this.entrada.iva = 0
+                } else {
+                    this.entrada.iva = 12
+                }
+                formDataItem.append('iva', (this.entrada.iva / 100).toString())
                 formDataItem.append('model', this.entrada.model)
                 formDataItem.append('name', this.entrada.name)
                 formDataItem.append('price', this.entrada.price.toString())
@@ -114,8 +112,8 @@
 
                 this.validarCheckbox()
                 formDataItem.append(
-                    'status_id',
-                    this.entrada.status_id.toString()
+                    'is_active',
+                    this.entrada.is_active.toString()
                 )
                 formDataItem.append('codename', this.entrada.codigo)
                 return formDataItem
@@ -230,12 +228,13 @@
                         this.entrada.price = this.items['0'].priceItem
                         this.entrada.model = this.items['0'].modelItem
                         this.entrada.iva = this.items['0'].ivaItem
+                        if (this.items['0'].ivaItem == 0) {
+                            this.checked = true
+                        }
                         this.entrada.quantity = this.items['0'].quantity
+
                         this.entrada.name = this.items['0'].nombreItem
-                        this.entrada.status_id = this.items['0'].status_id_Item
-                        /*this.fecha_hora.fecha = this.items[
-                            '0'
-                        ].created_at.substring(0, 10)*/
+                        this.entrada.is_active = this.items['0'].is_active
 
                         this.fecha_hora.fecha = new Date(
                             this.items['0'].created_at
@@ -249,6 +248,20 @@
                     .catch((e: Error) => {
                         console.log(e)
                     })
+            },
+            validatePrecio(value: any) {
+                // if the field is empty
+                if (!value) {
+                    return 'Este campo es requerido'
+                }
+                if (isNaN(value)) {
+                    return 'Inválido'
+                }
+                if (value < 0) {
+                    return 'Inválido'
+                }
+
+                return true
             },
             obtenerImagen(e: any) {
                 this.image_field = e.target.files[0]
@@ -274,7 +287,6 @@
                 this.showAllProducts(String(this.route.params.id))
             this.showAllCategory()
             this.showAllWarehouses()
-            this.loadStatus(this.formStatus.name)
         },
         components: {
             ECard,
@@ -303,7 +315,7 @@
             @ok="guardarDatos(performUpload())"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Esta seguro de modificar el producto?
+                ¿Está seguro de modificar el producto?
             </h1>
         </ModalDialog>
         <ECard>
@@ -425,23 +437,6 @@
                                 v-model="entrada.price"
                                 aria-label="First name" />
                         </div>
-
-                        <div class="col">
-                            <h6
-                                style="
-                                    font-size: 15px;
-                                    color: black;
-                                    text-align: left;
-                                ">
-                                Iva*
-                            </h6>
-                            <input
-                                type="text"
-                                class="form-control"
-                                placeholder=""
-                                v-model="entrada.iva"
-                                aria-label="First name" />
-                        </div>
                     </div>
                 </div>
 
@@ -449,13 +444,23 @@
                 <div class="container text-center" style="padding: 10px">
                     <div class="row">
                         <div class="col">
-                            <InputText
-                                label="Cantidad del Producto"
-                                v-model="entrada.quantity"
-                                type="number"
-                                @input="emitValue" />
+                            <InputText label="IVA" model-value="12" />
                         </div>
-                        <div class="col"></div>
+                        <div class="col" style="display: flex">
+                            <input
+                                type="checkbox"
+                                id="checkbox"
+                                v-model="checked" />
+                            <label
+                                style="
+                                    align-self: center;
+                                    font-weight: 700;
+                                    font-size: 1rem;
+                                "
+                                for="checkbox"
+                                >IVA 0</label
+                            >
+                        </div>
 
                         <div class="col">
                             <h6
@@ -473,7 +478,7 @@
                                     role="switch"
                                     id="check"
                                     @change="validarCheckbox()"
-                                    checked />
+                                    :checked="entrada.is_active" />
                                 <label
                                     class="form-check-label"
                                     for="flexSwitchCheckDefault"></label>
@@ -562,6 +567,13 @@
                                             {{ warehouse['name'] }}
                                         </option>
                                     </select>
+                                </div>
+                                <div class="col">
+                                    <InputText
+                                        label="Cantidad del Producto"
+                                        type="number"
+                                        v-model="entrada.quantity"
+                                        @input="emitValue" />
                                 </div>
                             </div>
                         </div>

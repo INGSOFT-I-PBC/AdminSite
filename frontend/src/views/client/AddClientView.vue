@@ -60,7 +60,7 @@
         number_id: '',
         name: '',
         address: '',
-        business_name: '',
+        business_name: 'razon social',
         email: '',
         phone_number: '',
         city: null,
@@ -322,7 +322,7 @@
                 @ok="saveClient"
                 button-type="ok-cancel">
                 <h1 style="font-size: 15px; color: black; text-align: left">
-                    ¿Esta seguro de guardar al Cliente?
+                    ¿Está seguro de guardar al Cliente?
                 </h1>
             </ModalDialog>
             <div class="container" style="border-radius: 5px">
@@ -426,6 +426,8 @@
                                         " />
                                 </div>
                             </div>
+                        </div>
+                        <div class="row">
                             <div class="col">
                                 <h6
                                     style="
@@ -433,7 +435,7 @@
                                         color: black;
                                         text-align: left;
                                     ">
-                                    Nombres y apellidos *
+                                    Razón Social *
                                 </h6>
                                 <Field
                                     name="name"
@@ -444,33 +446,6 @@
                                 <div class="col">
                                     <ErrorMessage
                                         name="name"
-                                        style="
-                                            font-size: 10px;
-                                            color: red;
-                                            text-align: left;
-                                        " />
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <h6
-                                    style="
-                                        font-size: 15px;
-                                        color: black;
-                                        text-align: left;
-                                    ">
-                                    Razón Social
-                                </h6>
-                                <Field
-                                    name="business_name"
-                                    class="form-control"
-                                    type="email"
-                                    v-model="formClient.business_name"
-                                    :rules="validateRazon" />
-                                <div class="col">
-                                    <ErrorMessage
-                                        name="razon"
                                         style="
                                             font-size: 10px;
                                             color: red;

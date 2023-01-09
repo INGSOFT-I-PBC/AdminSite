@@ -1,5 +1,7 @@
 from django.db import models
 
+from api.models.users import Employee
+
 
 class Role(models.Model):
     """
@@ -19,6 +21,7 @@ class Role(models.Model):
     role_class = models.CharField(
         max_length=128, db_column="class", verbose_name="role class", default=None
     )
+    created_at = models.DateTimeField(auto_created=True, auto_now=True, null=False)
 
     def __str__(self):
         return f"{self.name} <{self.codename}>"
