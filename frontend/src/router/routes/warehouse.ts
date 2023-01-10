@@ -84,7 +84,6 @@ export const warehouses: Array<RouteConfig> = [
             pageTitle: 'Gestión Pedidos',
         },
     },
-
     {
         path: '/bodegas/gestion',
         name: 'gestion-view',
@@ -96,6 +95,20 @@ export const warehouses: Array<RouteConfig> = [
                     text: 'Bodegas',
                     href: '/bodegas',
                 },
+            ],
+        },
+    },
+    {
+        path: '/bodegas/mantenimiento/inventario',
+        name: 'warehouse-management-inventory',
+        component: () => import('@views/warehouse/ManageInventoryView.vue'),
+        meta: {
+            pageTitle: 'Gestor de inventario por bodega',
+            permission: 'can_manage_warehouse_inventory',
+            breadcrumb: [
+                { text: 'Bodegas' },
+                { text: 'Mantenimiento' },
+                { text: 'Inventario' },
             ],
         },
     },

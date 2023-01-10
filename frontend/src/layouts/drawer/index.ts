@@ -100,6 +100,12 @@ export const menus: MenuItem[] = [
                 ],
             },
             {
+                label: 'Gestión Inventario',
+                path: '/bodegas/mantenimiento/inventario',
+                routeName: 'warehouse-management-inventory',
+            },
+
+            {
                 label: 'Tomas físicas',
                 path: '/bodegas/tomas-fisicas',
                 routeName: 'tomas-fisica-view',
