@@ -12,6 +12,13 @@ export interface OrderSaveData {
     items: SaveItemData[]
 }
 
+export interface OrderSaveData2 {
+    id?: number
+    warehouse?: string
+    requested_at?: string
+    requested_by?: string
+}
+
 export interface IOrderDetail {
     id?: number
     item: Item

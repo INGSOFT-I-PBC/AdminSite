@@ -8,7 +8,10 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import OrderRequest
 from api.models.orders import OrderRequestDetail
+from api.models.products import ProductProvider
+from api.models.purchases import Purchase
 from api.serializers.order import (
+    OrderDetailProviderProductSerializer,
     OrderDetailSerializer,
     OrderDetailSerializerprueba,
     OrderReadSerializer,
@@ -67,13 +70,63 @@ class OrderRequestFullView(ModelViewSet):
     serializer_class = OrderDetailSerializerprueba
 
     def get_queryset(self):
+        try:
+            busqueda = self.request.query_params.get("busqueda")
+            filtro = self.request.query_params.get("filtro")
+            ids = self.request.query_params.get("id")
+
+            if busqueda == None:
+                orders_details = (
+                    self.queryset.filter(
+                        order_request=ids,
+                    )
+                    .select_related("item")
+                    .select_related("item__product")
+                )
+
+            if busqueda != "":
+                if busqueda != None:
+                    if filtro == "marca":
+                        orders_details = (
+                            self.queryset.filter(
+                                order_request=ids,
+                                item__product__brand_name__contains=busqueda,
+                            )
+                            .select_related("item")
+                            .select_related("item__product")
+                        )
+
+                    if filtro == "producto":
+                        orders_details = (
+                            self.queryset.filter(
+                                order_request=ids,
+                                item__product__product_name__contains=busqueda,
+                            )
+                            .select_related("item")
+                            .select_related("item__product")
+                        )
+
+            return orders_details
+
+        except Exception as e:
+            print(e)
+            return error_response("Invalid query")
+
+
+class OrderRequestProductProvider(ModelViewSet):
+    queryset = ProductProvider.objects.all()
+    serializer_class = OrderDetailProviderProductSerializer
+    """
+    def get_queryset(self):
         # print(request.GET)
         try:
 
             orders_details = (
-                self.queryset.filter(order_request=self.request.query_params.get("id"))
-                .select_related("item")
-                .select_related("item__category")
+                self.queryset.filter(
+                    order_request=self.request.query_params.get("id")
+                ).select_related("product")
+                # .select_related("item__category")
+                .select_related("provider")
             )
 
             return orders_details
@@ -81,6 +134,23 @@ class OrderRequestFullView(ModelViewSet):
         except Exception as e:
             print(e)
             return error_response("Invalid query")
+    """
+
+
+@api_view(["GET"])
+def OrderApprovePurchase(request):
+    data = request.data
+    oid = request.query_params.get("order_origin_id")
+    order = OrderRequest.objects.filter(pk=oid).first()
+
+    Purchase.objects.create(
+        order_origin_id=oid,
+        warehouse_id=order.warehouse.id,
+        provider_id=1,
+        reference=1,
+        aproved_at="2023-01-07 12:00:00",
+    )
+    return error_response("Invalid query")
 
 
 @api_view(["POST"])

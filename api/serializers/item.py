@@ -70,6 +70,14 @@ class SimpleItemSerializer(serializers.Serializer):
         fields = "__all__"
 
 
+class ItemPriceSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        instance.id = validated_data.get("id", instance.id)
+        instance.price = validated_data.get("price", instance.price)
+        instance.save()
+        return instance
+
+
 class ItemPropSerializer(serializers.RelatedField):
     name = serializers.CharField(max_length=256)
     value = serializers.CharField(max_length=256)

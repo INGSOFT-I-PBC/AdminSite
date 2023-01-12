@@ -10,14 +10,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from api.models import Inventory, OrderRequest, Warehouse
+from api.models import Inventory, Item, OrderRequest, ProductVariant, Warehouse
 from api.models.common import Status
+from api.models.orders import OrderRequestDetail
 from api.models.products import ProductStockWarehouse, ProductVariant
 from api.models.warehouse import (
     WarehouseTransaction,
     WhTomasFisicas,
     WhTomasFisicasDetails,
 )
+from api.serializers.item import ItemPriceSerializer
 from api.serializers.order import OrderSerializer, OrderSerializerORDREQ
 from api.serializers.warehouse import (
     FullTomasDetailSerializer,
@@ -567,3 +569,29 @@ class OrderRequestViewSet2(ModelViewSet):
             return Response(OrderSerializerORDREQ(page_obj, many=True).data)
 
         return Response(serializer_class.data)
+
+
+class OrderSavePriceToItem(APIView):
+    def get(self, request):
+        try:
+            ids = request.query_params.get("id")
+            prices = request.query_params.get("price")
+            updateted_rows = ProductVariant.objects.filter(id=ids).update(price=prices)
+        except Exception as e:
+            error_response("Invalid query")
+
+        return JsonResponse({"error": False, "message": "Ok"})
+
+
+class OrderSaveQuantityToItem(APIView):
+    def get(self, request):
+        try:
+            ids = request.query_params.get("id")
+            quantities = request.query_params.get("quantity")
+            updateted_rows = OrderRequestDetail.objects.filter(item_id=ids).update(
+                quantity=quantities
+            )
+        except Exception as e:
+            error_response("Invalid query")
+
+        return JsonResponse({"error": False, "message": "Ok"})

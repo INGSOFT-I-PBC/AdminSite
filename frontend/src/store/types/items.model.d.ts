@@ -22,6 +22,64 @@ export interface Item {
     codename: string
 }
 
+export type ItemValue = {
+    id?: number
+    product_name?: string
+    price?: string
+    brand_name?: string
+    variant_name?: string
+    created_at?: string
+    updated_at?: string
+    deleted_at?: string
+    sku?: string
+    is_active?: boolean
+    prod_id?: number
+    summary?: string
+    short_description?: string
+    base_price?: string
+}
+
+export interface Item2 {
+    order_request?: number
+    item?: ItemValue[]
+    quantity?: number
+}
+
+export type ProductValues = {
+    id?: number
+    created_at?: string
+    updated_at?: string
+    deleted_at?: string
+    variant_name?: string
+    sku?: string
+    price?: string
+    is_active?: boolean
+    prod_id?: number
+    product_name?: string
+    brand_name?: string
+    sku?: string
+    summary?: string
+    short_description?: string
+    base_price?: string
+}
+
+export type ProviderValues = {
+    name?: string
+    document_path?: string
+    bussiness_name?: string
+    address?: string
+    website?: string
+    email?: string
+    latitude?: string
+    longitude?: string
+}
+
+export interface ProviderProductDetails {
+    product?: ProductValues[]
+    provider?: ProviderValues[]
+    price?: string
+}
+
 export interface FullItem extends Item {
     meta: Optional<MetaData>
 }

@@ -10,7 +10,11 @@ from api.views import *
 from api.views.clientview import ClientView
 from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
 from api.views.itemviews import ItemView
-from api.views.orders import OrderRequestFullView, OrderRequestView
+from api.views.orders import (
+    OrderApprovePurchase,
+    OrderRequestFullView,
+    OrderRequestView,
+)
 from api.views.provinceview import ProvinceCityView
 from api.views.sequence import *
 from api.views.statusview import StatusView
@@ -28,6 +32,10 @@ router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
 router.register(r"warehouses/order-requests2", views.OrderRequestViewSet2)
+
+# router.register("warehouses/order-savepricetoitem", views.OrderSavePriceToItem)
+
+router.register(r"warehouses/order-product-provider", views.OrderRequestProductProvider)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
 router.register(r"clients/all", views.ClientViewSet)
@@ -57,6 +65,21 @@ urlpatterns = [
     path("auth/me", user_data, name="user-data"),
     # Path for models
     path("warehouse", WarehouseView.as_view(), name="warehouse-list"),
+    path(
+        "warehouse/order-savepricetoitem",
+        OrderSavePriceToItem.as_view(),
+        name="warehouse-priceitem",
+    ),
+    path(
+        "warehouse/order-savequantitytoitem",
+        OrderSaveQuantityToItem.as_view(),
+        name="warehouse-quantityitem",
+    ),
+    path(
+        "warehouse/order-approvePurchase",
+        OrderApprovePurchase,
+        name="warehouse-approvePurchase",
+    ),
     path("warehouse/order", WhOrderRequestView.as_view(), name="wh-orders"),
     path(
         "warehouse/stock",

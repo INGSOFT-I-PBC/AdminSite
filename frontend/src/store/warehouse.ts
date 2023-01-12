@@ -16,7 +16,12 @@ import axios, { type AxiosResponse } from 'axios'
 import { defineStore } from 'pinia'
 
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
-import type { OrderDetails, OrderSaveData } from './types/orders.model'
+import type { ProviderProductDetails } from './types/items.model'
+import type {
+    OrderDetails,
+    OrderSaveData,
+    OrderSaveData2,
+} from './types/orders.model'
 
 type identifier = number | string
 
@@ -25,6 +30,7 @@ export interface WarehouseState {
     paginatedWarehouse: Optional<PaginatedAPIResponse<Warehouse>>
     lastOrdersWarehouseList: Optional<OrderSaveData[]>
     OrderDetailsList: Optional<OrderDetails[]>
+    ProviderProductDetails: Optional<ProviderProductDetails[]>
 }
 
 export const useWarehouseStore = defineStore('warehouse-store', {
@@ -33,6 +39,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
         paginatedWarehouse: null,
         lastOrdersWarehouseList: null,
         OrderDetailsList: null,
+        ProviderProductDetails: null,
     }),
 
     getters: {
@@ -40,6 +47,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
         getPaginatedWarehouse: state => state.paginatedWarehouse,
         getOrdersWarehouseList: state => state.lastOrdersWarehouseList,
         getOrderDetails: state => state.OrderDetailsList,
+        getProductProvider: state => state.ProviderProductDetails,
     },
 
     actions: {
@@ -217,7 +225,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             //datobusqueda = busqueda;
 
             const result = await (
-                await axios.get('/api/v1/list/warehouses/order-requests', {
+                await axios.get('/api/v1/list/warehouses/order-requests2', {
                     params: busqueda != '' ? dato : options,
                 })
             ).data
@@ -227,11 +235,84 @@ export const useWarehouseStore = defineStore('warehouse-store', {
 
         async fetchOrdersDetails(
             idOrder: identifier,
-            options: Optional<OrderDetails> = null
+            options: Optional<OrderDetails> = null,
+            busqueda = '',
+            filtro = ''
         ) {
+            const dato = {
+                busqueda: busqueda != '' ? busqueda : '',
+                filtro: filtro,
+            }
+
             const result = await (
                 await axios.get(`/api/v1/order-details?id=${idOrder}`, {
-                    params: options,
+                    params: busqueda != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async fetchProviderProduct(
+            options: Optional<ProviderProductDetails> = null
+        ) {
+            const result = await (
+                await axios.get(
+                    '/api/v1/list/warehouses/order-product-provider',
+                    {
+                        params: options,
+                    }
+                )
+            ).data
+
+            return result
+        },
+        async savePriceToItem(
+            options: Optional<OrderSaveData> = null,
+            item = '',
+            price = ''
+        ) {
+            const dato = {
+                id: item,
+                price: price,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-savepricetoitem', {
+                    params: item != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async saveQuantityToItem(
+            options: Optional<OrderSaveData> = null,
+            item = '',
+            quantity = ''
+        ) {
+            const dato = {
+                id: item,
+                quantity: quantity,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-savequantitytoitem', {
+                    params: item != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async approvePurchase(options: Optional<OrderSaveData> = null, id = 0) {
+            const dato = {
+                order_origin_id: id,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-approvePurchase', {
+                    params: id == 0 ? dato : options,
                 })
             ).data
 

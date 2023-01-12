@@ -1,8 +1,11 @@
 from rest_framework import serializers
 
 from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
+from api.models.products import ProductProvider
 from api.serializers.auth import EmployeeSerializer
 from api.serializers.item import SimpleItemSerializer
+from api.serializers.product import ProductVariantSerializer
+from api.serializers.provider import PartialProviderSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -82,11 +85,21 @@ class OrderReadSerializer(serializers.ModelSerializer):
 
 
 class OrderDetailSerializerprueba(serializers.ModelSerializer):
-    item = SimpleItemSerializer()
+    # item = SimpleItemSerializer()
+    item = ProductVariantSerializer()
 
     class Meta:
         model = OrderRequestDetail
         fields = ["order_request", "item", "quantity"]
+
+
+class OrderDetailProviderProductSerializer(serializers.ModelSerializer):
+    product = ProductVariantSerializer()
+    provider = PartialProviderSerializer()
+
+    class Meta:
+        model = ProductProvider
+        fields = ["product", "provider", "price"]
 
 
 class OrderSerializerORDREQ(serializers.ModelSerializer):
@@ -100,6 +113,7 @@ class OrderSerializerORDREQ(serializers.ModelSerializer):
             "requested_at": instance.requested_at,
             "requested_by": instance.requested_by.name,
             "warehouse": instance.warehouse.name,
+            "warehouse_id": instance.warehouse.id,
         }
 
 

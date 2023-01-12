@@ -14,7 +14,10 @@
         WhWithTomaFisica,
     } from '@store/types'
     import type { ItemProps } from '@store/types/items.model'
-    import type { OrderSaveData } from '@store/types/orders.model'
+    import type {
+        OrderSaveData,
+        OrderSaveData2,
+    } from '@store/types/orders.model'
     import { useWarehouseStore } from '@store/warehouse'
     import type { TableField } from 'bootstrap-vue-3'
     import {
@@ -81,20 +84,31 @@
         purchases: Purchase[]
         tomasFisicas: TomaFisica[]
         movements: []
-        ordenes2: OrderSaveData[]
+        ordenes2?: OrderSaveData2[]
+        //ord: OrderSaveData3[]
     }
 
     const formFields: TableField[] = [
         { label: 'ID Orden', key: 'id' },
-        { label: 'Numero Bodega ', key: 'warehouse' },
+        { label: 'Nombre Bodega ', key: 'warehouse' },
         { label: 'Fecha Pedido', key: 'requested_at' },
-        { label: 'Id De Solicitador', key: 'requested_by' },
+        { label: 'Nombre Solicitador', key: 'requested_by' },
         //{ label: 'Detalles', key: 'status' },
         'Acciones',
     ]
 
-    const activeWhInformation = ref<warehouseInformation>()
-    //let ordenes = ref(<arr_ordens>{})
+    const activeWhInformation = ref<warehouseInformation>({
+        bodega: {
+            id: -1,
+            name: 'Not Selected',
+            status: { description: '', name: '', id: '' },
+        },
+        inventory: [],
+        purchases: [],
+        tomasFisicas: [],
+        movements: [],
+        ordenes2: [],
+    })
     type FilterOption = {
         label: string
         value: 'bodega' | 'solicitador'
@@ -110,8 +124,6 @@
     async function lastOrders() {
         showWaitOverlay.value = true
 
-        //let wh_name = activeWhInformation.value.bodega.id
-
         const busqueda = filterText.value != '' ? filterText.value : ''
         const filtro = filterName.value.value
 
@@ -121,13 +133,22 @@
             filtro
         )
 
-        //activeWhInformation.value.arr_orders = response.data.data
-        //ordenes.value.ordenes= response.data.data
-        //console.log(response)
-        if (activeWhInformation.value == undefined) return
-        activeWhInformation.value.ordenes2 = response
+        console.log(response)
+        console.log('hola', typeof activeWhInformation.value?.ordenes2)
+        console.log(activeWhInformation.value?.ordenes2)
+        console.log(activeWhInformation.value?.ordenes2 == undefined)
+        //console.log(order1.warehouse)
+        console.log(activeWhInformation.value.ordenes2)
 
-        //invTableTotal.value = response.data.total
+        //if (activeWhInformation.value?.ordenes2 == undefined) return
+
+        activeWhInformation.value.ordenes2 = response
+        //return
+        console.log('hola')
+        //activeWhInformation.value?.ordenes2 = response
+        console.log(activeWhInformation.value?.ordenes2)
+
+        console.log('hola')
         showWaitOverlay.value = false
     }
 
@@ -175,12 +196,10 @@
                                     >Buscar</EButton
                                 >
                             </b-col>
-                            <b-col lg="6" class="my-1">
-                                <InputText
-                                    v-model="filterText"
-                                    label="Cuadro de búsqueda"
-                                    :placeholder="`Búsqueda por ${filterName.label}`" />
-                            </b-col>
+                            <InputText
+                                v-model="filterText"
+                                label="Cuadro de búsqueda"
+                                :placeholder="`Búsqueda por ${filterName.label}`" />
                         </b-row>
                     </div>
 
