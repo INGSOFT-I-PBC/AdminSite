@@ -7,7 +7,7 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import OrderRequest
-from api.models.orders import OrderRequestDetail
+from api.models.orders import OrderRequestDetail, OrderStatus
 from api.models.products import ProductProvider
 from api.models.purchases import Purchase
 from api.serializers.order import (
@@ -16,6 +16,7 @@ from api.serializers.order import (
     OrderDetailSerializerprueba,
     OrderReadSerializer,
     OrderSerializer,
+    OrderStatusSerializer,
     PartialOrderSerializer,
 )
 from api.utils import error_response, response
@@ -32,6 +33,10 @@ class OrderRequestViewSet(ReadOnlyModelViewSet):
             queryset = queryset.filter(comment__icontains=params.get("comment"))
 
         return queryset
+
+    class Meta:
+
+        model = OrderRequest
 
 
 class OrderRequestView(APIView):
@@ -191,3 +196,18 @@ def get_full_order(request, *args, **kwargs):
     order = search.get()
 
     return JsonResponse(OrderReadSerializer(order).data)
+
+
+class OrderStatusListViewSet(ModelViewSet):
+    queryset = OrderStatus.objects.all().order_by("-created_at")
+    serializer_class = OrderStatusSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
+        if params.get("comment", None):
+            queryset = queryset.filter(comment__icontains=params.get("comment"))
+        if params.get("order_id", None):
+            queryset = queryset.filter(order=params.get("order_id"))
+
+        return queryset

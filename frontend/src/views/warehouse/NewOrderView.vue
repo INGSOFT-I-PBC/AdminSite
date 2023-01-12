@@ -12,6 +12,7 @@
         Product,
         ProductAttribute,
         ProductVariant,
+        SimpleProductStock,
     } from '@store/types/product'
     import { useWarehouseStore } from '@store/warehouse'
     import type { TableField } from 'bootstrap-vue-3'
@@ -66,6 +67,8 @@
     }
 
     const pickedProduct = ref<Product>()
+
+    const productStock = ref<SimpleProductStock[]>([])
 
     const productPageLength = computed(() => {
         const items = productStore.products
@@ -127,6 +130,17 @@
         return productStore.products?.data ?? []
     })
 
+    const currentStockInfo = computed((): SimpleProductStock | null => {
+        if (!form.value.bodega || !productStock.value || !selectedVariant.value)
+            return null
+        const target = productStock.value.find(
+            stock =>
+                stock.warehouse === form.value.bodega?.id &&
+                stock.variant === selectedVariant.value?.id
+        )
+        return target ?? null
+    })
+
     warehouse.fetchWarehouses().then(() => {
         showWaitOverlay.value = false
     })
@@ -156,15 +170,31 @@
         productModalShow.value = true
     }
 
-    function onRowClick(selectedItem: Product) {
-        console.log('Data: ', selectedItem)
+    async function onRowClick(selectedItem: Product) {
         pickedProduct.value = selectedItem
         if (selectedItem.variants.length == 1) {
             // Automatically pick the first variant
             selectedVariant.value = selectedItem.variants[0]
         }
         productModalShow.value = false
+        showWaitOverlay.value = true
+        const stock = await productStore.findStockByProduct(
+            pickedProduct.value.id
+        )
+        productStock.value = stock
+        showWaitOverlay.value = false
     }
+
+    async function refreshStock() {
+        if (!pickedProduct.value) return // do anything
+        showWaitOverlay.value = true
+        const stock = await productStore.findStockByProduct(
+            pickedProduct.value.id
+        )
+        productStock.value = stock
+        showWaitOverlay.value = false
+    }
+
     function addToTable() {
         const targetItem = selectedVariant.value
         if (!targetItem) {
@@ -349,7 +379,8 @@
                             top-label="Seleccione una Bodega"
                             placeholder="No ha seleccionado una bodega"
                             :options="warehouse.getWarehouseList ?? []"
-                            label="name" />
+                            label="name"
+                            @change="refreshStock" />
                     </ECol>
                     <ECol cols="12" lg="6" xl="4">
                         <div class="tw-flex tw-flex-col">
@@ -443,7 +474,10 @@
                             <!-- TODO: Update this from api -->
                             <InputText
                                 label="Stock en bodega"
-                                :model-value="'0'"
+                                :model-value="
+                                    currentStockInfo?.stock_level.toString() ??
+                                    'no disponible'
+                                "
                                 readonly />
                         </ECol>
                         <ECol cols="12" lg="auto">

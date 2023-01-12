@@ -1,8 +1,10 @@
 from rest_framework import serializers
 
 from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
+from api.models.orders import OrderStatus
 from api.models.products import ProductProvider
 from api.serializers.auth import EmployeeSerializer
+from api.serializers.common import SimpleStatusSerializer
 from api.serializers.item import SimpleItemSerializer
 from api.serializers.product import ProductVariantSerializer
 from api.serializers.provider import PartialProviderSerializer
@@ -64,13 +66,14 @@ class _Item(serializers.ModelSerializer):
 
 
 class _DetailSerializer(serializers.ModelSerializer):
-    item_name = serializers.CharField(source="item.name")
-    item_category = serializers.CharField(source="item.category.name")
-    item_brand = serializers.CharField(source="item.brand")
+    item_name = serializers.CharField(source="item.variant_name")
+    # item_category = serializers.CharField(source="item.category.name")
+    item_brand = serializers.CharField(source="item.product.brand_name")
+    sku = serializers.CharField(source="item.sku")
 
     class Meta:
         model = OrderRequestDetail
-        fields = ("quantity", "item_name", "item_category", "item_brand")
+        fields = ("quantity", "item_name", "sku", "item_brand")
 
 
 class OrderReadSerializer(serializers.ModelSerializer):
@@ -119,3 +122,22 @@ class OrderSerializerORDREQ(serializers.ModelSerializer):
 
 class InputOrderSerializer(serializers.Serializer):
     pass
+
+
+class OrderStatusSerializer(serializers.Serializer):
+
+    id = serializers.IntegerField()
+    created_at = serializers.DateTimeField()
+    created_by = EmployeeSerializer()
+    status = SimpleStatusSerializer()
+
+    def to_representation(self, obj):
+        """Move fields from status to purchase_status representation."""
+        representation = super().to_representation(obj)
+        status_representation = representation.pop("status")
+        representation["status"] = status_representation["name"]
+        return representation
+
+    class Meta:
+        model = OrderStatus
+        fields = ["id", "order", "status", "created_by", "created_at"]

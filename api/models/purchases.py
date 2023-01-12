@@ -15,25 +15,36 @@ class Purchase(models.Model):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
 
-    aproved_at = models.DateTimeField(null=False, auto_now_add=True)
-    provider = models.ForeignKey(Provider, on_delete=models.RESTRICT)
+    approved_at = models.DateTimeField(null=False, auto_now_add=True)
     order_origin = models.ForeignKey(OrderRequest, on_delete=models.RESTRICT, null=True)
-    reference = models.IntegerField()
+    reference = models.IntegerField(unique=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
-    invoice = models.ForeignKey(
-        Invoice, null=True, default=None, on_delete=models.RESTRICT
-    )
-
-    img_details = models.CharField(max_length=255, null=True)
 
     class Meta:
         db_table = "purchase"
 
 
-class PurchaseDetail(models.Model):
+class PurchaseChild(models.Model):
 
-    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    purchase = models.ForeignKey(Purchase, on_delete=models.CASCADE)
+    id = models.BigAutoField(primary_key=True, auto_created=True, editable=False)
+    purchase_header = models.ForeignKey(Purchase, on_delete=models.RESTRICT)
+    invoice = models.ForeignKey(
+        Invoice, null=True, default=None, on_delete=models.RESTRICT
+    )
+    provider = models.ForeignKey(Provider, on_delete=models.RESTRICT)
+    img_details = models.CharField(max_length=255, null=True)
+    is_purchased = models.BooleanField(default=False, null=False, blank=False)
+    is_delivered = models.BooleanField(default=False, null=False, blank=False)
+    comment = models.CharField(max_length=300, null=True, blank=True)
+
+    class Meta:
+
+        db_table = "purchase_child"
+
+
+class PurchaseDetail(models.Model):
+    id = models.BigAutoField(primary_key=True, auto_created=True, editable=False)
+    purchase_child = models.ForeignKey(PurchaseChild, on_delete=models.CASCADE)
     variant = models.ForeignKey(ProductVariant, on_delete=models.RESTRICT)
     product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     price = models.DecimalField(
@@ -42,6 +53,7 @@ class PurchaseDetail(models.Model):
     quantity = models.IntegerField(validators=[MinValueValidator(1)])
 
     class Meta:
+        unique_together = [["product", "variant", "purchase_child"]]
         db_table = "purchase_details"
 
 
@@ -61,7 +73,7 @@ class PurchaseStatus(models.Model):
         status (Status)
     """
 
-    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+    id = models.BigAutoField(primary_key=True, auto_created=True, editable=False)
 
     created_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="created_by"

@@ -7,7 +7,13 @@ from .invoice import CreditNote, Invoice, InvoiceDetails, PaymentMethod
 from .items import Category, CategoryParam, Item, ItemMetaData
 from .offices import BranchOffice
 from .orders import OrderRequest, OrderRequestDetail, OrderStatus
-from .products import Product, ProductAttribute, ProductProvider, ProductVariant
+from .products import (
+    Product,
+    ProductAttribute,
+    ProductProvider,
+    ProductStockWarehouse,
+    ProductVariant,
+)
 from .provider import Provider
 from .purchases import Purchase, PurchaseDetail, PurchaseStatus
 from .roles import Role
@@ -57,4 +63,5 @@ __all__ = [
     "ProductProvider",
     "ProductVariant",
     "TestModel",
+    "ProductStockWarehouse",
 ]

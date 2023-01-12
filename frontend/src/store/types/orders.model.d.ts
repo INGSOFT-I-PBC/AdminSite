@@ -1,5 +1,6 @@
 import type { Item } from './items.model'
 import type { Employee } from './user.model'
+import { Warehouse } from './warehouse.model'
 
 export type SaveItemData = {
     item: number
@@ -81,8 +82,8 @@ export interface OrderRequest {
      */
     id: number
     requested_by: Employee
-    approved_by: Optional<Employee>
-    approved_at: Optional<string | Date>
+    revised_by: Optional<Employee>
+    revised_at: Optional<string | Date>
     items: OrderRequestDetail[]
     warehouse: string
     requested_at: string | Date
@@ -134,3 +135,19 @@ export interface OrderDetails2 {
 }
 
 export default {}
+
+export interface SimpleOrderStatus {
+    id?: number
+    created_by: Employee
+    created_at: string | Date
+    status: string
+}
+
+export interface SimpleOrderRequest {
+    id: number
+    requested_at: string | Date
+    revised_by?: Employee
+    revised_at?: string | Date
+    comment?: string
+    status_list?: SimpleOrderStatus[]
+}

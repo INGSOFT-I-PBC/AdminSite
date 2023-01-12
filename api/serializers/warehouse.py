@@ -1,3 +1,5 @@
+from types import MethodType
+
 from rest_framework.serializers import (
     CharField,
     DateTimeField,
@@ -8,12 +10,17 @@ from rest_framework.serializers import (
 )
 
 from api.models import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
-from api.models.products import ProductStockWarehouse, ProductVariant
-from api.models.warehouse import WhTomasFisicas, WhTomasFisicasDetails
+from api.models.products import ProductAttribute, ProductStockWarehouse, ProductVariant
+from api.models.warehouse import (
+    TransactionStatus,
+    WhTomasFisicas,
+    WhTomasFisicasDetails,
+)
 from api.serializers.auth import EmployeeSerializer
 from api.serializers.common import SimpleStatusSerializer
 from api.serializers.item import ItemSerializer, SimpleItemSerializer
 from api.serializers.product import (
+    ProductAttributeSerializer,
     ProductVariantSerializer,
     SimpleProductSerializer,
     SimpleVariantSerializer,
@@ -143,34 +150,30 @@ class WhStockSerializer(ModelSerializer):
         fields = ["product", "variant", "stock_level", "updated_by", "updated_at"]
 
 
-class WhTransactionDetailSerializer(ModelSerializer):
-    id = IntegerField()
-    item = SimpleItemSerializer()
-    quantity = IntegerField()
+class WhStockWithPropsSerializer(ModelSerializer):
 
-    def to_representation(self, obj):
-        """Move fields from item to Transaction Detail representation."""
-        representation = super().to_representation(obj)
-        item_representation = representation.pop("item")
-        for key in item_representation:
-            representation[key] = item_representation[key]
+    variant = SimpleVariantSerializer()
+    product = SimpleProductSerializer()
+    stock_level = IntegerField()
+    updated_by = SimpleEmployeeSerializer()
+    updated_at = DateTimeField()
+    props = SerializerMethodField(read_only=True)
 
-        return representation
-
-    def to_internal_value(self, data):
-        """Move fields related to item to their own item dictionary."""
-        item_internal = {}
-        for key in ItemSerializer.Meta.fields:
-            if key in data:
-                item_internal[key] = data.pop(key)
-
-        internal = super().to_internal_value(data)
-        internal["item"] = item_internal
-        return internal
+    def get_props(self, instance):
+        qs = ProductAttribute.objects.filter(option=instance.variant)
+        return ProductAttributeSerializer(qs, many=True).data
 
     class Meta:
-        model = WhTransactionDetails
-        fields = ["item", "quantity", "updated_at"]
+        model = ProductStockWarehouse
+        fields = ["product", "variant", "stock_level", "props", "updated_by", "updated_at"]
+
+
+class SimpleTransactionSerializer(ModelSerializer):
+    notes = CharField(max_length=300)
+
+    class Meta:
+        model = WarehouseTransaction
+        fields = ['notes', 'created_by', 'status', 'warehouse_origin', 'warehouse_destiny']
 
 
 class WhTransactionSerializer(ModelSerializer):
@@ -218,47 +221,32 @@ class TransactionDetailsSerializer(ModelSerializer):
     product = SimpleProductSerializer()
     variant = SimpleVariantSerializer()
     quantity = IntegerField()
-    movement = IntegerField()
 
     class Meta:
         model = WhTransactionDetails
-        fields = ["product", "variant", "quantity"]
+        fields = "__all__"
 
 
-class TranactionWithProductsSerializer(ModelSerializer):
+class TransactionDetailCreateSerializer(ModelSerializer):
+    class Meta:
+        model = WhTransactionDetails
+        fields = "__all__"
+
+
+class TransactionWithProductsSerializer(ModelSerializer):
 
     id = IntegerField()
     notes = CharField(max_length=300)
     created_by = SimpleEmployeeSerializer()
-    status = SimpleStatusSerializer()
     warehouse_origin = SimpleWarehouseSerializer()
     warehouse_destiny = SimpleWarehouseSerializer()
     details = SerializerMethodField(read_only=True)
 
-    def get_details(self):
-        qs = WhTransactionDetails.objects.filter(movement=self.id).prefetch_related(
+    def get_details(self, instance):
+        qs = WhTransactionDetails.objects.filter(header=instance.id).prefetch_related(
             "product", "variant"
         )
         return TransactionDetailsSerializer(qs, many=True).data
-
-    def to_representation(self, obj):
-        """Move fields from status to Transaction representation."""
-        representation = super().to_representation(obj)
-        status_representation = representation.pop("status")
-        representation["status"] = status_representation["name"]
-
-        return representation
-
-    def to_internal_value(self, data):
-        """Move fields related to status to their own status dictionary."""
-        status_internal = {}
-        for key in SimpleStatusSerializer.Meta.fields:
-            if key in data:
-                status_internal[key] = data.pop(key)
-
-        internal = super().to_internal_value(data)
-        internal["status"] = status_internal
-        return internal
 
     class Meta:
         model = WarehouseTransaction
@@ -267,11 +255,33 @@ class TranactionWithProductsSerializer(ModelSerializer):
             "created_by",
             "id",
             "notes",
-            "status",
             "warehouse_origin",
             "warehouse_destiny",
             "details",
         ]
+
+
+class TransactionStatusSerializer(ModelSerializer):
+
+    created_by = EmployeeSerializer()
+    status = SimpleStatusSerializer()
+
+    def to_representation(self, obj):
+        """Move fields from status to transaction_status representation."""
+        representation = super().to_representation(obj)
+        status_representation = representation.pop("status")
+        representation["status"] = status_representation["name"]
+        return representation
+
+    class Meta:
+        model = TransactionStatus
+        fields = "__all__"
+
+
+class CreateTransactionStatusSerializer(ModelSerializer):
+    class Meta:
+        model = TransactionStatus
+        fields = "__all__"
 
 
 class TomasFisicasSerializer(ModelSerializer):

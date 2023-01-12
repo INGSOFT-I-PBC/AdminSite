@@ -63,9 +63,9 @@
         <div class="tw-my-3">
             <Title
                 class="tw-absolute tw-left-3 -tw-top-3 tw-z-[5] tw-bg-slate-50 dark:tw-bg-slate-800"
-                size="lg"
-                >Cuadro de búsqueda</Title
-            >
+                size="lg">
+                Cuadro de búsqueda
+            </Title>
             <div
                 class="tw-border-solid tw-border-gray-800 tw-py-5 tw-px-3 tw-rounded-md tw-border-2">
                 <VeeForm @submit="makeSearch">
@@ -86,9 +86,9 @@
                                     () => {
                                         searchOptions.comment = undefined
                                     }
-                                "
-                                >Limpiar</EButton
-                            >
+                                ">
+                                Limpiar
+                            </EButton>
                         </div>
                     </div>
                     <div></div>
@@ -179,9 +179,13 @@
         OrderRequestStatus,
         RawOrderRequest,
     } from '@store/types/orders.model'
-    import type { ErrorResponse } from '@store/types/requests'
+    import type {
+        BadValidationResponse,
+        ErrorResponse,
+    } from '@store/types/requests'
     import { isErrorResponse } from '@store/types/typesafe'
     import OrderRequestPreview from '@views/warehouse/OrderRequestPreview.vue'
+    import axios from 'axios'
     import { BPagination, BTable, BvEvent } from 'bootstrap-vue-3'
     import moment from 'moment'
 
@@ -234,10 +238,21 @@
     function makeSearch() {
         isLoading.value = true
         orderRepository
-            .fetchRequests(searchOptions.value)
+            .fetchOrderRequests(searchOptions.value)
             .catch(err => {
-                console.log('Error while searching: ', err)
-                toast.error('No se pudo realizar la búsqueda')
+                if (
+                    axios.isAxiosError(err) &&
+                    defined(err.response) &&
+                    err.response.status < 500
+                ) {
+                    const queryError = err.response
+                        .data as BadValidationResponse
+                    toast.error('No se pudo realizar la busqueda')
+                } else {
+                    toast.error('Error desconocido')
+                }
+                //               console.log('Error while searching: ', err)
+                //                toast.error('No se pudo realizar a búsqueda')
             })
             .finally(() => {
                 isLoading.value = false

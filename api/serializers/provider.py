@@ -1,10 +1,12 @@
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import ModelSerializer, Serializer, URLField
 
 from api.models import Provider
 
 
 class ProviderSerializer(ModelSerializer):
+    website = URLField()
+
     class Meta:
         model = Provider
         fields = "__all__"

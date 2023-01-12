@@ -8,6 +8,8 @@ export interface MinimalWarehouse {
 
 export interface Warehouse extends MinimalWarehouse {
     id: number
+    latitude?: number
+    longitude?: number
 }
 
 export interface TomaFisica {
@@ -73,13 +75,35 @@ export interface Movement {
 }
 
 export interface MovementQuery {
-    created_at: string
-    created_by: number
-    id: number
-    notes: string
-    warehouse_origin: number
-    warehouse_destiny: number
+    created_at?: string
+    created_by?: number
+    created_by_name?: string
+    transaction_id?: number
+    id?: number
+    notes?: string
+    warehouse_origin?: number
+    warehouse_destiny?: number
+    from_date?: string
+    to_date?: string
+    status?: string
+    status_from_date?: string
+    status_to_date?: string
+}
+
+export interface MovementStatus {
+    id?: number
+    created_at: string | Date
+    created_by: Maybe<Employee>
     status: string
+    transaction?: number
+}
+
+export interface MovementDetail {
+    id?: number
+    quantity: number
+    header?: number
+    product: SimpleProduct
+    variant: ProductVariant
 }
 
 export interface WhWithTomaFisica {
@@ -95,9 +119,18 @@ export interface WhWithTomaFisica {
 export interface WarehouseStock {
     product: SimpleProduct
     variant: ProductVariant
-    updated_by: Employee
-    updated_at: string
+    updated_by?: Employee
+    updated_at?: string
     stock_level: number
+    is_active?: number
+    warehouse?: number
+}
+
+export interface MovementSaveData {
+    notes: string
+    details: MovementDetail[]
+    warehouse_destiny: number
+    warehouse_origin: number
 }
 
 export default {}

@@ -30,8 +30,8 @@ class OrderRequest(models.Model):
     revised_by = models.OneToOneField(
         Employee,
         on_delete=models.RESTRICT,
-        db_column="approved_by",
-        related_name="approved_by",
+        db_column="revised_by",
+        related_name="revised_by",
         default=None,
         null=True,
     )
