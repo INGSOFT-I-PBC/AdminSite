@@ -401,7 +401,7 @@ class WhTransactionViewSet(ModelViewSet):
                     (params.get("status_to_date")), "%Y-%m-%dT%H:%M:%S.%f%z"
                 ) + timedelta(days=1)
 
-                p_status = p_status.filter(created_at__gte=to_date)
+                p_status = p_status.filter(created_at__gte=to_date).order_by("-created_at")
 
             queryset = queryset.filter(pk__in=Subquery(p_status.values("transaction")))
 
@@ -504,7 +504,7 @@ def create_movement(request):
 
 
 class TransactionStatusViewSet(ModelViewSet):
-    queryset = TransactionStatus.objects.all()
+    queryset = TransactionStatus.objects.all().order_by('created_at')
     serializer_class = TransactionStatusSerializer
     pagination_class = None
 
