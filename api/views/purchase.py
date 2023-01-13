@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
+from distutils.log import error
 
+from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import OuterRef, Subquery
 from django.db.models.aggregates import Max
 from django.db.models.expressions import F
@@ -12,13 +14,21 @@ from rest_framework.viewsets import ModelViewSet
 from api.models import Purchase, User
 from api.models.common import Status
 from api.models.purchases import PurchaseChild, PurchaseDetail, PurchaseStatus
+from api.serializers.common import StatusSerializer
 from api.serializers.purchase import (
     PurchaseAditionalInfoSerialzier,
     PurchaseDetailSerializer,
     PurchaseStatusSerializer,
     SavePurchaseStatusSerializer,
+    SimplePurchaseChildSerializer,
+    SimplePurchaseDetailSerializer,
+    SimplePurchaseSerializer,
+    SimplePurchaseStatusSerializer,
 )
-from api.utils import error_response
+from api.utils import error_response, response
+
+REFERENCE_CONST_NUMBER = 1000
+PURCHASE_APROVED_STATUS_NAME = 'aprobado'
 
 
 class CustomPagination(PageNumberPagination):
@@ -217,6 +227,99 @@ class PurchaseDetailsViewSet(ModelViewSet):
             return queryset
 
         return queryset
+
+
+@api_view(["POST"])
+def create_purchase(request):
+    if not request.data:
+        return error_response("No data was provided")
+    details = request.data.pop("details")
+    details = [x for x in details if x]
+    if not details:
+        return error_response("An order need at least one item")
+    data = request.data
+    purchase_data = {
+        "warehouse": data["warehouse_id"],
+        "order_origin": data["order_origin"],
+        "reference": (data["order_origin"] + REFERENCE_CONST_NUMBER),
+    }
+
+    serializer = SimplePurchaseSerializer(data=purchase_data)
+    try:
+        if serializer.is_valid(raise_exception=True):
+            saved_childs = []
+            purchase: Purchase = serializer.save()
+            for child in details:
+                child_data = {
+                    "purchase_header": purchase.pk,
+                    "provider": child['provider'],
+                    "comment": child.get("comment", "")
+                }
+                child_serialzier = SimplePurchaseChildSerializer(data=child_data)
+                try:  # Check if the inserted  child is valid
+                    child_serialzier.is_valid(raise_exception=True)
+                except Exception as e:
+                    for c in saved_childs:
+                        c.delete()
+                    purchase.delete()
+                    raise (e)
+                child_obj: PurchaseChild = child_serialzier.save()
+                saved_childs.append(child_obj)
+
+                products = child.get("products", [])
+                if len(products) == 0:
+                    for c in saved_childs:
+                        c.delete()
+                    purchase.delete()
+                    raise (e)
+
+                for product in products:
+                    product['purchase_child'] = child_obj.pk
+
+                p_details = SimplePurchaseDetailSerializer(data=products, many=True)
+
+                try:  # Check if the inserted products are valid
+                    p_details.is_valid(raise_exception=True)
+                except Exception as e:
+                    for c in saved_childs:
+                        c.delete()
+                    purchase.delete()
+                    raise (e)
+                p_details.save()
+
+            try:
+                status_pending = Status.objects.get(name__icontains=PURCHASE_APROVED_STATUS_NAME)
+            except ObjectDoesNotExist as e:
+                new_stat = {
+                    "name": PURCHASE_APROVED_STATUS_NAME,
+                    "description": "aproved status purchase/movement"
+                }
+                st_serializer = StatusSerializer(data=new_stat)
+                st_serializer.is_valid()
+                status_pending = st_serializer.save()
+            print(status_pending.pk)
+
+            purchase_status_data = {
+                "status": status_pending.pk,
+                "created_by": request.user.employee_id,
+                "purchase": purchase.pk
+            }
+
+            purchase_status_serializer = SimplePurchaseStatusSerializer(data=purchase_status_data)
+
+            try:
+                purchase_status_serializer.is_valid(raise_exception=True)
+            except Exception as e:
+                for c in saved_childs:
+                    c.delete()
+                purchase.delete()
+                # TODO delete details
+                raise (e)
+
+            purchase_status_serializer.save()
+        return response("Purchase Created")
+    except Exception as e:
+        return error_response("The given data was invalid (Purchase)")
 
 
 @api_view(["POST"])

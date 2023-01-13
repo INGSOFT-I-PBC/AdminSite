@@ -6,21 +6,13 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
-from api.views import *
-from api.views.clientview import ClientView
-from api.views.invoiceview import InvoiceView, PaginatedItemInvoiceView
-from api.views.itemviews import ItemView
-from api.views.orders import (
-    OrderApprovePurchase,
-    OrderRequestFullView,
-    OrderRequestView,
+from api.views.orders import OrderApprovePurchase, OrderRequestFullView
+from api.views.warehouse import (
+    OrderSavePriceToItem,
+    OrderSaveQuantityToItem,
+    TransactionStatusViewSet,
+    WhTransactionDetailsViewSet,
 )
-from api.views.provinceview import ProvinceCityView
-from api.views.sequence import *
-from api.views.statusview import StatusView
-from api.views.test import CreateTestView, TestAPIView
-from api.views.warehouse import *
-from api.views.warehouse import TransactionStatusViewSet, WhTransactionDetailsViewSet
 
 """ Definition of paginated data
  This urls are read-only, for batch creation/update
@@ -34,13 +26,6 @@ router.register(r"employees", views.EmployeeViewSet, "employeeViewSet")
 router.register(r"gender/all", views.FullGenderViewSet)
 router.register(r"groups/all", views.UnpaginatedGroupViewSet)
 router.register(r"groups", views.GroupViewSet)
-router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
-router.register(r"warehouses/order-requests2", views.OrderRequestViewSet2)
-
-# router.register("warehouses/order-savepricetoitem", views.OrderSavePriceToItem)
-
-router.register(r"warehouses/order-product-provider", views.OrderRequestProductProvider)
-router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"inventory/all", views.FullInventoryViewSet, "paginatedInventoryVS")
 router.register(r"inventory", views.InventoryViewSet)
 router.register(r"invoice/item/all", views.PaginatedIItemViewSet)
@@ -191,6 +176,7 @@ urlpatterns = [
     # =====================================
     # <|        Purchase endpoints       |>
     # =====================================
+    path("purchase/create", views.create_purchase),
     path("purchase/details", views.PurchaseDetailsViewSet.as_view({"get": "list"})),
     path("purchase", views.PurchaseAditionalInfoViewSet.as_view({"get": "list"})),
     # =====================================

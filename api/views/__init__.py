@@ -37,6 +37,8 @@ from api.views.itemview import (
 )
 from api.views.itemviews import activate_item, inactivate_item
 from api.views.orders import (
+    OrderApprovePurchase,
+    OrderRequestFullView,
     OrderRequestView,
     OrderRequestViewSet,
     OrderStatusListViewSet,
@@ -67,6 +69,7 @@ from api.views.purchase import (
     PurchaseAditionalInfoViewSet,
     PurchaseDetailsViewSet,
     PurchaseViewSet,
+    create_purchase,
     create_purchase_status,
 )
 from api.views.roleview import RoleView, RoleViewSet, create_role
@@ -84,6 +87,8 @@ from api.views.userview import (
 )
 from api.views.warehouse import (
     FullWarehouseViewSet,
+    OrderRequestViewSet2,
+    OrderSavePriceToItem,
     TomasFisicasDetailsViewSet,
     TransactionStatusViewSet,
     WarehouseView,
@@ -113,6 +118,7 @@ __all__ = [
     create_prod_variant,
     create_product,
     create_provider,
+    create_purchase,
     create_purchase_status,
     create_role,
     create_user,
@@ -144,8 +150,12 @@ __all__ = [
     ItemView,
     ItemViewSet,
     LogoutViewSet,
+    OrderApprovePurchase,
     OrderRequestView,
+    OrderRequestFullView,
     OrderRequestViewSet,
+    OrderRequestViewSet2,
+    OrderSavePriceToItem,
     OrderStatusListViewSet,
     PaginatedIItemViewSet,
     PaginatedItemInvoiceView,
