@@ -39,6 +39,7 @@ from api.views.itemviews import activate_item, inactivate_item
 from api.views.orders import (
     OrderApprovePurchase,
     OrderRequestFullView,
+    OrderRequestProductProvider,
     OrderRequestView,
     OrderRequestViewSet,
     OrderStatusListViewSet,

@@ -1,11 +1,9 @@
 <script setup lang="ts">
-    //import type { Warehouse } from '@store/types';
     import EButton from '@components/custom/EButton.vue'
     import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import type { WarehouseQuery } from '@store/models/warehouseModels'
-    //import { type Item, type Warehouse, type Purchase, type TomaFisica, type WhWithTomaFisica } from '@store/types'
     import type {
         Item,
         Purchase,
@@ -16,6 +14,7 @@
     import type {
         Item2,
         ItemProps,
+        ProductProvider,
         ProviderProductDetails,
     } from '@store/types/items.model'
     import type {
@@ -43,14 +42,6 @@
     const route = useRoute()
     const warehouse = useWarehouseStore()
     const showWaitOverlay = ref<boolean>(true)
-    //let activeWhInformation = ref(<warehouseInformation>{})
-    const invTableTotal = ref(15)
-
-    const currentMainPage = ref(1)
-    const currentAsidePage = ref(1)
-    const whRows = ref(0)
-    const whPageCount = ref(15)
-    const whInformationPerPage = ref(15)
     const itemInfoShow = ref(false)
     const itemInfoShow2 = ref(false)
     const itemInfoShow3 = ref(false)
@@ -78,27 +69,13 @@
         items: []
     }
 
-    //comentario
-    type arr_ordens = {
-        /*
-        nameWarehouse: number
-        fechaPedido: string
-        solicitadoPor: string
-        estado: string
-        elementos: []
-        */
-    }
-
     type warehouseInformation = {
         bodega: Warehouse
         inventory: QuantifiedItem[]
         purchases: Purchase[]
         tomasFisicas: TomaFisica[]
         movements: []
-        //ordersDetails: OrderDetails[]
-        //ordersDetails2: { item: Item; quantity: number }[]
-        //ordersDetails2: { item: Item2; quantity: number }[]
-        ordersDetails2?: Item2[]
+        ordersDetails2?: Item2 & { providerInfo: Maybe<ProductProvider> }[]
     }
 
     const formFields: TableField[] = [
@@ -107,9 +84,6 @@
         'NombreProducto',
         'Precio',
         'Stock',
-        //{ label: 'NombreProducto', key: 'item.name' },
-        //{ label: 'Stock', key: 'quantity' },
-        //{ label: 'Precio', key: 'item.price' },
         'Marca',
         'Modelo',
         'Acciones',
@@ -170,11 +144,36 @@
         console.log(
             activeProductProviderInformations.value.productProviderDetails
         )
+
+        const arr_provider = []
+        const arr_products = []
+        for (let index = 0; index < response.data.length; index++) {
+            let dic_product = {}
+            const element = response.data[index]
+            console.log(element)
+            arr_provider.push(element.provider.id)
+            dic_product = {
+                product: element.product.id,
+                variant: element.product.prod_id,
+                quantity: element.product.quantity,
+                price: element.price,
+            }
+            arr_products.push(dic_product)
+        }
+        console.log(arr_provider)
+        console.log(arr_products)
+        const set1 = new Set(arr_provider)
+
+        for (let i = 0; i < arr_provider.length; i++) {
+            const arrProducts = []
+            if (set1.has(arr_provider[i])) {
+                arrProducts.push(arr_products[i])
+            }
+            console.log(arrProducts)
+        }
     }
 
     ProviderProductTable()
-
-    //let ordenes = ref(<arr_ordens>{})
 
     async function OrderDetailsTable() {
         showWaitOverlay.value = true
@@ -190,16 +189,7 @@
         console.log(response)
 
         activeWhInformation.value.ordersDetails2 = response.data
-        //console.log( 'data',activeWhInformation.value.ordersDetails2.data[0].item)
-
         console.log(activeWhInformation.value.ordersDetails2 == undefined)
-
-        /*
-        if (activeWhInformation.value == undefined) return
-        activeWhInformation.value.ordersDetails2 = response.data
-        console.log(response.data)
-        console.log(activeWhInformation.value.ordersDetails2)
-        */
         showWaitOverlay.value = false
     }
 
@@ -210,9 +200,13 @@
         router.push({ path: `/usuarios/cliente/editar/${String(id)}` })
     }
 
-    async function SolicitudAceptada(items: OrderDetails2, id: any) {
+    async function SolicitudAceptada(
+        items: OrderDetails2,
+        id: any,
+        index: number
+    ) {
         detailSelectedItem.value.item = items
-        itemId.value = id
+        SelectedItem.value = index
         itemInfoShow.value = true
     }
 
@@ -236,11 +230,6 @@
         itemInfoShow4.value = true
     }
 
-    async function datos() {
-        console.log(activeWhInformation.value?.ordersDetails2)
-        console.log()
-    }
-
     async function traerDatos(event: any, index: number) {
         console.log(event)
         if (activeWhInformation.value == undefined) return
@@ -251,7 +240,6 @@
     async function getQuantity(event: any) {
         //console.log(event)
         quantity.value = event
-        //console.log(event)
         if (quantity.value != null) {
             //itemInfoShow4.value = true
         }
@@ -259,13 +247,11 @@
         console.log(quantity.value)
     }
 
-    async function getPrice(event: any) {
-        price.value = event.price
-        if (price.value != null) {
-            itemInfoShow3.value = true
+    const SelectedItem = ref<number>()
+    async function getPrice(item: any) {
+        if (SelectedItem.value && activeWhInformation.value.ordersDetails2) {
+            activeWhInformation.value.ordersDetails2[SelectedItem.value] = item
         }
-        console.log(itemId.value)
-        console.log(price.value)
     }
 
     async function guardarprecioitem(event: any) {
@@ -278,10 +264,8 @@
         itemInfoShow3.value = false
         itemInfoShow.value = false
         OrderDetailsTable()
-        //location.reload()
     }
 
-    /**/
     async function guardarcantidaditem(event: any) {
         const response = await warehouse.saveQuantityToItem(
             null,
@@ -289,14 +273,29 @@
             cantStock.value
         )
         console.log(response)
-        //itemInfoShow4.value = false
         itemInfoShow4.value = false
         itemInfoShow5.value = false
         OrderDetailsTable()
-        //location.reload()
     }
 
     async function aprobarCompra(event: any, type: any, id = 0) {
+        const set = new Set()
+        ;(activeWhInformation.value.ordersDetails2 ?? []).map(order =>
+            set.add(order.providerInfo?.provider)
+        )
+
+        const details = []
+
+        for (const provider of set) {
+            const arr = (activeWhInformation.value.ordersDetails2 ?? []).filter(
+                order => order.providerInfo?.provider == provider
+            )
+            details.push(arr)
+            console.log(provider)
+        }
+        console.log(details)
+
+        /*
         if (type == 1) {
             itemInfoShow7.value = true
         }
@@ -306,7 +305,9 @@
         if (type == 2) {
             console.log(id)
             const response = await warehouse.approvePurchase(null, id)
+            //const response = await warehouse.savePurchaseOrder(null, id)
         }
+        */
     }
 
     async function GenerarInforme(event: any) {
@@ -374,28 +375,6 @@
                         </div>
                     </template>
                 </BTable>
-
-                <!--
-                <div
-                    class="row tw-pb-3 align-content-center justify-content-center gy-2">
-                    <template
-                        v-for="(d, k) in detailSelectedItem.item"
-                        :key="k">
-                        <div class="row" v-if="k == 'cantidad'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >Cantidad:</span
-                            >
-                            <span class="col-6">{{ d }}</span>
-                        </div>
-                        <div class="row" v-else-if="k == 'status'">
-                            <span class="tw-w-1/2 tw-font-bold col-6"
-                                >Estado:</span
-                            >
-                            <span class="col-6">{{ d }}</span>
-                        </div>
-                    </template>
-                </div>
-                -->
             </div>
         </ModalDialog>
 
@@ -487,13 +466,6 @@
                 <div style="spacing = 100">
                     <div class="container">
                         <InputText v-model="cantStock" />
-                        <!--<b-form-input
-                                    class="w-25 text-center"
-                                    type="number"
-                                    min="0"
-                                    @input="getQuantity($event)"
-                                    debounce="400">
-                                </b-form-input>-->
                     </div>
 
                     &nbsp; &nbsp;
@@ -611,7 +583,7 @@
 
                         <!---->
                         <template #cell(CodigoProducto)="{ item }">
-                            {{ item['item'].id }}
+                            {{ item.item.id }}
                         </template>
 
                         <template #cell(NombreProducto)="{ item }">
@@ -635,15 +607,19 @@
                             {{ item.item.variant_name }}
                         </template>
 
-                        <template #cell(Acciones)="{ item }">
+                        <template #cell(Acciones)="{ item, index }">
                             <div class="t-button-group">
                                 <e-button
-                                    left-icon="check"
+                                    left-icon=""
                                     type="button"
                                     @click="
-                                        SolicitudAceptada(item, item.item.id)
+                                        SolicitudAceptada(
+                                            item,
+                                            item.item.id,
+                                            index
+                                        )
                                     "
-                                    >Actualizar Precio</e-button
+                                    >Seleccionar Proveedor</e-button
                                 >
                                 &nbsp;
                                 <!---->
@@ -657,6 +633,7 @@
                                     ></e-button
                                 >
                                 &nbsp;
+                                <!--
                                 <e-button
                                     left-icon=""
                                     type="button"
@@ -665,7 +642,7 @@
                                         class="tw-invisible md:tw-visible tw-font-bold"
                                         >Informe</span
                                     ></e-button
-                                >
+                                >-->
                             </div>
                         </template>
                     </BTable>

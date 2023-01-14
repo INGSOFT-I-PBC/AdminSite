@@ -16,7 +16,7 @@ import axios, { type AxiosResponse } from 'axios'
 import { defineStore } from 'pinia'
 
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
-import type { ProviderProductDetails } from './types/items.model'
+import type { ProviderProductDetails, PurchaseOrder } from './types/items.model'
 import type {
     OrderDetails,
     OrderSaveData,
@@ -317,6 +317,10 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             ).data
 
             return result
+        },
+
+        async savePurchaseOrder(order: PurchaseOrder) {
+            return axios.post<MessageResponse>('/api/v1/purchase/create', order)
         },
     },
 })

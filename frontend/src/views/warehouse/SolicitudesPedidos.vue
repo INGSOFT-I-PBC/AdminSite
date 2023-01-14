@@ -1,11 +1,9 @@
 <script setup lang="ts">
-    //import type { Warehouse } from '@store/types';
     import EButton from '@components/custom/EButton.vue'
     import InputText from '@components/custom/InputText.vue'
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import type { WarehouseQuery } from '@store/models/warehouseModels'
-    //import { type Item, type Warehouse, type Purchase, type TomaFisica, type WhWithTomaFisica } from '@store/types'
     import type {
         Item,
         Purchase,
@@ -37,15 +35,6 @@
 
     const warehouse = useWarehouseStore()
     const showWaitOverlay = ref<boolean>(true)
-    //let activeWhInformation = ref(<warehouseInformation>{})
-    const invTableTotal = ref(15)
-
-    const currentMainPage = ref(1)
-    const currentAsidePage = ref(1)
-    const whRows = ref(0)
-    const whPageCount = ref(15)
-    const whInformationPerPage = ref(15)
-    const itemInfoShow = ref(false)
 
     type SelectedItem = { item: Item | null; props: ItemProps[] }
     const detailSelectedItem = ref<SelectedItem>({
@@ -67,17 +56,6 @@
         items: [],
     })
 
-    /*
-    type arr_ordens = {
-        nameWarehouse: number
-        fechaPedido: string
-        solicitadoPor: string
-        estado: string
-        elementos: []
-        ordenes: OrderSaveData[]
-    }
-    */
-
     type warehouseInformation = {
         bodega: Warehouse
         inventory: QuantifiedItem[]
@@ -85,7 +63,6 @@
         tomasFisicas: TomaFisica[]
         movements: []
         ordenes2?: OrderSaveData2[]
-        //ord: OrderSaveData3[]
     }
 
     const formFields: TableField[] = [
@@ -93,7 +70,6 @@
         { label: 'Nombre Bodega ', key: 'warehouse' },
         { label: 'Fecha Pedido', key: 'requested_at' },
         { label: 'Nombre Solicitador', key: 'requested_by' },
-        //{ label: 'Detalles', key: 'status' },
         'Acciones',
     ]
 
@@ -133,22 +109,20 @@
             filtro
         )
 
+        /*
         console.log(response)
         console.log('hola', typeof activeWhInformation.value?.ordenes2)
         console.log(activeWhInformation.value?.ordenes2)
         console.log(activeWhInformation.value?.ordenes2 == undefined)
-        //console.log(order1.warehouse)
         console.log(activeWhInformation.value.ordenes2)
-
-        //if (activeWhInformation.value?.ordenes2 == undefined) return
+        */
 
         activeWhInformation.value.ordenes2 = response
-        //return
+        /*
         console.log('hola')
-        //activeWhInformation.value?.ordenes2 = response
         console.log(activeWhInformation.value?.ordenes2)
 
-        console.log('hola')
+        console.log('hola')*/
         showWaitOverlay.value = false
     }
 
@@ -180,26 +154,32 @@
                             border-radius: 5px;
                         ">
                         <b-row>
-                            <b-col lg="6" class="my-1">
+                            <b-col lg="4" class="my-1">
                                 <ListBox
                                     :clearable="true"
                                     v-model="filterName"
                                     top-label="Filtrar por:"
                                     :options="filterOption" />
+                            </b-col>
+
+                            <b-col lg="4" class="my-1">
+                                <InputText
+                                    v-model="filterText"
+                                    label="Cuadro de búsqueda"
+                                    :placeholder="`Búsqueda por ${filterName.label}`" />
+                            </b-col>
+
+                            <b-col lg="4" class="my-1">
                                 <EButton
                                     style="
-                                        margin-top: 10px;
-                                        margin-bottom: 10px;
+                                        margin-top: 33px;
+                                        margin-bottom: 33px;
                                     "
                                     class="tw-min-w-full"
                                     @click="lastOrders"
                                     >Buscar</EButton
                                 >
                             </b-col>
-                            <InputText
-                                v-model="filterText"
-                                label="Cuadro de búsqueda"
-                                :placeholder="`Búsqueda por ${filterName.label}`" />
                         </b-row>
                     </div>
 

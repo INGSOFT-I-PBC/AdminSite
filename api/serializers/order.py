@@ -87,13 +87,26 @@ class OrderReadSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class ProductProviderSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ProductProvider
+        fields = "__all__"
+
+
 class OrderDetailSerializerprueba(serializers.ModelSerializer):
     # item = SimpleItemSerializer()
     item = ProductVariantSerializer()
+    providerInfo = serializers.SerializerMethodField(read_only=True)
+
+    def get_providerInfo(self, instance):
+        qs = ProductProvider.objects.filter(product=instance.item)
+        print(qs)
+        return ProductProviderSerializer(qs, many=True).data
 
     class Meta:
         model = OrderRequestDetail
-        fields = ["order_request", "item", "quantity"]
+        fields = ["order_request", "item", "quantity", "providerInfo"]
 
 
 class OrderDetailProviderProductSerializer(serializers.ModelSerializer):

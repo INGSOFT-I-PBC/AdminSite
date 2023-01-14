@@ -39,10 +39,18 @@ export type ItemValue = {
     base_price?: string
 }
 
+export interface ProductProvider {
+    active?: boolean
+    price: string
+    product: number
+    provider: number
+}
+
 export interface Item2 {
     order_request?: number
     item?: ItemValue[]
     quantity?: number
+    providerInfo?: ProductProvider
 }
 
 export type ProductValues = {
@@ -88,6 +96,24 @@ export interface ItemProps {
     name: string
     type: string
     value: Optional<string>
+}
+
+export type ProductsPurchase = {
+    product?: number
+    variant?: number
+    quantity?: number
+    price?: number
+}
+
+export interface DetailsOrders {
+    provider?: number
+    products?: ProductsPurchase[]
+}
+
+export interface PurchaseOrder extends DetailsOrders {
+    warehouse_id?: number
+    order_origin?: number
+    details?: DetailsOrders[]
 }
 
 export default {}
