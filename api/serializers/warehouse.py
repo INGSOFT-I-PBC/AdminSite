@@ -1,4 +1,3 @@
-from types import MethodType
 
 from rest_framework.serializers import (
     CharField,
@@ -10,7 +9,7 @@ from rest_framework.serializers import (
 )
 
 from api.models import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
-from api.models.products import ProductAttribute, ProductStockWarehouse, ProductVariant
+from api.models.products import ProductAttribute, ProductStockWarehouse
 from api.models.warehouse import (
     TransactionStatus,
     WhTomasFisicas,
@@ -299,6 +298,13 @@ class SimpleTomasFisicasSerializer(ModelSerializer):
 
 
 class TomasDetailSerializer(ModelSerializer):
+    def update(self, instance: WhTomasFisicasDetails, validated_data):
+        instance.acepted = validated_data.get("acepted", instance.revised_by)
+        instance.acepted_by = validated_data.get("acepted_by", instance.revised_at)
+        instance.novedad = validated_data.get("novedad", instance.warehouse)
+        instance.save()
+        return instance
+
     class Meta:
         model = WhTomasFisicasDetails
         fields = "__all__"
@@ -311,10 +317,12 @@ class FullTomasDetailSerializer(ModelSerializer):
     previous_stock = IntegerField()
     product = SimpleProductSerializer()
     variant = SimpleVariantSerializer()
+    acepted = CharField()
 
     class Meta:
         model = WhTomasFisicasDetails
         fields = [
+            "acepted",
             "id",
             "novedad",
             "new_stock",

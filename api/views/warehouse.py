@@ -571,7 +571,7 @@ class TomasFisicasDetailsViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset.objects.order_by("id")
         params = self.request.query_params.copy()
-        print(params)
+
         if params.get("order_by", None):
             fields = params.pop("order_by")
             queryset = queryset.order_by(*fields)
@@ -580,9 +580,56 @@ class TomasFisicasDetailsViewSet(ModelViewSet):
             queryset = queryset.filter(
                 toma_fisica__id=params.get("toma_fisica")
             ).select_related("product", "variant")
-            return queryset
 
-        return error_response("Invalid request")
+        if params.get("warehouse_id", None) is not None:
+            qs = WhTomasFisicas.objects.filter(warehouse=params.get("warehouse_id"))
+            queryset = queryset.filter(toma_fisica__in=qs)
+
+        if params.get("acepted", None):
+            queryset = queryset.filter(acepted__icontains=params.get("acepted"))
+
+        if params.get("acepted_by", None):
+            queryset = queryset = queryset.filter(
+                Q(acepted_by__name__icontains=params.get("acepted_by"))
+                | Q(acepted_by__lastname__icontains=params.get("acepted_by"))
+            )
+
+        return queryset
+
+
+@api_view(["PUT"])
+def update_stock(request):
+    if not request.data:
+        return error_response("No data was provided")
+
+    data = request.data
+
+    if (data.get("warehouse_id", None) and data.get("id", None) and data.get("product", None) and data.get("variant", None) and data.get("new_stock", None) and data.get("previous_stock", None)):
+
+        try:
+            qs = ProductStockWarehouse.objects.filter(
+                warehouse=data.get("warehouse_id")
+            ).filter(
+                product=data.get("product")
+            ).get(variant=data.get("variant"))
+        except:
+            return error_response("Warehouse stock not found")
+
+        qs.stock_level = qs.stock_level + (data.get("new_stock") - data.get("previous_stock"))
+        qs.updated_by = request.user.employee
+        qs.updated_at = datetime.now()
+        qs.save()
+
+        tomas_detail = WhTomasFisicasDetails.objects.get(pk=data.get("id"))
+
+        tomas_detail.acepted = "AP"
+        tomas_detail.acepted_by = request.user.employee
+        tomas_detail.save()
+
+        return response("Succesfully updated")
+
+    else:
+        return error_response("Incomplete data")
 
 
 class WhTomasFisicasViewSet(ModelViewSet):
