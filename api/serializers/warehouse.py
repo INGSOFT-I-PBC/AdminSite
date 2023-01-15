@@ -1,5 +1,3 @@
-
-from numpy import require
 from rest_framework.serializers import (
     CharField,
     DateTimeField,
@@ -21,7 +19,6 @@ from api.serializers.common import SimpleStatusSerializer
 from api.serializers.item import ItemSerializer, SimpleItemSerializer
 from api.serializers.product import (
     ProductAttributeSerializer,
-    ProductVariantSerializer,
     SimpleProductSerializer,
     SimpleVariantSerializer,
 )
