@@ -305,6 +305,7 @@
                 data.warehouse_destiny = undefined
                 data.warehouse_origin = undefined
                 data.items.splice(0, data.items.length)
+                selectedProxyWh.value = undefined
             })
             .catch((it: MessageResponse) => {
                 toast.error(`No se pudo guardar la orden [${it.code}]`)
@@ -725,7 +726,7 @@
                     id="change-modal"
                     v-model:show="showGuardarModal"
                     title="Confirmar Cambio de Inventario"
-                    ok-text="Cambiar"
+                    ok-text="Guardar"
                     @ok="saveMovement()"
                     class="dark-mode-text"
                     button-type="ok-cancel">

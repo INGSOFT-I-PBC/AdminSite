@@ -9,6 +9,7 @@ import type {
     Movement,
     TomaFisica,
     TomaFisicaQuery,
+    TomaSaveData,
     WarehouseStock,
     WhWithTomaFisica,
 } from '@store/types/warehouse.model'
@@ -119,6 +120,13 @@ export const useWarehouseStore = defineStore('warehouse-store', {
                 )
             ).data
             return result
+        },
+
+        async updateTomaFisicaDetail(toma_detail: TomaSaveData) {
+            return axios.put<MessageResponse>(
+                '/api/v1/warehouse/tomas-fisicas/update-stock',
+                toma_detail
+            )
         },
 
         async saveTomasFisicas(
