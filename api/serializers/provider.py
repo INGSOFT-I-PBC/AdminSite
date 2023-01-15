@@ -21,6 +21,7 @@ class PartialProviderSerializer(Serializer):
         Serializer (rest_framework.serializers.Serializer): The superclass
     """
 
+    id = serializers.IntegerField()
     name = serializers.CharField(max_length=128, required=False)
     document_path = serializers.CharField(max_length=128, required=False)
     bussiness_name = serializers.CharField(max_length=128, required=False)

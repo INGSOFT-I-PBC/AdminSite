@@ -13,6 +13,30 @@ from api.serializers.provider import SimpleProviderSerializer
 from api.serializers.users import EmployeeSerializer
 
 
+class SimplePurchaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Purchase
+        fields = ["order_origin", "reference", "warehouse"]
+
+
+class SimplePurchaseChildSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseChild
+        fields = ["purchase_header", "provider"]
+
+
+class SimplePurchaseDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseDetail
+        fields = "__all__"
+
+
+class SimplePurchaseStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PurchaseStatus
+        fields = ['created_by', "purchase", "status"]
+
+
 class PurchaseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Purchase
