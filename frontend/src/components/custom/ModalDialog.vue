@@ -166,6 +166,6 @@
 <style lang="scss">
     .e-modal-content {
         // tw-overflow-y-auto tw-max-h-full
-        @apply tw-px-5 tw-py-3 tw-z-10 tw-max-h-full tw-overflow-y-auto;
+        @apply tw-px-5 tw-py-3 tw-z-50 tw-max-h-full tw-overflow-y-auto;
     }
 </style>

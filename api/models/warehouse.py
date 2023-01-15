@@ -107,7 +107,8 @@ class WarehouseTransaction(models.Model):
 class WhTransactionDetails(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     header = models.ForeignKey(WarehouseTransaction, on_delete=models.CASCADE)
-    item = models.ForeignKey(Item, on_delete=models.RESTRICT)
+    variant = models.ForeignKey("ProductVariant", on_delete=models.RESTRICT)
+    product = models.ForeignKey("Product", on_delete=models.RESTRICT)
     quantity = models.IntegerField()
 
     class Meta:
@@ -201,13 +202,41 @@ class WhBarcodeItems(models.Model):
         db_table = "wh_stock_barcode_content"
 
 
+class TransactionStatus(models.Model):
+
+    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+    created_by = models.ForeignKey(
+        Employee, on_delete=models.RESTRICT, db_column="created_by"
+    )
+    created_at = models.DateTimeField(null=False, auto_now_add=True)
+    status = models.ForeignKey(Status, on_delete=models.RESTRICT)
+    transaction = models.ForeignKey(WarehouseTransaction, on_delete=models.RESTRICT)
+
+    class Meta:
+        db_table = "transaction_status"
+
+
 class WhTomasFisicas(models.Model):
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     done_by = models.ForeignKey(Employee, on_delete=models.RESTRICT)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
-    novedad = models.CharField(max_length=300, blank=True)
+    novedad = models.TextField(blank=True)
     warehouse = models.ForeignKey(Warehouse, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "tomas_fisicas"
+
+
+class WhTomasFisicasDetails(models.Model):
+
+    id = models.AutoField(primary_key=True, auto_created=True, editable=False)
+    product = models.ForeignKey("Product", on_delete=models.RESTRICT)
+    variant = models.ForeignKey("ProductVariant", on_delete=models.RESTRICT)
+    toma_fisica = models.ForeignKey(WhTomasFisicas, on_delete=models.RESTRICT)
+    novedad = models.CharField(max_length=300, null=False, blank=False)
+    new_stock = models.PositiveIntegerField()
+    previous_stock = models.PositiveIntegerField()
+
+    class Meta:
+        db_table = "tomas_fisicas_details"

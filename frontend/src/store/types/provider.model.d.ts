@@ -14,7 +14,7 @@ export interface ProviderModel {
 
 export interface Provider extends ProviderModel {
     id: number
-    status: number
+    is_active: boolean
     created_by: number
     created_at: string
 }

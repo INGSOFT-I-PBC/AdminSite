@@ -9,15 +9,16 @@ from .offices import BranchOffice
 from .orders import OrderRequest, OrderRequestDetail, OrderStatus
 from .products import (
     Product,
-    ProductMeta,
-    ProductProviders,
+    ProductAttribute,
+    ProductProvider,
+    ProductStockWarehouse,
     ProductVariant,
-    VariantMeta,
 )
 from .provider import Provider
 from .purchases import Purchase, PurchaseDetail, PurchaseStatus
 from .roles import Role
 from .sequence import Sequence
+from .test import *
 from .users import Employee
 from .warehouse import Inventory, Warehouse, WarehouseTransaction, WhTransactionDetails
 
@@ -58,8 +59,9 @@ __all__ = [
     "Gender",
     "Sequence",
     "Product",
-    "ProductMeta",
-    "ProductProviders",
+    "ProductAttribute",
+    "ProductProvider",
     "ProductVariant",
-    "VariantMeta",
+    "TestModel",
+    "ProductStockWarehouse",
 ]

@@ -65,6 +65,11 @@ export const menus: MenuItem[] = [
         icon: 'package',
         children: [
             {
+                label: 'Gestión Bodegas',
+                path: '/bodegas/gestion',
+                routeName: 'gestion-view',
+            },
+            {
                 label: 'Pedidos',
                 children: [
                     {
@@ -76,6 +81,21 @@ export const menus: MenuItem[] = [
                         label: 'Solicitar Pedido',
                         path: '/bodegas/nueva-orden',
                         routeName: 'warehouse-new-order',
+                    },
+                ],
+            },
+            {
+                label: 'Movimientos',
+                children: [
+                    {
+                        label: 'Gestión Movimientos',
+                        path: '/bodegas/movimiento-inventario',
+                        routeName: 'movimiento-inventario-view',
+                    },
+                    {
+                        label: 'Solicitar Movimiento',
+                        path: '/bodegas/nuevo-movimiento',
+                        routeName: 'warehouse-new-movement',
                     },
                 ],
             },
