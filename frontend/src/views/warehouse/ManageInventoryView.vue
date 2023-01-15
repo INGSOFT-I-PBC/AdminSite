@@ -1,4 +1,5 @@
 <script setup lang="ts">
+    import App from '@/App.vue'
     import { useItemStore, useWarehouseStore } from '@store'
     import {
         type FullTomaFisicaDetail,
@@ -54,6 +55,7 @@
     const activeWharehouseButton = ref<number>(-1)
     const selectedWarehouse = ref<Warehouse>()
     const showConfirmChange = ref<boolean>(false)
+    const isConfirmarModal = ref<boolean>(false)
 
     const tomaDetailsArray = ref<FullTomaFisicaDetail[]>([])
 
@@ -89,7 +91,16 @@
     const detailSelectedProduct = ref<SelectedItem>()
     const loadingProps = ref<boolean>(false)
 
-    function onSelectedTomaDetailPressed(toma: FullTomaFisicaDetail) {
+    function onSelectedTomaDetailPressed(
+        toma: FullTomaFisicaDetail,
+        status: 'AP' | 'NA'
+    ) {
+        if (status == ACEPTED.name) {
+            isConfirmarModal.value = true
+        } else if (status == NOT_ACEPTED.name) {
+            isConfirmarModal.value = false
+        }
+        selesctedChangeStatus.value = status
         selectedTomaDetail.value = toma
         showConfirmChange.value = true
     }
@@ -123,10 +134,27 @@
         tomaDetailsArray.value = res.data as FullTomaFisicaDetail[]
     }
 
-    function confirmarCambio() {
+    const selesctedChangeStatus = ref<string>('AP')
+
+    function updateCambioStatus() {
         if (selectedTomaDetail.value && selectedWarehouse.value) {
             loadingState.value.waitWarehouse = true
             if (selectedTomaDetail.value.id) {
+                const difference =
+                    selectedTomaDetail.value.new_stock -
+                    selectedTomaDetail.value.previous_stock
+                if (
+                    selectedTomaDetail.value.warehouse_stock + difference < 0 &&
+                    selesctedChangeStatus.value == 'AP'
+                ) {
+                    toast.error(
+                        'Stock de bodega cambio y no puede ser negativo, revise el cambio de inventario',
+                        { timeout: 4500 }
+                    )
+                    loadingState.value.waitWarehouse = false
+                    return
+                }
+
                 warehouseStore
                     .updateTomaFisicaDetail({
                         warehouse_id: selectedWarehouse.value.id,
@@ -135,13 +163,36 @@
                         id: selectedTomaDetail.value.id,
                         product: selectedTomaDetail.value?.product.id,
                         variant: selectedTomaDetail.value?.variant.id,
+                        acepted: selesctedChangeStatus.value,
                     })
                     .then(it => {
+                        if (selectedTomaDetail.value) {
+                            selectedTomaDetail.value.acepted =
+                                selesctedChangeStatus.value
+                        }
+
                         toast.success('Cambio actualizado con éxito')
                         loadingState.value.waitWarehouse = false
 
-                        if (selectedTomaDetail.value) {
-                            selectedTomaDetail.value.acepted = 'AP'
+                        if (
+                            selectedTomaDetail.value &&
+                            selesctedChangeStatus.value == 'AP'
+                        ) {
+                            const sameProductArray =
+                                tomaDetailsArray.value.filter(
+                                    t =>
+                                        t.variant.id ==
+                                            selectedTomaDetail.value?.variant
+                                                .id &&
+                                        t.product.id ==
+                                            selectedTomaDetail.value?.product.id
+                                )
+
+                            console.log(sameProductArray)
+
+                            for (const toma of sameProductArray) {
+                                toma.warehouse_stock += difference
+                            }
                         }
                     })
                     .catch(it => {
@@ -224,6 +275,9 @@
                         tomaDetailsArray.value = it.data
                         tomasTotal.value = it.total
                     }
+                    if (tomaDetailsArray.value.length == 0) {
+                        toast.error('No se han encontrado registros')
+                    }
 
                     loadingState.value.waitWarehouse = false
                 })
@@ -257,6 +311,10 @@
                 } else {
                     tomaDetailsArray.value = it.data
                     tomasTotal.value = it.total
+                }
+
+                if (tomaDetailsArray.value.length == 0) {
+                    toast.warning('No hay cambios pendientes para esta bodega')
                 }
 
                 loadingState.value.waitWarehouse = false
@@ -327,7 +385,7 @@
                                     activeWharehouseButton = -1
                                 }
                             ">
-                            Todas las bodegas
+                            Inicio
                         </b-list-group-item>
                         <b-list-group-item
                             v-for="(wh, index) in paginatedWarehouse"
@@ -363,9 +421,18 @@
                             left-icon="chevrons-right"
                             icon-provider="feather">
                         </e-button>
-                        <h1 class="tw-text-3xl tw-font-bold col-10">
+                        <h1 class="tw-text-3xl tw-font-bold col-9">
                             {{ selectedWarehouse?.name }}
                         </h1>
+
+                        <h2
+                            class="dark-mode-text col-3 tw-text-lg tw-font-bold">
+                            <span
+                                class="tw-text-amber-700 dark:tw-text-amber-400">
+                                {{ tomaDetailsArray?.length }}
+                            </span>
+                            Registros encontrados
+                        </h2>
                     </div>
 
                     <ECard>
@@ -489,15 +556,19 @@
                             v-model:show="showConfirmChange"
                             title="Confirmar cambio de inventario"
                             ok-text="Confirmar"
-                            @ok="confirmarCambio()"
+                            @ok="updateCambioStatus()"
                             button-type="ok-cancel">
                             <h1
                                 class="tw-text-3xl tw-text-black dark:tw-text-white">
-                                ¿Quiere confirmar el cambio de inventario?
+                                ¿Quiere
+                                <span v-if="isConfirmarModal"> confirmar </span>
+                                <span v-else> rechazar </span>
+                                el cambio de inventario?
                             </h1>
 
                             <h2
-                                class="tw-text-xl tw-text-black dark:tw-text-white">
+                                class="tw-text-xl tw-text-black dark:tw-text-white"
+                                v-if="isConfirmarModal">
                                 Se
                                 <span v-if="isPreviousStockLower()">
                                     sumará
@@ -516,6 +587,9 @@
                                 }}
 
                                 al stock de bodega.
+                            </h2>
+                            <h2 v-else>
+                                No se afectará el stock de inventario
                             </h2>
                         </ModalDialog>
 
@@ -582,32 +656,9 @@
                                                 variant="warning">
                                                 {{ 'Revisión Pendiente' }}
                                             </BBadge>
-                                        </div>
-                                        <div
-                                            class="row mb-2 allign-content-end mt-2">
-                                            <div class="col-3 tw-text-md">
-                                                <b>Stock Previo : </b>
-                                            </div>
-                                            <div class="col-3 tw-font-light">
-                                                <b>
-                                                    {{ toma.previous_stock }}
-                                                </b>
-                                            </div>
-                                            <div class="col-3 tw-text-md">
-                                                <b>Stock Nuevo: </b>
-                                            </div>
-                                            <div class="col-3 tw-font-light">
-                                                <b>
-                                                    {{ toma.new_stock }}
-                                                </b>
-                                            </div>
-                                        </div>
-                                        <div
-                                            class="row mb-2 allign-content-end mt-2">
-                                            <div class="col-2 tw-text-md">
-                                                <b>Nombre producto : </b>
-                                            </div>
-                                            <div class="col-4 tw-font-light">
+                                            <h2
+                                                class="dark-mode-text tw-text-xl col-6">
+                                                Produto:
                                                 <b>
                                                     {{
                                                         toma.product
@@ -617,11 +668,46 @@
                                                             .variant_name
                                                     }}
                                                 </b>
+                                            </h2>
+                                        </div>
+                                        <div
+                                            class="row mb-2 allign-content-end mt-2">
+                                            <div class="col-3 tw-text-md">
+                                                <b
+                                                    >Stock en el momento de la
+                                                    toma:
+                                                </b>
                                             </div>
-                                            <div class="col-2 tw-text-md">
+                                            <div class="col-3 tw-font-bold">
+                                                <b>
+                                                    {{ toma.previous_stock }}
+                                                </b>
+                                            </div>
+                                            <div class="col-3 tw-text-md">
+                                                <b
+                                                    >Stock revisado en la toma:
+                                                </b>
+                                            </div>
+                                            <div class="col-3 tw-font-bold">
+                                                <b>
+                                                    {{ toma.new_stock }}
+                                                </b>
+                                            </div>
+                                        </div>
+                                        <div
+                                            class="row mb-2 allign-content-end mt-2">
+                                            <div class="col-3 tw-text-md">
+                                                <b> Stock actual en bodega: </b>
+                                            </div>
+                                            <div class="col-3 tw-font-bold">
+                                                <b>
+                                                    {{ toma.warehouse_stock }}
+                                                </b>
+                                            </div>
+                                            <div class="col-3 tw-text-md">
                                                 <b>Código(Sku): </b>
                                             </div>
-                                            <div class="col-4 tw-font-light">
+                                            <div class="col-3 tw-font-light">
                                                 <b>
                                                     {{ toma.variant.sku }}
                                                 </b>
@@ -641,7 +727,7 @@
                                         </div>
                                         <div
                                             class="row mb-2 allign-content-end mt-2">
-                                            <div class="col-4">
+                                            <div class="col-3">
                                                 <e-button
                                                     variant="primary"
                                                     type="button"
@@ -651,17 +737,33 @@
                                                     Ver Detalles Del Producto
                                                 </e-button>
                                             </div>
-                                            <div class="col-4 tw-font-light">
+                                            <div
+                                                class="col-9 tw-font-light"
+                                                v-if="toma.acepted == 'PA'">
                                                 <e-button
-                                                    v-if="toma.acepted == 'PA'"
+                                                    class="col-5 mx-1"
                                                     variant="primary"
                                                     type="button"
                                                     @click.left="
                                                         onSelectedTomaDetailPressed(
-                                                            toma
+                                                            toma,
+                                                            'AP'
                                                         )
                                                     ">
                                                     Aceptar cambio de inventario
+                                                </e-button>
+                                                <e-button
+                                                    class="col-5 tw-font-light"
+                                                    variant="cancel"
+                                                    type="button"
+                                                    @click.left="
+                                                        onSelectedTomaDetailPressed(
+                                                            toma,
+                                                            'NA'
+                                                        )
+                                                    ">
+                                                    Rechazar cambio de
+                                                    inventario
                                                 </e-button>
                                             </div>
                                         </div>

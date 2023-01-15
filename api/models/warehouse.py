@@ -90,7 +90,7 @@ class Inventory(TimestampModel):
 
 class WarehouseTransaction(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    notes = models.CharField(max_length=300, blank=True)
+    notes = models.CharField(max_length=300, blank=True, null=True)
     warehouse_origin = models.ForeignKey(
         Warehouse, on_delete=models.RESTRICT, related_name="origin"
     )

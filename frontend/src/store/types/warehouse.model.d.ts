@@ -39,6 +39,7 @@ export interface TomaSaveData {
     previous_stock: number
     product: number
     variant: number
+    acepted: string
 }
 
 export interface FullTomaFisicaDetail {
@@ -51,6 +52,7 @@ export interface FullTomaFisicaDetail {
     novedad: string
     acepted: string
     acepted_by: Maybe<Employee>
+    warehouse_stock?: numebr
 }
 
 export interface TomaFisicaQuery {

@@ -1,4 +1,5 @@
 
+from numpy import require
 from rest_framework.serializers import (
     CharField,
     DateTimeField,
@@ -168,7 +169,6 @@ class WhStockWithPropsSerializer(ModelSerializer):
 
 
 class SimpleTransactionSerializer(ModelSerializer):
-    notes = CharField(max_length=300)
 
     class Meta:
         model = WarehouseTransaction
@@ -318,6 +318,7 @@ class FullTomasDetailSerializer(ModelSerializer):
     product = SimpleProductSerializer()
     variant = SimpleVariantSerializer()
     acepted = CharField()
+    warehouse_stock = IntegerField(required=False)
 
     class Meta:
         model = WhTomasFisicasDetails
@@ -330,6 +331,7 @@ class FullTomasDetailSerializer(ModelSerializer):
             "product",
             "toma_fisica",
             "variant",
+            "warehouse_stock"
         ]
 
 
