@@ -299,28 +299,28 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 ###################################
 if env('CACHE_BACKEND'):
     CACHES = {}
-    match env('CACHE_BACKEND'):
-        case 'memcached':
-            CACHES['default'] = {
-                'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-                'LOCATION': env('CACHE_LOCATION')
-            }
-            print('using memcached backend')
-        case 'redis':
-            CACHES['default'] = {
-                'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-                'LOCATION': env('CACHE_LOCATION')
-            }
-            print('using redis backend')
-        case 'database':
-            CACHES['default'] = {
-                'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-                'LOCATION': env('CACHE_LOCATION')
-            }
-            print('using database backend')
-        case 'filesystem':
-            CACHES['default'] = {
-                'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
-                'LOCATION': env('CACHE_LOCATION')
-            }
-            print('using filesystem backend')
+    backend = env('CACHE_BACKEND', None)
+    if backend == 'memcached':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using memcached backend')
+    elif backend == 'redis':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using redis backend')
+    elif backend == 'database':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using database backend')
+    elif backend == 'filesystem':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using filesystem backend')
