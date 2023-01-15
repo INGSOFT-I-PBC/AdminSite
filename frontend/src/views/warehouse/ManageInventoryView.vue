@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import App from '@/App.vue'
     import { useItemStore, useWarehouseStore } from '@store'
     import {
         type FullTomaFisicaDetail,
