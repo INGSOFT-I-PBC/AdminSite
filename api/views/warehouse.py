@@ -386,7 +386,7 @@ class WhTransactionViewSet(ModelViewSet):
             p_status = (
                 TransactionStatus.objects.annotate(
                     last_status_pk=Max(
-                        "warehouse_transaction__wh_transaction_status__pk"
+                        "transaction__transactionstatus__pk"
                     )
                 )
                 .filter(pk=F("last_status_pk"))
