@@ -297,7 +297,6 @@ def create_purchase(request):
                 st_serializer = StatusSerializer(data=new_stat)
                 st_serializer.is_valid()
                 status_pending = st_serializer.save()
-            print(status_pending.pk)
 
             purchase_status_data = {
                 "status": status_pending.pk,

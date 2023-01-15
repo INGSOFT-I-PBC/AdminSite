@@ -103,6 +103,7 @@ from api.views.warehouse import (
     WhTransactionDetailsViewSet,
     WhTransactionViewSet,
     create_movement,
+    update_stock,
 )
 
 __all__ = [
@@ -189,6 +190,7 @@ __all__ = [
     TomasFisicasDetailsViewSet,
     TransactionStatusViewSet,
     UnpaginatedGroupViewSet,
+    update_stock,
     user_data,
     UserView,
     UserViewSet,
