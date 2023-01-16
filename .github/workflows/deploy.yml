@@ -1,4 +1,4 @@
-name: Deploy to @${{ inputs.environment }} by @${{ github.actor }} [@${{ github.sha }}]
+name: Deploy to Production
 
 concurrency: production
 
@@ -16,19 +16,8 @@ on:
       - main
 
   workflow_call:
-    inputs:
-      environment:
-        required: true
-        type: string
-        default: production
 
   workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment where to deploy the given workflow'
-        type: environment
-        required: true
-        default: production
 
 permissions:
     contents: read
