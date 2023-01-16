@@ -1,12 +1,34 @@
-name: Deploy to @${{ inputs.deploy_target }} by @${{ github.actor }} [@${{ github.sha }}]
+name: Deploy to @${{ inputs.environment }} by @${{ github.actor }} [@${{ github.sha }}]
 
 concurrency: production
 
 on:
   push:
+    paths:
+      - 'frontend/**.vue'
+      - 'frontend/**.ts'
+      - 'frontend/**.js'
+      - '!frontend/**.spec.ts'
+      - 'api/**'
+      - 'backend/**'
+
     branches:
       - main
+
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        default: production
+
   workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment where to deploy the given workflow'
+        type: environment
+        required: true
+        default: production
 
 permissions:
     contents: read
