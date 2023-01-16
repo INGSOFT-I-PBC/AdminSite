@@ -79,4 +79,7 @@
         "ui",
         "frontend"
     ],
+    "yaml.schemas": {
+        "https://json.schemastore.org/github-workflow.json": "file:///home/neoterux/Documents/ERPt/.github/workflows/deploy.yml"
+    },
 }
