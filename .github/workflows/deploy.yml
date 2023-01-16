@@ -1,4 +1,4 @@
-name: Deploy to production
+name: Deploy to @${{ inputs.deploy_target }} by @${{ github.actor }} [@${{ github.sha }}]
 
 concurrency: production
 

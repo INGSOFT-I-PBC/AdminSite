@@ -1,15 +1,24 @@
 name: Check frontend code style and compilation
 
 on:
-    push:
-        paths:
-          - '**.vue'
-          - '**.ts'
-          - '**.js'
-          
     pull_request:
-            types: [opened, synchronize, reopened]
-            branches: ['main', 'master', 'release', 'testing']
+        paths:
+          - 'frontend/**'
+          - '!frontend/.husky/**'
+          - '!frontend/**.jpg'
+          - '!frontend/**.jpeg'
+          - '!frontend/**.png'
+          - '!frontend/**.gif'
+          - '!frontend/**.webp'
+        types:
+          - opened
+          - synchronize
+          - reopened
+        branches:
+            - 'main'
+            - 'master'
+            - 'release'
+            - 'testing'
 
 jobs:
     frontend-check:
