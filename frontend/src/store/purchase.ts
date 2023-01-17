@@ -7,7 +7,6 @@ import type {
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
-import type { PurchaseOrder } from './types/items.model'
 import type { SaveOrderDetail } from './types/orders.model'
 
 /**
