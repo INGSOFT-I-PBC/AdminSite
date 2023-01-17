@@ -13,6 +13,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.models import Purchase, User
 from api.models.common import Status
+from api.models.orders import OrderRequest
 from api.models.purchases import PurchaseChild, PurchaseDetail, PurchaseStatus
 from api.serializers.common import StatusSerializer
 from api.serializers.purchase import (
@@ -297,7 +298,6 @@ def create_purchase(request):
                 st_serializer = StatusSerializer(data=new_stat)
                 st_serializer.is_valid()
                 status_pending = st_serializer.save()
-            print(status_pending.pk)
 
             purchase_status_data = {
                 "status": status_pending.pk,
@@ -313,10 +313,15 @@ def create_purchase(request):
                 for c in saved_childs:
                     c.delete()
                 purchase.delete()
-                # TODO delete details
+                # TODO delete details if it fails
                 raise (e)
 
             purchase_status_serializer.save()
+
+            order: OrderRequest = OrderRequest.objects.filter(pk=data.get("order_origin"))
+            order.revised_at = datetime.now()
+            order.revised_by = request.user.employee_id
+
         return response("Purchase Created")
     except Exception as e:
         return error_response("The given data was invalid (Purchase)")

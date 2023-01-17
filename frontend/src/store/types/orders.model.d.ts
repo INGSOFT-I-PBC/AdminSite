@@ -1,4 +1,5 @@
 import type { Item } from './items.model'
+import { type ProductProvider, VarinatProductI } from './product.model'
 import type { Employee } from './user.model'
 import { Warehouse } from './warehouse.model'
 
@@ -11,13 +12,6 @@ export interface OrderSaveData {
     warehouse: number
     comment?: string
     items: SaveItemData[]
-}
-
-export interface OrderSaveData2 {
-    id?: number
-    warehouse?: string
-    requested_at?: string
-    requested_by?: string
 }
 
 export interface IOrderDetail {
@@ -91,56 +85,53 @@ export interface OrderRequest {
     status: OrderRequestStatus
 }
 
-export type OrderDetailsRequestBy = {
-    name: string
-    lastname: string
-    cid: string
-}
-
-export type OrderDetailsWarehouse = {
-    name: string
-    latitude: string
-    longitude: string
-}
-
-export type OrderDetailsDetail = {
+export type FullOrderDetail = {
     order_request: number
+    item: VarinatProductI
+    quantity: number
+    providerInfo: ProductProvider[]
+}
+
+export type SaveOrderDetail = {
     item: number
+    price: number
     quantity: number
 }
 
-export type OrderDetailsStatus = {
+export type OrderStatus = {
     id: number
     created_by: number
     created_at: string
     status: string
 }
 
-export interface OrderDetails {
+export interface OrderRequestInfo {
     id: number
     requested_at: string
-    requested_by: OrderDetailsRequestBy[]
-    warehouse: OrderDetailsWarehouse[]
+    requested_by: Maybe<Employee>
+    warehouse: Warehouse
     comment: string
-    details: OrderDetailsDetail[]
-    order_status: OrderDetailsStatus[]
-}
-
-export interface OrderDetails2 {
-    //orderElements: OrderDetailsElements[]
-    id: number
-    warehouse: string
-    cantidad: number
     status: string
+    revised_by: Maybe<Employee>
+    revised_at?: string
 }
-
-export default {}
 
 export interface SimpleOrderStatus {
     id?: number
     created_by: Employee
     created_at: string | Date
     status: string
+}
+
+export interface OrderDetailQuery {
+    order_id?: number
+    item_name?: string
+}
+
+export interface OrderQuery {
+    id?: number
+    warehouse_id?: number
+    requested_by_name?: string
 }
 
 export interface SimpleOrderRequest {
@@ -151,3 +142,5 @@ export interface SimpleOrderRequest {
     comment?: string
     status_list?: SimpleOrderStatus[]
 }
+
+export default {}

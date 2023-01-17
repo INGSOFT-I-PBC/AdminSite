@@ -1098,7 +1098,7 @@
                                     {{
                                         moment(
                                             selectedPurchase?.order_origin
-                                                .revised_by?.created_at
+                                                .revised_at
                                         ).format('dddd DD/MM/yyyy HH:mm:ss')
                                     }}
                                 </b>

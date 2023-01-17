@@ -24,3 +24,25 @@ export type ProductVariant = {
     is_active: boolean
     img?: string
 }
+
+export interface VarinatProductI {
+    id: number
+    created_at: string
+    updated_at: string
+    deleted_at: string
+    variant_name: string
+    sku: string
+    price: number
+    is_active: boolean
+    product: SimpleProduct
+}
+
+export interface ProductProvider {
+    active?: boolean
+    price: number
+    product: number
+    provider: {
+        id: number
+        name: string
+    }
+}

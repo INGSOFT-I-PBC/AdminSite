@@ -37,14 +37,14 @@ from api.views.itemview import (
 )
 from api.views.itemviews import activate_item, inactivate_item
 from api.views.orders import (
-    OrderApprovePurchase,
-    OrderRequestFullView,
-    OrderRequestProductProvider,
+    OrderRequestDetailFullView,
     OrderRequestView,
     OrderRequestViewSet,
     OrderStatusListViewSet,
+    SimplifiedOrderRequestView,
     create_order_request,
     get_full_order,
+    reject_order,
 )
 from api.views.payment import FullPaymentViewSet, PaymentView, PaymentViewSet
 from api.views.productInventory import WhProductInventoryViewSet
@@ -88,8 +88,6 @@ from api.views.userview import (
 )
 from api.views.warehouse import (
     FullWarehouseViewSet,
-    OrderRequestViewSet2,
-    OrderSavePriceToItem,
     TomasFisicasDetailsViewSet,
     TransactionStatusViewSet,
     WarehouseView,
@@ -151,12 +149,10 @@ __all__ = [
     ItemView,
     ItemViewSet,
     LogoutViewSet,
-    OrderApprovePurchase,
     OrderRequestView,
-    OrderRequestFullView,
+    OrderRequestDetailFullView,
     OrderRequestViewSet,
-    OrderRequestViewSet2,
-    OrderSavePriceToItem,
+    SimplifiedOrderRequestView,
     OrderStatusListViewSet,
     PaginatedIItemViewSet,
     PaginatedItemInvoiceView,
@@ -178,6 +174,7 @@ __all__ = [
     PurchaseAditionalInfoViewSet,
     PurchaseDetailsViewSet,
     PurchaseViewSet,
+    reject_order,
     reset_password,
     RoleView,
     RoleViewSet,

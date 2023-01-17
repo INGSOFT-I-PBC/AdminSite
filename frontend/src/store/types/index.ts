@@ -28,7 +28,17 @@ export type {
     SimpleProduct,
     ProductProps,
     ProductVariant,
+    VarinatProductI,
+    ProductProvider,
 } from './product.model'
+
+export type {
+    OrderRequestInfo,
+    SimpleOrderStatus,
+    FullOrderDetail,
+    SaveOrderDetail,
+    OrderDetailQuery,
+} from './orders.model'
 
 export type {
     MinimalPurchase,

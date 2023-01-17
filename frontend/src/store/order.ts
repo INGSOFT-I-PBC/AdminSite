@@ -1,7 +1,12 @@
 import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
 import type { MessageResponse } from '@store/types'
 import type {
+    FullOrderDetail,
+    OrderDetailQuery,
+    OrderQuery,
     OrderRequest,
+    OrderRequestDetail,
+    OrderRequestInfo,
     OrderSaveData,
     RawOrderRequest,
     SimpleOrderRequest,
@@ -118,6 +123,53 @@ export const useOrderStore = defineStore('orders', () => {
         return data
     }
 
+    async function fetchOrdersDetails(options: OrderDetailQuery) {
+        const result = await (
+            await axios.get<FullOrderDetail[] | MessageResponse>(
+                `/api/v1/order/details`,
+                {
+                    params: options,
+                }
+            )
+        ).data
+
+        return result
+    }
+
+    async function saveQuantityToItem(
+        options: Optional<OrderSaveData> = null,
+        item = '',
+        quantity = ''
+    ) {
+        const dato = {
+            id: item,
+            quantity: quantity,
+        }
+
+        const result = await (
+            await axios.get('/api/v1/warehouse/order-savequantitytoitem', {
+                params: item != '' ? dato : options,
+            })
+        ).data
+
+        return result
+    }
+
+    async function fetchOrdersRequestWithInfo(
+        options: Optional<OrderQuery> & PaginationOptions
+    ) {
+        const result = await (
+            await axios.get<PaginatedAPIResponse<OrderRequestInfo>>(
+                '/api/v1/list/warehouses/order-requests2',
+                {
+                    params: options,
+                }
+            )
+        ).data
+
+        return result
+    }
+
     return {
         orderRequests,
         order,
@@ -128,5 +180,8 @@ export const useOrderStore = defineStore('orders', () => {
         approveOrderRequest,
         denyOrderRequest,
         fetchOrderRequests,
+        fetchOrdersRequestWithInfo,
+        saveQuantityToItem,
+        fetchOrdersDetails,
     }
 })

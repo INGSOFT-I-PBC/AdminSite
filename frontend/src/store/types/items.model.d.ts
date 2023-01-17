@@ -99,8 +99,7 @@ export interface ItemProps {
 }
 
 export type ProductsPurchase = {
-    product?: number
-    variant?: number
+    item?: number
     quantity?: number
     price?: number
 }

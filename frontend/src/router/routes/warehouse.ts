@@ -100,21 +100,11 @@ export const warehouses: Array<RouteConfig> = [
     },
 
     {
-        path: '/bodegas/solicitudes-pedidos',
-        name: 'SolicitudesPedido-view',
-        component: () => import('@views/warehouse/SolicitudesPedidos.vue'),
+        path: '/bodegas/ordenes-pedidos',
+        name: 'order-request-view',
+        component: () => import('@views/warehouse/GestionOrderRequest.vue'),
         meta: {
-            pageTitle: 'Solicitud Pedido',
-        },
-    },
-
-    {
-        path: '/bodegas/tablas-solicitudes-pedidos/:id',
-        name: 'TablasSolicitudesPedidos-view',
-        component: () =>
-            import('@views/warehouse/TablasSolicitudesPedidos.vue'),
-        meta: {
-            pageTitle: 'Tabla Solicitud Pedido',
+            pageTitle: 'Solicitudes de Compra',
         },
     },
 

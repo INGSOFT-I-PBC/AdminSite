@@ -22,7 +22,7 @@ class SimplePurchaseSerializer(serializers.ModelSerializer):
 class SimplePurchaseChildSerializer(serializers.ModelSerializer):
     class Meta:
         model = PurchaseChild
-        fields = ["purchase_header", "provider"]
+        fields = ["purchase_header", "provider", "comment"]
 
 
 class SimplePurchaseDetailSerializer(serializers.ModelSerializer):

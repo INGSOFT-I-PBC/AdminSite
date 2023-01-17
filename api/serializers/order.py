@@ -1,3 +1,4 @@
+from requests import request
 from rest_framework import serializers
 
 from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
@@ -7,7 +8,8 @@ from api.serializers.auth import EmployeeSerializer
 from api.serializers.common import SimpleStatusSerializer
 from api.serializers.item import SimpleItemSerializer
 from api.serializers.product import ProductVariantSerializer
-from api.serializers.provider import PartialProviderSerializer
+from api.serializers.provider import PartialProviderSerializer, SimpleProviderSerializer
+from api.serializers.warehouse import FullWarehouseSerializer, WarehouseSerializer
 
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -88,20 +90,20 @@ class OrderReadSerializer(serializers.ModelSerializer):
 
 
 class ProductProviderSerializer(serializers.ModelSerializer):
+    provider = SimpleProviderSerializer()
 
     class Meta:
         model = ProductProvider
         fields = "__all__"
 
 
-class OrderDetailSerializerprueba(serializers.ModelSerializer):
-    # item = SimpleItemSerializer()
+class FullOrderDetailSerializer(serializers.ModelSerializer):
+
     item = ProductVariantSerializer()
     providerInfo = serializers.SerializerMethodField(read_only=True)
 
     def get_providerInfo(self, instance):
         qs = ProductProvider.objects.filter(product=instance.item)
-        print(qs)
         return ProductProviderSerializer(qs, many=True).data
 
     class Meta:
@@ -109,28 +111,14 @@ class OrderDetailSerializerprueba(serializers.ModelSerializer):
         fields = ["order_request", "item", "quantity", "providerInfo"]
 
 
-class OrderDetailProviderProductSerializer(serializers.ModelSerializer):
-    product = ProductVariantSerializer()
-    provider = PartialProviderSerializer()
+class SimplifiedOrderSerializer(serializers.ModelSerializer):
 
-    class Meta:
-        model = ProductProvider
-        fields = ["product", "provider", "price"]
+    requested_by = EmployeeSerializer()
+    warehouse = FullWarehouseSerializer()
 
-
-class OrderSerializerORDREQ(serializers.ModelSerializer):
     class Meta:
         model = OrderRequest
         fields = "__all__"
-
-    def to_representation(self, instance):
-        return {
-            "id": instance.id,
-            "requested_at": instance.requested_at,
-            "requested_by": instance.requested_by.name,
-            "warehouse": instance.warehouse.name,
-            "warehouse_id": instance.warehouse.id,
-        }
 
 
 class InputOrderSerializer(serializers.Serializer):
@@ -139,7 +127,7 @@ class InputOrderSerializer(serializers.Serializer):
 
 class OrderStatusSerializer(serializers.Serializer):
 
-    id = serializers.IntegerField()
+    id = serializers.IntegerField(required=False)
     created_at = serializers.DateTimeField()
     created_by = EmployeeSerializer()
     status = SimpleStatusSerializer()
