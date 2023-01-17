@@ -213,25 +213,5 @@ export const useWarehouseStore = defineStore('warehouse-store', {
                 )
             ).data
         },
-
-        async fetchOrdersWarehouse(
-            options: Optional<OrderSaveData> = null,
-            busqueda = '',
-            filtro = ''
-        ) {
-            const dato = {
-                busqueda: busqueda != '' ? busqueda : '',
-                filtro: filtro,
-            }
-            //datobusqueda = busqueda;
-
-            const result = await (
-                await axios.get('/api/v1/list/warehouses/order-requests2', {
-                    params: busqueda != '' ? dato : options,
-                })
-            ).data
-
-            return result
-        },
     },
 })
