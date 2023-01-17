@@ -1,4 +1,3 @@
-import queue
 from datetime import datetime
 
 from django.db.models import Q
@@ -11,8 +10,6 @@ from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 from api.models import OrderRequest
 from api.models.common import Status
 from api.models.orders import OrderRequestDetail, OrderStatus
-from api.models.products import ProductProvider
-from api.models.purchases import Purchase
 from api.serializers.order import (
     FullOrderDetailSerializer,
     OrderDetailSerializer,
