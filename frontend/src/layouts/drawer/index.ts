@@ -154,6 +154,12 @@ export const menus: MenuItem[] = [
                 path: '/bodegas/ordenes-pedidos',
                 routeName: 'order-products',
             },
+
+            {
+                label: 'Ordenes',
+                path: '/bodegas/solicitudes-pedidos',
+                routeName: 'order-products',
+            },
         ],
     },
     {

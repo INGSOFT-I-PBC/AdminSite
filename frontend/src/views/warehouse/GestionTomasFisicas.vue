@@ -30,6 +30,8 @@
         WaitOverlay,
     } from '@custom-components'
 
+    const PENDING_APPROVAL = { name: 'PA', display: 'Aprobación Pendiente' }
+
     type SelectionProduct = WarehouseStock & {
         checked: boolean
         novedad: string | undefined
@@ -258,6 +260,7 @@
                         : detail.stock_level,
                     previous_stock: detail.stock_level,
                     novedad: detail.novedad ? detail.novedad : 'N/A',
+                    acepted: PENDING_APPROVAL.name,
                 })
             }
         }
@@ -321,11 +324,13 @@
             selectedWarehouse.value = selectedProxyWarehouse.value
             showChangeWhModal.value = true
             return
-        } else if (selectedWarehouse.value) {
+        } else if (selectedProxyWarehouse.value) {
             showWaitOverlay.value = true
 
+            selectedWarehouse.value = selectedProxyWarehouse.value
+
             let res = await warehouse.fetchPaginatedWarehouseInventory(
-                { warehouse_id: selectedWarehouse.value.id },
+                { warehouse_id: selectedProxyWarehouse.value.id },
                 { page: 1, per_page: 100000 }
             )
 
@@ -721,7 +726,7 @@
                                     :validation-schema="productForm">
                                     <div class="row">
                                         <InputText
-                                            class="dark-mode-text"
+                                            class="dark-mode-text text-break"
                                             label="Novedad"
                                             v-model="productForm.novedad.value"
                                             :info-label="

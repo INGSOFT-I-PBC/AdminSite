@@ -22,6 +22,8 @@ export type {
     TomaFisicaDetail,
     FullTomaFisicaDetail,
     MovementSaveData,
+    TomaSaveData,
+    TomaFisicaQuery,
 } from './warehouse.model'
 
 export type {

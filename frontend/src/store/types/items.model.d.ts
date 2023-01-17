@@ -46,12 +46,6 @@ export interface ProductProvider {
     provider: number
 }
 
-export interface Item2 {
-    order_request?: number
-    item?: ItemValue[]
-    quantity?: number
-}
-
 export type ProductValues = {
     id?: number
     created_at?: string

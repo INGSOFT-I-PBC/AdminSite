@@ -282,7 +282,7 @@
                                         <div class="col justify-items-stretch">
                                             <small
                                                 class="tw-text-gray-600 tw-text-sm">
-                                                {{ provider.document_path }}
+                                                {{ provider.phone_no }}
                                             </small>
                                         </div>
                                     </div>

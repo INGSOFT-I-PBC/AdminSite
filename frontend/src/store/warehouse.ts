@@ -9,6 +9,7 @@ import type {
     Movement,
     TomaFisica,
     TomaFisicaQuery,
+    TomaSaveData,
     WarehouseStock,
     WhWithTomaFisica,
 } from '@store/types/warehouse.model'
@@ -132,6 +133,13 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
+        async updateTomaFisicaDetail(toma_detail: TomaSaveData) {
+            return axios.put<MessageResponse>(
+                '/api/v1/warehouse/tomas-fisicas/update-stock',
+                toma_detail
+            )
+        },
+
         async saveTomasFisicas(
             tomaFisica: TomaFisicaQuery
         ): Promise<MessageResponse> {
@@ -205,6 +213,116 @@ export const useWarehouseStore = defineStore('warehouse-store', {
                     { params: queryParams }
                 )
             ).data
+        },
+
+        async fetchOrdersWarehouse(
+            options: Optional<OrderSaveData> = null,
+            busqueda = '',
+            filtro = ''
+        ) {
+            const dato = {
+                busqueda: busqueda != '' ? busqueda : '',
+                filtro: filtro,
+            }
+            //datobusqueda = busqueda;
+
+            const result = await (
+                await axios.get('/api/v1/list/warehouses/order-requests2', {
+                    params: busqueda != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async fetchOrdersDetails(
+            idOrder: identifier,
+            options: Optional<OrderDetails> = null,
+            busqueda = '',
+            filtro = ''
+        ) {
+            const dato = {
+                busqueda: busqueda != '' ? busqueda : '',
+                filtro: filtro,
+            }
+
+            const result = await (
+                await axios.get(`/api/v1/order-details?id=${idOrder}`, {
+                    params: busqueda != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async fetchProviderProduct(
+            options: Optional<ProviderProductDetails> = null
+        ) {
+            const result = await (
+                await axios.get(
+                    '/api/v1/list/warehouses/order-product-provider',
+                    {
+                        params: options,
+                    }
+                )
+            ).data
+
+            return result
+        },
+        async savePriceToItem(
+            options: Optional<OrderSaveData> = null,
+            item = '',
+            price = ''
+        ) {
+            const dato = {
+                id: item,
+                price: price,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-savepricetoitem', {
+                    params: item != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async saveQuantityToItem(
+            options: Optional<OrderSaveData> = null,
+            item = '',
+            quantity = ''
+        ) {
+            const dato = {
+                id: item,
+                quantity: quantity,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-savequantitytoitem', {
+                    params: item != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async approvePurchase(options: Optional<OrderSaveData> = null, id = 0) {
+            const dato = {
+                order_origin_id: id,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-approvePurchase', {
+                    params: id == 0 ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async savePurchaseOrder(order: PurchaseOrder) {
+            return axios.post<MessageResponse>('/api/v1/purchase/create', order)
         },
     },
 })

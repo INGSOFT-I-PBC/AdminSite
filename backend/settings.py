@@ -25,6 +25,8 @@ env = environ.Env(
     ALLOW_ALL_ORIGINS=(bool, False),
     DJANGO_QUERY_LOG=(str, "/tmp/django_query.log"),
     DJANGO_LOG=(str, "/tmp/django.log"),
+    CACHE_BACKEND=(str, None),
+    CACHE_LOCATION=(str, None)
 )
 environ.Env.read_env(".env")
 
@@ -78,7 +80,9 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    # "django.middleware.cache.UpdateCacheMiddleware",
     "django.middleware.common.CommonMiddleware",
+    # "django.middleware.cache.FetchFromCacheMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
@@ -289,3 +293,34 @@ if DEBUG:
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+###################################
+##      Cache configuration      ##
+###################################
+if env('CACHE_BACKEND'):
+    CACHES = {}
+    backend = env('CACHE_BACKEND', None)
+    if backend == 'memcached':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using memcached backend')
+    elif backend == 'redis':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using redis backend')
+    elif backend == 'database':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using database backend')
+    elif backend == 'filesystem':
+        CACHES['default'] = {
+            'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+            'LOCATION': env('CACHE_LOCATION')
+        }
+        print('using filesystem backend')
