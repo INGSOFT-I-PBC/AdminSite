@@ -121,6 +121,20 @@ class OrderRequestFullView(ModelViewSet):
 class OrderRequestProductProvider(ModelViewSet):
     queryset = ProductProvider.objects.all()
     serializer_class = OrderDetailProviderProductSerializer
+
+    def get_queryset(self):
+        try:
+            busqueda = self.request.query_params.get("prod_id")
+
+            product_providers = (
+                self.queryset.filter(
+                    product__product__id=busqueda,
+                )
+            )
+
+            return product_providers
+        except Exception as e:
+            return error_response("Invalid query")
     """
     def get_queryset(self):
         # print(request.GET)

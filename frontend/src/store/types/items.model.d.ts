@@ -50,7 +50,6 @@ export interface Item2 {
     order_request?: number
     item?: ItemValue[]
     quantity?: number
-    providerInfo?: ProductProvider
 }
 
 export type ProductValues = {

@@ -104,7 +104,7 @@ export const warehouses: Array<RouteConfig> = [
         name: 'SolicitudesPedido-view',
         component: () => import('@views/warehouse/SolicitudesPedidos.vue'),
         meta: {
-            pageTitle: 'Solicitud Pedido',
+            pageTitle: 'Solicitud Orden Pedido',
         },
     },
 
@@ -114,7 +114,7 @@ export const warehouses: Array<RouteConfig> = [
         component: () =>
             import('@views/warehouse/TablasSolicitudesPedidos.vue'),
         meta: {
-            pageTitle: 'Tabla Solicitud Pedido',
+            pageTitle: 'Solicitud Orden Pedido',
         },
     },
 

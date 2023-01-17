@@ -109,34 +109,18 @@
             filtro
         )
 
-        /*
         console.log(response)
-        console.log('hola', typeof activeWhInformation.value?.ordenes2)
-        console.log(activeWhInformation.value?.ordenes2)
-        console.log(activeWhInformation.value?.ordenes2 == undefined)
-        console.log(activeWhInformation.value.ordenes2)
-        */
-
         activeWhInformation.value.ordenes2 = response
-        /*
-        console.log('hola')
-        console.log(activeWhInformation.value?.ordenes2)
-
-        console.log('hola')*/
         showWaitOverlay.value = false
     }
 
     lastOrders()
 
-    function goEdit(id: number): void {
-        console.log(id)
+    function goEdit(id: number, wrid: number): void {
         router.push({
             path: `/bodegas/tablas-solicitudes-pedidos/${String(id)}`,
+            query: { wrid: wrid },
         })
-    }
-
-    function prueba1() {
-        console.log(filterName.value.value)
     }
 </script>
 
@@ -194,7 +178,9 @@
                                 <e-button
                                     left-icon="fa-eye"
                                     type="button"
-                                    @click="goEdit(item['id'])"
+                                    @click="
+                                        goEdit(item['id'], item.warehouse_id)
+                                    "
                                     >Ver Detalles</e-button
                                 >
                             </div>

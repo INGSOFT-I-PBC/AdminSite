@@ -16,6 +16,7 @@ export interface OrderSaveData {
 export interface OrderSaveData2 {
     id?: number
     warehouse?: string
+    warehouse_id?: number
     requested_at?: string
     requested_by?: string
 }

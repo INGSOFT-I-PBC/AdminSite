@@ -253,20 +253,19 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
-        async fetchProviderProduct(
-            options: Optional<ProviderProductDetails> = null
-        ) {
+        async fetchProviderProduct(prod_id: number) {
             const result = await (
                 await axios.get(
                     '/api/v1/list/warehouses/order-product-provider',
                     {
-                        params: options,
+                        params: { prod_id: prod_id },
                     }
                 )
             ).data
 
             return result
         },
+
         async savePriceToItem(
             options: Optional<OrderSaveData> = null,
             item = '',
@@ -319,7 +318,7 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
-        async savePurchaseOrder(order: PurchaseOrder) {
+        async savePurchaseOrder(order: any) {
             return axios.post<MessageResponse>('/api/v1/purchase/create', order)
         },
     },

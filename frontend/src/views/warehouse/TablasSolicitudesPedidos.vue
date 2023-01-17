@@ -75,7 +75,7 @@
         purchases: Purchase[]
         tomasFisicas: TomaFisica[]
         movements: []
-        ordersDetails2?: Item2 & { providerInfo: Maybe<ProductProvider> }[]
+        ordersDetails2?: Item2 & { providerInfo: Maybe<ProductProvider>[] }[]
     }
 
     const formFields: TableField[] = [
@@ -135,45 +135,16 @@
 
     const numeroruta = route.params.id
 
-    async function ProviderProductTable() {
-        const response = await warehouse.fetchProviderProduct()
+    async function ProviderProductTable(prod_id: number) {
+        const response = await warehouse.fetchProviderProduct(prod_id)
         console.log(response)
-
         activeProductProviderInformations.value.productProviderDetails =
             response.data
         console.log(
             activeProductProviderInformations.value.productProviderDetails
         )
-
-        const arr_provider = []
-        const arr_products = []
-        for (let index = 0; index < response.data.length; index++) {
-            let dic_product = {}
-            const element = response.data[index]
-            console.log(element)
-            arr_provider.push(element.provider.id)
-            dic_product = {
-                product: element.product.id,
-                variant: element.product.prod_id,
-                quantity: element.product.quantity,
-                price: element.price,
-            }
-            arr_products.push(dic_product)
-        }
-        console.log(arr_provider)
-        console.log(arr_products)
-        const set1 = new Set(arr_provider)
-
-        for (let i = 0; i < arr_provider.length; i++) {
-            const arrProducts = []
-            if (set1.has(arr_provider[i])) {
-                arrProducts.push(arr_products[i])
-            }
-            console.log(arrProducts)
-        }
+        itemInfoShow.value = true
     }
-
-    ProviderProductTable()
 
     async function OrderDetailsTable() {
         showWaitOverlay.value = true
@@ -186,10 +157,8 @@
             busqueda,
             filtro
         )
-        console.log(response)
 
         activeWhInformation.value.ordersDetails2 = response.data
-        console.log(activeWhInformation.value.ordersDetails2 == undefined)
         showWaitOverlay.value = false
     }
 
@@ -203,11 +172,13 @@
     async function SolicitudAceptada(
         items: OrderDetails2,
         id: any,
-        index: number
+        index: number,
+        prod_id: number
     ) {
         detailSelectedItem.value.item = items
         SelectedItem.value = index
-        itemInfoShow.value = true
+
+        ProviderProductTable(prod_id)
     }
 
     async function AceptarRechazar(item: OrderDetails2) {
@@ -228,23 +199,6 @@
 
     async function StockWindow() {
         itemInfoShow4.value = true
-    }
-
-    async function traerDatos(event: any, index: number) {
-        console.log(event)
-        if (activeWhInformation.value == undefined) return
-        //activeWhInformation.value.ordersDetails2[index].item.price = event
-        console.log(activeWhInformation.value.ordersDetails2)
-    }
-
-    async function getQuantity(event: any) {
-        //console.log(event)
-        quantity.value = event
-        if (quantity.value != null) {
-            //itemInfoShow4.value = true
-        }
-        console.log(itemId.value)
-        console.log(quantity.value)
     }
 
     const SelectedItem = ref<number>()
@@ -279,21 +233,53 @@
     }
 
     async function aprobarCompra(event: any, type: any, id = 0) {
-        const set = new Set()
-        ;(activeWhInformation.value.ordersDetails2 ?? []).map(order =>
-            set.add(order.providerInfo?.provider)
-        )
-
+        const provid = new Set()
+        const warehouse_id = Number(route.query.wrid)
+        const order_origin = Number(route.params.id)
         const details = []
+        let product
 
-        for (const provider of set) {
-            const arr = (activeWhInformation.value.ordersDetails2 ?? []).filter(
-                order => order.providerInfo?.provider == provider
-            )
-            details.push(arr)
+        for (const order of activeWhInformation.value.ordersDetails2 ?? []) {
+            console.log(order)
+            provid.add(order.providerInfo[0]?.provider)
+        }
+
+        for (const provider of provid) {
+            product = []
+            for (const order1 of activeWhInformation.value.ordersDetails2 ??
+                []) {
+                const prov = order1.providerInfo[0]
+                if (prov?.provider == provider) {
+                    product.push({
+                        //"product"  : order1.item.prod_id,
+                        product: 'order1.item.prod_id',
+                        //"variant"  : order1.item.id,
+                        variant: 'order1.item.id',
+                        //"quantity" : order1.quantity,
+                        quantity: 'order1.quantity',
+                        //"price"    : order1.item.price
+                        price: 'order1.item.price',
+                    })
+                }
+            }
+            details.push({
+                provider: provider,
+                products: product,
+            })
             console.log(provider)
         }
-        console.log(details)
+
+        const data = {
+            warehouse_id: warehouse_id,
+            order_origin: order_origin,
+            details: details,
+        }
+
+        console.log(data)
+        console.log(activeWhInformation.value.ordersDetails2)
+
+        const response = await warehouse.savePurchaseOrder(data)
+        //console.log(activeWhInformation.value.ordersDetails2)
 
         /*
         if (type == 1) {
@@ -309,10 +295,6 @@
         }
         */
     }
-
-    async function GenerarInforme(event: any) {
-        itemInfoShow6.value = true
-    }
 </script>
 
 <template>
@@ -321,8 +303,6 @@
         <ModalDialog v-model:show="itemInfoShow" size="xl">
             <template #dialog-title>
                 <b class="tw-text-2xl">
-                    <!--
-                    <InputText v-model="filterText" label="Codigo Producto" readonly="true" />-->
                     Lista de proveedores
                     {{ detailSelectedItem.item?.warehouse }}
                 </b>
@@ -616,7 +596,8 @@
                                         SolicitudAceptada(
                                             item,
                                             item.item.id,
-                                            index
+                                            index,
+                                            item.item.prod_id
                                         )
                                     "
                                     >Seleccionar Proveedor</e-button
@@ -633,16 +614,6 @@
                                     ></e-button
                                 >
                                 &nbsp;
-                                <!--
-                                <e-button
-                                    left-icon=""
-                                    type="button"
-                                    @click="GenerarInforme($event)">
-                                    <span
-                                        class="tw-invisible md:tw-visible tw-font-bold"
-                                        >Informe</span
-                                    ></e-button
-                                >-->
                             </div>
                         </template>
                     </BTable>
@@ -653,7 +624,7 @@
                         type="button"
                         @click="aprobarCompra($event, 1)">
                         <span class="tw-invisible md:tw-visible tw-font-bold"
-                            >Aprobar Compra</span
+                            >Generar Orden</span
                         ></e-button
                     >
                 </b-container>
