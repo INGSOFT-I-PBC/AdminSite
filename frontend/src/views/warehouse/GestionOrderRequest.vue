@@ -1,5 +1,4 @@
 <script setup lang="ts">
-    import { faWizardsOfTheCoast } from '@fortawesome/free-brands-svg-icons'
     import { useItemStore, useWarehouseStore } from '@store'
     import { useOrderStore } from '@store/order'
     import {
@@ -28,7 +27,6 @@
         type ColorVariant,
         type TableField,
     } from 'bootstrap-vue-3'
-    import { useId } from 'bootstrap-vue-3/dist/composables'
     import moment from 'moment'
 
     import { computed, onMounted, watch } from 'vue'
@@ -44,8 +42,6 @@
         ModalDialog,
         WaitOverlay,
     } from '@custom-components'
-
-    import OrderDetails from './OrderDetails.vue'
 
     const router = useRouter()
 
