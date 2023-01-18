@@ -156,7 +156,7 @@ def create_prod_variant(request: Request):
 
 
 class VariantAttributesViewSet(_ROViewSet):
-    queryset = ProductAttribute.objects.all()
+    queryset = ProductAttribute.objects.all().order_by("-id")
     serializer_class = ProductAttributeSerializer
     pagination_class = CustomPagination
 

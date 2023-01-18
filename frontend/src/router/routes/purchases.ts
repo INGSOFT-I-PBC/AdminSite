@@ -1,6 +1,6 @@
 export const purchases: Array<RouteConfig> = [
     {
-        name: 'purchase-add-provider',
+        name: 'purchases-add-provider',
         path: '/compras/nuevo-proveedor',
         component: () => import('@/views/purchase/AddNewProvider.vue'),
         meta: {
@@ -8,6 +8,7 @@ export const purchases: Array<RouteConfig> = [
             pageTitle: 'Crear nuevo proveedor',
         },
     },
+
     {
         name: 'purchase-manage-providers',
         path: '/compras/proveedores',
@@ -17,6 +18,15 @@ export const purchases: Array<RouteConfig> = [
             pageTitle: 'Proveedores',
         },
     },
+    {
+        path: '/bodegas/ordenes-pedidos',
+        name: 'order-request-view',
+        component: () => import('@views/warehouse/GestionOrderRequest.vue'),
+        meta: {
+            pageTitle: 'Solicitudes de Compra',
+        },
+    },
+
     {
         name: 'purchase-approval-orders',
         path: '/compras/aprobacion-ordenes-compra',
