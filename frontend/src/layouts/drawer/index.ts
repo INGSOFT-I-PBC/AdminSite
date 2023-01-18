@@ -146,13 +146,13 @@ export const menus: MenuItem[] = [
             {
                 label: 'Solicitud de pedidos',
                 path: '/compras/aprobacion-ordenes-compra',
-                routeName: 'order-request-view',
+                routeName: 'purchase-approval-orders',
             },
 
             {
                 label: 'Ordenes de Compra',
                 path: '/bodegas/ordenes-pedidos',
-                routeName: 'order-products',
+                routeName: 'order-request-view',
             },
         ],
     },

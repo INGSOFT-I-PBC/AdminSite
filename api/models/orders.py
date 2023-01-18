@@ -27,7 +27,7 @@ class OrderRequest(models.Model):
         related_name="requested_by",
     )
     revised_at = models.DateTimeField(null=True, default=None)
-    revised_by = models.OneToOneField(
+    revised_by = models.ForeignKey(
         Employee,
         on_delete=models.RESTRICT,
         db_column="revised_by",

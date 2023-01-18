@@ -1148,7 +1148,7 @@
                             class="col-3" />
                         <ListBox
                             class="col-3"
-                            top-label="Proveedor"
+                            top-label="Proveedores Seleccionados"
                             v-model="selectedProvider"
                             placeholder="Filtro por proveedor"
                             label="provider"

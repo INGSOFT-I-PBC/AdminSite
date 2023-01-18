@@ -58,7 +58,7 @@ export const warehouses: Array<RouteConfig> = [
 
     {
         path: '/bodegas/nuevo-movimiento',
-        name: 'new-movimiento-view',
+        name: 'warehouse-new-movement',
         component: () => import('@views/warehouse/NewMovimiento.vue'),
         meta: {
             pageTitle: 'Nuevo Movimiento',
@@ -98,16 +98,6 @@ export const warehouses: Array<RouteConfig> = [
             ],
         },
     },
-
-    {
-        path: '/bodegas/ordenes-pedidos',
-        name: 'order-request-view',
-        component: () => import('@views/warehouse/GestionOrderRequest.vue'),
-        meta: {
-            pageTitle: 'Solicitudes de Compra',
-        },
-    },
-
     {
         path: '/bodegas/mantenimiento/inventario',
         name: 'warehouse-management-inventory',
