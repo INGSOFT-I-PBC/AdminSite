@@ -1,10 +1,12 @@
 from rest_framework import serializers
-from rest_framework.serializers import ModelSerializer, Serializer
+from rest_framework.serializers import ModelSerializer, Serializer, URLField
 
 from api.models import Provider
 
 
 class ProviderSerializer(ModelSerializer):
+    website = URLField()
+
     class Meta:
         model = Provider
         fields = "__all__"
@@ -19,6 +21,7 @@ class PartialProviderSerializer(Serializer):
         Serializer (rest_framework.serializers.Serializer): The superclass
     """
 
+    id = serializers.IntegerField()
     name = serializers.CharField(max_length=128, required=False)
     document_path = serializers.CharField(max_length=128, required=False)
     bussiness_name = serializers.CharField(max_length=128, required=False)

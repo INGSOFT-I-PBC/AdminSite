@@ -248,7 +248,7 @@ class SimpleVariantSerializer(_srl.ModelSerializer):
     id = _srl.IntegerField()
     created_at = _srl.DateTimeField()
     updated_at = _srl.DateTimeField()
-    deleted_at = _srl.DateTimeField()
+    deleted_at = _srl.DateTimeField(allow_null=True)
     variant_name = _srl.CharField(max_length=50)
     sku = _srl.CharField(max_length=128)
     price = _srl.DecimalField(max_digits=14, decimal_places=3)

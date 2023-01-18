@@ -50,6 +50,11 @@
     const itemStore = useItemStore()
     const orderStore = useOrderStore()
 
+    moment.locale('es', {
+        weekdays: 'Domingo_Lunes_Martes_Miércoles_Jueves_Viernes_Sábado'.split(
+            '_'
+        ),
+    })
     const purchaseStore = usePurchaseStore()
     const warehouse = useWarehouseStore()
     const toast = useToast()
@@ -149,7 +154,7 @@
         'FechaAprobación',
         { label: 'Código Orden', key: 'reference' },
         'AprobadoPor',
-        'RazonDeCompra',
+        'RazónDeCompra',
         'Estado',
         'Acciones',
     ]
@@ -335,6 +340,7 @@
     }
 
     function filterData(): void {
+        stopWatcher.value = true
         if (searchString.value.length > 0 && purchaseDetailsArr.value) {
             currentDetailsPage.value = 1
             paginatedPurchaseDetailsArr.value = purchaseDetailsArr.value
@@ -464,6 +470,11 @@
                 return 'Desconocido'
         }
     }
+    function getDisplayStatus(status_name: string) {
+        const status_list = purchaseStore.getPurchaseStatus()
+        const display_status = status_list?.find(s => s.name == status_name)
+        return display_status ? display_status.display : 'Estado no reconocido'
+    }
 
     const arrInfoChildPurchase =
         ref<{ total: number; num_variants: number }[]>()
@@ -536,7 +547,9 @@
 
     onMounted(() => {
         const purchase_id = router.params.id
-        onDetallesClicked(Number(purchase_id))
+        if (purchase_id) {
+            onDetallesClicked(Number(purchase_id))
+        }
     })
 </script>
 
@@ -764,20 +777,35 @@
                                             info-status="danger"
                                             label="Nombre de Provedor" />
                                     </div>
-                                    <div
-                                        class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2 text-center">
-                                        <e-button class="">
-                                            Confirmar Búsqueda
-                                        </e-button>
-                                    </div>
-                                    <div
-                                        class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2">
-                                        <e-button
-                                            @click.left="handleReset"
-                                            type="button"
-                                            variant="secondary">
-                                            Limpiar Búsqueda
-                                        </e-button>
+                                    <div class="row">
+                                        <div
+                                            class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2 text-center">
+                                            <e-button class="">
+                                                Confirmar Búsqueda
+                                            </e-button>
+                                        </div>
+                                        <div
+                                            class="col-2 mt-4 col-md-3 col-sm-4 mt-4 col-xl-2 col-lg-2">
+                                            <e-button
+                                                @click.left="handleReset"
+                                                type="button"
+                                                variant="secondary">
+                                                Limpiar Búsqueda
+                                            </e-button>
+                                        </div>
+                                        <h2
+                                            class="dark-mode-text col-6 mt-4 tw-text-lg tw-font-bold">
+                                            <span
+                                                class="tw-text-amber-700 dark:tw-text-amber-400">
+                                                {{
+                                                    (
+                                                        paginatedPurchaseList ??
+                                                        []
+                                                    ).length
+                                                }}
+                                            </span>
+                                            Registros encontrados
+                                        </h2>
                                     </div>
                                 </div>
                             </div>
@@ -823,7 +851,7 @@
                                 )
                             }}
                         </template>
-                        <template #cell(RazonDeCompra)="{ item }">
+                        <template #cell(RazónDeCompra)="{ item }">
                             {{
                                 item.order_origin.revised_by.comment
                                     ? truncate(
@@ -838,7 +866,7 @@
                             <BBadge
                                 class="tw-text-md"
                                 :variant="statusPurchaseColor(item.status)">
-                                {{ item.status }}
+                                {{ getDisplayStatus(item.status) }}
                             </BBadge>
                         </template>
                         <template #cell(Acciones)="{ item }">
@@ -891,7 +919,7 @@
                             >
                             <span
                                 class="col-sm-12 col-12 col-md-6 col-xl-3 col-lg-3 tw-font-bold">
-                                Fecha de aprobacion:
+                                Fecha de aprobación:
                             </span>
                             <span
                                 class="col-sm-12 col-12 col-md-6 col-xl-3 col-lg-3"
@@ -968,7 +996,12 @@
                                         <span class="tw-font-bold col-4"
                                             >{{ keyNaturalName(k) }}:</span
                                         >
-                                        <span class="col-4">{{ d }}</span>
+                                        <span v-if="k == 'price'" class="col-4">
+                                            {{ Number(d).toFixed(2) }}</span
+                                        >
+                                        <span v-else class="col-4">{{
+                                            d
+                                        }}</span>
                                     </div>
                                 </div>
                             </template>
@@ -1036,7 +1069,7 @@
                         <div
                             class="row mb-2 tw-ring-2 dark:tw-ring-white py-2 tw-ring-black">
                             <div class="col-3 tw-text-md">
-                                <b>Origen de la orden:</b>
+                                <b>Orden origen de la compra:</b>
                             </div>
                             <div class="col-3 tw-font-light">
                                 <b> #{{ selectedPurchase?.order_origin.id }}</b>
@@ -1062,12 +1095,12 @@
                             </div>
                             <div class="col-6 tw-font-light">
                                 <b>
-                                    ({{
+                                    {{
                                         moment(
                                             selectedPurchase?.order_origin
                                                 .revised_by?.created_at
-                                        )
-                                    }})
+                                        ).format('dddd DD/MM/yyyy HH:mm:ss')
+                                    }}
                                 </b>
                             </div>
                         </div>
@@ -1136,7 +1169,11 @@
                                     </div>
                                     <div class="col-6 tw-font-light">
                                         <b>
-                                            ({{ moment(order.created_at) }})
+                                            {{
+                                                moment(order.created_at).format(
+                                                    'dddd DD/MM/yyyy HH:mm:ss'
+                                                )
+                                            }}
                                         </b>
                                     </div>
                                 </div>
@@ -1160,7 +1197,10 @@
                                         statusPurchaseColor(status.status)
                                     ">
                                     {{
-                                        '( ' + (ix + 1) + ' ) ' + status.status
+                                        '( ' +
+                                        (ix + 1) +
+                                        ' ) ' +
+                                        getDisplayStatus(status.status)
                                     }}
                                 </BBadge>
 
@@ -1182,7 +1222,13 @@
                                     <b>Fecha : </b>
                                 </div>
                                 <div class="col-6 tw-font-light">
-                                    <b> ({{ moment(status.created_at) }}) </b>
+                                    <b>
+                                        {{
+                                            moment(status.created_at).format(
+                                                'dddd DD/MM/yyyy HH:mm:ss'
+                                            )
+                                        }}
+                                    </b>
                                 </div>
                             </div>
                         </div>
@@ -1217,7 +1263,9 @@
                         :items="paginatedPurchaseDetailsArr ?? []">
                         <template #cell(#)="{ index }">
                             {{
-                                index + 1 + (currentPage - 1) * purchasePerPage
+                                index +
+                                1 +
+                                (currentDetailsPage - 1) * purchasePerPage
                             }}
                         </template>
                         <template #cell(Código)="{ item }">

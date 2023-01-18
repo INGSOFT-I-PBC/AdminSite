@@ -30,6 +30,8 @@
         WaitOverlay,
     } from '@custom-components'
 
+    const PENDING_APPROVAL = { name: 'PA', display: 'Aprobación Pendiente' }
+
     type SelectionProduct = WarehouseStock & {
         checked: boolean
         novedad: string | undefined
@@ -55,6 +57,7 @@
     const cardTitle = ref<string>('')
 
     const selectedWarehouse = ref<Warehouse>()
+    const selectedProxyWarehouse = ref<Warehouse>()
 
     const codeInputString = ref('')
     const searchString = ref('')
@@ -257,6 +260,7 @@
                         : detail.stock_level,
                     previous_stock: detail.stock_level,
                     novedad: detail.novedad ? detail.novedad : 'N/A',
+                    acepted: PENDING_APPROVAL.name,
                 })
             }
         }
@@ -312,15 +316,24 @@
      */
 
     async function triggerWhChange() {
-        if (selectedWarehouse.value && invTableData.value.length > 0) {
+        if (
+            selectedWarehouse.value &&
+            invTableData.value.length > 0 &&
+            selectedProxyWarehouse.value != selectedWarehouse.value
+        ) {
+            selectedWarehouse.value = selectedProxyWarehouse.value
             showChangeWhModal.value = true
-        } else if (selectedWarehouse.value) {
+            return
+        } else if (selectedProxyWarehouse.value) {
             showWaitOverlay.value = true
 
+            selectedWarehouse.value = selectedProxyWarehouse.value
+
             let res = await warehouse.fetchPaginatedWarehouseInventory(
-                { warehouse_id: selectedWarehouse.value.id },
+                { warehouse_id: selectedProxyWarehouse.value.id },
                 { page: 1, per_page: 100000 }
             )
+
             if (isMessage(res)) {
                 toast.error(res.message + ' ' + res.code, { timeout: 2500 })
                 invTableData.value = []
@@ -462,7 +475,7 @@
                     </span>
                     <ListBox
                         class="col-3"
-                        v-model="selectedWarehouse"
+                        v-model="selectedProxyWarehouse"
                         placeholder="Seleccione un inventario a realizar la nueva toma física"
                         label="name"
                         :options="warehouse.getWarehouseList ?? []" />
@@ -558,7 +571,7 @@
                     </e-button>
                     <e-button
                         v-else
-                        :disabled="selectedWarehouse?.name === cardTitle"
+                        :disabled="selectedProxyWarehouse?.name === cardTitle"
                         type="button"
                         variant="primary"
                         class="col-1 mx-1 py-1 col-md-3 col-sm-4"
@@ -713,7 +726,7 @@
                                     :validation-schema="productForm">
                                     <div class="row">
                                         <InputText
-                                            class="dark-mode-text"
+                                            class="dark-mode-text text-break"
                                             label="Novedad"
                                             v-model="productForm.novedad.value"
                                             :info-label="

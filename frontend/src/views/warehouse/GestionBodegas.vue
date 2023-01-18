@@ -104,7 +104,7 @@
     /**
      * Flag to display main page or the specific warehouse page with the tabs
      */
-    const showAllWarehouses = ref(true)
+    const showAllWarehouses = ref<boolean>(true)
     /**
      * Flag to stop the watchers from executing
      */
@@ -268,7 +268,7 @@
         movementTabController.value,
     ]
     /**
-     * Object that contains the validations for the movementForm. Uses yup
+     * Object that contains the validations for the inventoryForm. Uses yup
      * @property {FieldContext<any>} from_date Minimum date to query
      * @property {FieldContext<any>} from_date Maximum date to query
      * @property {FieldContext<any>} name String query to search product name
@@ -386,7 +386,7 @@
     }
 
     /**
-     * Object that contains the validations for the movementForm. Uses yup
+     * Object that contains the validations for the purchase Form. Uses yup
      * @property {FieldContext<any>} from_date Minimum date to query
      * @property {FieldContext<any>} from_date Maximum date to query
      * @property {boolean} approved_date Flag: purchases approved in the range of the from_date and to_date range
@@ -1186,6 +1186,12 @@
         }
         return key
     }
+
+    function getDisplpayStatus(status: string) {
+        const s = purchase.getPurchaseStatus().find(st => (st.name = status))
+        return s?.display ? s.display : 'Desconocido'
+    }
+
     /**
      * Shortens a long text to a given lenght ending with a suffix
      * @param text  Input string to be shorten
@@ -1552,7 +1558,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Min de Actualizacion"
+                                                                label="Fecha Min de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "
@@ -1596,7 +1602,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Max de Actualizacion"
+                                                                label="Fecha Max de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "
@@ -2296,7 +2302,7 @@
                                     <BBadge
                                         class="tw-text-md"
                                         :variant="statusColor(item.status)">
-                                        {{ item.status }}
+                                        {{ getDisplpayStatus(item.status) }}
                                     </BBadge>
                                 </template>
                                 <template #cell(Entregado)="{ item }">
@@ -2414,7 +2420,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Min de Actualizacion"
+                                                                label="Fecha Min de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "
@@ -2457,7 +2463,7 @@
                                                                 value,
                                                             }">
                                                             <InputText
-                                                                label="Fecha Max de Actualizacion"
+                                                                label="Fecha Max de Actualización"
                                                                 :model-value="
                                                                     value
                                                                 "

@@ -1,5 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.utils.translation import gettext_lazy
 
 from api.models.common import Status, TimestampModel
 from api.models.items import Item
@@ -89,7 +90,7 @@ class Inventory(TimestampModel):
 
 class WarehouseTransaction(models.Model):
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    notes = models.CharField(max_length=300, blank=True)
+    notes = models.CharField(max_length=300, blank=True, null=True)
     warehouse_origin = models.ForeignKey(
         Warehouse, on_delete=models.RESTRICT, related_name="origin"
     )
@@ -143,6 +144,11 @@ class WhTomasFisicas(models.Model):
 
 class WhTomasFisicasDetails(models.Model):
 
+    class TomaDetailStatus(models.TextChoices):
+        PENDING_APPROVAL = "PA", gettext_lazy("Pendiente aprobación")
+        ACEPTED = "AP", gettext_lazy("Aceptado")
+        NOT_ACEPTED = "NA", gettext_lazy("No Aceptado")
+
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
     product = models.ForeignKey("Product", on_delete=models.RESTRICT)
     variant = models.ForeignKey("ProductVariant", on_delete=models.RESTRICT)
@@ -150,6 +156,10 @@ class WhTomasFisicasDetails(models.Model):
     novedad = models.CharField(max_length=300, null=False, blank=False)
     new_stock = models.PositiveIntegerField()
     previous_stock = models.PositiveIntegerField()
+    acepted = models.CharField(
+        max_length=6, choices=TomaDetailStatus.choices, default=TomaDetailStatus.PENDING_APPROVAL
+    )
+    acepted_by = models.ForeignKey(Employee, null=True, default=None, on_delete=models.RESTRICT)
 
     class Meta:
         db_table = "tomas_fisicas_details"

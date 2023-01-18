@@ -9,6 +9,7 @@ import type {
     Movement,
     TomaFisica,
     TomaFisicaQuery,
+    TomaSaveData,
     WarehouseStock,
     WhWithTomaFisica,
 } from '@store/types/warehouse.model'
@@ -16,21 +17,40 @@ import axios, { type AxiosResponse } from 'axios'
 import { defineStore } from 'pinia'
 
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
+import type { ProviderProductDetails, PurchaseOrder } from './types/items.model'
+import type {
+    OrderDetails,
+    OrderSaveData,
+    OrderSaveData2,
+} from './types/orders.model'
+
+type identifier = number | string
 
 export interface WarehouseState {
     lastWarehouseList: Optional<Warehouse[]>
     paginatedWarehouse: Optional<PaginatedAPIResponse<Warehouse>>
+    lastOrdersWarehouseList: Optional<OrderSaveData[]>
+    OrderDetailsList: Optional<OrderDetails[]>
+    ProviderProductDetails: Optional<ProviderProductDetails[]>
 }
+
+export type StockWithProps = WarehouseStock & { props: ProductProps[] }
 
 export const useWarehouseStore = defineStore('warehouse-store', {
     state: (): WarehouseState => ({
         lastWarehouseList: null,
         paginatedWarehouse: null,
+        lastOrdersWarehouseList: null,
+        OrderDetailsList: null,
+        ProviderProductDetails: null,
     }),
 
     getters: {
         getWarehouseList: state => state.lastWarehouseList,
         getPaginatedWarehouse: state => state.paginatedWarehouse,
+        getOrdersWarehouseList: state => state.lastOrdersWarehouseList,
+        getOrderDetails: state => state.OrderDetailsList,
+        getProductProvider: state => state.ProviderProductDetails,
     },
 
     actions: {
@@ -119,6 +139,13 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return result
         },
 
+        async updateTomaFisicaDetail(toma_detail: TomaSaveData) {
+            return axios.put<MessageResponse>(
+                '/api/v1/warehouse/tomas-fisicas/update-stock',
+                toma_detail
+            )
+        },
+
         async saveTomasFisicas(
             tomaFisica: TomaFisicaQuery
         ): Promise<MessageResponse> {
@@ -172,10 +199,136 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             }
             return (
                 await axios.get<PaginatedAPIResponse<ProductProps>>(
-                    `products/variant/props`,
-                    queryParams
+                    `/api/v1/products/variant/props`,
+                    { params: queryParams }
                 )
             ).data
+        },
+        async fetchStockWithProps(
+            options: any,
+            paginated_opt: PaginationOptions
+        ): Promise<PaginatedAPIResponse<StockWithProps>> {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            return (
+                await axios.get<PaginatedAPIResponse<StockWithProps>>(
+                    `/api/v1/warehouse/stock-props`,
+                    { params: queryParams }
+                )
+            ).data
+        },
+
+        async fetchOrdersWarehouse(
+            options: Optional<OrderSaveData> = null,
+            busqueda = '',
+            filtro = ''
+        ) {
+            const dato = {
+                busqueda: busqueda != '' ? busqueda : '',
+                filtro: filtro,
+            }
+            //datobusqueda = busqueda;
+
+            const result = await (
+                await axios.get('/api/v1/list/warehouses/order-requests2', {
+                    params: busqueda != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async fetchOrdersDetails(
+            idOrder: identifier,
+            options: Optional<OrderDetails> = null,
+            busqueda = '',
+            filtro = ''
+        ) {
+            const dato = {
+                busqueda: busqueda != '' ? busqueda : '',
+                filtro: filtro,
+            }
+
+            const result = await (
+                await axios.get(`/api/v1/order-details?id=${idOrder}`, {
+                    params: busqueda != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async fetchProviderProduct(
+            options: Optional<ProviderProductDetails> = null
+        ) {
+            const result = await (
+                await axios.get(
+                    '/api/v1/list/warehouses/order-product-provider',
+                    {
+                        params: options,
+                    }
+                )
+            ).data
+
+            return result
+        },
+        async savePriceToItem(
+            options: Optional<OrderSaveData> = null,
+            item = '',
+            price = ''
+        ) {
+            const dato = {
+                id: item,
+                price: price,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-savepricetoitem', {
+                    params: item != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async saveQuantityToItem(
+            options: Optional<OrderSaveData> = null,
+            item = '',
+            quantity = ''
+        ) {
+            const dato = {
+                id: item,
+                quantity: quantity,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-savequantitytoitem', {
+                    params: item != '' ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async approvePurchase(options: Optional<OrderSaveData> = null, id = 0) {
+            const dato = {
+                order_origin_id: id,
+            }
+
+            const result = await (
+                await axios.get('/api/v1/warehouse/order-approvePurchase', {
+                    params: id == 0 ? dato : options,
+                })
+            ).data
+
+            return result
+        },
+
+        async savePurchaseOrder(order: PurchaseOrder) {
+            return axios.post<MessageResponse>('/api/v1/purchase/create', order)
         },
     },
 })

@@ -57,11 +57,21 @@ export const warehouses: Array<RouteConfig> = [
     },
 
     {
-        path: '/bodegas/proveedores',
-        name: 'proveedores-view',
-        component: () => import('@views/warehouse/ProveedoresView.vue'),
+        path: '/bodegas/nuevo-movimiento',
+        name: 'new-movimiento-view',
+        component: () => import('@views/warehouse/NewMovimiento.vue'),
         meta: {
-            pageTitle: 'Proveedores',
+            pageTitle: 'Nuevo Movimiento',
+            breadcrumb: [
+                {
+                    text: 'Bodegas',
+                    href: '/bodegas/gestion',
+                },
+                {
+                    text: 'Nuevo Movimiento',
+                    active: true,
+                },
+            ],
         },
     },
 
@@ -69,12 +79,11 @@ export const warehouses: Array<RouteConfig> = [
         path: '/bodegas/pedidos/:id?',
         name: 'pedidos-view',
         props: true,
-        component: () => import('@views/warehouse/GestionPedidos.vue'),
+        component: () => import('@views/purchase/GestionPedidos.vue'),
         meta: {
-            pageTitle: 'Gestion Pedidos',
+            pageTitle: 'Gestión Pedidos',
         },
     },
-
     {
         path: '/bodegas/gestion',
         name: 'gestion-view',
@@ -86,6 +95,40 @@ export const warehouses: Array<RouteConfig> = [
                     text: 'Bodegas',
                     href: '/bodegas',
                 },
+            ],
+        },
+    },
+
+    {
+        path: '/bodegas/solicitudes-pedidos',
+        name: 'SolicitudesPedido-view',
+        component: () => import('@views/warehouse/SolicitudesPedidos.vue'),
+        meta: {
+            pageTitle: 'Solicitud Pedido',
+        },
+    },
+
+    {
+        path: '/bodegas/tablas-solicitudes-pedidos/:id',
+        name: 'TablasSolicitudesPedidos-view',
+        component: () =>
+            import('@views/warehouse/TablasSolicitudesPedidos.vue'),
+        meta: {
+            pageTitle: 'Tabla Solicitud Pedido',
+        },
+    },
+
+    {
+        path: '/bodegas/mantenimiento/inventario',
+        name: 'warehouse-management-inventory',
+        component: () => import('@views/warehouse/ManageInventoryView.vue'),
+        meta: {
+            pageTitle: 'Gestor de inventario por bodega',
+            permission: 'can_manage_warehouse_inventory',
+            breadcrumb: [
+                { text: 'Bodegas' },
+                { text: 'Mantenimiento' },
+                { text: 'Inventario' },
             ],
         },
     },

@@ -1,7 +1,11 @@
+from ast import Sub
 from datetime import datetime, timedelta
+from distutils.log import error
+from shutil import move
 
 from django.core.paginator import Paginator
-from django.db.models import OuterRef, Prefetch, Q, Subquery
+from django.db.models import F, OuterRef, Prefetch, Q, Subquery
+from django.db.models.aggregates import Max
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.pagination import PageNumberPagination
@@ -10,25 +14,33 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from api.models import Inventory, OrderRequest, Warehouse
+from api.models import Inventory, Item, OrderRequest, ProductVariant, Warehouse
 from api.models.common import Status
+from api.models.orders import OrderRequestDetail
 from api.models.products import ProductStockWarehouse, ProductVariant
 from api.models.warehouse import (
+    TransactionStatus,
     WarehouseTransaction,
     WhTomasFisicas,
     WhTomasFisicasDetails,
 )
-from api.serializers.order import OrderSerializer
+from api.serializers.item import ItemPriceSerializer
+from api.serializers.order import OrderSerializer, OrderSerializerORDREQ
 from api.serializers.warehouse import (
+    CreateTransactionStatusSerializer,
     FullTomasDetailSerializer,
     FullWarehouseSerializer,
     SimpleTomasFisicasSerializer,
+    SimpleTransactionSerializer,
     TomasDetailSerializer,
     TomasFisicasSerializer,
-    TranactionWithProductsSerializer,
+    TransactionDetailCreateSerializer,
+    TransactionStatusSerializer,
+    TransactionWithProductsSerializer,
     WarehouseSerializer,
     WhInventorySerializer,
     WhStockSerializer,
+    WhStockWithPropsSerializer,
     WhTransactionSerializer,
     WhWithTomaFisicaSerializer,
 )
@@ -244,6 +256,15 @@ class WhStockViewSet(ModelViewSet):
         return queryset
 
 
+class WhStockWithPropsViewSet(WhStockViewSet):
+    pagination_class = CustomPagination
+    serializer_class = WhStockWithPropsSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset
+
+
 class WhOrderRequestView(APIView):
     def get(self, request):
 
@@ -349,22 +370,56 @@ class WhTransactionViewSet(ModelViewSet):
                 created_by__lastname__icontains=(params.get("created_by_name"))
             )
 
+        if params.get("warehouse_origin", None):
+            queryset = queryset.filter(
+                warehouse_origin__pk=params.get("warehouse_origin")
+            )
+
+        if params.get("warehouse_destiny", None):
+            queryset = queryset.filter(
+                warehouse_destiny__pk=params.get("warehouse_destiny")
+            )
+
+        if params.get("notes", None):
+            queryset = queryset.filter(notes__icontains=params.get("notes"))
+
+        if params.get("status", None):
+
+            p_status = (
+                TransactionStatus.objects.annotate(
+                    last_status_pk=Max(
+                        "transaction__transactionstatus__pk"
+                    )
+                )
+                .filter(pk=F("last_status_pk"))
+                .filter(status__name__icontains=params.get("status"))
+            )
+
+            if params.get("status_from_date", None):
+                p_status = p_status.filter(
+                    created_at__gte=params.get("status_from_date")
+                )
+
+            if params.get("status_to_date", None):
+                to_date = datetime.strptime(
+                    (params.get("status_to_date")), "%Y-%m-%dT%H:%M:%S.%f%z"
+                ) + timedelta(days=1)
+
+                p_status = p_status.filter(created_at__gte=to_date).order_by("-created_at")
+
+            queryset = queryset.filter(pk__in=Subquery(p_status.values("transaction")))
+
         return queryset
 
 
 class WhTransactionDetailsViewSet(ModelViewSet):
     queryset = WarehouseTransaction.objects.all()
-    serializer_class = TranactionWithProductsSerializer
+    serializer_class = TransactionWithProductsSerializer
+    pagination_class = None
 
     def get_queryset(self):
-
-        queryset = self.queryset.select_related(
-            "created_by", "status"
-        ).prefetch_related("wh_transaction_details")
+        queryset = self.queryset.select_related("created_by", "status")
         params = self.request.query_params.copy()
-
-        if (not params.get("id", False)) and (not params.get("warehouse_id", False)):
-            return error_response("Invalid request")
 
         if params.get("order_by", None):
             fields = params.pop("order_by")
@@ -391,6 +446,90 @@ class WhTransactionDetailsViewSet(ModelViewSet):
                 queryset = queryset.filter(
                     warehouse_origin__name__icontains=params.get("warehouse_name")
                 )
+            else:
+                queryset = queryset.filter(
+                    Q(warehouse_destiny=params.get("warehouse_id"))
+                    | Q(warehouse_origin=params.get("warehouse_id"))
+                )
+
+        return queryset
+
+
+@api_view(["POST"])
+def create_movement(request):
+    if not request.data:
+        return error_response("No data was provided")
+    details = request.data.pop("details")
+
+    details = [x for x in details if x]
+    if not details:
+        return error_response("A movement needs at least one product")
+
+    data = request.data
+    data["created_by"] = request.user.employee_id
+
+    status = Status.objects.filter(name='pendiente').first()
+    # TODO create status if its not in the db
+
+    data['status'] = status.id
+
+    serializer = SimpleTransactionSerializer(data=data)
+
+    if serializer.is_valid(raise_exception=True):
+        movement: WarehouseTransaction = serializer.save()
+        for detail in details:
+            # inject order, due client doesn't know which is created
+            detail["header"] = movement.pk
+            detail['variant'] = detail['variant']['id']
+            detail['product'] = detail['product']['id']
+
+        detail_serializer = TransactionDetailCreateSerializer(data=details, many=True)
+        try:  # Check if the inserted items are valid
+            detail_serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            movement.delete()
+            raise e
+
+        movement_status = {'created_by': request.user.employee_id, 'status': status.id, 'transaction': movement.id}
+        mv_status_serializer = CreateTransactionStatusSerializer(data=movement_status)
+
+        try:  # Check if the inserted items are valid
+            mv_status_serializer.is_valid(raise_exception=True)
+        except Exception as e:
+            movement.delete()
+            raise e
+
+        mv_status_serializer.save()
+        detail_serializer.save()
+
+        serializer = SimpleTransactionSerializer(movement)
+        return JsonResponse(serializer.data, status=201)
+    return error_response("The given data was invalid")
+
+
+class TransactionStatusViewSet(ModelViewSet):
+    queryset = TransactionStatus.objects.all().order_by('created_at')
+    serializer_class = TransactionStatusSerializer
+    pagination_class = None
+
+    def get_queryset(self):
+
+        queryset = self.queryset.select_related("created_by", "status")
+        params = self.request.query_params.copy()
+
+        if (not params.get("id", False)) and (not params.get("transaction_id", False)):
+            return queryset.none()
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("id", None):
+            queryset = queryset.filter(id=params.get("id"))
+            return queryset
+
+        if params.get("transaction_id", None):
+            queryset = queryset.filter(transaction=params.get("transaction_id"))
 
         return queryset
 
@@ -436,7 +575,7 @@ class TomasFisicasDetailsViewSet(ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset.objects.order_by("id")
         params = self.request.query_params.copy()
-        print(params)
+
         if params.get("order_by", None):
             fields = params.pop("order_by")
             queryset = queryset.order_by(*fields)
@@ -445,9 +584,77 @@ class TomasFisicasDetailsViewSet(ModelViewSet):
             queryset = queryset.filter(
                 toma_fisica__id=params.get("toma_fisica")
             ).select_related("product", "variant")
-            return queryset
 
-        return error_response("Invalid request")
+        if params.get("warehouse_id", None) is not None:
+            qs = WhTomasFisicas.objects.filter(warehouse=params.get("warehouse_id"))
+            queryset = queryset.filter(toma_fisica__in=qs)
+
+            wh_stock = ProductStockWarehouse.objects.filter(warehouse=params.get("warehouse_id"))
+            queryset = queryset.annotate(
+                warehouse_stock=Subquery(
+                    wh_stock.filter(
+                        variant=OuterRef('variant')
+                    ).values('stock_level'))
+                .query)
+
+        if params.get("acepted", None):
+            queryset = queryset.filter(acepted__icontains=params.get("acepted"))
+
+        if params.get("acepted_by", None):
+            queryset = queryset = queryset.filter(
+                Q(acepted_by__name__icontains=params.get("acepted_by"))
+                | Q(acepted_by__lastname__icontains=params.get("acepted_by"))
+            )
+
+        return queryset
+
+
+@api_view(["PUT"])
+def update_stock(request):
+    if not request.data:
+        return error_response("No data was provided")
+
+    data = request.data
+
+    if (data.get("warehouse_id", None)
+        and data.get("id", None)
+        and data.get("product", None)
+        and data.get("variant", None)
+        and data.get("new_stock", None)
+        and data.get("previous_stock", None)
+            and data.get("acepted", None)):
+
+        detail_status = data.get("acepted")
+
+        tomas_detail = WhTomasFisicasDetails.objects.get(pk=data.get("id"))
+
+        if (tomas_detail.acepted == "AP" and tomas_detail.acepted == detail_status):
+            return error_response("Change already acepted")
+
+        tomas_detail.acepted = detail_status
+        tomas_detail.acepted_by = request.user.employee
+
+        if (detail_status == "AP"):
+            try:
+                qs = ProductStockWarehouse.objects.filter(
+                    warehouse=data.get("warehouse_id")
+                ).filter(
+                    product=data.get("product")
+                ).get(variant=data.get("variant"))
+            except:
+                return error_response("Warehouse stock not found")
+
+            qs.stock_level = qs.stock_level + (data.get("new_stock") - data.get("previous_stock"))
+            qs.updated_by = request.user.employee
+            qs.updated_at = datetime.now()
+            qs.save()
+
+        tomas_detail.save()
+
+        return response("Succesfully updated")
+
+    else:
+        return error_response("Incomplete data")
 
 
 class WhTomasFisicasViewSet(ModelViewSet):
@@ -528,3 +735,68 @@ class WhTomasFisicasViewSet(ModelViewSet):
             serializer = TomasFisicasSerializer(toma_fisica)
             return JsonResponse(serializer.data, status=201)
         return error_response("Data is not valid")
+
+
+class OrderRequestViewSet2(ModelViewSet):
+
+    queryset = (
+        OrderRequest.objects.all()
+        .select_related("warehouse")
+        .select_related("requested_by")
+        .order_by("id")
+    )
+
+    def list(self, request):
+        busqueda = request.query_params.get("busqueda")
+        filtro = request.query_params.get("filtro")
+
+        if busqueda != "":
+            if busqueda != None:
+                if filtro == "bodega":
+                    self.queryset = self.queryset.filter(
+                        warehouse__name__contains=busqueda
+                    )
+                if filtro == "solicitador":
+                    self.queryset = self.queryset.filter(
+                        requested_by__name__contains=busqueda
+                    )
+
+        serializer_class = OrderSerializerORDREQ(self.queryset, many=True)
+
+        page_number = request.query_params.get("page")
+
+        if page_number:
+
+            paginator = Paginator(self.queryset, 50)
+
+            page_obj = paginator.get_page(page_number)
+
+            return Response(OrderSerializerORDREQ(page_obj, many=True).data)
+
+        return Response(serializer_class.data)
+
+
+class OrderSavePriceToItem(APIView):
+    def get(self, request):
+        try:
+            ids = request.query_params.get("id")
+            prices = request.query_params.get("price")
+            updateted_rows = ProductVariant.objects.filter(id=ids).update(price=prices)
+        except Exception as e:
+            error_response("Invalid query")
+
+        return JsonResponse({"error": False, "message": "Ok"})
+
+
+class OrderSaveQuantityToItem(APIView):
+    def get(self, request):
+        try:
+            ids = request.query_params.get("id")
+            quantities = request.query_params.get("quantity")
+            updateted_rows = OrderRequestDetail.objects.filter(item_id=ids).update(
+                quantity=quantities
+            )
+        except Exception as e:
+            error_response("Invalid query")
+
+        return JsonResponse({"error": False, "message": "Ok"})

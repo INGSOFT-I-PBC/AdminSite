@@ -1,11 +1,22 @@
-name: Deploy to production
+name: Deploy to Production
 
 concurrency: production
 
 on:
   push:
+    paths:
+      - 'frontend/**.vue'
+      - 'frontend/**.ts'
+      - 'frontend/**.js'
+      - '!frontend/**.spec.ts'
+      - 'api/**'
+      - 'backend/**'
+
     branches:
       - main
+
+  workflow_call:
+
   workflow_dispatch:
 
 permissions:

@@ -172,6 +172,7 @@
 
     async function onRowClick(selectedItem: Product) {
         pickedProduct.value = selectedItem
+        selectedVariant.value = undefined
         if (selectedItem.variants.length == 1) {
             // Automatically pick the first variant
             selectedVariant.value = selectedItem.variants[0]
@@ -260,6 +261,23 @@
         itemInfoShow.value = true
     }
     watch(serverOpts, loadItems)
+
+    function showInformation() {
+        const targetItem = iformShow.value.variante
+        if (!targetItem || pickedProduct.value == undefined) {
+            toast.warning('No hay ítem seleccionado')
+            return
+        }
+        const target: ProductVariantInformation = {
+            parent: pickedProduct.value,
+            all_attributes: [
+                ...targetItem.attributes,
+                ...(pickedProduct.value?.attributes ?? []),
+            ],
+            ...targetItem,
+        }
+        showItem(target)
+    }
 </script>
 
 <template>
@@ -471,7 +489,6 @@
                                 readonly />
                         </ECol>
                         <ECol cols="12" lg="3" v-if="selectedVariant">
-                            <!-- TODO: Update this from api -->
                             <InputText
                                 label="Stock en bodega"
                                 :model-value="
@@ -490,6 +507,15 @@
                                 "
                                 @click="addToTable">
                                 Añadir producto
+                            </EButton>
+                        </ECol>
+                        <ECol cols="3">
+                            <EButton
+                                id="info-button"
+                                variant="blank"
+                                @click="showInformation">
+                                <FontAwesomeIcon icon="circle-info" />
+                                <span>&ThinSpace;</span>
                             </EButton>
                         </ECol>
                         <!-- <ECol></ECol>
@@ -594,4 +620,75 @@
     .easy-data-table__rows-selector {
         @apply tw-flex tw-relative;
     }
+
+    $message: 'Informacion del ítem';
+    $l: str-length($message);
+
+    @keyframes info_content {
+        0% {
+            content: '';
+            opacity: 0;
+        }
+        10% {
+            content: str-slice($message, 0, calc($l * 0.1));
+        }
+        50% {
+            content: str-slice($message, 0, calc($l/2));
+        }
+        80% {
+            content: str-slice($message, 0, calc($l * 0.8));
+            opacity: 0.65;
+        }
+
+        100% {
+            content: str-slice($message, 0, $l);
+            opacity: 1;
+        }
+    }
+
+    button#info-button {
+        // display:inline-block;
+        padding-left: 0.33rem;
+        padding-right: 0.66rem;
+        transition: all 0.5s;
+        overflow: hidden;
+        box-shadow: none;
+        transition: width 1s ease-in-out;
+        svg {
+            transition: all 0.75s ease-in-out;
+        }
+
+        &:hover {
+            padding-left: 0.1rem;
+            // padding-right: 0.66rem;
+
+            svg {
+                margin-right: 0.11rem;
+            }
+            span::after {
+                animation: info_content 0.25s normal;
+                content: 'Informacion del ítem';
+                opacity: 1;
+                right: 0rem;
+            }
+        }
+        span::after {
+            // content: '';
+            transition: all 0.75s ease-in-out;
+            opacity: 0;
+            right: 3rem;
+        }
+    }
+    // button#info-button span:after {
+
+    //     opacity: 0;
+    //     top: 0;
+    //     transition: all 1.5s;
+    //     width: 0;
+    // }
+    // button#info-button:hover span:after {
+    //     opacity: 1;
+    //     right: 0;
+    //     width: auto;
+    // }
 </style>

@@ -54,6 +54,25 @@ export const useOrderStore = defineStore('orders', () => {
     }
 
     /**
+     * This function would fetch the data for the order requests on a
+     * pagination mode.
+     *
+     * @param params the search params used for this route
+     */
+    async function fetchOrderRequests(
+        params?: PaginationOptions & Partial<OrderSearchParams>
+    ) {
+        const data = (
+            await axios.get<PaginatedResponse<OrderRequest>>(
+                '/api/v1/list/warehouses/order-requests',
+                { params }
+            )
+        ).data
+        orderRequests.value = data
+        return data
+    }
+
+    /**
      * This function will make a partial update of a given order request, and
      * would return the response message of the API server.
      *
@@ -108,5 +127,6 @@ export const useOrderStore = defineStore('orders', () => {
         partialUpdate,
         approveOrderRequest,
         denyOrderRequest,
+        fetchOrderRequests,
     }
 })

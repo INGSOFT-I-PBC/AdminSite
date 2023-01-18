@@ -6,6 +6,14 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
+from api.views.orders import OrderApprovePurchase, OrderRequestFullView
+from api.views.warehouse import (
+    OrderSavePriceToItem,
+    OrderSaveQuantityToItem,
+    TransactionStatusViewSet,
+    WhTransactionDetailsViewSet,
+    update_stock,
+)
 
 """ Definition of paginated data
  This urls are read-only, for batch creation/update
@@ -34,6 +42,8 @@ router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"users", views.UserViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
+router.register(r"warehouses/order-product-provider", views.OrderRequestProductProvider)
+router.register(r"warehouses/order-requests2", views.OrderRequestViewSet2)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"products/variants/<int:variant>/stock", views.ProductStockViewSet)
 router.register("products/(?P<product>\d+)/stock", views.ProductStockViewSet)
@@ -46,6 +56,21 @@ urlpatterns = [
     # <|            Auth endpoints       |>
     # =====================================
     path("logout", TokenBlacklistView.as_view(), name="logout"),
+    path(
+        "warehouse/order-savepricetoitem",
+        OrderSavePriceToItem.as_view(),
+        name="warehouse-priceitem",
+    ),
+    path(
+        "warehouse/order-savequantitytoitem",
+        OrderSaveQuantityToItem.as_view(),
+        name="warehouse-quantityitem",
+    ),
+    path(
+        "warehouse/order-approvePurchase",
+        OrderApprovePurchase,
+        name="warehouse-approvePurchase",
+    ),
     path("auth/me/permissions", views.self_permissions, name="user-permissions"),
     path("auth/me", views.user_data, name="user-data"),
     # =====================================
@@ -144,6 +169,11 @@ urlpatterns = [
     path("order", views.create_order_request),
     path("order/<int:id>", views.OrderRequestView.as_view()),
     path("order/status", views.OrderStatusListViewSet.as_view({"get": "list"})),
+    path(
+        "order-details",
+        OrderRequestFullView.as_view({"get": "list"}),
+        name="order-details",
+    ),
     path("provinces", views.ProvinceCityView.as_view()),
     path("status", views.StatusView.as_view()),
     # =====================================
@@ -165,8 +195,15 @@ urlpatterns = [
     # =====================================
     # <|        Purchase endpoints       |>
     # =====================================
+    path("purchase/create", views.create_purchase),
     path("purchase/details", views.PurchaseDetailsViewSet.as_view({"get": "list"})),
     path("purchase", views.PurchaseAditionalInfoViewSet.as_view({"get": "list"})),
+    # =====================================
+    # <|         Movement endpoints       |>
+    # =====================================
+    path("movement/status", TransactionStatusViewSet.as_view({"get": "list"})),
+    path("movement", WhTransactionDetailsViewSet.as_view({"get": "list"})),
+    path('movement/create', views.create_movement),
     # =====================================
     # <|        Role endpoints       |>
     # =====================================
@@ -182,6 +219,11 @@ urlpatterns = [
         "warehouse/stock",
         views.WhStockViewSet.as_view({"get": "list"}),
         name="wh-inventory",
+    ),
+    path(
+        "warehouse/stock-props",
+        views.WhStockWithPropsViewSet.as_view({"get": "list"}),
+        name="wh-stock-props",
     ),
     path("warehouse/purchase/confirm", views.create_purchase_status),
     path(
@@ -207,10 +249,16 @@ urlpatterns = [
     ),
     # Tomas fisicas
     path(
+        "warehouse/tomas-fisicas/update-stock", views.update_stock,
+        name="wh-tomas-update-stock",
+    ),
+    path(
         "warehouse/tomas-fisicas/details",
         views.TomasFisicasDetailsViewSet.as_view({"get": "list"}),
         name="wh-tomas-details",
     ),
+
+
     path(
         "warehouse/tomas-fisicas/all",
         views.WhLatestTomaFisicaView.as_view(),
@@ -238,6 +286,7 @@ urlpatterns = [
     path("user/<int:id>/activate", views.activate_user),
     path("user/<str:username>/activate", views.activate_user),
     path("user", views.create_user),
+
     # -====[ Test Api view urls ]====-
     path("utils/test", views.CreateTestView.as_view()),
     re_path(r"utils/test/(?P<id>\d+)", views.TestAPIView.as_view()),

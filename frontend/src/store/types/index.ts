@@ -4,6 +4,7 @@ export type {
     DataResponse,
     MessageResponse,
     PaginatedAPIResponse,
+    BadValidationResponse,
 } from './requests'
 
 export { isMessage } from './typesafe'
@@ -14,9 +15,15 @@ export type {
     TomaFisica,
     WhWithTomaFisica,
     Movement,
+    MovementDetail,
+    MovementQuery,
+    MovementStatus,
     WarehouseStock,
     TomaFisicaDetail,
     FullTomaFisicaDetail,
+    MovementSaveData,
+    TomaSaveData,
+    TomaFisicaQuery,
 } from './warehouse.model'
 
 export type {

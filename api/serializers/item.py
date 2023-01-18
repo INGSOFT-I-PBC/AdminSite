@@ -1,8 +1,10 @@
 from distutils.command.install_data import install_data
+
 import rest_framework.serializers as serializers
 
-from api.models import ItemMetaData, Category
+from api.models import Category, ItemMetaData
 from api.models.items import Item
+from api.serializers.status import StatusSerializer
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -45,7 +47,8 @@ class SimpleItemSerializer(serializers.Serializer):
     price = serializers.DecimalField(max_digits=14, decimal_places=3)
     codename = serializers.CharField(max_length=128)
 
-    # category = CategorySerializer()
+    category = CategorySerializer()
+    status = StatusSerializer()
 
     def create(self, validated_data):
         return Item(**validated_data)
@@ -65,6 +68,14 @@ class SimpleItemSerializer(serializers.Serializer):
     class Meta:
         model = Item
         fields = "__all__"
+
+
+class ItemPriceSerializer(serializers.Serializer):
+    def update(self, instance, validated_data):
+        instance.id = validated_data.get("id", instance.id)
+        instance.price = validated_data.get("price", instance.price)
+        instance.save()
+        return instance
 
 
 class ItemPropSerializer(serializers.RelatedField):
