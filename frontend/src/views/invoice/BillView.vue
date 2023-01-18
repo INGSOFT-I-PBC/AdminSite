@@ -11,6 +11,7 @@
     import type { IClient, IPayment, Invoice } from '@store/types'
     //import { useToast } from 'vue-toastification'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
+    import { jsPDF } from 'jspdf'
     import moment from 'moment'
 
     import type { Ref } from 'vue'
@@ -20,7 +21,6 @@
     import WaitOverlay from '../../components/custom/WaitOverlay.vue'
 
     type SearchParam = PaginationOptions
-
     const router = useRouter()
     const productModalShow = ref(false)
     const showWaitOverlay = ref<boolean>(true)
@@ -31,7 +31,6 @@
     const filterText = ref<string>('')
     const itemInfoShow = ref<boolean>(false)
     const toast = useToast()
-
     const templateList = ref<
         {
             label: string
@@ -48,7 +47,6 @@
     const detailSelectedItem = ref<SelectedItem>({
         item: null,
     })
-
     const formFields: TableField[] = [
         '#',
         { label: 'Secuencia', key: 'code' },
@@ -59,10 +57,8 @@
         { label: 'Subtotal', key: 'subtotal' },
         { label: 'Total IVA', key: 'iva' },
         { label: 'Total', key: 'total' },
-
         'Acciones',
     ]
-
     const form = ref<Form>({
         items: [],
     })
@@ -76,7 +72,6 @@
         id: number
         index: number
     }
-
     const itemForm = ref<DeleteInvoice>({
         id: 0,
         index: 0,
@@ -84,10 +79,8 @@
     const model = ref({})
     /*Pagination*/
     const perPage = ref(10)
-
     const searchParam: SearchParam = {
         page: 1,
-
         per_page: 10,
     }
     function cleanFilters() {
@@ -103,7 +96,6 @@
         inventoryForm.client_name = ''
         inventoryForm.client_cid = ''
     }
-
     const inventoryForm: Record<string, any> = ref({
         from_date: '',
         to_date: '',
@@ -141,10 +133,8 @@
             }
         }
     }
-
     async function showInvoices2(query: any) {
         showWaitOverlay.value = true
-
         const res = await itemStore
             .fetchPaginatedListInvoice(query, searchParam)
             .then(() => {
@@ -156,7 +146,6 @@
                         itemStore.paginatedIInvoice as PaginatedResponse<Invoice>
                     ).data
                 }
-
                 console.log(form.value.items)
                 showWaitOverlay.value = false
             })
@@ -175,10 +164,17 @@
         searchParam.page = page
         showInvoices2(inventoryForm)
     }
-
     async function showItem(item: Invoice) {
         detailSelectedItem.value.item = item
         itemInfoShow.value = true
+    }
+
+    async function descargar(item: Invoice) {
+        const doc = new jsPDF()
+        doc.text('Lista de facturas', 40, 40)
+        detailSelectedItem.value.item = item
+        console.log(form.value.items[0])
+        //doc.save("Nota_crédito.pdf");
     }
     function removeItem(index: number) {
         console.log(index)
@@ -188,14 +184,12 @@
         itemStore.removeInvoice(itemForm.value.id)
         removeItem(itemForm.value.index)
     }
-
     function go(): void {
         router.push({ path: '/facturacion/agregar' })
     }
     function goNote(): void {
         router.push({ path: '/facturacion/notascredito' })
     }
-
     function goEdit(id: number): void {
         console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
@@ -205,7 +199,6 @@
         itemForm.value.index = index
         productModalShow.value = true
     }
-
     showInvoices2(inventoryForm)
 </script>
 
@@ -299,6 +292,11 @@
                     <EButton variant="secondary" @click="goNote"
                         >Notas de crédito
                     </EButton>
+
+                    <EButton variant="secondary" @click="descargar(item)"
+                        >PDF
+                    </EButton>
+
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="filterName"
@@ -380,7 +378,6 @@
                             ).name
                         }}
                     </template>
-
                     <template #cell(Acciones)="{ item, index }">
                         <div class="t-button-group">
                             <e-button

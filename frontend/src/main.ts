@@ -47,6 +47,7 @@ if (!import.meta.env.VITE_BACKEND_URL) {
 
 app.use(createPinia())
 app.use(BootstrapVue3)
+
 app.use(router)
 app.use(Toast, defToastOptions)
 app.use(OpenLayersMap)
