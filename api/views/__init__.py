@@ -27,6 +27,15 @@ from api.views.invoiceview import (
     InvoiceViewSet,
     PaginatedIItemViewSet,
     PaginatedItemInvoiceView,
+    PaginatedItemInvoiceView2,
+
+)
+from api.views.dashboard import (
+    DashboardViewSet,
+
+)
+from api.views.creditnote import (
+    CreditNoteViewSet
 )
 from api.views.itemview import (
     ItemView,
@@ -189,4 +198,5 @@ __all__ = [
     FullProvinceViewSet,
     CreateTestView,
     TestAPIView,
+    CreditNoteViewSet,
 ]

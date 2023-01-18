@@ -35,6 +35,7 @@ __all__ = [
     "ProvinceSerializer",
     "FullInvoiceSerializer",
     "IItemSerializer",
+    "IProductStockSerializer",
     "ICategorySerializer",
     "IInvoiceDetailsSerializer",
     "PartialProviderSerializer",

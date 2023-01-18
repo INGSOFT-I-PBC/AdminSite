@@ -798,10 +798,9 @@
                     <template #cell(price)="{ index }"
                         >{{ form.items[index]?.variant?.price }}
                     </template>
-                    <template #cell(iva)="{}"> 0.12 </template>
-                    <!--<template>
-                        0.12 {{ form.items[index]?.item?.iva }}
-                    </template>-->
+                    <template #cell(iva)>
+                        0.12<!-- {{ form.items[index]?.item?.iva }}-->
+                    </template>
                     <template #cell(Acciones)="{ index }">
                         <div class="t-button-group">
                             <EButton

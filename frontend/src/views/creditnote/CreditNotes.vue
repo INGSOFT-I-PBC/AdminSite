@@ -7,9 +7,14 @@
     import ListBox from '@components/custom/ListBox.vue'
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import type { PaginatedResponse } from '@store-types'
-    import { useInvoiceStore } from '@store/invoice'
-    import type { IClient, IPayment, Invoice } from '@store/types'
-    //import { useToast } from 'vue-toastification'
+    import { useCreditNoteStore } from '@store/creditnote'
+    import type {
+        CClient,
+        CreditNote,
+        IClient,
+        IPayment,
+        Invoice,
+    } from '@store/types'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
     import moment from 'moment'
 
@@ -25,7 +30,7 @@
     const productModalShow = ref(false)
     const showWaitOverlay = ref<boolean>(true)
     const itemLoading = ref(false)
-    const itemStore = useInvoiceStore()
+    const itemStore = useCreditNoteStore()
     const emission: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
     const endDate: Ref<string> = ref(new Date().toUTCString().slice(0, 10))
     const filterText = ref<string>('')
@@ -39,8 +44,8 @@
         }[]
     >([
         //{ label: 'Por creador', value: 'created' },
-        { label: 'Por tipo de ID', value: 'cid' },
-        { label: 'Por Nombres y apellidos', value: 'name' },
+        { label: 'Por Cédula de Cliente', value: 'cid' },
+        { label: 'Por Nombres y apellidos de Cliente', value: 'name' },
         { label: 'Por fecha de creación', value: 'emission' },
     ])
     const filterName = ref(templateList.value[0])
@@ -51,11 +56,11 @@
 
     const formFields: TableField[] = [
         '#',
-        { label: 'Secuencia', key: 'code' },
-        { label: 'Emisión', key: 'emission' },
-        'Cliente',
-        { label: 'Cedúla Cliente', key: 'cid' },
-        { label: 'Metodo de pago', key: 'name' },
+        { label: 'Secuencia de factura', key: 'code' },
+        { label: 'Fecha de creación', key: 'created_at' },
+        { label: 'Nombre Cliente', key: 'name_client' },
+        { label: 'Cedúla Cliente', key: 'cid_client' },
+        { label: 'Metodo de pago', key: 'name_payment' },
         { label: 'Subtotal', key: 'subtotal' },
         { label: 'Total IVA', key: 'iva' },
         { label: 'Total', key: 'total' },
@@ -66,11 +71,9 @@
     const form = ref<Form>({
         items: [],
     })
-    const formFiltres = ref<Form>({
-        items: [],
-    })
+
     type Form = {
-        items: Invoice[]
+        items: CreditNote[]
     }
     type DeleteInvoice = {
         id: number
@@ -92,10 +95,8 @@
     }
     function cleanFilters() {
         filterText.value = ''
-        //formFiltres.value.items.splice(0, formFiltres.value.items.length)
         cleanQuery()
         showInvoices2(inventoryForm)
-        //showInvoices()
     }
     function cleanQuery() {
         inventoryForm.from_date = ''
@@ -146,17 +147,18 @@
         showWaitOverlay.value = true
 
         const res = await itemStore
-            .fetchPaginatedListInvoice(query, searchParam)
+            .fetchPaginatedListCreditNote(query, searchParam)
             .then(() => {
                 if (
-                    (itemStore.paginatedIInvoice as PaginatedResponse<Invoice>)
-                        .data !== undefined
+                    (
+                        itemStore.paginatedCreditNote as PaginatedResponse<CreditNote>
+                    ).data !== undefined
                 ) {
                     form.value.items = (
-                        itemStore.paginatedIInvoice as PaginatedResponse<Invoice>
+                        itemStore.paginatedCreditNote as PaginatedResponse<CreditNote>
                     ).data
                 }
-
+                console.log(itemStore.paginatedCreditNote?.data)
                 console.log(form.value.items)
                 showWaitOverlay.value = false
             })
@@ -176,10 +178,6 @@
         showInvoices2(inventoryForm)
     }
 
-    async function showItem(item: Invoice) {
-        detailSelectedItem.value.item = item
-        itemInfoShow.value = true
-    }
     function removeItem(index: number) {
         console.log(index)
         form.value.items.splice(index, 1)
@@ -192,14 +190,17 @@
     function go(): void {
         router.push({ path: '/facturacion/agregar' })
     }
+    function goNote(): void {
+        router.push({ path: '/facturacion/notascredito' })
+    }
+
     function goEdit(id: number): void {
         console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
     }
-    function onSubmit(id: number, index: number) {
-        itemForm.value.id = id
-        itemForm.value.index = index
-        productModalShow.value = true
+    function goCancelBill(id: number): void {
+        console.log(id)
+        router.push({ path: `/facturacion/cancel/${String(id)}` })
     }
 
     showInvoices2(inventoryForm)
@@ -232,7 +233,7 @@
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >cliente:</span
                             >
-                            <span class="col-6">{{ (d as IClient).name }}</span>
+                            <span class="col-6">{{ (d as CClient).name }}</span>
                         </div>
                         <div class="row" v-else-if="k == 'payment_method'">
                             <span class="tw-w-1/2 tw-font-bold col-6"
@@ -285,10 +286,16 @@
 
         <ECard>
             <ERow>
-                <h1 style="font-size: 35px; color: black">Notas de crédito</h1>
+                <h1 style="font-size: 35px; color: black">Facturas</h1>
             </ERow>
             <nav class="navbar">
                 <div class="container-fluid">
+                    <EButton variant="secondary" @click="go"
+                        >+ Agregar factura
+                    </EButton>
+                    <EButton variant="secondary" @click="goNote"
+                        >Notas de crédito
+                    </EButton>
                     <ECol cols="9" md="6" xl="4">
                         <ListBox
                             v-model="filterName"
@@ -339,60 +346,38 @@
             <!-- <ERow>
                 <ECol cols="12"> -->
             <WaitOverlay :show="showWaitOverlay">
-                <BTable
-                    :fields="formFields"
-                    :items="itemStore.paginatedIInvoice?.data">
+                <BTable :fields="formFields" :items="form.items">
                     <template #cell(#)="{ index }">{{ index + 1 }} </template>
-                    <template #cell(Cliente)="{ index }"
+
+                    <template #cell(created_at)="{ index }"
                         >{{
-                            (
-                                itemStore.paginatedIInvoice?.data[index][
-                                    'client'
-                                ] as IClient
-                            ).name
+                            moment(
+                                form.items[index].created_at as string
+                            ).format('DD/MM/YYYY')
                         }}
                     </template>
-                    <template #cell(cid)="{ index }"
+                    <template #cell(name_client)="{ index }"
+                        >{{ (form.items[index]['client'] as IClient)?.name }}
+                    </template>
+                    <template #cell(cid_client)="{ index }"
                         >{{
-                            (
-                                itemStore.paginatedIInvoice?.data[index][
-                                    'client'
-                                ] as IClient
-                            ).number_id
+                            (form.items[index]['client'] as IClient)?.number_id
                         }}
                     </template>
-                    <template #cell(name)="{ index }"
+                    <template #cell(name_payment)="{ index }"
                         >{{
-                            (
-                                itemStore.paginatedIInvoice?.data[index][
-                                    'payment_method'
-                                ] as IPayment
-                            ).name
+                            (form.items[index]['payment_method'] as IPayment)
+                                ?.name
                         }}
                     </template>
 
-                    <template #cell(Acciones)="{ item, index }">
+                    <template #cell(Acciones)="{ item }">
                         <div class="t-button-group">
                             <e-button
                                 left-icon="fa-eye"
                                 variant="secondary"
-                                @click="showItem(item)"
-                                >Ver detalles</e-button
-                            >
-                            <e-button
-                                left-icon="fa-edit"
-                                variant="success"
                                 @click="goEdit(item['id'])"
-                                >Editar</e-button
-                            >
-                            <e-button
-                                left-icon="fa-cancel"
-                                variant="cancel"
-                                @click="onSubmit(item['id'], index)">
-                                <span
-                                    class="tw-invisible md:tw-visible tw-font-bold"
-                                    >Anular</span
-                                ></e-button
+                                >Ver detalles</e-button
                             >
                         </div>
                     </template>
@@ -401,7 +386,7 @@
                     <BPagination
                         align="center"
                         v-model="searchParam.page"
-                        :total-rows="itemStore.paginatedIInvoice?.total ?? 1"
+                        :total-rows="itemStore.paginatedCreditNote?.total ?? 1"
                         :per-page="searchParam.per_page ?? 10"
                         next-text="Siguiente"
                         prev-text="Anterior"

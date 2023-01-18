@@ -22,7 +22,7 @@ export const bill: Array<RouteConfig> = [
     {
         path: '/facturacion/notascredito',
         name: 'viewnotescredit-panel',
-        component: () => import('@views/invoice/CreditNotes.vue'),
+        component: () => import('@views/creditnote/CreditNotes.vue'),
         meta: {
             pageTitle: 'Notas de crédito',
             permission: 'view_dashboard',
@@ -42,7 +42,7 @@ export const bill: Array<RouteConfig> = [
     {
         path: '/facturacion/cancel/:id',
         name: 'cancelbill-panel',
-        component: () => import('@views/invoice/CancelBillView.vue'),
+        component: () => import('@views/creditnote/CancelBillView.vue'),
         meta: {
             pageTitle: 'Facturas',
             permission: 'view_dashboard',

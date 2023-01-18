@@ -88,7 +88,7 @@ urlpatterns = [
     path("invoice", views.InvoiceView.as_view({"post": "save_invoice"}), name="save-invoice"),
     path(
         "invoice/quantity",
-        views.InvoiceView.as_view({"put": "edit_quantity"}),
+        views.InvoiceView.as_view({"put": "edit_quantity2"}),
         name="save-invoice",
     ),
     path(
@@ -103,6 +103,22 @@ urlpatterns = [
         views.PaginatedItemInvoiceView.as_view(),
         name="search-invoice-items",
     ),
+    path(
+        "invoice/product-inventory",
+        views.PaginatedItemInvoiceView2.as_view({"get": "list"}),
+        name="product-inventory-items",
+    ),
+     # =====================================
+    # <|        Credit Note  endpoints       |>
+    # =====================================
+    path(
+        "creditnotes",
+        views.CreditNoteViewSet.as_view({"get": "list"}),
+        name="creditnote-list",
+    ),
+    path("save/creditnote", views.CreditNoteViewSet.as_view({"post": "save_creditnote"}), name="save-creditnote"),
+    path("edit/creditnote/invoice", views.CreditNoteViewSet.as_view({"put": "edit_invoice_anulated"}), name="edit-creditnote-invoice"),
+
     # =====================================
     # <|        Inventory endpoints       |>
     # =====================================
@@ -207,6 +223,13 @@ urlpatterns = [
         name="product-inventory",
     ),
     path("warehouse/puchase-order", views.WhOrderRequestView.as_view(), name="wh-orders"),
+    # =====================================
+    # <|         Dashboard         |>
+    # =====================================
+    path("dashboard/sales", views.DashboardViewSet.as_view({"get": "search_sales"})),
+    path("dashboard/sales/allmonths", views.DashboardViewSet.as_view({"get": "search_sales_months"})),
+
+
     # =====================================
     # <|         User endpoints          |>
     # =====================================

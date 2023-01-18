@@ -19,6 +19,7 @@
         MessageResponse,
     } from '@store/types'
     import { type Sequence, isMessage } from '@store/types'
+    import type { IVariant } from '@store/types/invoice.model'
     import type { TableField } from 'bootstrap-vue-3'
     import { Console } from 'console'
     import { all } from 'ol/loadingstrategy'
@@ -98,16 +99,16 @@
         buscar: serverOpts.value.buscar,
     }))
     const iformShow = computed(() => ({
-        codigo: itemForm.value.item?.item?.codename?.toString(),
-        nombre: itemForm.value.item?.item?.name ?? '',
+        codigo: itemForm.value.item?.variant?.sku?.toString(),
+        nombre: itemForm.value.item?.variant?.variant_name ?? '',
         iquantity: itemForm.value.iquantity ?? 1,
-        priceIVA:
-            Number(itemForm.value.item?.item?.price) *
-            Number(itemForm.value.item?.item?.iva),
-        iva: itemForm.value.item?.item?.iva,
+        priceIVA: Number(itemForm.value.item?.variant?.price) * 0.12,
+        // Number(itemForm.value.item?.item?.iva),
+        iva: 0.12, //itemForm.value.item?.item?.iva,
         total:
-            Number(itemForm.value.item?.item?.price) *
-            Number(itemForm.value.item?.item?.iva) *
+            Number(itemForm.value.item?.variant?.price) *
+            0.12 *
+            //Number(itemForm.value.item?.item?.iva) *
             Number(itemForm.value.iquantity),
     }))
 
@@ -172,12 +173,11 @@
         totalInvoice: '0',
     })
     const itemHeader = [
-        { text: 'Código', value: 'item.codename' },
-        { text: 'Nombre de producto', value: 'item.name' },
-        { text: 'Marca', value: 'item.brand' },
-        { text: 'Modelo', value: 'item.model' },
-        { text: 'Stock', value: 'quantity' },
-        { text: 'Categoría', value: 'item.category.name' },
+        { text: 'Código', value: 'variant.sku' },
+        { text: 'Nombre de producto', value: 'product.product_name' },
+        { text: 'Variante', value: 'variant.variant_name' },
+        { text: 'Marca', value: 'product.brand_name' },
+        { text: 'Stock', value: 'stock_level' },
     ]
     const formFields: TableField[] = [
         '#',
@@ -185,10 +185,10 @@
         'Descripción',
         'Medida',
         { label: 'Cantidad', key: 'iquantity' },
-        { label: 'Precio IVA', key: 'price' },
-        { label: 'IVA', key: 'iva' },
+        { label: 'Precio', key: 'price' },
+        { label: 'IVA 12%', key: 'iva' },
         { label: 'Total', key: 'total' },
-        'Acciones',
+        //  'Acciones',
     ]
     const formSequence = ref<Sequence>({
         id: 0,
@@ -250,9 +250,10 @@
             total: Number(itemForm.value.totalInvoice),
             anulated: false,
             invoice_details: data.items.map(it => ({
-                price: Number(it.item?.price),
+                price: Number(it.variant?.price),
                 quantity: it.iquantity,
-                item: Number(it.item?.id),
+                product: it.product?.id,
+                variant: it.variant?.id,
             })),
         }
         showWaitOverlay.value = true
@@ -261,12 +262,12 @@
             .then(() => {
                 for (const i of form.value.items) {
                     const editquantity: IEditInventory = {
-                        quantity: i.quantity - i.iquantity,
+                        stock_level: i.stock_level - i.iquantity,
                     }
-                    console.log(i.item?.id)
-                    console.log(editquantity.quantity)
+                    //console.log(i.item?.id)
+                    //console.log(editquantity.quantity)
                     itemStore.editquantityInventory(
-                        Number(i.item?.id),
+                        Number(i.variant?.id),
                         editquantity
                     )
                 }
@@ -305,13 +306,13 @@
                     console.log(index)
                 } else if (
                     form.value.items[index].iquantity >
-                    form.value.items[index].quantity
+                    form.value.items[index].stock_level
                 ) {
                     toast.error(
-                        `El stock del producto ${form.value.items[index].item?.codename} es de ${form.value.items[index].quantity}`
+                        `El stock del producto ${form.value.items[index].variant?.sku} es de ${form.value.items[index].stock_level}`
                     )
                     form.value.items[index].iquantity =
-                        form.value.items[index].quantity
+                        form.value.items[index].stock_level
                 }
                 itemForm.value.subtotal = '0'
                 itemForm.value.totalIVA = '0'
@@ -319,14 +320,13 @@
                 for (const i of form.value.items) {
                     const suma =
                         Number(i.iquantity) *
-                        (Number(i.item?.price) +
-                            Number(i.item?.price) * Number(i.item?.iva))
+                        (Number(i.variant?.price) +
+                            Number(i.variant?.price) * 0.12) // Number(i.item?.iva))
                     i.total = Number(suma.toFixed(2))
-                    i.subtotal = Number(i.iquantity) * Number(i.item?.price)
+                    i.subtotal = Number(i.iquantity) * Number(i.variant?.price)
                     i.totalIVA =
-                        Number(i.iquantity) *
-                        Number(i.item?.price) *
-                        Number(i.item?.iva)
+                        Number(i.iquantity) * Number(i.variant?.price) * 0.12
+                    //Number(i.item?.iva)
                     itemForm.value.subtotal = (
                         Number(itemForm.value.subtotal) +
                         Number(i.subtotal.toFixed(2))
@@ -358,9 +358,9 @@
         }
         const suma =
             Number(itemForm.value.iquantity) *
-            (Number(itemForm.value.item?.item?.price) +
-                Number(itemForm.value.item?.item?.price) *
-                    Number(itemForm.value.item?.item?.iva))
+            (Number(itemForm.value.item?.variant?.price) +
+                Number(itemForm.value.item?.variant?.price) * 0.12)
+        //  Number(itemForm.value.item?.item?.iva))
         form.value.items.push({
             ...itemForm.value.item,
             iquantity: Number(itemForm.value.iquantity),
@@ -369,23 +369,25 @@
         itemForm.value.subtotal = (
             Number(itemForm.value.subtotal) +
             Number(itemForm.value.iquantity) *
-                Number(itemForm.value.item?.item?.price)
+                Number(itemForm.value.item?.variant?.price)
         ).toFixed(2)
 
         itemForm.value.totalIVA = (
             Number(itemForm.value.totalIVA) +
             Number(itemForm.value.iquantity) *
-                Number(itemForm.value.item?.item?.price) *
-                Number(itemForm.value.item?.item?.iva)
-        ).toFixed(2)
+                Number(itemForm.value.item?.variant?.price) *
+                0.12
+        )
+            //Number(itemForm.value.item?.item?.iva)
+            .toFixed(2)
 
         const subtotal =
             Number(itemForm.value.iquantity) *
-            Number(itemForm.value.item?.item?.price)
+            Number(itemForm.value.item?.variant?.price)
         const totalIva =
             Number(itemForm.value.iquantity) *
-            (Number(itemForm.value.item?.item?.price) *
-                Number(itemForm.value.item?.item?.iva))
+            (Number(itemForm.value.item?.variant?.price) * 0.12)
+        // Number(itemForm.value.item?.item?.iva))
         itemForm.value.totalInvoice = (
             Number(itemForm.value.totalInvoice) +
             Number(subtotal) +
@@ -410,14 +412,11 @@
         for (const i of form.value.items) {
             const suma =
                 Number(i.iquantity) *
-                (Number(i.item?.price) +
-                    Number(i.item?.price) * Number(i.item?.iva))
+                (Number(i.variant?.price) + Number(i.variant?.price) * 0.12) // Number(i.item?.iva))
             i.total = Number(suma.toFixed(2))
-            i.subtotal = Number(i.iquantity) * Number(i.item?.price)
-            i.totalIVA =
-                Number(i.iquantity) *
-                Number(i.item?.price) *
-                Number(i.item?.iva)
+            i.subtotal = Number(i.iquantity) * Number(i.variant?.price)
+            i.totalIVA = Number(i.iquantity) * Number(i.variant?.price) * 0.12
+            //Number(i.item?.iva)
             itemForm.value.subtotal = (
                 Number(itemForm.value.subtotal) + Number(i.subtotal.toFixed(2))
             ).toFixed(2)
@@ -535,15 +534,15 @@
             console.log(value)
 
             itemForm.value.item = await itemStore.fetchIInventoryById(
-                (value.item as IItem)?.id
+                (value.variant as IVariant)?.id
             )
 
             itemForm.value.iquantity = String(value.quantity)
             const suma =
                 Number(itemForm.value.iquantity) *
-                (Number(itemForm.value.item?.item?.price) +
-                    Number(itemForm.value.item?.item?.price) *
-                        Number(itemForm.value.item?.item?.iva))
+                (Number(itemForm.value.item?.variant?.price) +
+                    Number(itemForm.value.item?.variant?.price) * 0.12)
+            // Number(itemForm.value.item?.item?.iva))
             form.value.items.push({
                 ...itemForm.value.item,
                 iquantity: Number(itemForm.value.iquantity),
@@ -552,23 +551,25 @@
             itemForm.value.subtotal = (
                 Number(itemForm.value.subtotal) +
                 Number(itemForm.value.iquantity) *
-                    Number(itemForm.value.item?.item?.price)
+                    Number(itemForm.value.item?.variant?.price)
             ).toFixed(2)
 
             itemForm.value.totalIVA = (
                 Number(itemForm.value.totalIVA) +
                 Number(itemForm.value.iquantity) *
-                    Number(itemForm.value.item?.item?.price) *
-                    Number(itemForm.value.item?.item?.iva)
-            ).toFixed(2)
+                    Number(itemForm.value.item?.variant?.price) *
+                    0.12
+            )
+                // Number(itemForm.value.item?.item?.iva)
+                .toFixed(2)
 
             const subtotal =
                 Number(itemForm.value.iquantity) *
-                Number(itemForm.value.item?.item?.price)
+                Number(itemForm.value.item?.variant?.price)
             const totalIva =
                 Number(itemForm.value.iquantity) *
-                (Number(itemForm.value.item?.item?.price) *
-                    Number(itemForm.value.item?.item?.iva))
+                (Number(itemForm.value.item?.variant?.price) * 0.12)
+            // Number(itemForm.value.item?.item?.iva))
             itemForm.value.totalInvoice = (
                 Number(itemForm.value.totalInvoice) +
                 Number(subtotal) +
@@ -644,7 +645,7 @@
         </ModalDialog>
         <div class="container" style="border-radius: 5px">
             <EForm>
-                <ERow v-if="divEditar">
+                <!-- <ERow v-if="divEditar">
                     <ECol cols="6" lg="6" xl="2">
                         <EButton
                             left-icon="fa-edit"
@@ -663,7 +664,7 @@
                             Cancelar
                         </EButton>
                     </ECol>
-                </ERow>
+                </ERow>-->
                 <ERow align-v="start" class="tw-items-center">
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
@@ -723,7 +724,7 @@
                                 " />
                         </div>
                     </ECol>
-                    <ECol cols="6" lg="6" xl="1">
+                    <!-- <ECol cols="6" lg="6" xl="1">
                         <EButton
                             variant="secondary"
                             class="tw-w-full lg:tw-w-auto"
@@ -731,28 +732,26 @@
                             @click="loadClient(formClient.number_id)">
                             Buscar
                         </EButton>
-                    </ECol>
+                    </ECol>-->
 
                     <ECol cols="12" lg="6" xl="2">
-                        <br />
+                        <!-- <br />-->
 
                         <InputText
+                            label="Nombre del Cliente"
                             placeholder=""
                             :model-value="formClient.name"
                             readonly />
                     </ECol>
                     <ECol cols="12" lg="6" xl="1"> </ECol>
                     <ECol cols="12" lg="6" xl="3">
-                        <ListBox
-                            top-label="Seleccione metodo de pago"
-                            v-model="form.payment_method"
-                            placeholder="No ha seleccionado metodo de pago"
-                            :disabled="readonlyPayMethod"
-                            :options="paymentStore.allPayment ?? []"
-                            label="name" />
+                        <InputText
+                            label="Método de pago"
+                            :model-value="form.payment_method?.name"
+                            readonly />
                     </ECol>
                 </ERow>
-                <ERow style="margin-bottom: 10px">
+                <!--<ERow style="margin-bottom: 10px">
                     <ECol cols="6" lg="auto">
                         <EButton
                             class="tw-w-full lg:tw-w-auto"
@@ -761,7 +760,7 @@
                             Seleccionar producto
                         </EButton>
                     </ECol>
-                </ERow>
+                </ERow>-->
                 <div class="tw">
                     <div class="tw"></div>
                 </div>
@@ -772,12 +771,11 @@
                         {{ index + 1 }}
                     </template>
                     <template #cell(Código)="{ index }">
-                        {{ form.items[index]?.item?.codename }}
+                        {{ form.items[index]?.variant?.sku }}
                     </template>
                     <template #cell(Descripción)="{ index }"
-                        >{{ form.items[index]?.item?.name }}-
-                        {{ form.items[index]?.item?.model }}-
-                        {{ form.items[index]?.item?.brand }}
+                        >{{ form.items[index]?.variant?.variant_name }}-
+                        {{ form.items[index]?.product?.brand_name }}
                     </template>
                     <template #cell(Medida)="{}">Unidad </template>
                     <template #cell(iquantity)="{ index }">
@@ -796,12 +794,12 @@
                         </ECol>
                     </template>
                     <template #cell(price)="{ index }"
-                        >{{ form.items[index]?.item?.price }}
+                        >{{ form.items[index]?.variant?.price }}
                     </template>
-                    <template #cell(iva)="{ index }"
-                        >{{ form.items[index]?.item?.iva }}
+                    <template #cell(iva)>
+                        0.12<!-- {{ form.items[index]?.item?.iva }}-->
                     </template>
-                    <template #cell(Acciones)="{ index }">
+                    <!--<template #cell(Acciones)="{ index }">
                         <div class="t-button-group">
                             <EButton
                                 left-icon="fa-trash-can"
@@ -814,7 +812,7 @@
                                 </span>
                             </EButton>
                         </div>
-                    </template>
+                    </template>-->
                 </BTable>
             </div>
             <ERow>
@@ -845,10 +843,10 @@
                     style="position: absolute; top: 220px; right: 10px">
                     <EButton
                         left-icon="fa-floppy-disk"
+                        variant="cancel"
                         icon-provider="awesome"
-                        :disabled="divButtons"
                         @click="onSubmit">
-                        Facturar
+                        Anular
                     </EButton>
                 </ECol>
                 <ECol

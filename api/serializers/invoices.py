@@ -1,6 +1,8 @@
 # from rest_framework.serializers import ModelSerializer
 import rest_framework.serializers as serializers
 from django.core.validators import MinValueValidator
+import rest_framework.serializers as _srl
+
 
 from api.models import (
     Category,
@@ -9,9 +11,62 @@ from api.models import (
     Invoice,
     InvoiceDetails,
     Item,
+    ProductVariant,
+    Product,
+    ProductStockWarehouse,
     PaymentMethod,Inventory
 )
 
+from rest_framework.serializers import (
+    DateTimeField,
+    IntegerField,
+    ModelSerializer,
+)
+from api.serializers.users import EmployeeSerializer as SimpleEmployeeSerializer
+from api.models.products import ProductStockWarehouse
+
+class ISimpleProductSerializer(_srl.ModelSerializer):
+    id = _srl.IntegerField()
+    product_name = _srl.CharField(max_length=128)
+    brand_name = _srl.CharField(max_length=50)
+    base_price = _srl.DecimalField(max_digits=14, decimal_places=3)
+
+    class Meta:
+        model = Product
+        fields = [
+            "id",
+            "product_name",
+            "brand_name",
+            "base_price",
+        ]
+class ISimpleVariantSerializer(ModelSerializer):
+
+    id = IntegerField()
+    variant_name = _srl.CharField(max_length=50)
+    sku = _srl.CharField(max_length=128)
+    price = _srl.DecimalField(max_digits=14, decimal_places=3)
+    is_active = _srl.BooleanField()
+
+    class Meta:
+        model = ProductVariant
+        fields = [
+            "id",
+            "variant_name",
+            "sku",
+            "price",
+            "is_active",
+        ]
+
+class IProductStockSerializer(ModelSerializer):
+
+    id = IntegerField()
+    variant = ISimpleVariantSerializer()
+    product = ISimpleProductSerializer()
+    stock_level = IntegerField()
+
+    class Meta:
+        model = ProductStockWarehouse
+        fields = ["id","product", "variant", "stock_level"]
 
 class EmployeeSerializer(serializers.ModelSerializer):
     class Meta:
@@ -43,7 +98,7 @@ class IItemSerializer(serializers.ModelSerializer):
             "category",
         ]
 
-class IInventorySerializer(serializers.ModelSerializer):
+'''class IInventorySerializer(serializers.ModelSerializer):
     """
     Serializer class that show all the data of the Warehouse model
     """
@@ -56,8 +111,22 @@ class IInventorySerializer(serializers.ModelSerializer):
             "id",
             "item",
             "quantity"
-        ]
+        ]'''
 
+class IInventorySerializer(serializers.ModelSerializer):
+    """
+    Serializer class that show all the data of the Warehouse model
+    """
+
+    variant = ISimpleVariantSerializer(read_only=True)
+
+    class Meta:
+        model = ProductStockWarehouse
+        fields = [
+            "id",
+            "variant",
+            "stock_level"
+        ]
 
 class IClientSerializer(serializers.ModelSerializer):
     class Meta:
@@ -84,19 +153,20 @@ class IPayMethodSerializer(serializers.ModelSerializer):
 
 
 class IInvoiceDetailsSerializer(serializers.ModelSerializer):
-    item = IItemSerializer()
+    variant = ISimpleVariantSerializer()
+    product=ISimpleProductSerializer()
 
     class Meta:
         model = InvoiceDetails
-        fields = ["id", "invoice", "item", "price", "quantity", "price"]
+        fields = ["id", "invoice", "price", "quantity","variant","product"]
 
 
 class IInvoiceDetailsEditSerializer(serializers.ModelSerializer):
     class Meta:
         model = InvoiceDetails
-        fields = ["id", "invoice", "item", "price", "quantity", "price"]
+        fields = ["id", "invoice", "price", "quantity","variant","product"]
 
-class InvoiceInventorySerializer(serializers.Serializer):
+'''class InvoiceInventorySerializer(serializers.Serializer):
     """
     Serializer class that show the essential data of a Invoice Inventary model object
     """
@@ -112,6 +182,21 @@ class InvoiceInventorySerializer(serializers.Serializer):
         instance.save()
         return instance
 
+'''
+class InvoiceInventorySerializer(serializers.Serializer):
+    """
+    Serializer class that show the essential data of a Invoice Inventary model object
+    """
+    id=serializers.IntegerField(read_only=True)
+    stock_level=serializers.IntegerField(validators=[MinValueValidator(0)])
+
+
+    def update(self, instance, validated_data):
+        instance.stock_level = validated_data.get("stock_level", instance.stock_level)
+        #print(instance)
+
+        instance.save()
+        return instance
 
 class FullInvoiceSerializer(serializers.ModelSerializer):
     """
@@ -167,6 +252,22 @@ class InvoiceEditSerializer(serializers.ModelSerializer):
         model = Invoice
         fields = [
             "client",
+            "created_at",
+            "emission",
+            "return_deadline",
+            "iva",
+            "payment_method",
+            "status",
+            "subtotal",
+            "total",
+            "anulated",
+            "created_by",
+        ]
+class InvoiceSerializerlist(serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = [
+            "code",
             "created_at",
             "emission",
             "return_deadline",
