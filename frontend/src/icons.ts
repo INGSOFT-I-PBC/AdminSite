@@ -42,6 +42,8 @@ import {
     faGear,
     faGears,
     faHouseChimney,
+    faInfo,
+    faInfoCircle,
     faLocationDot,
     faLock,
     faMinus,
@@ -118,4 +120,6 @@ export const awesomeIcons: Array<IconDefinition> = [
     faEyeSlash,
     faLocationDot,
     faUpload,
+    faInfo,
+    faInfoCircle,
 ]
