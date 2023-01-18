@@ -62,4 +62,13 @@ export interface SimpleProductStock {
 export interface ProductVariant extends BaseProductVariant {
     id: number
     img: string | null
+    upc: string | null
+    ean: string | null
+}
+
+export interface BCProductVariant extends ProductVariant {
+    product_name: string
+    summary: string
+    brand_name: string
+    short_description: string
 }

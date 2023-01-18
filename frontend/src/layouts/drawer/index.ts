@@ -110,6 +110,11 @@ export const menus: MenuItem[] = [
                 path: '/bodegas/tomas-fisicas',
                 routeName: 'tomas-fisica-view',
             },
+            {
+                label: 'Imp. Etiquetas',
+                path: '/bodegas/impresion-etiquetas',
+                routeName: 'warehouse-tag-print',
+            },
         ],
     },
     {

@@ -132,4 +132,17 @@ export const warehouses: Array<RouteConfig> = [
             ],
         },
     },
+    {
+        path: '/bodegas/impresion-etiquetas',
+        name: 'warehouse-tag-print',
+        component: () => import('@views/warehouse/TagPrintingView.vue'),
+        meta: {
+            pageTitle: 'Impresión de etiquetas',
+            permission: 'can_print_tags',
+            breadcrumb: [
+                { text: 'Bodegas' },
+                { text: 'Impresión de etiquetas' },
+            ],
+        },
+    },
 ]
