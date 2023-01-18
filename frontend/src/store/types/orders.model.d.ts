@@ -100,7 +100,8 @@ export type FullOrderDetail = {
 }
 
 export type SaveOrderDetail = {
-    item: number
+    variant: number
+    product: number
     price: number
     quantity: number
 }

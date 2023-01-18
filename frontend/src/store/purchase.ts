@@ -15,7 +15,7 @@ import type { SaveOrderDetail } from './types/orders.model'
 
 export type PurchaseFromOrderData = {
     warehouse_id: number
-    order_id: number
+    order_origin: number
     details: { provider: number; products: SaveOrderDetail[] }[]
 }
 

@@ -8,6 +8,7 @@ import type {
     OrderRequestDetail,
     OrderRequestInfo,
     OrderSaveData,
+    OrderStatus,
     RawOrderRequest,
     SimpleOrderRequest,
     SimpleOrderStatus,
@@ -113,11 +114,11 @@ export const useOrderStore = defineStore('orders', () => {
         return partialUpdate(target, { status: 'NG' })
     }
 
-    async function fetchStatus(params: PaginationOptions) {
+    async function fetchStatus(query: OrderQuery) {
         const data = (
-            await axios.get<PaginatedResponse<SimpleOrderRequest>>(
-                '/api/v1/list/order/status',
-                { params }
+            await axios.get<SimpleOrderStatus[] | MessageResponse>(
+                '/api/v1/order/status',
+                { params: query }
             )
         ).data
         return data
@@ -131,25 +132,6 @@ export const useOrderStore = defineStore('orders', () => {
                     params: options,
                 }
             )
-        ).data
-
-        return result
-    }
-
-    async function saveQuantityToItem(
-        options: Optional<OrderSaveData> = null,
-        item = '',
-        quantity = ''
-    ) {
-        const dato = {
-            id: item,
-            quantity: quantity,
-        }
-
-        const result = await (
-            await axios.get('/api/v1/warehouse/order-savequantitytoitem', {
-                params: item != '' ? dato : options,
-            })
         ).data
 
         return result
@@ -170,6 +152,14 @@ export const useOrderStore = defineStore('orders', () => {
         return result
     }
 
+    async function rejectOrderRequest(order_id: number) {
+        return (
+            await axios.put<MessageResponse>('/api/v1/order/reject', {
+                id: order_id,
+            })
+        ).data
+    }
+
     return {
         orderRequests,
         order,
@@ -180,8 +170,9 @@ export const useOrderStore = defineStore('orders', () => {
         approveOrderRequest,
         denyOrderRequest,
         fetchOrderRequests,
+        fetchStatus,
         fetchOrdersRequestWithInfo,
-        saveQuantityToItem,
         fetchOrdersDetails,
+        rejectOrderRequest,
     }
 })

@@ -11,6 +11,7 @@ from api.models import OrderRequest
 from api.models.common import Status
 from api.models.orders import OrderRequestDetail, OrderStatus
 from api.serializers.order import (
+    CreateOrderStatusSerializer,
     FullOrderDetailSerializer,
     OrderDetailSerializer,
     OrderReadSerializer,
@@ -63,6 +64,7 @@ class OrderRequestView(APIView):
         serialized = PartialOrderSerializer(target, data=new_data)
         serialized.is_valid(raise_exception=True)
         target = serialized.save()
+
         if new_status in ("AP", "NG"):
             target.revised_at = datetime.now()
             target.revised_by = request.user.employee
@@ -141,9 +143,9 @@ def reject_order(request):
         return error_response("Invalid data")
 
     order: OrderRequest = OrderRequest.objects.get(pk=data.get("id"))
-
     order.revised_at = datetime.now()
     order.revised_by = request.user.employee
+    order.status = "NG"
 
     try:
         denied_status = Status.objects.get(name=OrderRequest.OrderStatus.NEGATED)
@@ -152,17 +154,17 @@ def reject_order(request):
 
     status_data = {
         "created_at": datetime.now(),
-        "created_by ": request.user.employee,
-        "status": denied_status,
-        "order": data.get("id")
+        "created_by": request.user.employee.id,
+        "status": denied_status.id,
+        "order": order.id
     }
 
-    order_status_serializer = OrderStatusSerializer(data=status_data)
+    order_status_serializer = CreateOrderStatusSerializer(data=status_data)
 
     try:
         order_status_serializer.is_valid(raise_exception=True)
 
-    except:
+    except Exception as e:
         return error_response("Invalidad data - status name")
 
     order_status_obj: OrderStatus = order_status_serializer.save()
@@ -216,8 +218,9 @@ class OrderSaveQuantityToItem(APIView):
 
 
 class OrderStatusListViewSet(ModelViewSet):
-    queryset = OrderStatus.objects.all().order_by("-created_at")
+    queryset = OrderStatus.objects.all().order_by("created_at")
     serializer_class = OrderStatusSerializer
+    pagination_class = None
 
     def get_queryset(self):
         queryset = self.queryset

@@ -5,12 +5,10 @@
     import {
         type FullPurchase,
         type FullPurchaseDetails,
-        type MessageResponse,
         type PaginatedResponse,
         type ProductProps,
         type ProductVariant,
         type Purchase,
-        type PurchaseChild,
         type PurchaseQuery,
         type SimpleProduct,
         type Status,
@@ -842,20 +840,23 @@
                         'AprobadoPor',
                         <template #cell(AprobadoPor)="{ item }">
                             {{
-                                truncate(
-                                    item.order_origin.revised_by.name +
-                                        ' ' +
-                                        item.order_origin.revised_by.lastname,
-                                    20,
-                                    '...'
-                                )
+                                item.order_origin.revised_by?.name
+                                    ? truncate(
+                                          item.order_origin.revised_by.name +
+                                              ' ' +
+                                              item.order_origin.revised_by
+                                                  .lastname,
+                                          20,
+                                          '...'
+                                      )
+                                    : '--'
                             }}
                         </template>
                         <template #cell(RazónDeCompra)="{ item }">
                             {{
-                                item.order_origin.revised_by.comment
+                                item.order_origin.comment
                                     ? truncate(
-                                          item.order_origin.revised_by.comment,
+                                          item.order_origin.comment,
                                           25,
                                           '...'
                                       )

@@ -133,11 +133,6 @@ urlpatterns = [
     path("order/status", views.OrderStatusListViewSet.as_view({"get": "list"})),
     path("order/reject", views.reject_order),
     path(
-        "warehouse/order-savequantitytoitem",
-        OrderSaveQuantityToItem.as_view(),
-        name="warehouse-quantityitem",
-    ),
-    path(
         "order/details",
         views.OrderRequestDetailFullView.as_view({"get": "list"}),
         name="order-details",

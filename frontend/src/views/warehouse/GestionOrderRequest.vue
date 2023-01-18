@@ -17,8 +17,8 @@
     import type {
         FullOrderDetail,
         OrderQuery,
-        OrderRequestStatus,
         SaveOrderDetail,
+        SimpleOrderStatus,
     } from '@store/types/orders.model'
     import {
         BBadge,
@@ -42,6 +42,11 @@
         ModalDialog,
         WaitOverlay,
     } from '@custom-components'
+
+    type SimpleProvider = {
+        name: string
+        id: number
+    }
 
     const router = useRouter()
 
@@ -69,11 +74,18 @@
         '#',
         'CódigoProducto',
         'NombreProducto',
-        'Precio',
-        'Stock',
         'Marca',
-        'Acciones',
+        'PrecioDeVenta',
+        'PrecioDeCompra',
+        'Proveedor',
         'Cantidad',
+        'Acciones',
+    ]
+
+    const providerFields: TableField[] = [
+        'PrecioDeCompra',
+        'Proveedor',
+        'Acciones',
     ]
 
     const orderStore = useOrderStore()
@@ -83,6 +95,12 @@
     const itemStore = useItemStore()
 
     const showWaitOverlay = ref<boolean>(true)
+
+    const showConfirmarModal = ref<boolean>(false)
+
+    const showRejectModal = ref<boolean>(false)
+
+    const showProviderModal = ref<boolean>(false)
 
     const selectedWarehouse = ref<Warehouse>()
 
@@ -103,7 +121,9 @@
 
     const paginatedDetailsArr = ref<DetailTableData[]>()
 
-    const providerList = ref<ProductProvider[]>([])
+    const providerList = ref<SimpleProvider[]>([])
+
+    const showModalQantity = ref<boolean>(false)
 
     const selectedProvider = ref<ProductProvider>()
 
@@ -130,9 +150,17 @@
         requested_by_name: undefined,
     })
 
+    const changeQuantity = ref<string>('')
+
     const searchNameString = ref<string>('')
 
     const totalRows = ref<number>(0)
+
+    const showStatusOrderModal = ref<boolean>(false)
+
+    const showConfirmRegresar = ref<boolean>(false)
+
+    const selectedOrderStatus = ref<SimpleOrderStatus[]>([])
 
     const orderRequestArray = ref<OrderRequestInfo[]>([])
 
@@ -192,7 +220,7 @@
                         serverOpts.value.per_page
                 )
         } else {
-            paginatedDetailsArr.value = paginatedDetailsArr.value?.slice(
+            paginatedDetailsArr.value = orderTableDetailsArr.value?.slice(
                 (detailsPaginatedCurrentPage.value.page - 1) *
                     serverOpts.value.per_page,
                 detailsPaginatedCurrentPage.value.page *
@@ -240,8 +268,6 @@
             return
         }
 
-        toast.success('Se han encontrado ' + response.total + ' solicitudes')
-
         orderRequestArray.value = response.data
 
         totalRows.value = response.total
@@ -252,6 +278,10 @@
     function onOrderSelected(order: OrderRequestInfo): void {
         selectedOrder.value = order
         showWaitOverlay.value = true
+        paginatedDetailsArr.value = []
+        selectedDetail.value = undefined
+        selectedProvider.value = undefined
+
         orderStore
             .fetchOrdersDetails({ order_id: order.id })
             .then(it => {
@@ -272,18 +302,31 @@
                     showWaitOverlay.value = false
                     return
                 }
+
+                filterData()
+
                 detailsShow.value = true
             })
             .catch(() => {
                 toast.error('Error de carga')
                 showWaitOverlay.value = false
             })
+
+        orderStore.fetchStatus({ id: selectedOrder.value.id }).then(it => {
+            if (isMessage(it)) {
+                toast.error('Error' + it.code)
+                return
+            }
+
+            selectedOrderStatus.value = it
+        })
         showWaitOverlay.value = false
     }
 
     //Details functions
+    function chooseProvider(productProvider: ProductProvider) {
+        showConfirmarModal.value = false
 
-    function chooseProvider(provider: ProductProvider) {
         if (!selectedDetail.value) {
             toast.error('Error, vuelva a elegir un producto de la tabla')
             return
@@ -293,17 +336,54 @@
             providerList.value.splice(
                 providerList.value.findIndex(
                     p =>
-                        p.provider.name ==
+                        p.name ==
                         selectedDetail.value?.selected_provider?.provider.name
                 ),
                 1
             )
         }
 
-        selectedDetail.value.selected_provider = provider
+        selectedDetail.value.selected_provider = productProvider
         orderTableDetailsArr.value[
             selectedDetail.value.index
-        ].selected_provider = provider
+        ].selected_provider = productProvider
+        providerList.value.push(productProvider.provider)
+        if (paginatedDetailsArr.value) {
+            const idx = paginatedDetailsArr.value.findIndex(
+                d => d.index == selectedDetail.value?.index
+            )
+
+            if (idx > 0) {
+                paginatedDetailsArr.value[idx].selected_provider =
+                    productProvider
+            }
+        }
+
+        toast.success('Selección de proveedor confirmado', { timeout: 1500 })
+        showProviderModal.value = false
+    }
+
+    function showChangeQuantity(picked: DetailTableData) {
+        showModalQantity.value = true
+        selectedDetail.value = picked
+        changeQuantity.value = ''
+    }
+
+    function confirmQuantity() {
+        showConfirmarModal.value = false
+
+        if (changeQuantity.value == '') {
+            return
+        }
+
+        if (!selectedDetail.value) {
+            toast.error('Error, vuelva a elegir un producto de la tabla')
+            return
+        }
+
+        selectedDetail.value.quantity = Number(changeQuantity.value)
+        orderTableDetailsArr.value[selectedDetail.value.index].quantity =
+            Number(changeQuantity.value)
 
         if (paginatedDetailsArr.value) {
             const idx = paginatedDetailsArr.value.findIndex(
@@ -311,13 +391,17 @@
             )
 
             if (idx > 0) {
-                paginatedDetailsArr.value[idx].selected_provider = provider
+                paginatedDetailsArr.value[idx].quantity = Number(
+                    changeQuantity.value
+                )
             }
         }
-        toast.success('Selección de proveedor confirmado')
+
+        toast.success('Cambio de cantidad confirmada', { timeout: 1500 })
     }
 
     async function confirmPurchase() {
+        showConfirmarModal.value = false
         if (!selectedOrder.value) {
             toast.error('Error, intente seleccionar una orden de nuevo')
             return
@@ -329,7 +413,6 @@
 
         const proxyProviders: number[] = []
         const proxyDetails: SaveOrderDetail[][] = []
-
         for (const detail of orderTableDetailsArr.value) {
             if (!detail.selected_provider) {
                 toast.error(
@@ -342,6 +425,10 @@
                 return
             }
 
+            if (detail.quantity <= 0) {
+                continue
+            }
+
             const index = proxyProviders.indexOf(
                 detail.selected_provider.provider.id
             )
@@ -350,16 +437,22 @@
                 proxyProviders.push(detail.selected_provider.provider.id)
                 const push_data: SaveOrderDetail[] = [
                     {
-                        item: detail.item.id,
-                        price: detail.selected_provider.price,
+                        variant: detail.item.id,
+                        product: detail.item.product.id,
+                        price: Number(
+                            Number(detail.selected_provider.price).toFixed(2)
+                        ),
                         quantity: detail.quantity,
                     },
                 ]
                 proxyDetails.push(push_data)
             } else {
                 proxyDetails[index].push({
-                    item: detail.item.id,
-                    price: detail.selected_provider.price,
+                    variant: detail.item.id,
+                    product: detail.item.product.id,
+                    price: Number(
+                        Number(detail.selected_provider.price).toFixed(2)
+                    ),
                     quantity: detail.quantity,
                 })
             }
@@ -374,20 +467,52 @@
 
         const saveOrederData: PurchaseFromOrderData = {
             warehouse_id: selectedOrder.value.warehouse.id,
-            order_id: selectedOrder.value.id,
+            order_origin: selectedOrder.value.id,
             details: details,
         }
 
         purchaseStore.savePurchaseFromOrder(saveOrederData).then(it => {
-            if (isMessage(it)) {
-                if (it.code == '200') {
-                    toast.success('Compra aprobada con éxito')
-                }
+            toast.success('Orden aprobada con éxito')
+            if (selectedOrder.value) {
+                selectedOrder.value.revised_at = Date()
+                selectedOrder.value.status = 'AP'
             }
         })
     }
 
-    async function showProduct(picked: FullOrderDetail): Promise<void> {
+    function rejectOrder() {
+        showRejectModal.value = false
+
+        showWaitOverlay.value = true
+        if (!selectedOrder.value) {
+            toast.error('Error, vuelva a elegir una orden')
+            return
+        }
+
+        orderStore
+            .rejectOrderRequest(selectedOrder.value.id)
+            .then(it => {
+                toast.success('Orden rechazada con éxito')
+                detailsShow.value = false
+                showWaitOverlay.value = false
+
+                if (selectedOrder.value) {
+                    selectedOrder.value.revised_at = Date()
+                    selectedOrder.value.status = 'NG'
+                }
+            })
+            .catch(e => {
+                toast.error(e.response.data.message)
+                showWaitOverlay.value = false
+            })
+    }
+
+    function showProvedorProduct(picked: DetailTableData) {
+        selectedDetail.value = picked
+        showProviderModal.value = true
+    }
+
+    async function showProduct(picked: DetailTableData): Promise<void> {
         const object = {
             item: picked.item,
             props: [],
@@ -411,7 +536,7 @@
         loadingProps.value = false
     }
 
-    function statusColor(status?: OrderRequestStatus): ColorVariant {
+    function statusColor(status?: string): ColorVariant {
         switch (status) {
             case 'AP':
                 return 'success'
@@ -423,7 +548,7 @@
                 return 'dark'
         }
     }
-    function parseStatus(status?: OrderRequestStatus): string {
+    function parseStatus(status?: string): string {
         switch (status) {
             case 'AP':
                 return 'Aprobado'
@@ -469,6 +594,7 @@
 
     watch(serverOpts, fetchOrderRequest)
     watch(currentDetailsPage, onDetailsPageChange)
+    watch(searchProductString, filterData)
 </script>
 
 <template>
@@ -592,18 +718,190 @@
                     </div>
                 </div>
                 <div v-else>
+                    <ModalDialog
+                        :show="showConfirmarModal"
+                        id="change-modal"
+                        title="Confirmar Orden"
+                        class="dark-mode-text"
+                        button-type="none">
+                        <h1 class="dark-mode-text tw-text-2xl">
+                            ¿Quiere aprobar la orden?
+                        </h1>
+
+                        <h2 class="dark-mode-text tw-text-lg mt-3">
+                            Se creará la compra para los proveedores
+                            seleccionados de cada producto.
+                        </h2>
+
+                        <div class="row allign-end mt-3">
+                            <EButton
+                                type="button"
+                                class="col-4 mx-2"
+                                variant="success"
+                                @click.left="confirmPurchase">
+                                Aceptar la orden
+                            </EButton>
+
+                            <EButton
+                                type="button"
+                                class="col-4 mx-2"
+                                variant="cancel"
+                                @click.left="showConfirmarModal = false">
+                                Cancelar
+                            </EButton>
+                        </div>
+                    </ModalDialog>
+                    <ModalDialog
+                        :show="showConfirmRegresar"
+                        id="change-modal"
+                        title="Confirmar Orden"
+                        class="dark-mode-text"
+                        button-type="none">
+                        <h1 class="dark-mode-text tw-text-2xl">
+                            ¿Quiere regresar a la vista de todas las
+                            solicitudes?
+                        </h1>
+
+                        <h2
+                            class="tw-font-bold tw-text-lg mt-3 tw-text-red-800">
+                            Perderá el progreso de la orden actual
+                        </h2>
+
+                        <div class="row allign-end mt-3">
+                            <EButton
+                                type="button"
+                                class="col-4 mx-2"
+                                variant="success"
+                                @click.left="
+                                    () => {
+                                        detailsShow = false
+                                        showConfirmRegresar = false
+                                    }
+                                ">
+                                Confirmar
+                            </EButton>
+
+                            <EButton
+                                type="button"
+                                class="col-4 mx-2"
+                                variant="cancel"
+                                @click.left="showConfirmRegresar = false">
+                                Cancelar
+                            </EButton>
+                        </div>
+                    </ModalDialog>
+                    <ModalDialog
+                        :show="showRejectModal"
+                        :hide-buttons="true"
+                        title="Rechazar la orden"
+                        button-type="none">
+                        <h1 class="dark-mode-text tw-text-2xl">
+                            ¿Quiere rechazar la orden?
+                        </h1>
+
+                        <h2 class="dark-mode-text tw-text-lg mt-3">
+                            Se cambiará el estado de la orden,
+                        </h2>
+
+                        <div class="row allign-end">
+                            <EButton
+                                type="button"
+                                class="col-4 mx-2"
+                                variant="primary"
+                                @click.left="rejectOrder()">
+                                Rechazar la Orden
+                            </EButton>
+
+                            <EButton
+                                type="button"
+                                class="col-4 mx-2"
+                                variant="cancel"
+                                @click.left="showRejectModal = false">
+                                Cancelar
+                            </EButton>
+                        </div>
+                    </ModalDialog>
+                    <ModalDialog
+                        v-model:show="showStatusOrderModal"
+                        size="3xl"
+                        class="dark-mode-text"
+                        title="Estados">
+                        <div class="row tw-text-lg tw-font-bold mb-3">
+                            Estados de la Orden:
+                        </div>
+
+                        <template
+                            v-for="(status, ix) in selectedOrderStatus ?? []"
+                            :key="ix">
+                            <div
+                                class="row tw-ring-2 dark:tw-ring-white py-2 tw-ring-black mb-3 pt-3 tw-capitalize">
+                                <div class="row col-12">
+                                    <BBadge
+                                        class="tw-text-lg mx-2 col-5"
+                                        :variant="statusColor(status.status)">
+                                        {{
+                                            '( ' +
+                                            (ix + 1) +
+                                            ' ) ' +
+                                            parseStatus(status.status)
+                                        }}
+                                    </BBadge>
+
+                                    <div class="col-3 tw-text-md">
+                                        <b>Creado por: </b>
+                                    </div>
+                                    <div class="col-3 tw-font-light">
+                                        <b>
+                                            {{
+                                                status.created_by?.name +
+                                                ' ' +
+                                                status.created_by?.lastname
+                                            }}
+                                        </b>
+                                    </div>
+                                </div>
+                                <div class="row mb-2 allign-content-end mt-2">
+                                    <div class="col-3 tw-text-md">
+                                        <b>Fecha : </b>
+                                    </div>
+                                    <div class="col-6 tw-font-light">
+                                        <b>
+                                            {{
+                                                moment(
+                                                    status.created_at
+                                                ).format(
+                                                    'dddd DD/MM/yyyy HH:mm:ss'
+                                                )
+                                            }}
+                                        </b>
+                                    </div>
+                                </div>
+                            </div>
+                        </template>
+                    </ModalDialog>
                     <div class="row">
                         <h1 class="dark-mode-text tw-text-xl col-8">
                             Detalles de la solicitud
                         </h1>
                     </div>
-                    <e-button
-                        variant="primary"
-                        type="button"
-                        class="col-3 my-3"
-                        @click.left="detailsShow = false">
-                        Regresar a todas las solicitudes
-                    </e-button>
+                    <div class="row">
+                        <div class="col-7 mt-3">
+                            <EButton
+                                type="button"
+                                varinat="primary"
+                                @click.left="showStatusOrderModal = true">
+                                Ver estados de la orden
+                            </EButton>
+                        </div>
+                        <e-button
+                            variant="primary"
+                            type="button"
+                            class="col-3 my-3"
+                            @click.left="showConfirmRegresar = true">
+                            Regresar a todas las solicitudes
+                        </e-button>
+                    </div>
+
                     <div class="row my-2">
                         <div
                             class="tw-rounded tw-ring-2 my-2 tw-ring-yellow-400 tw-py-1 col-12 dark-mode-text tw-text-lg">
@@ -642,17 +940,18 @@
                                             : '(No se ingresó comentarios)'
                                     }}</span
                                 >
-                                <template v-if="selectedOrder?.revised_at">
+                                <template>
                                     <span
                                         class="col-sm-12 col-12 col-md-6 col-xl-3 col-lg-3 tw-font-bold">
-                                        Orden revisada por:
+                                        Orden solicitada por:
                                     </span>
                                     <span
                                         class="col-sm-12 col-12 col-md-6 col-xl-3 col-lg-3"
                                         >{{
-                                            selectedOrder.revised_by?.name +
+                                            selectedOrder?.requested_by?.name +
                                             ' ' +
-                                            selectedOrder.revised_by?.lastname
+                                            selectedOrder?.requested_by
+                                                ?.lastname
                                         }}</span
                                     >
                                 </template>
@@ -662,7 +961,8 @@
                     <ModalDialog
                         v-model:show="productInfoShow"
                         size="3xl"
-                        class="dark-mode-text">
+                        class="dark-mode-text"
+                        title="Información del producto">
                         <template>
                             <b class="tw-text-2xl"
                                 >Detalle del producto
@@ -766,25 +1066,126 @@
                             </div>
                         </div>
                     </ModalDialog>
+                    <ModalDialog
+                        v-model:show="showProviderModal"
+                        title="Selección de proveedor"
+                        ok-text="Cancelar"
+                        class="dark-mode-text">
+                        <h2 class="tw-text-lg my-2">
+                            Proveedores para el producto
+                            {{
+                                selectedDetail?.item.product.product_name +
+                                '/' +
+                                selectedDetail?.item.variant_name
+                            }}
+                        </h2>
+
+                        <BTable
+                            :fields="providerFields"
+                            :items="selectedDetail?.providerInfo ?? []">
+                            <template #cell(#)="{ index }">
+                                {{ index }}
+                            </template>
+                            <template #cell(PrecioDeCompra)="{ item }">
+                                {{ Number(item.price).toFixed(2) }}
+                            </template>
+                            <template #cell(Proveedor)="{ item }">
+                                {{ item.provider.name }}
+                            </template>
+                            <template #cell(Acciones)="{ item }">
+                                <EButton @click.left="chooseProvider(item)">
+                                    Seleccionar
+                                </EButton>
+                            </template>
+                        </BTable>
+                    </ModalDialog>
+                    <ModalDialog
+                        v-model:show="showModalQantity"
+                        size="2xl"
+                        ok-text="Cambiar"
+                        button-type="ok-cancel"
+                        @ok="confirmQuantity()"
+                        title="Cambiar cantidad de producto">
+                        <h1 class="dark-mode-text tw-text-2xl">
+                            Desea cambiar la cantidad de la orden para el
+                            producto seleccionado?
+                        </h1>
+                        <h2 class="tw-text-lg my-2">
+                            Se cambiara la cantidad a pedir para el producto
+                            {{
+                                selectedDetail?.item.product.product_name +
+                                '/' +
+                                selectedDetail?.item.variant_name
+                            }}
+                        </h2>
+                        <div
+                            class="row tw-ring-primary tw-rounded-xl tw-ring-1">
+                            <div class="row my-4">
+                                <h3
+                                    class="dark-mode-text tw-text-lg tw-font-bold col-5">
+                                    Ingrese la nueva Cantidad
+                                </h3>
+                                <h3
+                                    class="dark-mode-text tw-text-lg tw-font-light col-5">
+                                    Cantidad Previa:
+                                    {{ selectedDetail?.quantity }}
+                                </h3>
+                            </div>
+                            <div
+                                class="row allign-center justify-content-center">
+                                <InputText
+                                    label="Cantidad del Producto"
+                                    v-model="changeQuantity"
+                                    :formatter="(it: string) => it
+                                .replace(/(\D|^0+(?=\d+))/g, '') || '0'" />
+                            </div>
+                        </div>
+                    </ModalDialog>
                     <div class="row">
                         <InputText
                             v-model="searchProductString"
                             label="Búsqueda de producto"
                             class="col-3" />
                         <ListBox
-                            class="col-4 mx-2"
+                            class="col-3"
                             top-label="Proveedor"
                             v-model="selectedProvider"
                             placeholder="Filtro por proveedor"
-                            label="name"
+                            label="provider"
                             @change="filterData"
                             :options="providerList ?? []" />
+
+                        <EButton
+                            type="button"
+                            variant="primary"
+                            class="col-2 mx-1 my-3"
+                            @click.left="showConfirmarModal = true"
+                            v-if="!selectedOrder?.revised_at">
+                            Aprobar orden
+                        </EButton>
+
+                        <EButton
+                            type="button"
+                            class="col-2 mx-1 my-3"
+                            variant="cancel"
+                            @click.left="showRejectModal = true"
+                            v-if="!selectedOrder?.revised_at">
+                            Rechazar Orden
+                        </EButton>
                     </div>
-                    <div class="row">
+                    <div
+                        class="row my-2"
+                        v-if="(paginatedDetailsArr ?? []).length == 0">
+                        <h2 class="dark-mode-text tw-text-2xl">
+                            No se han encontrado registros, intente otra
+                            búsqueda
+                        </h2>
+                    </div>
+                    <div class="row" v-else>
                         <BTable
                             :fields="detailsFields"
                             outline
-                            class="tw-capitalize dark-mode-text"
+                            class="tw-capitalize dark-mode-text table"
                             :items="paginatedDetailsArr ?? []">
                             <template #cell(#)="{ index }">
                                 {{
@@ -795,26 +1196,39 @@
                                 }}
                             </template>
                             <template #cell(CódigoProducto)="{ item }">
-                                {{ item.sku }}
+                                {{ item.item.sku }}
+                            </template>
+                            <template #cell(Marca)="{ item }">
+                                {{ item.item.product.brand_name }}
                             </template>
                             <template #cell(NombreProducto)="{ item }">
                                 {{
                                     item.item.product.product_name +
                                     ' ' +
-                                    item.variant_name
+                                    item.item.variant_name
                                 }}
                             </template>
-                            <template #cell(PrecioDeCompra)="{ item }">
-                                {{ Number(item.provider.price).toFixed(2) }}
-                            </template>
                             <template #cell(PrecioDeVenta)="{ item }">
-                                {{ Number(item.variant.price).toFixed(2) }}
+                                {{ Number(item.item.price).toFixed(2) }}
                             </template>
                             <template #cell(Cantidad)="{ item }">
                                 {{ item.quantity }}
                             </template>
                             <template #cell(Proveedor)="{ item }">
-                                {{ item.provider.name }}
+                                {{
+                                    item.selected_provider
+                                        ? item.selected_provider.provider.name
+                                        : 'No Seleccionado'
+                                }}
+                            </template>
+                            <template #cell(PrecioDeCompra)="{ item }">
+                                {{
+                                    item.selected_provider
+                                        ? Number(
+                                              item.selected_provider?.price
+                                          ).toFixed(2)
+                                        : '-- '
+                                }}
                             </template>
 
                             <template #cell(Acciones)="{ item }">
@@ -823,6 +1237,20 @@
                                     variant="primary"
                                     @click.left="showProduct(item)">
                                     Ver Detalles
+                                </e-button>
+                                <e-button
+                                    v-if="!selectedOrder?.revised_at"
+                                    type="button"
+                                    variant="primary"
+                                    @click.left="showProvedorProduct(item)">
+                                    Proveedor
+                                </e-button>
+                                <e-button
+                                    v-if="!selectedOrder?.revised_at"
+                                    type="button"
+                                    variant="primary"
+                                    @click.left="showChangeQuantity(item)">
+                                    Cantidad
                                 </e-button>
                             </template>
                         </BTable>

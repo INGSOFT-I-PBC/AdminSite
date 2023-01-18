@@ -125,7 +125,13 @@ class InputOrderSerializer(serializers.Serializer):
     pass
 
 
-class OrderStatusSerializer(serializers.Serializer):
+class CreateOrderStatusSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = OrderStatus
+        fields = ["id", "order", "status", "created_by", "created_at"]
+
+
+class OrderStatusSerializer(serializers.ModelSerializer):
 
     id = serializers.IntegerField(required=False)
     created_at = serializers.DateTimeField()
