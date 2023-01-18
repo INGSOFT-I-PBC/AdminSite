@@ -8,13 +8,7 @@
     import ModalDialog from '@components/custom/ModalDialog.vue'
     import type { PaginatedResponse } from '@store-types'
     import { useCreditNoteStore } from '@store/creditnote'
-    import type {
-        CClient,
-        CreditNote,
-        IClient,
-        IPayment,
-        Invoice,
-    } from '@store/types'
+    import type { CreditNote, IClient, IPayment, Invoice } from '@store/types'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
     import moment from 'moment'
 
@@ -233,7 +227,7 @@
                             <span class="tw-w-1/2 tw-font-bold col-6"
                                 >cliente:</span
                             >
-                            <span class="col-6">{{ (d as CClient).name }}</span>
+                            <span class="col-6">{{ (d as IClient).name }}</span>
                         </div>
                         <div class="row" v-else-if="k == 'payment_method'">
                             <span class="tw-w-1/2 tw-font-bold col-6"

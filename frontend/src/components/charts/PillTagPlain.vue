@@ -24,7 +24,7 @@
             h="h-4"
             w="w-4"
             :class="small ? 'mr-1' : 'mr-2'"
-            :size="small ? 14 : null" />
+            :size="small ? 14 : 0" />
         <span>{{ label }}</span>
     </div>
 </template>
