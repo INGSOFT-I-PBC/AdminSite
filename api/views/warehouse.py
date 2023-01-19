@@ -4,7 +4,7 @@ from distutils.log import error
 from shutil import move
 
 from django.core.paginator import Paginator
-from django.db.models import F, OuterRef, Prefetch, Q, Subquery
+from django.db.models import F, OuterRef, Prefetch, Q, Subquery, Sum
 from django.db.models.aggregates import Max
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
@@ -23,6 +23,7 @@ from api.models.warehouse import (
     WarehouseTransaction,
     WhTomasFisicas,
     WhTomasFisicasDetails,
+    WhTransactionDetails,
 )
 from api.serializers.order import OrderSerializer
 from api.serializers.warehouse import (
@@ -38,6 +39,7 @@ from api.serializers.warehouse import (
     TransactionWithProductsSerializer,
     WarehouseSerializer,
     WhStockSerializer,
+    WhStockWithCompromisedSerializer,
     WhStockWithPropsSerializer,
     WhTransactionSerializer,
     WhWithTomaFisicaSerializer,
@@ -260,6 +262,44 @@ class WhStockWithPropsViewSet(WhStockViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        return queryset
+
+
+class WhStockWithCompromiesd(WhStockViewSet):
+    serializer_class = WhStockWithCompromisedSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        params = self.request.query_params.copy()
+
+        p_status = (
+            TransactionStatus.objects.annotate(
+                last_status_pk=Max(
+                    "transaction__transactionstatus__pk"
+                )
+            )
+            .filter(pk=F("last_status_pk"))
+            .filter(status__name__icontains="pendiente")
+        )
+
+        pending_transactions = WarehouseTransaction.objects.filter(pk__in=Subquery(
+            p_status.values("transaction")), warehouse_origin=params.get("warehouse_id"))
+        subquery = WhTransactionDetails.objects.filter(
+            header__in=pending_transactions, variant=OuterRef('variant')
+        ).values(
+            'variant__id'
+        ).annotate(
+            compromised_stock=Sum('quantity')
+        ).values(
+            'compromised_stock'
+        )
+        queryset = queryset.annotate(compromised_stock=Subquery(subquery))
+
+        # WhTransactionDetails.objects.filter(
+        #         variant=OuterRef('variant'),
+        #         header__in=pending_transactions
+        #     ).values("quantity").aggregate(Sum('quantity'))
+
         return queryset
 
 
