@@ -17,13 +17,7 @@ import axios, { type AxiosResponse } from 'axios'
 import { defineStore } from 'pinia'
 
 import type { Warehouse, WarehouseQuery } from './models/warehouseModels'
-import type {
-    OrderDetailQuery,
-    OrderQuery,
-    OrderSaveData,
-} from './types/orders.model'
-
-type identifier = number | string
+import type { OrderSaveData } from './types/orders.model'
 
 export interface WarehouseState {
     lastWarehouseList: Optional<Warehouse[]>
@@ -32,6 +26,11 @@ export interface WarehouseState {
 }
 
 export type StockWithProps = WarehouseStock & { props: ProductProps[] }
+
+export type FullStockWithCompromised = WarehouseStock & {
+    props: ProductProps[]
+    compromised_stock?: number
+}
 
 export const useWarehouseStore = defineStore('warehouse-store', {
     state: (): WarehouseState => ({
@@ -209,6 +208,23 @@ export const useWarehouseStore = defineStore('warehouse-store', {
             return (
                 await axios.get<PaginatedAPIResponse<StockWithProps>>(
                     `/api/v1/warehouse/stock-props`,
+                    { params: queryParams }
+                )
+            ).data
+        },
+
+        async fetchFullStockWithCompromised(
+            options: any,
+            paginated_opt: PaginationOptions
+        ): Promise<PaginatedAPIResponse<FullStockWithCompromised>> {
+            const queryParams = {
+                ...options,
+                page: paginated_opt.page,
+                per_page: paginated_opt.per_page,
+            }
+            return (
+                await axios.get<PaginatedAPIResponse<FullStockWithCompromised>>(
+                    `/api/v1/movement/compromised-stock`,
                     { params: queryParams }
                 )
             ).data

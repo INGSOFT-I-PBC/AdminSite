@@ -6,7 +6,6 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
-from api.views.orders import OrderSaveQuantityToItem
 from api.views.warehouse import TransactionStatusViewSet, WhTransactionDetailsViewSet
 
 """ Definition of paginated data
@@ -167,6 +166,7 @@ urlpatterns = [
     path("movement/status", TransactionStatusViewSet.as_view({"get": "list"})),
     path("movement", WhTransactionDetailsViewSet.as_view({"get": "list"})),
     path('movement/create', views.create_movement),
+    path('movement/compromised-stock', views.WhStockWithCompromiesd.as_view({"get": "list"})),
     # =====================================
     # <|        Role endpoints       |>
     # =====================================
