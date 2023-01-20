@@ -160,6 +160,7 @@ class WhTomasFisicasDetails(models.Model):
         max_length=6, choices=TomaDetailStatus.choices, default=TomaDetailStatus.PENDING_APPROVAL
     )
     acepted_by = models.ForeignKey(Employee, null=True, default=None, on_delete=models.RESTRICT)
+    acepted_comment = models.CharField(max_length=150, null=True, blank=False)
 
     class Meta:
         db_table = "tomas_fisicas_details"

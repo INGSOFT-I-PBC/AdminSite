@@ -40,6 +40,7 @@ export interface TomaSaveData {
     product: number
     variant: number
     acepted: string
+    acepted_comment?: string
 }
 
 export interface FullTomaFisicaDetail {

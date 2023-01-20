@@ -672,6 +672,9 @@ def update_stock(request):
         tomas_detail.acepted = detail_status
         tomas_detail.acepted_by = request.user.employee
 
+        if (data.get("acepted_comment", None)):
+            tomas_detail.acepted_comment = data.get("acepted_comment")
+
         if (detail_status == "AP"):
             try:
                 qs = ProductStockWarehouse.objects.filter(
