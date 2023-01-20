@@ -186,6 +186,7 @@
         itemLoading.value = true
 
         const loadedIdx: number = loadedProducts.value.findIndex(p => {
+            itemLoading.value = false
             return (
                 p.page == serverOpts.value.page &&
                 p.rowsPerPage == serverOpts.value.rowsPerPage &&
@@ -193,6 +194,7 @@
             )
         })
         if (loadedIdx >= 0) {
+            itemLoading.value = false
             productStock.value = loadedProducts.value[loadedIdx].stock
             return
         }
@@ -204,6 +206,7 @@
         itemLoading.value = false
         if (isMessage(res)) {
             toast.error('Error de carga de stock')
+            itemLoading.value = false
             return
         }
 
