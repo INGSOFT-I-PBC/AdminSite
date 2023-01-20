@@ -26,7 +26,7 @@ class _SimpleProductVariant(_srl.ModelSerializer):
             "variant_name",
             "sku",
             "ean",
-            "upc"
+            "upc",
             "price",
             "img",
             "stock_level",
@@ -207,6 +207,7 @@ class ProductVariantSerializer(_srl.ModelSerializer):
         model = ProductVariant
         fields = "__all__"
 
+
 class BCProductVariantsSerializer(_srl.ModelSerializer):
 
     product_name = _srl.CharField(source='product.product_name')
@@ -229,6 +230,7 @@ class BCProductVariantsSerializer(_srl.ModelSerializer):
             "brand_name",
             "short_description",
         ]
+
 
 class SimpleVariantSerializer(_srl.ModelSerializer):
 
