@@ -17,6 +17,7 @@ from api.models.products import (
     ProductVariant,
 )
 from api.serializers.product import (
+    BCProductVariantsSerializer,
     InputProductSerializer,
     ProductAttributeSerializer,
     ProductSerializer,
@@ -65,7 +66,6 @@ class ProductStockViewSet(_ROViewSet):
         if params.get("warehouse", None):
             filter("filter warehouse")
             result = result.filter(warehouse=params.get("warehouse"))
-        print("Hola sdfsdfs")
         return result
 
 
@@ -80,6 +80,23 @@ class ProductVariantViewSet(_ROViewSet):
         params = self.request.query_params.copy()
         if not params.get("all", False):
             queryset.filter(active=True)
+        product_id = self.kwargs.get("product", None)
+        if product_id is not None:
+            queryset.filter(product=product_id)
+        return queryset
+
+
+class ProductVariantsViewSet(_ROViewSet):
+    queryset = ProductVariant.objects.order_by("variant_name")
+    serializer_class = BCProductVariantsSerializer
+    filter_backends = [OrderingFilter]
+    ordering_fields = ["variant_name", "sku", "price"]
+
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
+        if not params.get("all", False):
+            queryset.filter(is_active=True)
         product_id = self.kwargs.get("product", None)
         if product_id is not None:
             queryset.filter(product=product_id)

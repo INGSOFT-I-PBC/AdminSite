@@ -69,6 +69,10 @@ class ProductVariant(TimestampMixin, SoftDeleteMixin):
         max_length=128, null=False, blank=False, help_text="The Stock Keeping Unit code"
     )
 
+    upc = models.CharField(max_length=13, null=True, blank=True, help_text="The UPC code of the Product variant")
+
+    ean = models.CharField(max_length=13, null=True, blank=True)
+
     price = models.DecimalField(max_digits=20, decimal_places=3, null=False, default=0)
 
     img = models.ImageField(upload_to=PathAndRename("products"), null=True, blank=True)

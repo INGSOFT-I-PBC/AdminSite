@@ -52,6 +52,7 @@ from api.views.productview import (
     CreateProductView,
     FullProductView,
     ProductStockViewSet,
+    ProductVariantsViewSet,
     ProductVariantView,
     ProductVariantViewSet,
     ProductView,
@@ -205,4 +206,5 @@ __all__ = [
     WhTransactionDetailsViewSet,
     WhStockWithPropsViewSet,
     WhTransactionViewSet,
+    ProductVariantsViewSet,
 ]

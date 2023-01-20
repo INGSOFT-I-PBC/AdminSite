@@ -12,7 +12,7 @@
     type ValidListboxItem = ListboxItem & Record<string | number, unknown>
     const props = defineProps({
         modelValue: {
-            type: Object,
+            type: Object as PropType<ValidListboxItem>,
             default: null,
         },
         topLabel: {
