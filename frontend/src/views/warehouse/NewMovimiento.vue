@@ -327,6 +327,7 @@
                 data.warehouse_origin = undefined
                 data.items.splice(0, data.items.length)
                 selectedProxyWh.value = undefined
+                loadedProducts.value = []
             })
             .catch((it: MessageResponse) => {
                 toast.error(`No se pudo guardar la orden [${it.code}]`)

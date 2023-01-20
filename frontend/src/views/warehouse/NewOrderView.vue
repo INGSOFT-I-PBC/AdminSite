@@ -473,7 +473,7 @@
                                 label="Cantidad del Producto"
                                 v-model="itemForm.quantity"
                                 :formatter="(it: string) => it
-                                .replace(/(\D|0+(?=\d+))/g, '') || '0'" />
+                                .replace(/(\D|^0+(?=\d+))/g, '') || '0'" />
                         </ECol>
                         <ECol cols="12" lg="3" v-if="selectedVariant">
                             <InputText

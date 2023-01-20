@@ -347,7 +347,8 @@ class FullTomasDetailSerializer(ModelSerializer):
             "product",
             "toma_fisica",
             "variant",
-            "warehouse_stock"
+            "warehouse_stock",
+            "acepted_comment"
         ]
 
 

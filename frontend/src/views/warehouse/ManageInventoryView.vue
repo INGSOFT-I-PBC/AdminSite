@@ -22,6 +22,7 @@
         ListBox,
         LoadingBar,
         ModalDialog,
+        TextArea,
         WaitOverlay,
     } from '@custom-components'
 
@@ -99,7 +100,11 @@
         } else if (status == NOT_ACEPTED.name) {
             isConfirmarModal.value = false
         }
-        selesctedChangeStatus.value = status
+
+        if (toma != selectedTomaDetail.value) {
+            aceptedCommentString.value = ''
+        }
+        selectedChangeStatus.value = status
         selectedTomaDetail.value = toma
         showConfirmChange.value = true
     }
@@ -133,9 +138,28 @@
         tomaDetailsArray.value = res.data as FullTomaFisicaDetail[]
     }
 
-    const selesctedChangeStatus = ref<string>('AP')
+    const selectedChangeStatus = ref<string>('AP')
+    const aceptedCommentString = ref<string>('')
 
     function updateCambioStatus() {
+        if (!isConfirmarModal.value && !aceptedCommentString.value) {
+            toast.error(
+                'Debe ingresar la razón del rechazo, vuelva a intentarlo'
+            )
+            return
+        }
+
+        const isOverMaxChars: boolean = aceptedCommentString.value.length
+            ? aceptedCommentString.value.length > 150
+            : false
+
+        if (isOverMaxChars) {
+            toast.error('Máximo de caracteres excedido, vuelva a intentarlo', {
+                timeout: 2300,
+            })
+            return
+        }
+
         if (selectedTomaDetail.value && selectedWarehouse.value) {
             loadingState.value.waitWarehouse = true
             if (selectedTomaDetail.value.id) {
@@ -144,7 +168,7 @@
                     selectedTomaDetail.value.previous_stock
                 if (
                     selectedTomaDetail.value.warehouse_stock + difference < 0 &&
-                    selesctedChangeStatus.value == 'AP'
+                    selectedChangeStatus.value == 'AP'
                 ) {
                     toast.error(
                         'Stock de bodega cambio y no puede ser negativo, revise el cambio de inventario',
@@ -162,12 +186,16 @@
                         id: selectedTomaDetail.value.id,
                         product: selectedTomaDetail.value?.product.id,
                         variant: selectedTomaDetail.value?.variant.id,
-                        acepted: selesctedChangeStatus.value,
+                        acepted: selectedChangeStatus.value,
+                        acepted_comment:
+                            aceptedCommentString.value.length > 0
+                                ? aceptedCommentString.value
+                                : undefined,
                     })
                     .then(it => {
                         if (selectedTomaDetail.value) {
                             selectedTomaDetail.value.acepted =
-                                selesctedChangeStatus.value
+                                selectedChangeStatus.value
                         }
 
                         toast.success('Cambio actualizado con éxito')
@@ -175,7 +203,7 @@
 
                         if (
                             selectedTomaDetail.value &&
-                            selesctedChangeStatus.value == 'AP'
+                            selectedChangeStatus.value == 'AP'
                         ) {
                             const sameProductArray =
                                 tomaDetailsArray.value.filter(
@@ -186,8 +214,6 @@
                                         t.product.id ==
                                             selectedTomaDetail.value?.product.id
                                 )
-
-                            console.log(sameProductArray)
 
                             for (const toma of sameProductArray) {
                                 toma.warehouse_stock += difference
@@ -555,6 +581,7 @@
                             v-model:show="showConfirmChange"
                             title="Confirmar cambio de inventario"
                             ok-text="Confirmar"
+                            size="2xl"
                             @ok="updateCambioStatus()"
                             button-type="ok-cancel">
                             <h1
@@ -564,6 +591,44 @@
                                 <span v-else> rechazar </span>
                                 el cambio de inventario?
                             </h1>
+
+                            <div v-if="!isConfirmarModal" clas="row">
+                                <h1
+                                    class="tw-text-lg my-3 tw-font-light tw-text-black dark:tw-text-white">
+                                    Debe ingrese la razón para rechazar el
+                                    cambio
+                                </h1>
+
+                                <TextArea
+                                    v-model="aceptedCommentString"
+                                    trim
+                                    class="col-12"
+                                    placeholder="Ingrese la razón"
+                                    resize="vertical"
+                                    :color="
+                                        aceptedCommentString.length > 150
+                                            ? 'danger'
+                                            : 'auto'
+                                    " />
+                                <p class="dark-mode-text">
+                                    Caracteres:
+                                    <span
+                                        :class="{
+                                            'tw-text-red-600':
+                                                aceptedCommentString.length >
+                                                150
+                                                    ? 'tw-text-red-600'
+                                                    : undefined,
+                                        }">
+                                        {{
+                                            aceptedCommentString
+                                                ? aceptedCommentString.length
+                                                : 0
+                                        }}
+                                    </span>
+                                    (Máximo de caracteres: 150)
+                                </p>
+                            </div>
 
                             <h2
                                 class="tw-text-xl tw-text-black dark:tw-text-white"
@@ -587,8 +652,9 @@
 
                                 al stock de bodega.
                             </h2>
-                            <h2 v-else>
-                                No se afectará el stock de inventario
+                            <h2 v-else class="mt-2">
+                                <span class="tw-font-bold">Importante:</span> No
+                                se afectará el stock en el inventario
                             </h2>
                         </ModalDialog>
 
@@ -756,10 +822,12 @@
                                                     variant="cancel"
                                                     type="button"
                                                     @click.left="
-                                                        onSelectedTomaDetailPressed(
-                                                            toma,
-                                                            'NA'
-                                                        )
+                                                        () => {
+                                                            onSelectedTomaDetailPressed(
+                                                                toma,
+                                                                'NA'
+                                                            )
+                                                        }
                                                     ">
                                                     Rechazar cambio de
                                                     inventario
@@ -779,6 +847,9 @@
 </template>
 
 <style lang="scss">
+    warning-text {
+    }
+
     h1.title {
         @apply tw-text-2xl tw-text-black dark:tw-text-neutral-100;
     }

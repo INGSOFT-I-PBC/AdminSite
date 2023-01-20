@@ -75,10 +75,11 @@
         'CódigoProducto',
         'NombreProducto',
         'Marca',
+        'Proveedor',
         'PrecioDeVenta',
         'PrecioDeCompra',
-        'Proveedor',
         'Cantidad',
+        'Total',
         'Acciones',
     ]
 
@@ -121,11 +122,16 @@
 
     const paginatedDetailsArr = ref<DetailTableData[]>()
 
-    const providerList = ref<SimpleProvider[]>([])
+    const providerList = ref<SimpleProvider[]>([
+        {
+            name: 'Todos los provedores',
+            id: -1,
+        },
+    ])
+
+    const selectedProvider = ref<SimpleProvider>()
 
     const showModalQantity = ref<boolean>(false)
-
-    const selectedProvider = ref<ProductProvider>()
 
     const selectedDetail = ref<DetailTableData>()
 
@@ -174,6 +180,21 @@
 
     const loadingProps = ref<boolean>(false)
 
+    const totalOrderObject = computed(() => ({
+        total_items: orderTableDetailsArr.value
+            .map(obj => obj.quantity)
+            .reduce((accumulator, current) => accumulator + current, 0),
+        total_price: orderTableDetailsArr.value
+            .map(
+                obj =>
+                    obj.quantity *
+                    (obj.selected_provider?.price
+                        ? obj.selected_provider?.price
+                        : 0)
+            )
+            .reduce((accumulator, current) => accumulator + current, 0),
+    }))
+
     async function cleanSearch() {
         searchOptions.value.id = undefined
         searchOptions.value.warehouse_id = undefined
@@ -184,13 +205,18 @@
 
     function filterData(): void {
         stopWatcher.value = true
-        if (selectedProvider.value && orderTableDetailsArr.value) {
+        paginatedDetailsArr.value = orderTableDetailsArr.value
+        if (
+            selectedProvider.value &&
+            orderTableDetailsArr.value &&
+            selectedProvider.value.id != -1
+        ) {
             currentDetailsPage.value = 1
-            paginatedDetailsArr.value = orderTableDetailsArr.value
+            paginatedDetailsArr.value = paginatedDetailsArr.value
                 .filter(d => {
                     return d.selected_provider?.provider.name.includes(
-                        selectedProvider.value?.provider.name
-                            ? selectedProvider.value?.provider.name
+                        selectedProvider.value?.name
+                            ? selectedProvider.value?.name
                             : ''
                     )
                 })
@@ -200,16 +226,17 @@
                     detailsPaginatedCurrentPage.value.page *
                         serverOpts.value.per_page
                 )
-        } else if (
+        }
+        if (
             searchProductString.value.length > 0 &&
             orderTableDetailsArr.value
         ) {
             currentDetailsPage.value = 1
-            paginatedDetailsArr.value = orderTableDetailsArr.value
+            paginatedDetailsArr.value = paginatedDetailsArr.value
                 .filter(d => {
                     return d.selected_provider?.provider.name.includes(
-                        selectedProvider.value?.provider.name
-                            ? selectedProvider.value?.provider.name
+                        selectedProvider.value?.name
+                            ? selectedProvider.value?.name
                             : ''
                     )
                 })
@@ -885,7 +912,14 @@
                         </h1>
                     </div>
                     <div class="row">
-                        <div class="col-7 mt-3">
+                        <e-button
+                            variant="secondary"
+                            type="button"
+                            class="col-3 my-3"
+                            @click.left="showConfirmRegresar = true">
+                            Regresar a todas las solicitudes
+                        </e-button>
+                        <div class="col-4 mt-3">
                             <EButton
                                 type="button"
                                 varinat="primary"
@@ -893,13 +927,23 @@
                                 Ver estados de la orden
                             </EButton>
                         </div>
-                        <e-button
-                            variant="primary"
+                        <EButton
                             type="button"
-                            class="col-3 my-3"
-                            @click.left="showConfirmRegresar = true">
-                            Regresar a todas las solicitudes
-                        </e-button>
+                            variant="success"
+                            class="col-2 mx-1 my-3"
+                            @click.left="showConfirmarModal = true"
+                            v-if="!selectedOrder?.revised_at">
+                            Aprobar orden
+                        </EButton>
+
+                        <EButton
+                            type="button"
+                            class="col-2 mx-1 my-3"
+                            variant="cancel"
+                            @click.left="showRejectModal = true"
+                            v-if="!selectedOrder?.revised_at">
+                            Rechazar Orden
+                        </EButton>
                     </div>
 
                     <div class="row my-2">
@@ -1151,27 +1195,29 @@
                             top-label="Proveedores Seleccionados"
                             v-model="selectedProvider"
                             placeholder="Filtro por proveedor"
-                            label="provider"
+                            label="name"
                             @change="filterData"
-                            :options="providerList ?? []" />
+                            :options="providerList" />
 
-                        <EButton
-                            type="button"
-                            variant="primary"
-                            class="col-2 mx-1 my-3"
-                            @click.left="showConfirmarModal = true"
-                            v-if="!selectedOrder?.revised_at">
-                            Aprobar orden
-                        </EButton>
-
-                        <EButton
-                            type="button"
-                            class="col-2 mx-1 my-3"
-                            variant="cancel"
-                            @click.left="showRejectModal = true"
-                            v-if="!selectedOrder?.revised_at">
-                            Rechazar Orden
-                        </EButton>
+                        <h3 class="dark-mode-text tw-text-xl col-3 my-4">
+                            Total:
+                            <span class="tw-text-secondary tw-font-semibold">{{
+                                totalOrderObject.total_price.toLocaleString(
+                                    'en-US',
+                                    {
+                                        style: 'currency',
+                                        currency: 'USD',
+                                    }
+                                )
+                            }}</span
+                            >$
+                        </h3>
+                        <h3 class="dark-mode-text tw-text-xl col-3 my-4">
+                            Cantidad de items:
+                            <span class="tw-text-secondary tw-font-semibold">
+                                {{ totalOrderObject.total_items }}
+                            </span>
+                        </h3>
                     </div>
                     <div
                         class="row my-2"
@@ -1228,6 +1274,15 @@
                                               item.selected_provider?.price
                                           ).toFixed(2)
                                         : '-- '
+                                }}
+                            </template>
+                            <template #cell(Total)="{ item }">
+                                {{
+                                    Number(
+                                        (item.selected_provider
+                                            ? item.selected_provider?.price
+                                            : 0) * item.quantity
+                                    ).toFixed(2)
                                 }}
                             </template>
 
