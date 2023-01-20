@@ -11,7 +11,10 @@
         type WarehouseStock,
         isMessage,
     } from '@store/types'
-    import { type StockWithProps, useWarehouseStore } from '@store/warehouse'
+    import {
+        type FullStockWithCompromised,
+        useWarehouseStore,
+    } from '@store/warehouse'
     import type { TableField } from 'bootstrap-vue-3'
     import { Form as ValidationForm, useField } from 'vee-validate'
     import * as yup from 'yup'
@@ -57,9 +60,9 @@
         per_page: serverOpts.value.rowsPerPage,
     }))
 
-    const detailSelectedProduct = ref<StockWithProps>()
+    const detailSelectedProduct = ref<FullStockWithCompromised>()
 
-    const pickedProduct = ref<StockWithProps>()
+    const pickedProduct = ref<FullStockWithCompromised>()
 
     const productStock = ref<WarehouseStock[]>([])
 
@@ -69,7 +72,7 @@
      * Definition of page-used form
      */
 
-    type DisplayedItem = StockWithProps & { quantity: number }
+    type DisplayedItem = FullStockWithCompromised & { quantity: number }
     type Form = {
         warehouse_origin?: Warehouse
         warehouse_destiny?: Warehouse
@@ -83,7 +86,7 @@
 
     type LoadedStock = ServerOptions & {
         warehouse_id: number
-        stock: StockWithProps[]
+        stock: FullStockWithCompromised[]
     }
 
     const loadedProducts = ref<LoadedStock[]>([])
@@ -96,6 +99,7 @@
         'NombreProducto',
         'Marca',
         { label: 'Stock', key: 'stock_level' },
+        'StockComprometido',
         'Detalles',
     ]
 
@@ -106,6 +110,7 @@
         'Marca',
         { label: 'Stock En Bodega', key: 'stock_level' },
         { label: 'Stock A Mover', key: 'quantity' },
+        { label: 'StockComprometido', key: 'compromised_stock' },
         'Detalles',
         'Acciones',
     ]
@@ -141,9 +146,19 @@
     const quantityRangeError = (): void => {
         const f = itemForm.value
         if (f.quantity.value != '' && pickedProduct.value) {
-            if (Number(f.quantity.value) > pickedProduct.value.stock_level) {
-                quantity_message.value =
-                    'Stock a mover tiene que ser menor al Stock actual'
+            if (
+                Number(f.quantity.value) >
+                pickedProduct.value.stock_level -
+                    (pickedProduct.value.compromised_stock
+                        ? pickedProduct.value.compromised_stock
+                        : 0)
+            ) {
+                quantity_message.value = `Stock a mover tiene que ser menor a ${
+                    pickedProduct.value.stock_level -
+                    (pickedProduct.value.compromised_stock
+                        ? pickedProduct.value.compromised_stock
+                        : 0)
+                }`
                 return
             }
         }
@@ -166,10 +181,12 @@
         variante: pickedProduct.value?.variant,
         marca: pickedProduct.value?.product.brand_name,
     }))
+
     const loadItems = async () => {
         itemLoading.value = true
 
         const loadedIdx: number = loadedProducts.value.findIndex(p => {
+            itemLoading.value = false
             return (
                 p.page == serverOpts.value.page &&
                 p.rowsPerPage == serverOpts.value.rowsPerPage &&
@@ -177,18 +194,22 @@
             )
         })
         if (loadedIdx >= 0) {
+            itemLoading.value = false
             productStock.value = loadedProducts.value[loadedIdx].stock
             return
         }
 
-        const res = await warehouse.fetchStockWithProps(
+        const res = await warehouse.fetchFullStockWithCompromised(
             { warehouse_id: form.value.warehouse_origin?.id },
             paginationOptions.value
         )
+        itemLoading.value = false
         if (isMessage(res)) {
             toast.error('Error de carga de stock')
+            itemLoading.value = false
             return
         }
+
         productPageLength.value = res.total
         productStock.value = res.data
         const whid = form.value.warehouse_origin?.id
@@ -199,7 +220,6 @@
             warehouse_id: whid,
             stock: res.data,
         })
-        itemLoading.value = false
     }
 
     /**
@@ -209,11 +229,10 @@
         form.value.items.splice(index, 1)
     }
     function onShowModalClick() {
-        loadItems()
         productModalShow.value = true
     }
 
-    async function onRowClick(selectedItem: StockWithProps) {
+    async function onRowClick(selectedItem: FullStockWithCompromised) {
         pickedProduct.value = selectedItem
         productModalShow.value = false
     }
@@ -250,13 +269,14 @@
     function changeModalManager() {
         if (stopWatcher) {
             stopWatcher = false
-            return //do nothing
+            return
         }
 
         if (form.value.warehouse_origin) {
             showChangeWhModal.value = true
         } else {
             form.value.warehouse_origin = selectedProxyWh.value
+            loadItems()
         }
     }
     function cancelarCambio() {
@@ -269,6 +289,7 @@
         pickedProduct.value = undefined
         form.value.items = []
         showChangeWhModal.value = false
+        loadItems()
         toast.success('Cambio realizado')
     }
 
@@ -320,7 +341,7 @@
         showGuardarModal.value = true
     }
 
-    async function showItem(item: StockWithProps) {
+    async function showItem(item: FullStockWithCompromised) {
         detailSelectedProduct.value = item
         itemInfoShow.value = true
     }
@@ -363,17 +384,18 @@
                 v-model:show="productModalShow"
                 size="full"
                 title="Haga Click en el producto para seleccionar">
-                <div class="tw-container tw-flex mb-3">
-                    <b-pagination
-                        v-model="serverOpts.page"
-                        :total-rows="productPageLength"
-                        :per-page="serverOpts.rowsPerPage"
-                        align="center"
-                        :limit="10"
-                        hide-goto-end-buttons
-                        class="paginator">
-                    </b-pagination>
-                    <!--  TODO Fix reload table after row size change
+                <WaitOverlay :show="itemLoading">
+                    <div class="tw-container tw-flex mb-3">
+                        <b-pagination
+                            v-model="serverOpts.page"
+                            :total-rows="productPageLength"
+                            :per-page="serverOpts.rowsPerPage"
+                            align="center"
+                            :limit="10"
+                            hide-goto-end-buttons
+                            class="paginator">
+                        </b-pagination>
+                        <!--  TODO Fix reload table after row size change
                     <label class="form-label">
                         Productos Por Página:
                     </label>
@@ -383,49 +405,58 @@
                     :options="[5,10,15]"
                     placeholder="Productos por página"
                     /> -->
-                </div>
+                    </div>
 
-                <div class="row" style="height: 450px">
-                    <BTable
-                        :fields="productFields"
-                        :items="productStock"
-                        outline
-                        hover
-                        selectable
-                        @row-selected="onRowClick">
-                        <template #cell(selected)="{}"> </template>
-                        <template #cell(#)="{ index }">
-                            {{
-                                index +
-                                1 +
-                                (serverOpts.page - 1) * serverOpts.rowsPerPage
-                            }}
-                        </template>
-                        <template #cell(Código)="{ item }">
-                            {{ item.variant.sku }}
-                        </template>
-                        <template #cell(Marca)="{ item }">
-                            {{ item.product.brand_name }}
-                        </template>
-                        <template #cell(NombreProducto)="{ item }">
-                            {{
-                                item.product.product_name +
-                                ' - ' +
-                                item.variant.variant_name
-                            }}
-                        </template>
-                        <template #cell(Detalles)="{ item }">
-                            {{
-                                item.props
-                                    .map(
-                                        (it: ProductProps) =>
-                                            it.name + ' : ' + it.value
-                                    )
-                                    .join(',  ')
-                            }}
-                        </template>
-                    </BTable>
-                </div>
+                    <div class="row" style="height: 450px">
+                        <BTable
+                            :fields="productFields"
+                            :items="productStock"
+                            outline
+                            hover
+                            selectable
+                            @row-selected="onRowClick">
+                            <template #cell(selected)="{}"> </template>
+                            <template #cell(#)="{ index }">
+                                {{
+                                    index +
+                                    1 +
+                                    (serverOpts.page - 1) *
+                                        serverOpts.rowsPerPage
+                                }}
+                            </template>
+                            <template #cell(Código)="{ item }">
+                                {{ item.variant.sku }}
+                            </template>
+                            <template #cell(Marca)="{ item }">
+                                {{ item.product.brand_name }}
+                            </template>
+                            <template #cell(NombreProducto)="{ item }">
+                                {{
+                                    item.product.product_name +
+                                    ' - ' +
+                                    item.variant.variant_name
+                                }}
+                            </template>
+                            <template #cell(Detalles)="{ item }">
+                                {{
+                                    item.props
+                                        .map(
+                                            (it: ProductProps) =>
+                                                it.name + ' : ' + it.value
+                                        )
+                                        .join(',  ')
+                                }}
+                            </template>
+                            <template #cell(StockComprometido)="{ item }">
+                                {{
+                                    item.compromised_stock
+                                        ? item.compromised_stock
+                                        : 0
+                                }}
+                            </template>
+                        </BTable>
+                    </div>
+                </WaitOverlay>
             </ModalDialog>
             <ModalDialog
                 v-model:show="itemInfoShow"
@@ -630,9 +661,16 @@
                         </ECol>
                         <ECol cols="12" lg="3">
                             <InputText
-                                label="Stock"
+                                label="Stock Disponible Para Mover"
                                 :model-value="
-                                    pickedProduct?.stock_level.toString()
+                                    (
+                                        (pickedProduct?.stock_level
+                                            ? pickedProduct.stock_level
+                                            : 0) -
+                                        (pickedProduct?.compromised_stock
+                                            ? pickedProduct.compromised_stock
+                                            : 0)
+                                    ).toString()
                                 "
                                 readonly />
                             <label

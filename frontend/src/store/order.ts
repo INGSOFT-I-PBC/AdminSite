@@ -1,8 +1,14 @@
 import type { PaginatedAPIResponse, PaginatedResponse } from '@store-types'
 import type { MessageResponse } from '@store/types'
 import type {
+    FullOrderDetail,
+    OrderDetailQuery,
+    OrderQuery,
     OrderRequest,
+    OrderRequestDetail,
+    OrderRequestInfo,
     OrderSaveData,
+    OrderStatus,
     RawOrderRequest,
     SimpleOrderRequest,
     SimpleOrderStatus,
@@ -108,14 +114,50 @@ export const useOrderStore = defineStore('orders', () => {
         return partialUpdate(target, { status: 'NG' })
     }
 
-    async function fetchStatus(params: PaginationOptions) {
+    async function fetchStatus(query: OrderQuery) {
         const data = (
-            await axios.get<PaginatedResponse<SimpleOrderRequest>>(
-                '/api/v1/list/order/status',
-                { params }
+            await axios.get<SimpleOrderStatus[] | MessageResponse>(
+                '/api/v1/order/status',
+                { params: query }
             )
         ).data
         return data
+    }
+
+    async function fetchOrdersDetails(options: OrderDetailQuery) {
+        const result = await (
+            await axios.get<FullOrderDetail[] | MessageResponse>(
+                `/api/v1/order/details`,
+                {
+                    params: options,
+                }
+            )
+        ).data
+
+        return result
+    }
+
+    async function fetchOrdersRequestWithInfo(
+        options: Optional<OrderQuery> & PaginationOptions
+    ) {
+        const result = await (
+            await axios.get<PaginatedAPIResponse<OrderRequestInfo>>(
+                '/api/v1/list/warehouses/order-requests2',
+                {
+                    params: options,
+                }
+            )
+        ).data
+
+        return result
+    }
+
+    async function rejectOrderRequest(order_id: number) {
+        return (
+            await axios.put<MessageResponse>('/api/v1/order/reject', {
+                id: order_id,
+            })
+        ).data
     }
 
     return {
@@ -128,5 +170,9 @@ export const useOrderStore = defineStore('orders', () => {
         approveOrderRequest,
         denyOrderRequest,
         fetchOrderRequests,
+        fetchStatus,
+        fetchOrdersRequestWithInfo,
+        fetchOrdersDetails,
+        rejectOrderRequest,
     }
 })

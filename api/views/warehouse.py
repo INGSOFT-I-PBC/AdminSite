@@ -4,7 +4,7 @@ from distutils.log import error
 from shutil import move
 
 from django.core.paginator import Paginator
-from django.db.models import F, OuterRef, Prefetch, Q, Subquery
+from django.db.models import F, OuterRef, Prefetch, Q, Subquery, Sum
 from django.db.models.aggregates import Max
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
@@ -14,18 +14,18 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
-from api.models import Inventory, Item, OrderRequest, ProductVariant, Warehouse
+from api.models import OrderRequest, Warehouse
 from api.models.common import Status
 from api.models.orders import OrderRequestDetail
-from api.models.products import ProductStockWarehouse, ProductVariant
+from api.models.products import ProductStockWarehouse
 from api.models.warehouse import (
     TransactionStatus,
     WarehouseTransaction,
     WhTomasFisicas,
     WhTomasFisicasDetails,
+    WhTransactionDetails,
 )
-from api.serializers.item import ItemPriceSerializer
-from api.serializers.order import OrderSerializer, OrderSerializerORDREQ
+from api.serializers.order import OrderSerializer
 from api.serializers.warehouse import (
     CreateTransactionStatusSerializer,
     FullTomasDetailSerializer,
@@ -38,8 +38,8 @@ from api.serializers.warehouse import (
     TransactionStatusSerializer,
     TransactionWithProductsSerializer,
     WarehouseSerializer,
-    WhInventorySerializer,
     WhStockSerializer,
+    WhStockWithCompromisedSerializer,
     WhStockWithPropsSerializer,
     WhTransactionSerializer,
     WhWithTomaFisicaSerializer,
@@ -262,6 +262,44 @@ class WhStockWithPropsViewSet(WhStockViewSet):
 
     def get_queryset(self):
         queryset = super().get_queryset()
+        return queryset
+
+
+class WhStockWithCompromiesd(WhStockViewSet):
+    serializer_class = WhStockWithCompromisedSerializer
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        params = self.request.query_params.copy()
+
+        p_status = (
+            TransactionStatus.objects.annotate(
+                last_status_pk=Max(
+                    "transaction__transactionstatus__pk"
+                )
+            )
+            .filter(pk=F("last_status_pk"))
+            .filter(status__name__icontains="pendiente")
+        )
+
+        pending_transactions = WarehouseTransaction.objects.filter(pk__in=Subquery(
+            p_status.values("transaction")), warehouse_origin=params.get("warehouse_id"))
+        subquery = WhTransactionDetails.objects.filter(
+            header__in=pending_transactions, variant=OuterRef('variant')
+        ).values(
+            'variant__id'
+        ).annotate(
+            compromised_stock=Sum('quantity')
+        ).values(
+            'compromised_stock'
+        )
+        queryset = queryset.annotate(compromised_stock=Subquery(subquery))
+
+        # WhTransactionDetails.objects.filter(
+        #         variant=OuterRef('variant'),
+        #         header__in=pending_transactions
+        #     ).values("quantity").aggregate(Sum('quantity'))
+
         return queryset
 
 
@@ -736,59 +774,6 @@ class WhTomasFisicasViewSet(ModelViewSet):
             return JsonResponse(serializer.data, status=201)
         return error_response("Data is not valid")
 
-
-class OrderRequestViewSet2(ModelViewSet):
-
-    queryset = (
-        OrderRequest.objects.all()
-        .select_related("warehouse")
-        .select_related("requested_by")
-        .order_by("id")
-    )
-
-    def list(self, request):
-        busqueda = request.query_params.get("busqueda")
-        filtro = request.query_params.get("filtro")
-
-        if busqueda != "":
-            if busqueda != None:
-                if filtro == "bodega":
-                    self.queryset = self.queryset.filter(
-                        warehouse__name__contains=busqueda
-                    )
-                if filtro == "solicitador":
-                    self.queryset = self.queryset.filter(
-                        requested_by__name__contains=busqueda
-                    )
-
-        serializer_class = OrderSerializerORDREQ(self.queryset, many=True)
-
-        page_number = request.query_params.get("page")
-
-        if page_number:
-
-            paginator = Paginator(self.queryset, 50)
-
-            page_obj = paginator.get_page(page_number)
-
-            return Response(OrderSerializerORDREQ(page_obj, many=True).data)
-
-        return Response(serializer_class.data)
-
-
-class OrderSavePriceToItem(APIView):
-    def get(self, request):
-        try:
-            ids = request.query_params.get("id")
-            prices = request.query_params.get("price")
-            updateted_rows = ProductVariant.objects.filter(id=ids).update(price=prices)
-        except Exception as e:
-            error_response("Invalid query")
-
-        return JsonResponse({"error": False, "message": "Ok"})
-
-
-class OrderSaveQuantityToItem(APIView):
     def get(self, request):
         try:
             ids = request.query_params.get("id")

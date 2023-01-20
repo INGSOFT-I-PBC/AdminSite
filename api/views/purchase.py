@@ -13,8 +13,10 @@ from rest_framework.viewsets import ModelViewSet
 
 from api.models import Purchase, User
 from api.models.common import Status
+from api.models.orders import OrderRequest, OrderStatus
 from api.models.purchases import PurchaseChild, PurchaseDetail, PurchaseStatus
 from api.serializers.common import StatusSerializer
+from api.serializers.order import CreateOrderStatusSerializer, OrderStatusSerializer
 from api.serializers.purchase import (
     PurchaseAditionalInfoSerialzier,
     PurchaseDetailSerializer,
@@ -246,79 +248,109 @@ def create_purchase(request):
 
     serializer = SimplePurchaseSerializer(data=purchase_data)
     try:
-        if serializer.is_valid(raise_exception=True):
-            saved_childs = []
-            purchase: Purchase = serializer.save()
-            for child in details:
-                child_data = {
-                    "purchase_header": purchase.pk,
-                    "provider": child['provider'],
-                    "comment": child.get("comment", "")
-                }
-                child_serialzier = SimplePurchaseChildSerializer(data=child_data)
-                try:  # Check if the inserted  child is valid
-                    child_serialzier.is_valid(raise_exception=True)
-                except Exception as e:
-                    for c in saved_childs:
-                        c.delete()
-                    purchase.delete()
-                    raise (e)
-                child_obj: PurchaseChild = child_serialzier.save()
-                saved_childs.append(child_obj)
-
-                products = child.get("products", [])
-                if len(products) == 0:
-                    for c in saved_childs:
-                        c.delete()
-                    purchase.delete()
-                    raise (e)
-
-                for product in products:
-                    product['purchase_child'] = child_obj.pk
-
-                p_details = SimplePurchaseDetailSerializer(data=products, many=True)
-
-                try:  # Check if the inserted products are valid
-                    p_details.is_valid(raise_exception=True)
-                except Exception as e:
-                    for c in saved_childs:
-                        c.delete()
-                    purchase.delete()
-                    raise (e)
-                p_details.save()
-
-            try:
-                status_pending = Status.objects.get(name__icontains=PURCHASE_APROVED_STATUS_NAME)
-            except ObjectDoesNotExist as e:
-                new_stat = {
-                    "name": PURCHASE_APROVED_STATUS_NAME,
-                    "description": "aproved status purchase/movement"
-                }
-                st_serializer = StatusSerializer(data=new_stat)
-                st_serializer.is_valid()
-                status_pending = st_serializer.save()
-
-            purchase_status_data = {
-                "status": status_pending.pk,
-                "created_by": request.user.employee_id,
-                "purchase": purchase.pk
-            }
-
-            purchase_status_serializer = SimplePurchaseStatusSerializer(data=purchase_status_data)
-
-            try:
-                purchase_status_serializer.is_valid(raise_exception=True)
-            except Exception as e:
-                for c in saved_childs:
-                    c.delete()
-                purchase.delete()
-                # TODO delete details
-                raise (e)
-
-            purchase_status_serializer.save()
-        return response("Purchase Created")
+        serializer.is_valid(raise_exception=True)
     except Exception as e:
         return error_response("The given data was invalid (Purchase)")
+
+    saved_childs = []
+    purchase: Purchase = serializer.save()
+    for child in details:
+        child_data = {
+            "purchase_header": purchase.pk,
+            "provider": child['provider'],
+            "comment": child.get("comment", "")
+        }
+        child_serialzier = SimplePurchaseChildSerializer(data=child_data)
+        try:  # Check if the inserted  child is valid
+            child_serialzier.is_valid(raise_exception=True)
+        except Exception as e:
+            for c in saved_childs:
+                c.delete()
+            purchase.delete()
+            raise (e)
+        child_obj: PurchaseChild = child_serialzier.save()
+        saved_childs.append(child_obj)
+
+        products = child.get("products", [])
+        if len(products) == 0:
+            for c in saved_childs:
+                c.delete()
+            purchase.delete()
+            raise (e)
+
+        for product in products:
+            product['purchase_child'] = child_obj.pk
+
+        p_details = SimplePurchaseDetailSerializer(data=products, many=True)
+
+        try:  # Check if the inserted products are valid
+            p_details.is_valid(raise_exception=True)
+        except Exception as e:
+            for c in saved_childs:
+                c.delete()
+            purchase.delete()
+            raise (e)
+        p_details.save()
+
+    try:
+        status_pending = Status.objects.get(name__icontains=PURCHASE_APROVED_STATUS_NAME)
+    except ObjectDoesNotExist as e:
+        new_stat = {
+            "name": PURCHASE_APROVED_STATUS_NAME,
+            "description": "aproved status purchase/movement"
+        }
+        st_serializer = StatusSerializer(data=new_stat)
+        st_serializer.is_valid()
+        status_pending = st_serializer.save()
+
+    purchase_status_data = {
+        "status": status_pending.pk,
+        "created_by": request.user.employee_id,
+        "purchase": purchase.pk
+    }
+
+    purchase_status_serializer = SimplePurchaseStatusSerializer(data=purchase_status_data)
+
+    try:
+        purchase_status_serializer.is_valid(raise_exception=True)
+    except Exception as e:
+        for c in saved_childs:
+            c.delete()
+        purchase.delete()
+        # TODO delete details if it fails
+        raise (e)
+
+    purchase_status_serializer.save()
+
+    order: OrderRequest = OrderRequest.objects.get(pk=data.get("order_origin"))
+    order.revised_at = datetime.now()
+    order.revised_by = request.user.employee
+    order.status = "AP"
+
+    try:
+        denied_status = Status.objects.get(name=OrderRequest.OrderStatus.NEGATED)
+    except:
+        return error_response("Invalid data - status")
+
+    status_data = {
+        "created_at": datetime.now(),
+        "created_by": request.user.employee.id,
+        "status": denied_status.id,
+        "order": order.id
+    }
+
+    order_status_serializer = CreateOrderStatusSerializer(data=status_data)
+
+    try:
+        order_status_serializer.is_valid(raise_exception=True)
+
+    except Exception as e:
+        return error_response("Invalidad data - status name")
+
+    order_status_obj: OrderStatus = order_status_serializer.save()
+    order.save()
+
+    return response("Purchase Created")
 
 
 @api_view(["POST"])

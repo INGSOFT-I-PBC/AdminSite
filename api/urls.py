@@ -6,14 +6,7 @@ from rest_framework import routers
 from rest_framework_simplejwt.views import TokenBlacklistView
 
 from api import views
-from api.views.orders import OrderApprovePurchase, OrderRequestFullView
-from api.views.warehouse import (
-    OrderSavePriceToItem,
-    OrderSaveQuantityToItem,
-    TransactionStatusViewSet,
-    WhTransactionDetailsViewSet,
-    update_stock,
-)
+from api.views.warehouse import TransactionStatusViewSet, WhTransactionDetailsViewSet
 
 """ Definition of paginated data
  This urls are read-only, for batch creation/update
@@ -42,8 +35,7 @@ router.register(r"sequence/all", views.FullSequenceViewSet)
 router.register(r"users", views.UserViewSet)
 router.register(r"warehouses/all", views.FullWarehouseViewSet)
 router.register(r"warehouses/order-requests", views.OrderRequestViewSet)
-router.register(r"warehouses/order-product-provider", views.OrderRequestProductProvider)
-router.register(r"warehouses/order-requests2", views.OrderRequestViewSet2)
+router.register(r"warehouses/order-requests2", views.SimplifiedOrderRequestView)
 router.register(r"warehouses", views.WarehouseViewSet)
 router.register(r"products/variants/<int:variant>/stock", views.ProductStockViewSet)
 router.register(r"products/barcode-data/variants", views.ProductVariantsViewSet)
@@ -57,21 +49,6 @@ urlpatterns = [
     # <|            Auth endpoints       |>
     # =====================================
     path("logout", TokenBlacklistView.as_view(), name="logout"),
-    path(
-        "warehouse/order-savepricetoitem",
-        OrderSavePriceToItem.as_view(),
-        name="warehouse-priceitem",
-    ),
-    path(
-        "warehouse/order-savequantitytoitem",
-        OrderSaveQuantityToItem.as_view(),
-        name="warehouse-quantityitem",
-    ),
-    path(
-        "warehouse/order-approvePurchase",
-        OrderApprovePurchase,
-        name="warehouse-approvePurchase",
-    ),
     path("auth/me/permissions", views.self_permissions, name="user-permissions"),
     path("auth/me", views.user_data, name="user-data"),
     # =====================================
@@ -154,9 +131,10 @@ urlpatterns = [
     path("order", views.create_order_request),
     path("order/<int:id>", views.OrderRequestView.as_view()),
     path("order/status", views.OrderStatusListViewSet.as_view({"get": "list"})),
+    path("order/reject", views.reject_order),
     path(
-        "order-details",
-        OrderRequestFullView.as_view({"get": "list"}),
+        "order/details",
+        views.OrderRequestDetailFullView.as_view({"get": "list"}),
         name="order-details",
     ),
     path("provinces", views.ProvinceCityView.as_view()),
@@ -189,6 +167,7 @@ urlpatterns = [
     path("movement/status", TransactionStatusViewSet.as_view({"get": "list"})),
     path("movement", WhTransactionDetailsViewSet.as_view({"get": "list"})),
     path('movement/create', views.create_movement),
+    path('movement/compromised-stock', views.WhStockWithCompromiesd.as_view({"get": "list"})),
     # =====================================
     # <|        Role endpoints       |>
     # =====================================

@@ -165,6 +165,25 @@ class WhStockWithPropsSerializer(ModelSerializer):
         fields = ["product", "variant", "stock_level", "props", "updated_by", "updated_at"]
 
 
+class WhStockWithCompromisedSerializer(ModelSerializer):
+
+    variant = SimpleVariantSerializer()
+    product = SimpleProductSerializer()
+    stock_level = IntegerField()
+    updated_by = SimpleEmployeeSerializer()
+    updated_at = DateTimeField()
+    props = SerializerMethodField(read_only=True)
+    compromised_stock = IntegerField()
+
+    def get_props(self, instance):
+        qs = ProductAttribute.objects.filter(option=instance.variant)
+        return ProductAttributeSerializer(qs, many=True).data
+
+    class Meta:
+        model = ProductStockWarehouse
+        fields = ["product", "variant", "stock_level", "props", "updated_by", "updated_at", "compromised_stock"]
+
+
 class SimpleTransactionSerializer(ModelSerializer):
 
     class Meta:

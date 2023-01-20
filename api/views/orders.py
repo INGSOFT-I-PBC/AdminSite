@@ -1,5 +1,6 @@
 from datetime import datetime
 
+from django.db.models import Q
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.request import Request
@@ -7,17 +8,17 @@ from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, ReadOnlyModelViewSet
 
 from api.models import OrderRequest
+from api.models.common import Status
 from api.models.orders import OrderRequestDetail, OrderStatus
-from api.models.products import ProductProvider
-from api.models.purchases import Purchase
 from api.serializers.order import (
-    OrderDetailProviderProductSerializer,
+    CreateOrderStatusSerializer,
+    FullOrderDetailSerializer,
     OrderDetailSerializer,
-    OrderDetailSerializerprueba,
     OrderReadSerializer,
     OrderSerializer,
     OrderStatusSerializer,
     PartialOrderSerializer,
+    SimplifiedOrderSerializer,
 )
 from api.utils import error_response, response
 
@@ -63,6 +64,7 @@ class OrderRequestView(APIView):
         serialized = PartialOrderSerializer(target, data=new_data)
         serialized.is_valid(raise_exception=True)
         target = serialized.save()
+
         if new_status in ("AP", "NG"):
             target.revised_at = datetime.now()
             target.revised_by = request.user.employee
@@ -70,92 +72,24 @@ class OrderRequestView(APIView):
         return response("Successfully updated order request")
 
 
-class OrderRequestFullView(ModelViewSet):
-    queryset = OrderRequestDetail.objects.all()
-    serializer_class = OrderDetailSerializerprueba
+class OrderRequestDetailFullView(ModelViewSet):
+    queryset = OrderRequestDetail.objects.all().order_by("id")
+    serializer_class = FullOrderDetailSerializer
+    pagination_class = None
 
     def get_queryset(self):
-        try:
-            busqueda = self.request.query_params.get("busqueda")
-            filtro = self.request.query_params.get("filtro")
-            ids = self.request.query_params.get("id")
+        params = self.request.query_params
+        queryset = self.queryset.select_related("item").select_related("item__product")
 
-            if busqueda == None:
-                orders_details = (
-                    self.queryset.filter(
-                        order_request=ids,
-                    )
-                    .select_related("item")
-                    .select_related("item__product")
-                )
+        if params.get("order_id", None):
+            queryset = queryset.filter(order_request=params.get("order_id"))
 
-            if busqueda != "":
-                if busqueda != None:
-                    if filtro == "marca":
-                        orders_details = (
-                            self.queryset.filter(
-                                order_request=ids,
-                                item__product__brand_name__contains=busqueda,
-                            )
-                            .select_related("item")
-                            .select_related("item__product")
-                        )
+        if params.get("item_name"):
+            queryset = queryset.filter(
+                Q(item__product__name__icontains=params.get("name")) |
+                Q(item__name__icontains=params.get("name")))
 
-                    if filtro == "producto":
-                        orders_details = (
-                            self.queryset.filter(
-                                order_request=ids,
-                                item__product__product_name__contains=busqueda,
-                            )
-                            .select_related("item")
-                            .select_related("item__product")
-                        )
-
-            return orders_details
-
-        except Exception as e:
-            print(e)
-            return error_response("Invalid query")
-
-
-class OrderRequestProductProvider(ModelViewSet):
-    queryset = ProductProvider.objects.all()
-    serializer_class = OrderDetailProviderProductSerializer
-    """
-    def get_queryset(self):
-        # print(request.GET)
-        try:
-
-            orders_details = (
-                self.queryset.filter(
-                    order_request=self.request.query_params.get("id")
-                ).select_related("product")
-                # .select_related("item__category")
-                .select_related("provider")
-            )
-
-            return orders_details
-
-        except Exception as e:
-            print(e)
-            return error_response("Invalid query")
-    """
-
-
-@api_view(["GET"])
-def OrderApprovePurchase(request):
-    data = request.data
-    oid = request.query_params.get("order_origin_id")
-    order = OrderRequest.objects.filter(pk=oid).first()
-
-    Purchase.objects.create(
-        order_origin_id=oid,
-        warehouse_id=order.warehouse.id,
-        provider_id=1,
-        reference=1,
-        aproved_at="2023-01-07 12:00:00",
-    )
-    return error_response("Invalid query")
+        return queryset
 
 
 @api_view(["POST"])
@@ -198,9 +132,95 @@ def get_full_order(request, *args, **kwargs):
     return JsonResponse(OrderReadSerializer(order).data)
 
 
+@api_view(["PUT"])
+def reject_order(request):
+    if not request.data:
+        return error_response("No data was provided")
+
+    data = request.data
+
+    if (data.get("id", None) is None):
+        return error_response("Invalid data")
+
+    order: OrderRequest = OrderRequest.objects.get(pk=data.get("id"))
+    order.revised_at = datetime.now()
+    order.revised_by = request.user.employee
+    order.status = "NG"
+
+    try:
+        denied_status = Status.objects.get(name=OrderRequest.OrderStatus.NEGATED)
+    except:
+        return error_response("Invalid data - status")
+
+    status_data = {
+        "created_at": datetime.now(),
+        "created_by": request.user.employee.id,
+        "status": denied_status.id,
+        "order": order.id
+    }
+
+    order_status_serializer = CreateOrderStatusSerializer(data=status_data)
+
+    try:
+        order_status_serializer.is_valid(raise_exception=True)
+
+    except Exception as e:
+        return error_response("Invalidad data - status name")
+
+    order_status_obj: OrderStatus = order_status_serializer.save()
+    order.save()
+
+    return response("Succesfully updated")
+
+
+class SimplifiedOrderRequestView(ModelViewSet):
+
+    queryset = (
+        OrderRequest.objects.all()
+        .select_related("warehouse")
+        .select_related("requested_by")
+        .order_by("-requested_at")
+    )
+
+    serializer_class = SimplifiedOrderSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params
+
+        if (params.get("id", None)):
+            queryset = queryset.filter(pk=params.get("id"))
+
+        if (params.get("warehouse_id", None)):
+            queryset = queryset.filter(warehouse__pk=params.get("warehouse_id"))
+
+        if (params.get("requested_by_name", None)):
+            queryset = queryset.filter(
+                Q(requested_by__name__icontains=params.get("requested_by_name")) |
+                Q(requested_by__lastname__icontains=params.get("requested_by_name"))
+            )
+
+        return queryset
+
+
+class OrderSaveQuantityToItem(APIView):
+    def get(self, request):
+        try:
+            ids = request.query_params.get("id")
+            quantities = request.query_params.get("quantity")
+            updateted_rows = OrderRequestDetail.objects.filter(item_id=ids).update(
+                quantity=quantities
+            )
+        except Exception as e:
+            error_response("Invalid query")
+
+        return JsonResponse({"error": False, "message": "Ok"})
+
+
 class OrderStatusListViewSet(ModelViewSet):
-    queryset = OrderStatus.objects.all().order_by("-created_at")
+    queryset = OrderStatus.objects.all().order_by("created_at")
     serializer_class = OrderStatusSerializer
+    pagination_class = None
 
     def get_queryset(self):
         queryset = self.queryset

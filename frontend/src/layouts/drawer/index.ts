@@ -155,9 +155,9 @@ export const menus: MenuItem[] = [
             },
 
             {
-                label: 'Ordenes',
-                path: '/bodegas/solicitudes-pedidos',
-                routeName: 'order-products',
+                label: 'Ordenes de Compra',
+                path: '/bodegas/ordenes-pedidos',
+                routeName: 'order-request-view',
             },
         ],
     },

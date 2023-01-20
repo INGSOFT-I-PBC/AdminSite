@@ -15,12 +15,6 @@ class SimpleAttributeSerializer(_srl.ModelSerializer):
         fields = ["name", "value", "type"]
 
 
-class ProductVariantSerializer(_srl.ModelSerializer):
-    class Meta:
-        model = ProductVariant
-        fields = "__all__"
-
-
 class _SimpleProductVariant(_srl.ModelSerializer):
 
     attributes = SimpleAttributeSerializer(many=True, required=False)
@@ -207,45 +201,11 @@ class SimpleProductSerializer(_srl.ModelSerializer):
 
 
 class ProductVariantSerializer(_srl.ModelSerializer):
-
-    id = _srl.IntegerField()
-    created_at = _srl.DateTimeField()
-    updated_at = _srl.DateTimeField()
-    deleted_at = _srl.DateTimeField()
-    variant_name = _srl.CharField(max_length=50)
-    sku = _srl.CharField(max_length=128)
-    price = _srl.DecimalField(max_digits=14, decimal_places=3)
-    is_active = _srl.BooleanField()
     product = SimpleProductSerializer()
-
-    def to_representation(self, obj):
-        """Move fields from product to Vaariant representation."""
-        representation = super().to_representation(obj)
-        product_representation = representation.pop("product")
-        for key in product_representation:
-            if key == "id":
-                representation["prod_id"] = product_representation[key]
-            else:
-                representation[key] = product_representation[key]
-
-        return representation
 
     class Meta:
         model = ProductVariant
-        fields = [
-            "id",
-            "created_at",
-            "updated_at",
-            "deleted_at",
-            "variant_name",
-            "sku",
-            "price",
-            "is_active",
-            "product",
-            "ean",
-            "upc",
-        ]
-
+        fields = "__all__"
 
 class BCProductVariantsSerializer(_srl.ModelSerializer):
 
@@ -269,7 +229,6 @@ class BCProductVariantsSerializer(_srl.ModelSerializer):
             "brand_name",
             "short_description",
         ]
-
 
 class SimpleVariantSerializer(_srl.ModelSerializer):
 

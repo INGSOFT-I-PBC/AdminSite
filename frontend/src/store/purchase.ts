@@ -3,14 +3,21 @@ import type {
     FullPurchase,
     MessageResponse,
     PaginatedAPIResponse,
-    Status,
 } from '@store/types'
 import axios from 'axios'
 import { defineStore } from 'pinia'
 
+import type { SaveOrderDetail } from './types/orders.model'
+
 /**
  * Names of the status for puchase registered in the database
  */
+
+export type PurchaseFromOrderData = {
+    warehouse_id: number
+    order_origin: number
+    details: { provider: number; products: SaveOrderDetail[] }[]
+}
 
 const APROVED_STATUS = { name: 'aprobado', display: 'Aprobado' }
 const DELIVERED_STATUS = { name: 'entregado', display: 'Entregado' }
@@ -96,6 +103,10 @@ export const usePurchaseStore = defineStore('purchases-store', {
                 )
             ).data
             return result
+        },
+
+        async savePurchaseFromOrder(order: PurchaseFromOrderData) {
+            return axios.post<MessageResponse>('/api/v1/purchase/create', order)
         },
     },
 })
