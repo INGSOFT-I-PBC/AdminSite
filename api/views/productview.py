@@ -79,7 +79,7 @@ class ProductVariantViewSet(_ROViewSet):
         queryset = self.queryset
         params = self.request.query_params.copy()
         if not params.get("all", False):
-            queryset.filter(active=True)
+            queryset.filter(is_active=True)
         product_id = self.kwargs.get("product", None)
         if product_id is not None:
             queryset.filter(product=product_id)

@@ -79,6 +79,8 @@ class ProductVariant(TimestampMixin, SoftDeleteMixin):
 
     stock_level = models.IntegerField(default=0)
 
+    is_active = models.BooleanField(default=True, null=False)
+
     def _delete_resources(self):
         obj = None
         try:

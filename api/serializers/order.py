@@ -1,4 +1,3 @@
-from requests import request
 from rest_framework import serializers
 
 from api.models import Employee, Item, OrderRequest, OrderRequestDetail, Warehouse
