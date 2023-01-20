@@ -39,6 +39,7 @@
         "bootstrap-icons-vue": "^1.8.1",
         "bootstrap-vue-3": "^0.4.0",
         "feather-icons": "^4.29.0",
+        "jsbarcode": "^3.11.5",
         "moment": "^2.29.4",
         "ol": "6.15.1",
         "pinia": "^2.0.23",

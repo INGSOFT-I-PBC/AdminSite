@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 
 import type { PaginatedResponse } from './types'
 import type {
+    BCProductVariant,
     Product,
     ProductCreationForm,
     ProductSearchOptions,
@@ -15,6 +16,10 @@ import type {
  * it must be the `id` or the `sku` value to find them
  */
 export type ProductIdentifier = number | string
+export type BCSearchParams = {
+    code?: string
+    name?: string
+} & PaginationOptions
 
 export const useProductStore = defineStore('store-product', () => {
     const product = ref<Product>()
@@ -87,6 +92,17 @@ export const useProductStore = defineStore('store-product', () => {
         ).data
     }
 
+    async function searchThroughVariants(params?: BCSearchParams) {
+        const response = (
+            await axios.get<PaginatedResponse<BCProductVariant>>(
+                `/api/v1/list/products/barcode-data/variants`,
+                { params }
+            )
+        ).data
+        productVariants.value = response
+        return response
+    }
+
     return {
         product,
         products,
@@ -99,5 +115,6 @@ export const useProductStore = defineStore('store-product', () => {
         createProduct,
         updateProduct,
         findStockByProduct,
+        searchThroughVariants,
     }
 })
