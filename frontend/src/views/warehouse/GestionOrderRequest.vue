@@ -27,6 +27,7 @@
         type ColorVariant,
         type TableField,
     } from 'bootstrap-vue-3'
+    import { select } from 'bootstrap-vue-3/dist/utils'
     import moment from 'moment'
 
     import { computed, onMounted, watch } from 'vue'
@@ -206,6 +207,7 @@
     function filterData(): void {
         stopWatcher.value = true
         paginatedDetailsArr.value = orderTableDetailsArr.value
+
         if (
             selectedProvider.value &&
             orderTableDetailsArr.value &&
@@ -214,11 +216,10 @@
             currentDetailsPage.value = 1
             paginatedDetailsArr.value = paginatedDetailsArr.value
                 .filter(d => {
-                    return d.selected_provider?.provider.name.includes(
-                        selectedProvider.value?.name
-                            ? selectedProvider.value?.name
-                            : ''
-                    )
+                    return d.selected_provider?.provider.id ==
+                        selectedProvider.value?.id
+                        ? selectedProvider.value?.id
+                        : -2
                 })
                 .slice(
                     (detailsPaginatedCurrentPage.value.page - 1) *
@@ -234,10 +235,11 @@
             currentDetailsPage.value = 1
             paginatedDetailsArr.value = paginatedDetailsArr.value
                 .filter(d => {
-                    return d.selected_provider?.provider.name.includes(
-                        selectedProvider.value?.name
-                            ? selectedProvider.value?.name
-                            : ''
+                    return (
+                        d.item.product.product_name.includes(
+                            searchProductString.value
+                        ) ||
+                        d.item.variant_name.includes(searchProductString.value)
                     )
                 })
                 .slice(
@@ -374,7 +376,15 @@
         orderTableDetailsArr.value[
             selectedDetail.value.index
         ].selected_provider = productProvider
-        providerList.value.push(productProvider.provider)
+
+        if (
+            providerList.value.findIndex(
+                p => p.id == productProvider.provider.id
+            ) < 0
+        ) {
+            providerList.value.push(productProvider.provider)
+        }
+
         if (paginatedDetailsArr.value) {
             const idx = paginatedDetailsArr.value.findIndex(
                 d => d.index == selectedDetail.value?.index

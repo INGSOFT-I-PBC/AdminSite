@@ -133,7 +133,7 @@
     const currentStockInfo = computed((): SimpleProductStock | null => {
         if (!form.value.bodega || !productStock.value || !selectedVariant.value)
             return null
-        const target = productStock.value.find(
+        const target = productStock.value?.find(
             stock =>
                 stock.warehouse === form.value.bodega?.id &&
                 stock.variant === selectedVariant.value?.id
