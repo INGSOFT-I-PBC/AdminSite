@@ -92,7 +92,9 @@ export const useProductStore = defineStore('store-product', () => {
         ).data
     }
 
-    async function searchThroughVariants(params?: BCSearchParams) {
+    async function searchThroughVariants(
+        params?: BCSearchParams & PaginationOptions
+    ) {
         const response = (
             await axios.get<PaginatedResponse<BCProductVariant>>(
                 `/api/v1/list/products/barcode-data/variants`,
