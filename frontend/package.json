@@ -53,7 +53,7 @@
         "vue-toastification": "2.0.0-rc.5",
         "vue3-easy-data-table": "^1.5.7",
         "vue3-openlayers": "^0.1.70",
-        "yup": "^0.32.11"
+        "yup": "^1.0.0"
     },
     "devDependencies": {
         "@rushstack/eslint-patch": "^1.2.0",
