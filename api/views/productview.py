@@ -87,6 +87,7 @@ class ProductVariantViewSet(_ROViewSet):
 
 
 class ProductVariantsViewSet(_ROViewSet):
+    # pagination_class = CustomPagination
     queryset = ProductVariant.objects.order_by("variant_name")
     serializer_class = BCProductVariantsSerializer
     filter_backends = [OrderingFilter]
@@ -95,6 +96,10 @@ class ProductVariantsViewSet(_ROViewSet):
     def get_queryset(self):
         queryset = self.queryset
         params = self.request.query_params.copy()
+
+        if params.get("busqueda", None):
+            busqueda = params.get("busqueda")
+            queryset = queryset.select_related("product").filter(product__product_name__contains=busqueda)
         if not params.get("all", False):
             queryset.filter(is_active=True)
         product_id = self.kwargs.get("product", None)

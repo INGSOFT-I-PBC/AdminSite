@@ -601,6 +601,9 @@
                     toast.error(res.message)
                     return
                 }
+
+                console.log(res, paginated_opt)
+
                 res = res as PaginatedResponse<WarehouseStock>
 
                 activeWhInformation.value.inventory = res.data
@@ -1129,6 +1132,8 @@
     function filterData(): void {
         stopWatcher.value = true
         mainPageController.value.currentPage = 0
+
+        //console.log(allWarehousesTableInformation)
 
         if (searchString.value.length > 0) {
             paginatedMainTable.value = (allWarehousesTableInformation ?? [])
