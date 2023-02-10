@@ -46,3 +46,17 @@ export interface ProductProvider {
         name: string
     }
 }
+
+export interface ProductVariant2 {
+    id: number
+    brand_name: string
+    variant_name: string
+    sku: string
+    price: number
+    is_active: boolean
+    ean?: null
+    upc: string
+    summary?: string
+    short_description?: string
+    product_name?: string
+}

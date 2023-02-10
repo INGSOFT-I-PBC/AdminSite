@@ -72,3 +72,17 @@ export interface BCProductVariant extends ProductVariant {
     brand_name: string
     short_description: string
 }
+
+export interface BCProductVariant2 {
+    product_name: string
+    summary: string
+    brand_name: string
+    short_description: string
+    id: number
+    upc: string
+    ean: string | null
+    sku: string
+    variant_name: string
+    is_active: boolean
+    price: string
+}

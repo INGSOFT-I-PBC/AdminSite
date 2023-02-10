@@ -10,16 +10,22 @@ import type {
     ProductVariant,
     SimpleProductStock,
 } from './types/product'
+import type { ProductVariant2 } from './types/product.model'
 
 /**
  * This type represents the identifier of a given product,
  * it must be the `id` or the `sku` value to find them
  */
 export type ProductIdentifier = number | string
+/*export type BCSearchParams = {
+    code?: string
+    name?: string
+} & PaginationOptions*/
+
 export type BCSearchParams = {
     code?: string
     name?: string
-} & PaginationOptions
+}
 
 export const useProductStore = defineStore('store-product', () => {
     const product = ref<Product>()
@@ -93,17 +99,56 @@ export const useProductStore = defineStore('store-product', () => {
     }
 
     async function searchThroughVariants(
-        params?: BCSearchParams & PaginationOptions
+        //params?: BCSearchParams & PaginationOptions,
+        paginated_opt: PaginationOptions,
+        options: Optional<BCSearchParams> = null,
+        busqueda = '',
+        filtro = ''
     ) {
+        const dato = {
+            busqueda: busqueda != '' ? busqueda : '',
+            filtro: filtro,
+        }
+        const queryParams = {
+            ...options,
+            page: paginated_opt.page,
+            per_page: paginated_opt.per_page,
+            busqueda: busqueda != '' ? busqueda : '',
+        }
         const response = (
             await axios.get<PaginatedResponse<BCProductVariant>>(
                 `/api/v1/list/products/barcode-data/variants`,
-                { params }
+                {
+                    params: queryParams,
+                }
             )
         ).data
         productVariants.value = response
+
         return response
     }
+
+    /*
+    async function searchThroughVariants(
+        options: Optional<ProductVariant2> = null,
+        busqueda = '',
+        filtro = ''
+    ) {
+        const dato = {
+            busqueda: busqueda != '' ? busqueda : '',
+            filtro: filtro,
+        }
+        const response = (
+            await axios.get(
+                `/api/v1/list/products/barcode-data/variants`,
+                {
+                    params: busqueda != '' ? dato : options,
+                }
+            )
+        ).data
+        //productVariants.value = response
+        return response
+    }*/
 
     return {
         product,

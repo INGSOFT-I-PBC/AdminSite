@@ -1,6 +1,8 @@
 {
   "dependencies": {
     "html2pdf.js": "^0.10.1",
-    "jspdf": "^2.5.1"
+    "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.5.28",
+    "vue-html-to-paper": "^1.4.4"
   }
 }
