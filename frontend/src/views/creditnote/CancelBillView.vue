@@ -4,10 +4,13 @@
     import Title from '@components/custom/Title.vue'
     import Table from '@components/holders/Table.vue'
     import { useAuthStore } from '@store'
+    import { useCreditNoteStore } from '@store/creditnote'
     import { useInvoiceStore } from '@store/invoice'
     import { usePaymentStore } from '@store/payment'
     import type {
         Client,
+        CreditNote,
+        EditCreditNoteInvoice,
         IClient,
         IEditInventory,
         IInventory,
@@ -49,6 +52,7 @@
     const nameEmployee = authStore.userData?.name
     const nameNoteCredit = ref('Nota de Crédito')
     const itemStore = useInvoiceStore()
+    const creditnoteStore = useCreditNoteStore()
 
     const paymentStore = usePaymentStore()
     const productModalShow = ref<boolean>(false)
@@ -188,7 +192,7 @@
         { label: 'Precio', key: 'price' },
         { label: 'IVA 12%', key: 'iva' },
         { label: 'Total', key: 'total' },
-        'Acciones',
+        //  'Acciones',
     ]
     const formSequence = ref<Sequence>({
         id: 0,
@@ -239,30 +243,27 @@
             )
             return
         }
-        const saveData: Invoice = {
+        const saveData: CreditNote = {
+            code: codeInvoice.value,
             client: formClient.value.id,
             iva: Number(itemForm.value.totalIVA),
             payment_method: data.payment_method.id,
             return_deadline: return_deadline.value,
-            emission: emission.value,
-            status: 2,
+            active: true,
             subtotal: Number(itemForm.value.subtotal),
             total: Number(itemForm.value.totalInvoice),
-            anulated: false,
-            invoice_details: data.items.map(it => ({
-                price: Number(it.variant?.price),
-                quantity: it.iquantity,
-                product: it.product?.id,
-                variant: it.variant?.id,
-            })),
         }
         showWaitOverlay.value = true
-        itemStore
-            .editInvoice(Number(route.params.id), saveData)
-            .then(() => {
+        //Number(route.params.id)
+        creditnoteStore
+            .saveCreditNote(saveData)
+            .then(response => {
+                console.log('fffff')
+                console.log(response)
+                console.log(response.id)
                 for (const i of form.value.items) {
                     const editquantity: IEditInventory = {
-                        stock_level: i.stock_level - i.iquantity,
+                        stock_level: i.stock_level + i.iquantity,
                     }
                     //console.log(i.item?.id)
                     //console.log(editquantity.quantity)
@@ -271,14 +272,22 @@
                         editquantity
                     )
                 }
-                toast.success('Factura registrada correctamente')
+                const editcreditinvoice: EditCreditNoteInvoice = {
+                    credit_note: response.id,
+                    //01856-80e5b0739a-7b0db
+                }
+                creditnoteStore.editCreditNoteInvoice(
+                    Number(route.params.id),
+                    editcreditinvoice
+                )
+                toast.success('La Factura ha sido registrada correctamenta')
                 data.items.splice(0, data.items.length)
                 formSequence.value.number += 1
 
                 router.push({ path: '/facturacion' })
             })
             .catch((it: MessageResponse) => {
-                toast.error(`No se pudo actualizar la factura [${it.code}]`)
+                toast.error(`No se pudo anular la factura [${it.code}]`)
             })
             .finally(() => {
                 showWaitOverlay.value = false
@@ -612,7 +621,7 @@
             @ok="saveInvoice"
             button-type="ok-cancel">
             <h1 style="font-size: 15px; color: black; text-align: left">
-                ¿Está seguro de editar la factura?
+                ¿Está seguro de anular la factura?
             </h1>
         </ModalDialog>
         <ModalDialog
@@ -645,7 +654,7 @@
         </ModalDialog>
         <div class="container" style="border-radius: 5px">
             <EForm>
-                <ERow v-if="divEditar">
+                <!-- <ERow v-if="divEditar">
                     <ECol cols="6" lg="6" xl="2">
                         <EButton
                             left-icon="fa-edit"
@@ -664,7 +673,7 @@
                             Cancelar
                         </EButton>
                     </ECol>
-                </ERow>
+                </ERow>-->
                 <ERow align-v="start" class="tw-items-center">
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
@@ -724,7 +733,7 @@
                                 " />
                         </div>
                     </ECol>
-                    <ECol cols="6" lg="6" xl="1">
+                    <!-- <ECol cols="6" lg="6" xl="1">
                         <EButton
                             variant="secondary"
                             class="tw-w-full lg:tw-w-auto"
@@ -732,28 +741,26 @@
                             @click="loadClient(formClient.number_id)">
                             Buscar
                         </EButton>
-                    </ECol>
+                    </ECol>-->
 
                     <ECol cols="12" lg="6" xl="2">
-                        <br />
+                        <!-- <br />-->
 
                         <InputText
+                            label="Nombre del Cliente"
                             placeholder=""
                             :model-value="formClient.name"
                             readonly />
                     </ECol>
                     <ECol cols="12" lg="6" xl="1"> </ECol>
                     <ECol cols="12" lg="6" xl="3">
-                        <ListBox
-                            top-label="Seleccione metodo de pago"
-                            v-model="form.payment_method"
-                            placeholder="No ha seleccionado metodo de pago"
-                            :disabled="readonlyPayMethod"
-                            :options="paymentStore.allPayment ?? []"
-                            label="name" />
+                        <InputText
+                            label="Método de pago"
+                            :model-value="form.payment_method?.name"
+                            readonly />
                     </ECol>
                 </ERow>
-                <ERow style="margin-bottom: 10px">
+                <!--<ERow style="margin-bottom: 10px">
                     <ECol cols="6" lg="auto">
                         <EButton
                             class="tw-w-full lg:tw-w-auto"
@@ -762,7 +769,7 @@
                             Seleccionar producto
                         </EButton>
                     </ECol>
-                </ERow>
+                </ERow>-->
                 <div class="tw">
                     <div class="tw"></div>
                 </div>
@@ -798,11 +805,10 @@
                     <template #cell(price)="{ index }"
                         >{{ form.items[index]?.variant?.price }}
                     </template>
-                    <template #cell(iva)="{}"> 0.12 </template>
-                    <!--<template>
-                        0.12 {{ form.items[index]?.item?.iva }}
-                    </template>-->
-                    <template #cell(Acciones)="{ index }">
+                    <template #cell(iva)>
+                        0.12<!-- {{ form.items[index]?.item?.iva }}-->
+                    </template>
+                    <!--<template #cell(Acciones)="{ index }">
                         <div class="t-button-group">
                             <EButton
                                 left-icon="fa-trash-can"
@@ -815,7 +821,7 @@
                                 </span>
                             </EButton>
                         </div>
-                    </template>
+                    </template>-->
                 </BTable>
             </div>
             <ERow>
@@ -846,10 +852,10 @@
                     style="position: absolute; top: 220px; right: 10px">
                     <EButton
                         left-icon="fa-floppy-disk"
+                        variant="cancel"
                         icon-provider="awesome"
-                        :disabled="divButtons"
                         @click="onSubmit">
-                        Facturar
+                        Anular
                     </EButton>
                 </ECol>
                 <ECol

@@ -27,6 +27,15 @@ from api.views.invoiceview import (
     InvoiceViewSet,
     PaginatedIItemViewSet,
     PaginatedItemInvoiceView,
+    PaginatedItemInvoiceView2,
+
+)
+from api.views.dashboard import (
+    DashboardViewSet,
+
+)
+from api.views.creditnote import (
+    CreditNoteViewSet
 )
 from api.views.itemview import (
     ItemView,
@@ -204,6 +213,19 @@ __all__ = [
     WhStockWithCompromiesd,
     WhTomasFisicasViewSet,
     WhTransactionDetailsViewSet,
+    PermissionGroupView,
+    activate_employee,
+    activate_item,
+    activate_user,
+    inactivate_employee,
+    inactivate_item,
+    find_item,
+    get_item_properties,
+    create_role,
+    FullProvinceViewSet,
+    CreateTestView,
+    TestAPIView,
+    CreditNoteViewSet,
     WhStockWithPropsViewSet,
     WhTransactionViewSet,
     ProductVariantsViewSet,

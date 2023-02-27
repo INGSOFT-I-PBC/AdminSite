@@ -1,9 +1,10 @@
 import { isMessage } from '@/store/types/typesafe'
 import type {
+    CreditNote,
+    EditCreditNoteInvoice,
     IClient,
     IEditInventory,
     IInventory,
-    IItem,
     IPayment,
     Invoice,
     MessageResponse,
@@ -15,12 +16,12 @@ import { defineStore } from 'pinia'
 
 import { type Ref, computed } from 'vue'
 
-export const useInvoiceStore = defineStore('invoice-store', () => {
-    const invoice: Ref<Optional<Invoice>> = ref(null)
+export const useCreditNoteStore = defineStore('creditnote-store', () => {
+    const invoice: Ref<Optional<CreditNote>> = ref(null)
     const inventory: Ref<Optional<IInventory>> = ref(null)
-    const paginatedInvoice: Ref<Optional<PaginatedAPIResponse<Invoice>>> =
+    const paginatedInvoice: Ref<Optional<PaginatedAPIResponse<CreditNote>>> =
         ref(null)
-    const paginatedIInvoice = ref<PaginatedResponse<Invoice>>() // Ref<Optional<PaginatedAPIResponse<Invoice>>> =
+    const paginatedCreditNote = ref<PaginatedResponse<CreditNote>>() // Ref<Optional<PaginatedAPIResponse<Invoice>>> =
     // ref(null)
 
     const paginatedItems: Ref<Optional<PaginatedAPIResponse<IInventory>>> =
@@ -43,7 +44,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
 
     const allPayment: Ref<Optional<IPayment[]>> = ref(null)
 
-    async function fetchPaginatedListInvoice(
+    async function fetchPaginatedListCreditNote(
         options: any,
         paginated_opt: PaginationOptions
     ) {
@@ -53,16 +54,19 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
             per_page: paginated_opt.per_page,
         }
         const response = (
-            await axios.get<PaginatedResponse<Invoice>>('/api/v1/invoices', {
-                params: queryParams,
-            })
+            await axios.get<PaginatedResponse<CreditNote>>(
+                '/api/v1/creditnotes',
+                {
+                    params: queryParams,
+                }
+            )
         ).data
-        paginatedIInvoice.value = response
+        paginatedCreditNote.value = response
         return response
     }
 
     async function getAllInvoice() {
-        return await axios.get<Invoice[]>('/api/v1/list/invoice', {})
+        return await axios.get<CreditNote[]>('/api/v1/list/invoice', {})
     }
 
     async function fetchClientNumber(number_id: string) {
@@ -79,9 +83,9 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
      * @param item the client to save
      * @returns a response from the backend
      */
-    async function saveInvoice(item: Invoice) {
-        const data = await (
-            await axios.post<MessageResponse>('/api/v1/invoice', item)
+    async function saveCreditNote(item: CreditNote): Promise<any> {
+        const data = (
+            await axios.post<MessageResponse>('/api/v1/save/creditnote', item)
         ).data
         return data
     }
@@ -93,11 +97,18 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
      * @param data the data to overwrite
      * @returns the response of the backend
      */
-    async function editInvoice(id: number, data: Invoice) {
+    async function editCreditNoteInvoice(
+        id: number,
+        data: EditCreditNoteInvoice
+    ) {
         return (
-            await axios.put<Invoice>(`/api/v1/invoice/editar?id=${id}`, data)
+            await axios.put<CreditNote>(
+                `/api/v1/edit/creditnote/invoice?id=${id}`,
+                data
+            )
         ).data
     }
+
     /**
      * Edit the data of an specific Item into the backend.
      *
@@ -136,7 +147,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
      */
     async function fetchInvoiceById(id: number) {
         const data = (
-            await axios.get<Invoice>(`/api/v1/invoice/editar?id=${id}`)
+            await axios.get<CreditNote>(`/api/v1/invoice/editar?id=${id}`)
         ).data
         invoice.value = data
         return data
@@ -163,7 +174,7 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
 
     async function fetchInvoicePaginated(params?: PaginationOptions) {
         const response = (
-            await axios.get<PaginatedResponse<Invoice>>(
+            await axios.get<PaginatedResponse<CreditNote>>(
                 '/api/v1/list/invoices/all',
                 { params }
             )
@@ -183,13 +194,13 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
     return {
         invoice,
         paginatedInvoice,
-        paginatedIInvoice,
+        paginatedCreditNote,
         paginatedItems,
         allInvoice,
         inventory,
         currentPaginatedItemPage,
         currentPaginatedInvoicePage,
-        fetchPaginatedListInvoice,
+        fetchPaginatedListCreditNote,
         fetchIInventoryById,
         getAllInvoice,
         editquantityInventory,
@@ -197,8 +208,8 @@ export const useInvoiceStore = defineStore('invoice-store', () => {
         fetchInvoiceById,
         fetchIItemsPaginated,
         fetchInvoicePaginated,
-        saveInvoice,
-        editInvoice,
+        saveCreditNote,
+        editCreditNoteInvoice,
         removeInvoice,
         fetchClientNumber,
     }

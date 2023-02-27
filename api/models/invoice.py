@@ -7,6 +7,7 @@ from .clients import Client
 from .users import Employee
 from .offices import BranchOffice
 from django.core.validators import MinValueValidator
+from api.models.products import Product, ProductVariant
 
 
 class PaymentMethod(models.Model):
@@ -45,21 +46,21 @@ class CreditNote(models.Model):
     """
 
     id = models.AutoField(primary_key=True, auto_created=True, editable=False)
-    branch_office = models.ForeignKey(BranchOffice, on_delete=models.RESTRICT)
+    branch_office = models.ForeignKey(BranchOffice, on_delete=models.RESTRICT, null=True, default=None)
     client = models.ForeignKey(Client, on_delete=models.RESTRICT)
     code = models.CharField(max_length=128, blank=False)
     created_at = models.DateTimeField(null=False, auto_now_add=True)
     created_by = models.ForeignKey(
         Employee, on_delete=models.RESTRICT, db_column="created_by"
     )
-    iva = models.DecimalField(max_digits=6, decimal_places=3)
+    iva = models.DecimalField(decimal_places=3, max_digits=15)
     payment_method = models.ForeignKey(PaymentMethod, on_delete=models.RESTRICT)
     return_deadline = models.DateField(null=True, default=None)
-    status = models.ForeignKey(Status, on_delete=models.RESTRICT)
+    active = models.BooleanField(null=False, default=True)
     subtotal = models.DecimalField(
-        validators=[MinValueValidator(0)], decimal_places=3, max_digits=14
+        validators=[MinValueValidator(0)], decimal_places=3, max_digits=15
     )
-    total = models.DecimalField(decimal_places=3, max_digits=14)
+    total = models.DecimalField(decimal_places=3, max_digits=15)
     anulated = models.BooleanField(null=False, default=False)
 
     class Meta:
@@ -163,6 +164,8 @@ class InvoiceDetails(models.Model):
 
     invoice = models.ForeignKey(Invoice, related_name='invoice_details',on_delete=models.RESTRICT)
     item = models.ForeignKey(Item, on_delete=models.RESTRICT)
+    variant = models.ForeignKey(ProductVariant, on_delete=models.RESTRICT)
+    product = models.ForeignKey(Product, on_delete=models.RESTRICT)
     price = models.DecimalField(
         validators=[MinValueValidator(0)], decimal_places=3, max_digits=14
     )
@@ -171,7 +174,7 @@ class InvoiceDetails(models.Model):
     class Meta:
         db_table = "invoice_details"
         indexes = [
-            models.Index(fields=["item"]),
+            #models.Index(fields=["item"]),
             models.Index(fields=["price"]),
             models.Index(fields=["quantity"]),
         ]

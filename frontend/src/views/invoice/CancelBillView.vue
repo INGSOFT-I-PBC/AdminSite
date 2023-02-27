@@ -188,7 +188,7 @@
         { label: 'Precio', key: 'price' },
         { label: 'IVA 12%', key: 'iva' },
         { label: 'Total', key: 'total' },
-        'Acciones',
+        //  'Acciones',
     ]
     const formSequence = ref<Sequence>({
         id: 0,
@@ -645,7 +645,7 @@
         </ModalDialog>
         <div class="container" style="border-radius: 5px">
             <EForm>
-                <ERow v-if="divEditar">
+                <!-- <ERow v-if="divEditar">
                     <ECol cols="6" lg="6" xl="2">
                         <EButton
                             left-icon="fa-edit"
@@ -664,7 +664,7 @@
                             Cancelar
                         </EButton>
                     </ECol>
-                </ERow>
+                </ERow>-->
                 <ERow align-v="start" class="tw-items-center">
                     <ECol cols="12" lg="6" xl="2">
                         <InputText
@@ -724,7 +724,7 @@
                                 " />
                         </div>
                     </ECol>
-                    <ECol cols="6" lg="6" xl="1">
+                    <!-- <ECol cols="6" lg="6" xl="1">
                         <EButton
                             variant="secondary"
                             class="tw-w-full lg:tw-w-auto"
@@ -732,28 +732,26 @@
                             @click="loadClient(formClient.number_id)">
                             Buscar
                         </EButton>
-                    </ECol>
+                    </ECol>-->
 
                     <ECol cols="12" lg="6" xl="2">
-                        <br />
+                        <!-- <br />-->
 
                         <InputText
+                            label="Nombre del Cliente"
                             placeholder=""
                             :model-value="formClient.name"
                             readonly />
                     </ECol>
                     <ECol cols="12" lg="6" xl="1"> </ECol>
                     <ECol cols="12" lg="6" xl="3">
-                        <ListBox
-                            top-label="Seleccione metodo de pago"
-                            v-model="form.payment_method"
-                            placeholder="No ha seleccionado metodo de pago"
-                            :disabled="readonlyPayMethod"
-                            :options="paymentStore.allPayment ?? []"
-                            label="name" />
+                        <InputText
+                            label="Método de pago"
+                            :model-value="form.payment_method?.name"
+                            readonly />
                     </ECol>
                 </ERow>
-                <ERow style="margin-bottom: 10px">
+                <!--<ERow style="margin-bottom: 10px">
                     <ECol cols="6" lg="auto">
                         <EButton
                             class="tw-w-full lg:tw-w-auto"
@@ -762,7 +760,7 @@
                             Seleccionar producto
                         </EButton>
                     </ECol>
-                </ERow>
+                </ERow>-->
                 <div class="tw">
                     <div class="tw"></div>
                 </div>
@@ -798,11 +796,10 @@
                     <template #cell(price)="{ index }"
                         >{{ form.items[index]?.variant?.price }}
                     </template>
-                    <template #cell(iva)="{}"> 0.12 </template>
-                    <!--<template>
-                        0.12 {{ form.items[index]?.item?.iva }}
-                    </template>-->
-                    <template #cell(Acciones)="{ index }">
+                    <template #cell(iva)>
+                        0.12<!-- {{ form.items[index]?.item?.iva }}-->
+                    </template>
+                    <!--<template #cell(Acciones)="{ index }">
                         <div class="t-button-group">
                             <EButton
                                 left-icon="fa-trash-can"
@@ -815,7 +812,7 @@
                                 </span>
                             </EButton>
                         </div>
-                    </template>
+                    </template>-->
                 </BTable>
             </div>
             <ERow>
@@ -846,10 +843,10 @@
                     style="position: absolute; top: 220px; right: 10px">
                     <EButton
                         left-icon="fa-floppy-disk"
+                        variant="cancel"
                         icon-provider="awesome"
-                        :disabled="divButtons"
                         @click="onSubmit">
-                        Facturar
+                        Anular
                     </EButton>
                 </ECol>
                 <ECol

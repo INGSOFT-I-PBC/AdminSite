@@ -9,6 +9,8 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ReadOnlyModelViewSet,ModelViewSet
+from api.models.invoice import CreditNote
+from api.serializers.credit_note import CreditNoteListSerializer,CreditNoteSerializer,CreditNoteInvoiceSerializer
 
 from api.models import Client, Invoice, InvoiceDetails, Item,Inventory
 from api.serializers.invoices import (
@@ -97,26 +99,16 @@ class InvoiceView(viewsets.GenericViewSet):
             status=status.HTTP_400_BAD_REQUEST,
 
         )
-    @action(methods=["put"], detail=False)
-    def edit_quantity(self, request: Request):
-            item = int(request.GET.get("item"))
-            print(item)
-            supplier = Inventory.objects.filter(item_id=item).first()
-           # print(supplier)
-            serializer=InvoiceInventorySerializer(supplier,data=request.data)
-            if serializer.is_valid():
 
-                serializer.save()
-                print(serializer.data)
-                return Response(serializer.data,status=status.HTTP_201_CREATED)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     @action(methods=["put"], detail=False)
-    def edit_quantity2(self, request: Request):
+    def edit_invoice_anulated(self, request: Request):
             item = int(request.GET.get("id"))
             print(item)
-            supplier = ProductStockWarehouse.objects.filter(variant_id=item).first()
+            supplier = Invoice.objects.filter(id=item).first()
            # print(supplier)
-            serializer=InvoiceInventorySerializer(supplier,data=request.data)
+            data = request.data
+            data["anulated"] = True
+            serializer=CreditNoteInvoiceSerializer(supplier,data=data)
             if serializer.is_valid():
 
                 serializer.save()
@@ -125,35 +117,18 @@ class InvoiceView(viewsets.GenericViewSet):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @action(methods=["post"], detail=False)
-    def save_invoice(self, request: Request):
+    def save_creditnote(self, request: Request):
         if not request.data:
             return error_response("No data was provided")
-        items = request.data.pop("invoice_details")
-        items = [x for x in items if x]
-        if not items:
-            return error_response("An order need at least one item")
 
         data = request.data
         data["created_by"] = request.user.employee_id
         data["created_at"] = datetime.datetime.now()
-        serializer = InvoiceSerializer(data=data)
-
+        serializer = CreditNoteListSerializer(data=data)
         if serializer.is_valid(raise_exception=True):
-            order: Invoice = serializer.save()
-            for item in items:
-                # inject order, due client doesn't know which is created
-                item["invoice"] = order.pk
-            item_serializer = IInvoiceDetailsEditSerializer(data=items, many=True)
-            try:  # Check if the inserted items are valid
-                item_serializer.is_valid(raise_exception=True)
-            except Exception as e:
-                order.delete()
-                raise e
-            item_serializer.save()
-            serializer = InvoiceSerializer(order)
-            return JsonResponse(serializer.data)
-        return error_response("The given data was invalid")
-
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class InvoicesView(APIView):
     """
@@ -258,6 +233,68 @@ class InvoiceViewSet(ModelViewSet):
             queryset = queryset.filter(emission__lte=(params["to_date"]))
 
         return queryset
+
+
+
+
+class CreditNoteViewSet(ModelViewSet):
+
+    queryset = CreditNote.objects.all().order_by("-created_at").exclude(anulated=True)
+    serializer_class = CreditNoteListSerializer
+    def get_queryset(self):
+        queryset = self.queryset
+        params = self.request.query_params.copy()
+
+        if params.get("order_by", None):
+            fields = params.pop("order_by")
+            queryset = queryset.order_by(*fields)
+
+        if params.get("id", None):
+            queryset = queryset.filter(id=params.get("id", None))
+            return queryset
+
+        if params.get("client_name", None):
+            queryset = queryset.filter(client__name__icontains=params.get("client_name"))
+
+        if params.get("client_cid", None):
+            queryset = queryset.filter(client__number_id__icontains=params.get("client_cid"))
+
+        if params.get("from_date", None):
+            queryset = queryset.filter(emission__gte=(params["from_date"]))
+        if params.get("to_date", None):
+            queryset = queryset.filter(emission__lte=(params["to_date"]))
+
+        return queryset
+
+    @action(methods=["post"], detail=False)
+    def save_creditnote(self, request: Request):
+        if not request.data:
+            return error_response("No data was provided")
+
+        data = request.data
+        data["created_by"] = request.user.employee_id
+        data["created_at"] = datetime.datetime.now()
+        serializer = CreditNoteSerializer(data=data)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    @action(methods=["put"], detail=False)
+    def edit_invoice_anulated(self, request: Request):
+            item = int(request.GET.get("id"))
+            print(item)
+            supplier = Invoice.objects.filter(id=item).first()
+            print("hola")
+            print(supplier)
+            data = request.data
+            data["anulated"] = True
+            serializer=CreditNoteInvoiceSerializer(supplier,data=data)
+            if serializer.is_valid():
+
+                serializer.save()
+                print(serializer.data)
+                return Response(serializer.data,status=status.HTTP_201_CREATED)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 

@@ -9,7 +9,6 @@
     import type { PaginatedResponse } from '@store-types'
     import { useInvoiceStore } from '@store/invoice'
     import type { IClient, IPayment, Invoice } from '@store/types'
-    //import { useToast } from 'vue-toastification'
     import type { BvEvent, TableField } from 'bootstrap-vue-3'
     import moment from 'moment'
 
@@ -39,8 +38,8 @@
         }[]
     >([
         //{ label: 'Por creador', value: 'created' },
-        { label: 'Por tipo de ID', value: 'cid' },
-        { label: 'Por Nombres y apellidos', value: 'name' },
+        { label: 'Por Cédula de Cliente', value: 'cid' },
+        { label: 'Por Nombres y apellidos de Cliente', value: 'name' },
         { label: 'Por fecha de creación', value: 'emission' },
     ])
     const filterName = ref(templateList.value[0])
@@ -66,9 +65,7 @@
     const form = ref<Form>({
         items: [],
     })
-    const formFiltres = ref<Form>({
-        items: [],
-    })
+
     type Form = {
         items: Invoice[]
     }
@@ -92,10 +89,8 @@
     }
     function cleanFilters() {
         filterText.value = ''
-        //formFiltres.value.items.splice(0, formFiltres.value.items.length)
         cleanQuery()
         showInvoices2(inventoryForm)
-        //showInvoices()
     }
     function cleanQuery() {
         inventoryForm.from_date = ''
@@ -176,10 +171,6 @@
         showInvoices2(inventoryForm)
     }
 
-    async function showItem(item: Invoice) {
-        detailSelectedItem.value.item = item
-        itemInfoShow.value = true
-    }
     function removeItem(index: number) {
         console.log(index)
         form.value.items.splice(index, 1)
@@ -200,10 +191,9 @@
         console.log(id)
         router.push({ path: `/facturacion/editar/${String(id)}` })
     }
-    function onSubmit(id: number, index: number) {
-        itemForm.value.id = id
-        itemForm.value.index = index
-        productModalShow.value = true
+    function goCancelBill(id: number): void {
+        console.log(id)
+        router.push({ path: `/facturacion/cancel/${String(id)}` })
     }
 
     showInvoices2(inventoryForm)
@@ -381,24 +371,19 @@
                         }}
                     </template>
 
-                    <template #cell(Acciones)="{ item, index }">
+                    <template #cell(Acciones)="{ item }">
                         <div class="t-button-group">
                             <e-button
                                 left-icon="fa-eye"
                                 variant="secondary"
-                                @click="showItem(item)"
+                                @click="goEdit(item['id'])"
                                 >Ver detalles</e-button
                             >
-                            <e-button
-                                left-icon="fa-edit"
-                                variant="success"
-                                @click="goEdit(item['id'])"
-                                >Editar</e-button
-                            >
+
                             <e-button
                                 left-icon="fa-cancel"
                                 variant="cancel"
-                                @click="onSubmit(item['id'], index)">
+                                @click="goCancelBill(item['id'])">
                                 <span
                                     class="tw-invisible md:tw-visible tw-font-bold"
                                     >Anular</span

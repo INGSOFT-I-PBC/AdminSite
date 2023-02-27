@@ -75,4 +75,6 @@ export type {
     IEditInventory,
 } from './invoice.model'
 export type { Inventory, IEmployee } from './inventory.model'
+export type { CreditNote, EditCreditNoteInvoice } from './creditnote.model'
+
 export type { Sequence } from './sequence.model'

@@ -31,7 +31,7 @@ class WhProductInventoryViewSet(ModelViewSet):
 
     def get_queryset(self):
 
-        queryset = self.queryset.exclude(product__active=0)
+        queryset = self.queryset.exclude(product__is_active=0)
         params = self.request.query_params.copy()
 
         if params.get("order_by", None):

@@ -25,19 +25,34 @@ export interface IItem {
     name: string
     price: string
 }
+export interface IProduct {
+    id: number
+    product_name: string
+    brand_name: string
+    base_price: string
+}
+export interface IVariant {
+    id: number
+    variant_name: string
+    sku: string
+    price: string
+    is_active: boolean
+}
 export interface IInventory {
     id: number
-    item: Maybe<IItem>
-    quantity: number
+    product: Maybe<IProduct>
+    variant: Maybe<IVariant>
+    stock_level: number
 }
 export interface IEditInventory {
-    quantity: number
+    stock_level: number
 }
 export interface IInvoiceDetails {
     id?: number
     price: number
     quantity: number
-    item: IItem | number
+    product: Maybe<IProduct> | number
+    variant: Maybe<IVariant> | number
 }
 export interface IPayment {
     id: number

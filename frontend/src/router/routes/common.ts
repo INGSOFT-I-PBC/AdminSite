@@ -9,7 +9,7 @@ export const common: Array<RouteConfig> = [
     },
     {
         path: '/dashboard',
-        component: () => import('@views/DashboardView.vue'),
+        component: () => import('@views/dashboard/DashboardView.vue'),
         name: 'dashboard-view',
         meta: {
             pageTitle: 'Dashboard General',
