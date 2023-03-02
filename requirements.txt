@@ -19,7 +19,7 @@ django-vite==2.0.2
 django-cors-headers==3.13.0
 
 # For cryptography
-cryptography==39.0.0
+cryptography==39.0.2
 
 # WSGI compliant production server
 gunicorn==20.1.0
