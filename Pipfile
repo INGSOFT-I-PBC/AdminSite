@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 django = {version = "==4.1.5", extras = ["argon2"]}
 django-environ = "==0.9.0"
-psycopg2-binary = "==2.9.4"
+psycopg2-binary = "==2.9.10"
 mysqlclient = "==2.1.1"
 djangorestframework = "==3.14.0"
 django-filter = "==22.1"
