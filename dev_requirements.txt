@@ -5,7 +5,7 @@ pep8>=1.7.1
 pylint>=2.15.9
 pylint_django>=2.5.3
 # To show API endpoints information
-Markdown==3.4.1
+Markdown==3.10.3
 
 # black formatter
 black==22.12.0
